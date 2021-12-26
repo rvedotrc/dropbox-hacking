@@ -3,18 +3,25 @@ import * as fs from "fs";
 import { Operation } from "./types";
 
 import catOperation from "./operations/cat";
+import cpOperation from "./operations/cp";
 import lsOperation from "./operations/ls";
 import mkdirOperation from "./operations/mkdir";
+import mvOperation from "./operations/mv";
 import rmOperation from "./operations/rm";
 import uploadStdinOperation from "./operations/uploadStdin";
 
 const envVar = "DROPBOX_CREDENTIALS_PATH";
 const prefix = "./bin/cli";
 
+// download_zip (could be useful)
+// get_metadata (is this different from "ls"?)
+
 const operations: Operation[] = [
   catOperation,
+  cpOperation,
   lsOperation,
   mkdirOperation,
+  mvOperation,
   rmOperation,
   uploadStdinOperation,
 ];

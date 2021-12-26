@@ -36,6 +36,6 @@ const handler = (dbxp: DropboxProvider, argv: string[]): void => {
     });
 };
 
-const argsHelp = "PATH (NOTE: recursive!)";
+const argsHelp = "DROPBOX_PATH (NOTE: recursive!)";
 
 export default { verb, handler, argsHelp };

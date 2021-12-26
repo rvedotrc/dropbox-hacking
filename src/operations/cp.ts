@@ -1,14 +1,17 @@
 import { DropboxProvider } from "../types";
 import { usageFail } from "../cli";
 
-const verb = "rm";
+const verb = "cp";
 
 const handler = (dbxp: DropboxProvider, argv: string[]): void => {
-  if (argv.length !== 1) usageFail(verb);
-  const path = argv[0];
+  if (argv.length !== 2) usageFail(verb);
+  const fromPath = argv[0];
+  const toPath = argv[1];
 
-  dbxp()
-    .filesDeleteV2({ path })
+  const dbx = dbxp();
+
+  dbx
+    .filesCopyV2({ from_path: fromPath, to_path: toPath })
     .then((response) => {
       process.stdout.write(JSON.stringify(response.result) + "\n");
       process.exit(0);
@@ -19,6 +22,6 @@ const handler = (dbxp: DropboxProvider, argv: string[]): void => {
     });
 };
 
-const argsHelp = "DROPBOX_PATH";
+const argsHelp = "FROM_DROPBOX_PATH TO_DROPBOX_PATH";
 
 export default { verb, handler, argsHelp };
