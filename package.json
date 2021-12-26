@@ -1,0 +1,38 @@
+{
+  "name": "dropbox-hacking",
+  "version": "1.0.0",
+  "description": "Dropbox API hackery",
+  "scripts": {
+    "compile": "tsc -p tsconfig.json",
+    "prettier": "prettier --write src",
+    "build": "yarn prettier && yarn lint && yarn compile",
+    "rebuild": "rebuild package.json tsconfig.json .eslintrc .eslintrc.js src -- yarn build",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx --max-warnings=0",
+    "lint:report": "yarn lint --format json --output-file .eslint/report.json",
+    "cli": "node dist/main.js"
+  },
+  "contributors": [
+    "Rachel Evans <git@rve.org.uk>"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=0.10"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dropbox/dropbox-sdk-js.git"
+  },
+  "dependencies": {
+    "dropbox": "^10.23.0",
+    "stream-json": "^1.7.3"
+  },
+  "devDependencies": {
+    "@types/node": "^14.14.25",
+    "@types/stream-json": "^1.7.2",
+    "@typescript-eslint/eslint-plugin": "^5.8.0",
+    "@typescript-eslint/parser": "^5.8.0",
+    "eslint": "^8.5.0",
+    "prettier": "^2.5.1",
+    "typescript": "^4.1.4"
+  }
+}
