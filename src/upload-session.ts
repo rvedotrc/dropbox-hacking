@@ -13,7 +13,7 @@ const makeWritable = (
   let offset = 0;
 
   writable._write = (chunk: Buffer, encoding, callback): void => {
-    console.debug("_write", chunk);
+    console.debug(`_write length=${chunk.length}`);
     if (chunk.length === 0) return;
 
     // Already got exactly enough for a part, and there's more data
@@ -27,24 +27,6 @@ const makeWritable = (
       offset += PART_SIZE;
 
       onNonFinalPart(wholeBuffer, oldOffset);
-
-      // partPromises.push(
-      //     dbx
-      //         .filesUploadSessionAppendV2({
-      //             cursor: {
-      //                 session_id: sessionId,
-      //                 offset,
-      //                 contents: wholeBuffer,
-      //             },
-      //             close: false,
-      //         })
-      //         .then((partResult) => {
-      //             console.debug(
-      //                 `part result offset=${offset} size=${wholeBuffer.length} ${partResult}`
-      //             );
-      //             return partResult;
-      //         })
-      // );
     }
 
     const neededToFill = PART_SIZE - bufferedSize;
@@ -66,13 +48,13 @@ const makeWritable = (
 
     buffers.push(chunk);
     bufferedSize += chunk.length;
-    console.debug(`After chunk, bufferedSize=${bufferedSize}`);
+    console.debug(`After chunk, bufferedSize=${bufferedSize} offset=${offset}`);
 
     callback();
   };
 
   writable.on("finish", () => {
-    console.debug("finish");
+    console.debug(`finish bufferedSize=${bufferedSize} offset=${offset}`);
     onFinalPart(Buffer.concat(buffers), offset);
   });
 
@@ -92,8 +74,6 @@ export default (
     .then(
       (sessionId) =>
         new Promise<files.FileMetadata>((resolve, reject) => {
-          // const writable = new stream.Writable();
-
           const partPromises: Promise<void>[] = [];
 
           const writable = makeWritable(
@@ -107,7 +87,9 @@ export default (
                     close: false,
                   })
                   .then(() => {
-                    console.debug(`append for offset=${offset} completed`);
+                    console.debug(
+                      `non-final part for offset=${offset} completed`
+                    );
                   })
                   .catch((err) => {
                     console.error(`Error from append offset=${offset}`, err);
@@ -116,9 +98,11 @@ export default (
               );
             },
             (chunk, offset) => {
-              console.debug("final chunk", chunk, offset);
+              console.debug(
+                `final chunk length=${chunk.length} offset=${offset}`
+              );
 
-              if (chunk.length > 0) {
+              if (chunk.length > 0 || offset === 0) {
                 partPromises.push(
                   dbx
                     .filesUploadSessionAppendV2({
@@ -126,14 +110,17 @@ export default (
                       contents: chunk,
                       close: true,
                     })
-                    .then((r) => {
-                      console.debug("final part OK", offset, r);
+                    .then(() => {
+                      console.debug(
+                        `final part for offset=${offset} completed`
+                      );
                     })
                 );
+                offset += chunk.length;
               }
 
               Promise.all(partPromises).then(() => {
-                console.debug("all non-final parts completed, finish");
+                console.debug(`all parts completed, finish, offset=${offset}`);
 
                 return dbx
                   .filesUploadSessionFinish({
@@ -148,7 +135,10 @@ export default (
                     resolve(r.result);
                   })
                   .catch((err) => {
-                    console.error(`Error from finish offset=${offset}`, err);
+                    console.error(
+                      `Error from finish offset=${offset}`,
+                      JSON.stringify(err.error)
+                    );
                     reject(err);
                   });
               });
