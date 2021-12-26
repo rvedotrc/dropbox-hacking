@@ -8,6 +8,7 @@ import lsOperation from "./operations/ls";
 import mkdirOperation from "./operations/mkdir";
 import mvOperation from "./operations/mv";
 import rmOperation from "./operations/rm";
+import uploadFileOperation from "./operations/uploadFile";
 import uploadStdinOperation from "./operations/uploadStdin";
 
 const envVar = "DROPBOX_CREDENTIALS_PATH";
@@ -23,6 +24,7 @@ const operations: Operation[] = [
   mkdirOperation,
   mvOperation,
   rmOperation,
+  uploadFileOperation,
   uploadStdinOperation,
 ];
 
