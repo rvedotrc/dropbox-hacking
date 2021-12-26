@@ -4,6 +4,7 @@ import { Operation } from "./types";
 
 import catOperation from "./operations/cat";
 import lsOperation from "./operations/ls";
+import mkdirOperation from "./operations/mkdir";
 import rmOperation from "./operations/rm";
 import uploadStdinOperation from "./operations/uploadStdin";
 
@@ -13,6 +14,7 @@ const prefix = "./bin/cli";
 const operations: Operation[] = [
   catOperation,
   lsOperation,
+  mkdirOperation,
   rmOperation,
   uploadStdinOperation,
 ];
