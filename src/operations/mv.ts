@@ -3,6 +3,10 @@ import { usageFail } from "../cli";
 
 const verb = "mv";
 
+// Case insensitive
+// Can't rename to same-case (e.g. mv foo FOO) - you have to do e.g. foo => tmpfoo => FOO
+// Does a "mkdir -p" on the destination structure
+
 const handler = (dbxp: DropboxProvider, argv: string[]): void => {
   if (argv.length !== 2) usageFail(verb);
   const fromPath = argv[0];

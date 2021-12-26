@@ -3,6 +3,8 @@ import { usageFail } from "../cli";
 
 const verb = "mkdir";
 
+// Does a "mkdir -p" on the destination structure
+
 const handler = (dbxp: DropboxProvider, argv: string[]): void => {
   if (argv.length !== 1) usageFail(verb);
   const path = argv[0];
@@ -36,6 +38,6 @@ const handler = (dbxp: DropboxProvider, argv: string[]): void => {
     });
 };
 
-const argsHelp = "DROPBOX_PATH (NOTE: recursive!)";
+const argsHelp = "DROPBOX_PATH";
 
 export default { verb, handler, argsHelp };

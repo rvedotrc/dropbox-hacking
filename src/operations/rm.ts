@@ -3,6 +3,8 @@ import { usageFail } from "../cli";
 
 const verb = "rm";
 
+// Recursive!
+
 const handler = (dbxp: DropboxProvider, argv: string[]): void => {
   if (argv.length !== 1) usageFail(verb);
   const path = argv[0];
@@ -19,6 +21,6 @@ const handler = (dbxp: DropboxProvider, argv: string[]): void => {
     });
 };
 
-const argsHelp = "DROPBOX_PATH";
+const argsHelp = "DROPBOX_PATH (recursive!)";
 
 export default { verb, handler, argsHelp };

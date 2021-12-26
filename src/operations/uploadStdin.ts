@@ -3,6 +3,8 @@ import { usageFail } from "../cli";
 
 const verb = "upload-stdin";
 
+// Does a "mkdir -p" on the destination structure
+
 const handler = (dbxp: DropboxProvider, argv: string[]): void => {
   if (argv.length !== 1) usageFail(verb);
   const path = argv[0];
