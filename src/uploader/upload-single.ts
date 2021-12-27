@@ -5,7 +5,7 @@ export const MAX_SINGLE_UPLOAD_SIZE = 150_000_000;
 
 export default (
   dbx: Dropbox,
-  path: string,
+  commitInfo: files.CommitInfo,
   readable: stream.Readable
 ): Promise<files.FileMetadata> =>
   new Promise<files.FileMetadata>((resolve) => {
@@ -32,9 +32,8 @@ export default (
       resolve(
         dbx
           .filesUpload({
-            path,
+            ...commitInfo,
             contents,
-            mode: { ".tag": "overwrite" },
           })
           .then((r) => r.result)
       );

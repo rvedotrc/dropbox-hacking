@@ -9,7 +9,7 @@ const defaultLimiter = limiter<void>(10);
 
 export default (
   dbx: Dropbox,
-  path: string,
+  commitInfo: files.CommitInfo,
   readable: stream.Readable
 ): Promise<files.FileMetadata> =>
   dbx
@@ -81,7 +81,7 @@ export default (
                     session_id: sessionId,
                     offset: totalOffset,
                   },
-                  commit: { path },
+                  commit: commitInfo,
                 })
                 .then((r) => {
                   console.debug("finish completed");

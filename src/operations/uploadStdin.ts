@@ -2,6 +2,8 @@ import { DropboxProvider } from "../types";
 import { usageFail } from "../cli";
 import { selectUploader } from "../uploader";
 import * as fs from "fs";
+import { files } from "dropbox";
+import { formatTime } from "../util";
 
 const verb = "upload-stdin";
 
@@ -14,7 +16,16 @@ const handler = (dbxp: DropboxProvider, argv: string[]): void => {
   const stat = fs.fstatSync(process.stdin.fd);
   const uploader = selectUploader(stat.isFile() ? stat.size : undefined);
 
-  uploader(dbxp(), dropboxPath, process.stdin)
+  const commitInfo: files.CommitInfo = {
+    path: dropboxPath,
+    mode: { ".tag": "overwrite" },
+  };
+
+  if (stat.isFile()) {
+    commitInfo.client_modified = formatTime(stat.mtime);
+  }
+
+  uploader(dbxp(), commitInfo, process.stdin)
     .then((value) => {
       process.stdout.write(JSON.stringify(value) + "\n");
       // console.info(value.result);
