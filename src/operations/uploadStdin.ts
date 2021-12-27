@@ -1,7 +1,6 @@
 import { DropboxProvider } from "../types";
 import { usageFail } from "../cli";
-import uploadSession from "../upload-session";
-import uploadSingle, { MAX_SIZE as MAX_SINGLE_SIZE } from "../upload-single";
+import { selectUploader } from "../uploader";
 import * as fs from "fs";
 
 const verb = "upload-stdin";
@@ -13,8 +12,7 @@ const handler = (dbxp: DropboxProvider, argv: string[]): void => {
   const dropboxPath = argv[0];
 
   const stat = fs.fstatSync(process.stdin.fd);
-  const isSmall = stat.isFile() && stat.size <= MAX_SINGLE_SIZE;
-  const uploader = isSmall ? uploadSingle : uploadSession;
+  const uploader = selectUploader(stat.isFile() ? stat.size : undefined);
 
   uploader(dbxp(), dropboxPath, process.stdin)
     .then((value) => {

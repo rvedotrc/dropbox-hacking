@@ -1,7 +1,7 @@
 import { Dropbox, files } from "dropbox";
 import stream = require("node:stream");
 
-export const MAX_SIZE = 150_000_000;
+export const MAX_SINGLE_UPLOAD_SIZE = 150_000_000;
 
 export default (
   dbx: Dropbox,
