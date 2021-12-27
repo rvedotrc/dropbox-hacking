@@ -1,8 +1,11 @@
 import { Dropbox, files } from "dropbox";
 import stream = require("node:stream");
 import fixedChunkStream from "./fixed-chunk-stream";
+import limiter from "./limiter";
 
 const PART_SIZE = 4194304; // 4 MB
+
+const defaultLimiter = limiter<void>(10);
 
 export default (
   dbx: Dropbox,
@@ -37,19 +40,23 @@ export default (
               console.debug(`${logPrefix} starting`);
 
               partPromises.push(
-                dbx
-                  .filesUploadSessionAppendV2({
-                    cursor: { session_id: sessionId, offset },
-                    contents: buffer,
-                    close: finalPart,
-                  })
-                  .then(() => {
-                    console.debug(`${logPrefix} completed`);
-                  })
-                  .catch((err) => {
-                    console.error(`${logPrefix} failed`, err);
-                    reject(err);
-                  })
+                defaultLimiter.submit(
+                  () =>
+                    dbx
+                      .filesUploadSessionAppendV2({
+                        cursor: { session_id: sessionId, offset },
+                        contents: buffer,
+                        close: finalPart,
+                      })
+                      .then(() => {
+                        console.debug(`${logPrefix} completed`);
+                      })
+                      .catch((err) => {
+                        console.error(`${logPrefix} failed`, err);
+                        reject(err);
+                      }),
+                  logPrefix
+                )
               );
             }
           };
