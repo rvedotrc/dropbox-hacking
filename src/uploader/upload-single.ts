@@ -11,6 +11,7 @@ export default (
   new Promise<files.FileMetadata>((resolve) => {
     // Dumb version, where the whole contents goes into memory,
     // and the upload will fail if > 150MB.
+    console.debug("Using single-part upload");
 
     const buffers: Buffer[] = [];
 

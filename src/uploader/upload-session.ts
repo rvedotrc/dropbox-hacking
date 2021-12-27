@@ -1,6 +1,8 @@
 import { Dropbox, files } from "dropbox";
 import stream = require("node:stream");
-import SessionPartWritable from "./session-part-writable";
+import fixedChunkStream from "./fixed-chunk-stream";
+
+const PART_SIZE = 4194304; // 4 MB
 
 export default (
   dbx: Dropbox,
@@ -15,77 +17,76 @@ export default (
     .then(
       (sessionId) =>
         new Promise<files.FileMetadata>((resolve, reject) => {
+          console.debug(`Using multi-part upload session=${sessionId}`);
+
           const partPromises: Promise<void>[] = [];
 
-          const writable = SessionPartWritable(
-            (chunk, offset) => {
-              console.debug("non-final chunk", chunk, offset);
+          let totalOffset = 0;
+          let previous: { buffer: Buffer; offset: number } | undefined =
+            undefined;
+
+          const flushPrevious = (finalPart: boolean) => {
+            if (previous) {
+              const { buffer, offset } = previous;
+              previous = undefined;
+
+              if (!finalPart && buffer.length !== PART_SIZE)
+                throw "Bad non-final buffer size";
+
+              const logPrefix = `part offset=${offset} size=${buffer.length} finalPart=${finalPart}`;
+              console.debug(`${logPrefix} starting`);
+
               partPromises.push(
                 dbx
                   .filesUploadSessionAppendV2({
                     cursor: { session_id: sessionId, offset },
-                    contents: chunk,
-                    close: false,
+                    contents: buffer,
+                    close: finalPart,
                   })
                   .then(() => {
-                    console.debug(
-                      `non-final part for offset=${offset} completed`
-                    );
+                    console.debug(`${logPrefix} completed`);
                   })
                   .catch((err) => {
-                    console.error(`Error from append offset=${offset}`, err);
+                    console.error(`${logPrefix} failed`, err);
                     reject(err);
                   })
               );
-            },
-            (chunk, offset) => {
-              console.debug(
-                `final chunk length=${chunk.length} offset=${offset}`
-              );
-
-              if (chunk.length > 0 || offset === 0) {
-                partPromises.push(
-                  dbx
-                    .filesUploadSessionAppendV2({
-                      cursor: { session_id: sessionId, offset },
-                      contents: chunk,
-                      close: true,
-                    })
-                    .then(() => {
-                      console.debug(
-                        `final part for offset=${offset} completed`
-                      );
-                    })
-                );
-                offset += chunk.length;
-              }
-
-              Promise.all(partPromises).then(() => {
-                console.debug(`all parts completed, finish, offset=${offset}`);
-
-                return dbx
-                  .filesUploadSessionFinish({
-                    cursor: {
-                      session_id: sessionId,
-                      offset,
-                    },
-                    commit: { path },
-                  })
-                  .then((r) => {
-                    console.debug("finish completed", r);
-                    resolve(r.result);
-                  })
-                  .catch((err) => {
-                    console.error(
-                      `Error from finish offset=${offset}`,
-                      JSON.stringify(err.error)
-                    );
-                    reject(err);
-                  });
-              });
             }
-          );
+          };
 
-          readable.pipe(writable);
+          const onChunk = (buffer: Buffer): void => {
+            flushPrevious(false);
+            previous = { buffer, offset: totalOffset };
+            totalOffset += buffer.length;
+          };
+
+          const onEnd = (): void => {
+            flushPrevious(true);
+
+            Promise.all(partPromises).then(() => {
+              console.debug(
+                `all parts completed, finish, offset=${totalOffset}`
+              );
+
+              return dbx
+                .filesUploadSessionFinish({
+                  cursor: {
+                    session_id: sessionId,
+                    offset: totalOffset,
+                  },
+                  commit: { path },
+                })
+                .then((r) => {
+                  console.debug("finish completed");
+                  resolve(r.result);
+                })
+                .catch((err) => {
+                  console.error(`finish failed`, JSON.stringify(err.error));
+                  reject(err);
+                });
+            });
+          };
+
+          fixedChunkStream(PART_SIZE, readable, onChunk, onEnd);
         })
     );
