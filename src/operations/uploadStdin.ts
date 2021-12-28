@@ -1,4 +1,4 @@
-import { DropboxProvider } from "../types";
+import { DropboxProvider, Handler } from "../types";
 import { usageFail } from "../cli";
 import { selectUploader } from "../uploader";
 import * as fs from "fs";
@@ -9,7 +9,10 @@ const verb = "upload-stdin";
 
 // Does a "mkdir -p" on the destination structure
 
-const handler = (dbxp: DropboxProvider, argv: string[]): void => {
+const handler: Handler = async (
+  dbxp: DropboxProvider,
+  argv: string[]
+): Promise<void> => {
   if (argv.length !== 1) usageFail(verb);
   const dropboxPath = argv[0];
 
@@ -25,7 +28,9 @@ const handler = (dbxp: DropboxProvider, argv: string[]): void => {
     commitInfo.client_modified = formatTime(stat.mtime);
   }
 
-  uploader(dbxp(), commitInfo, process.stdin)
+  const dbx = await dbxp();
+
+  uploader(dbx, commitInfo, process.stdin)
     .then((value) => {
       process.stdout.write(JSON.stringify(value) + "\n");
       // console.info(value.result);

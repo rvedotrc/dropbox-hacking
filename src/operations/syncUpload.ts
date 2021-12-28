@@ -1,4 +1,4 @@
-import { DropboxProvider } from "../types";
+import { DropboxProvider, Handler } from "../types";
 import { usageFail } from "../cli";
 import * as fs from "fs";
 import { Dropbox, DropboxResponseError, files } from "dropbox";
@@ -158,12 +158,17 @@ const syncAny = (args: {
     });
 };
 
-const handler = (dbxp: DropboxProvider, argv: string[]): void => {
+const handler: Handler = async (
+  dbxp: DropboxProvider,
+  argv: string[]
+): Promise<void> => {
   if (argv.length !== 2) usageFail(verb);
   const localPath = argv[0];
   const dropboxPath = argv[1];
 
-  syncAny({ dbx: dbxp(), localPath, dropboxPath })
+  const dbx = await dbxp();
+
+  syncAny({ dbx, localPath, dropboxPath })
     .then((result) => {
       if (result) process.stdout.write(JSON.stringify(result) + "\n");
       process.exit(0);

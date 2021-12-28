@@ -1,4 +1,4 @@
-import { DropboxProvider } from "../types";
+import { DropboxProvider, Handler } from "../types";
 import { usageFail } from "../cli";
 
 const verb = "mv";
@@ -7,12 +7,15 @@ const verb = "mv";
 // Can't rename to same-case (e.g. mv foo FOO) - you have to do e.g. foo => tmpfoo => FOO
 // Does a "mkdir -p" on the destination structure
 
-const handler = (dbxp: DropboxProvider, argv: string[]): void => {
+const handler: Handler = async (
+  dbxp: DropboxProvider,
+  argv: string[]
+): Promise<void> => {
   if (argv.length !== 2) usageFail(verb);
   const fromPath = argv[0];
   const toPath = argv[1];
 
-  const dbx = dbxp();
+  const dbx = await dbxp();
 
   dbx
     .filesMoveV2({ from_path: fromPath, to_path: toPath })

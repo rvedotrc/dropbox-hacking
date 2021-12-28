@@ -1,15 +1,20 @@
-import { DropboxProvider } from "../types";
+import { DropboxProvider, Handler } from "../types";
 import { usageFail } from "../cli";
 
 const verb = "rm";
 
 // Recursive!
 
-const handler = (dbxp: DropboxProvider, argv: string[]): void => {
+const handler: Handler = async (
+  dbxp: DropboxProvider,
+  argv: string[]
+): Promise<void> => {
   if (argv.length !== 1) usageFail(verb);
   const path = argv[0];
 
-  dbxp()
+  const dbx = await dbxp();
+
+  dbx
     .filesDeleteV2({ path })
     .then((response) => {
       process.stdout.write(JSON.stringify(response.result) + "\n");

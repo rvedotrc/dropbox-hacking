@@ -1,9 +1,11 @@
 import { Dropbox } from "dropbox";
 
-export type DropboxProvider = () => Dropbox;
+export type DropboxProvider = () => Promise<Dropbox>;
+
+export type Handler = (dbxp: DropboxProvider, argv: string[]) => Promise<void>;
 
 export type Operation = {
   verb: string;
-  handler: (dbxp: DropboxProvider, argv: string[]) => void;
+  handler: Handler;
   argsHelp: string;
 };

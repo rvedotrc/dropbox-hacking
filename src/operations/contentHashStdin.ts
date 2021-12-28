@@ -1,13 +1,16 @@
-import { DropboxProvider } from "../types";
+import { DropboxProvider, Handler } from "../types";
 import { usageFail } from "../cli";
 import contentHash from "../uploader/content-hash";
 
 const verb = "content-hash-stdin";
 
-const handler = (_dbxp: DropboxProvider, argv: string[]): void => {
+const handler: Handler = async (
+  _dbxp: DropboxProvider,
+  argv: string[]
+): Promise<void> => {
   if (argv.length !== 0) usageFail(verb);
 
-  contentHash(process.stdin)
+  return contentHash(process.stdin)
     .then((hash) => {
       process.stdout.write(hash + "\n");
       process.exit(0);

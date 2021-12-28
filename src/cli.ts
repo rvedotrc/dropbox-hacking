@@ -42,7 +42,7 @@ export const usageFail = (verb?: string): void => {
   process.exit(2);
 };
 
-const getDropboxClient = (): Dropbox => {
+const getDropboxClient = async (): Promise<Dropbox> => {
   const credentialsPath = process.env[envVar];
   if (!credentialsPath) {
     process.stderr.write(`Fatal: ${envVar} is not set\n`);

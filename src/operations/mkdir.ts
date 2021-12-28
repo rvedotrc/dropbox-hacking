@@ -1,15 +1,18 @@
-import { DropboxProvider } from "../types";
+import { DropboxProvider, Handler } from "../types";
 import { usageFail } from "../cli";
 
 const verb = "mkdir";
 
 // Does a "mkdir -p" on the destination structure
 
-const handler = (dbxp: DropboxProvider, argv: string[]): void => {
+const handler: Handler = async (
+  dbxp: DropboxProvider,
+  argv: string[]
+): Promise<void> => {
   if (argv.length !== 1) usageFail(verb);
   const path = argv[0];
 
-  const dbx = dbxp();
+  const dbx = await dbxp();
 
   dbx
     .filesCreateFolderBatch({ paths: [path] })

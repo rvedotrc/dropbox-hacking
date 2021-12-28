@@ -1,17 +1,18 @@
-import { DropboxProvider } from "../types";
+import { DropboxProvider, Handler } from "../types";
 import * as https from "https";
 import { usageFail } from "../cli";
 
 const verb = "cat";
 
-const handler = async (
+const handler: Handler = async (
   dbxp: DropboxProvider,
   argv: string[]
 ): Promise<void> => {
   if (argv.length !== 1) usageFail(verb);
   const path = argv[0];
 
-  const response = (await dbxp().filesGetTemporaryLink({ path })).result;
+  const dbx = await dbxp();
+  const response = (await dbx.filesGetTemporaryLink({ path })).result;
 
   process.stderr.write(JSON.stringify(response.metadata) + "\n");
 

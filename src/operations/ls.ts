@@ -1,4 +1,4 @@
-import { DropboxProvider } from "../types";
+import { DropboxProvider, Handler } from "../types";
 import { files } from "dropbox";
 import { usageFail } from "../cli";
 
@@ -8,7 +8,7 @@ const RECURSIVE = "--recursive";
 const TAIL = "--tail";
 const LATEST = "--latest";
 
-const handler = async (
+const handler: Handler = async (
   dbxp: DropboxProvider,
   argv: string[]
 ): Promise<void> => {
@@ -44,7 +44,7 @@ const handler = async (
     recursive,
   };
 
-  const dbx = dbxp();
+  const dbx = await dbxp();
 
   const handlePage = (result: files.ListFolderResult) => {
     // console.debug(`showing entries=${result.entries.length}`);
