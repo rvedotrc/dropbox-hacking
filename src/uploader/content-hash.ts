@@ -5,7 +5,7 @@ import * as crypto from "crypto";
 const PART_SIZE = 4194304; // 4 MB
 
 export default (readable: stream.Readable): Promise<string> =>
-  new Promise<string>((resolve, _reject) => {
+  new Promise<string>((resolve, reject) => {
     const overallHash = crypto.createHash("sha256");
 
     const onChunk = (buffer: Buffer): void => {
@@ -18,6 +18,5 @@ export default (readable: stream.Readable): Promise<string> =>
       resolve(overallHash.digest("hex"));
     };
 
-    // FIXME: this needs to report errors
-    fixedChunkStream(PART_SIZE, readable, onChunk, onEnd);
+    fixedChunkStream(PART_SIZE, readable, onChunk, onEnd, reject);
   });

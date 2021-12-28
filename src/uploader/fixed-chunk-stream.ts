@@ -4,7 +4,8 @@ export default (
   chunkSize: number,
   readable: stream.Readable,
   onChunk: (chunk: Buffer) => void,
-  onEnd: () => void
+  onEnd: () => void,
+  onError: (err: Error) => void
 ): void => {
   if (isNaN(chunkSize)) throw "Invalid chunkSize";
 
@@ -53,4 +54,5 @@ export default (
   };
 
   readable.on("data", addChunk);
+  readable.on("error", onError);
 };

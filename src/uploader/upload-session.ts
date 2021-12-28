@@ -94,6 +94,6 @@ export default (
             });
           };
 
-          fixedChunkStream(PART_SIZE, readable, onChunk, onEnd);
+          fixedChunkStream(PART_SIZE, readable, onChunk, onEnd, reject);
         })
     );
