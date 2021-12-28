@@ -21,16 +21,24 @@ yarn build
 
 ## Authorization
 
-You'll need an access token.
+You'll need an app key and an app secret.
 
-To get a token, [create an app](https://www.dropbox.com/developers/apps) in Dropbox,
-then select "Generate access token".
+To get them, [create an app](https://www.dropbox.com/developers/apps) in Dropbox, and add
+`http://localhost:9988/auth` as a redirect URI. Set the permissions to:
 
-The access token needs to go in a JSON file somewhere, with this structure:
+ * files.metadata.write
+ * files.content.write
+ * files.content.read
+
+Find the app key and app secret and save them in a JSON file somewhere, with this structure:
 
 ```json
 {
-  "token": "YOUR_ACCESS_TOKEN_HERE"
+
+  "app": {
+    "app_key": "YOUR_APP_KEY",
+    "app_secret": "YOUR_APP_SECRET"
+  }
 }
 ```
 
