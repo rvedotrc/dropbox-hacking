@@ -3,6 +3,7 @@ import * as fs from "fs";
 import { Operation } from "./types";
 
 import catOperation from "./operations/cat";
+import contentHashStdinOperation from "./operations/contentHashStdin";
 import cpOperation from "./operations/cp";
 import lsOperation from "./operations/ls";
 import mkdirOperation from "./operations/mkdir";
@@ -18,6 +19,7 @@ const prefix = "./bin/cli";
 
 const operations: Operation[] = [
   catOperation,
+  contentHashStdinOperation,
   cpOperation,
   lsOperation,
   mkdirOperation,
