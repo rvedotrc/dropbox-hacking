@@ -92,9 +92,11 @@ const handler = async (
 
       if (r.changes) break;
 
-      if (r.backoff) {
+      const backoff = r.backoff;
+
+      if (backoff) {
         // console.debug(`sleep ${r.backoff}s`);
-        await new Promise((resolve) => setTimeout(resolve, r.backoff * 1000));
+        await new Promise((resolve) => setTimeout(resolve, backoff * 1000));
       }
     }
 

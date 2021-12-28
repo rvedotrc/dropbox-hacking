@@ -14,9 +14,12 @@ export default <T>(size: number): Limiter<T> => {
   const queue: Entry<T>[] = [];
 
   const tryStart = () => {
-    while (free > 0 && queue.length > 0) {
+    while (free > 0) {
+      const entry = queue.shift();
+      if (!entry) break;
+
       --free;
-      const { makePromise, resolve, reject, tag } = queue.shift();
+      const { makePromise, resolve, reject, tag } = entry;
       console.debug(`limiter start job ${tag}`);
       makePromise()
         .finally(() => {

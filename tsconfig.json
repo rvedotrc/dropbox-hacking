@@ -12,6 +12,7 @@
     "noImplicitThis": true,
     "noImplicitUseStrict": true,
     "noUnusedLocals": true,
+    "strictNullChecks": true,
     "outDir": "dist",
     "rootDir": "src"
   },

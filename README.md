@@ -11,6 +11,7 @@ Primarily this comes in the form of a simple command-line interface to a handful
  - delete
  - mkdir
  - list directory (ls)
+ - sync-upload (recursive upload)
  
 ```shell
 yarn
