@@ -41,6 +41,8 @@ export const usageFail = (verb?: string): void => {
 };
 
 export default async (argv: string[]): Promise<void> => {
+  // const getter = () => getDropboxClient().then(retryAndRateLimit);
+
   const op = operations.find(({ verb }) => verb === argv[0]);
   if (op) {
     op.handler(getDropboxClient, argv.splice(1));

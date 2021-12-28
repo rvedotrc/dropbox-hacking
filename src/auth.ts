@@ -8,12 +8,6 @@ const envVar = "DROPBOX_CREDENTIALS_PATH";
 const port = 9988;
 const redirectUri = `http://localhost:${port}/auth`; // has to match app's config
 
-type UserOAuthConfig = {
-  access_token: string;
-  access_token_expires_at: number;
-  refresh_token: string;
-};
-
 const runServer = (
   appAuth: DropboxAuth,
   checkCode: (code: string) => Promise<void>
@@ -72,20 +66,10 @@ const runServer = (
   });
 };
 
-const makeAuth = (config: UserOAuthConfig) =>
-  new DropboxAuth({
-    accessToken: config.access_token,
-    accessTokenExpiresAt: new Date(config.access_token_expires_at),
-    refreshToken: config.refresh_token,
-  });
-
-const getUserOAuthConfig = (
-  appAuth: DropboxAuth,
-  code: string
-): Promise<UserOAuthConfig> => {
+const updateAuthFromCode = (auth: DropboxAuth, code: string): Promise<void> => {
   const t0 = new Date().getTime();
 
-  return appAuth.getAccessTokenFromCode(redirectUri, code).then((token) => {
+  return auth.getAccessTokenFromCode(redirectUri, code).then((token) => {
     const result = token.result as {
       access_token: string;
       token_type: string;
@@ -96,24 +80,24 @@ const getUserOAuthConfig = (
       account_id: string;
     };
 
-    const config: UserOAuthConfig = {
-      access_token: result.access_token,
-      access_token_expires_at: t0 + result.expires_in * 1000,
-      refresh_token: result.refresh_token,
-    };
-
-    return config;
+    auth.setAccessToken(result.access_token);
+    auth.setAccessTokenExpiresAt(new Date(t0 + result.expires_in * 1000));
+    auth.setRefreshToken(result.refresh_token);
   });
 };
 
 const saveUserCredentials = (
   credentials: any, // eslint-disable-line @typescript-eslint/no-explicit-any
-  user_oauth_config: UserOAuthConfig,
+  auth: DropboxAuth,
   credentialsPath: string
 ): Promise<void> => {
   const newPayload = {
     ...credentials,
-    user_oauth_config,
+    user_oauth_config: {
+      access_token: auth.getAccessToken(),
+      access_token_expires_at: auth.getAccessTokenExpiresAt().getTime(),
+      refresh_token: auth.getRefreshToken(),
+    },
   };
 
   const tmpFile = credentialsPath + ".tmp"; // unsafe
@@ -133,26 +117,50 @@ export const getDropboxClient = async (): Promise<Dropbox> =>
 
     const credentials = JSON.parse(fs.readFileSync(credentialsPath).toString());
 
-    if (credentials.user_oauth_config) {
-      // console.debug("Using cached auth_config");
-      const config: UserOAuthConfig = credentials.user_oauth_config;
-      return resolve(new Dropbox({ auth: makeAuth(config) }));
-    }
-
-    const appAuth = new DropboxAuth({
+    const auth = new DropboxAuth({
       clientId: credentials.app.app_key,
       clientSecret: credentials.app.app_secret,
     });
 
+    if (credentials.user_oauth_config) {
+      // console.debug("Using cached auth_config");
+
+      const userOAuthConfig: {
+        access_token: string;
+        access_token_expires_at: number;
+        refresh_token: string;
+      } = credentials.user_oauth_config;
+
+      auth.setAccessToken(userOAuthConfig.access_token);
+      auth.setAccessTokenExpiresAt(
+        new Date(userOAuthConfig.access_token_expires_at)
+      );
+      auth.setRefreshToken(userOAuthConfig.refresh_token);
+
+      // console.debug("checkAndRefreshAccessToken", JSON.stringify(auth));
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return (auth.checkAndRefreshAccessToken() as any as Promise<void>)
+        .then(() => {
+          // console.debug("after refresh", JSON.stringify(auth));
+          saveUserCredentials(credentials, auth, credentialsPath);
+          const dbx = new Dropbox({ auth });
+          return resolve(dbx);
+        })
+        .catch((err) => {
+          console.error("checkAndRefreshAccessToken", err);
+        });
+    }
+
     runServer(
-      appAuth,
+      auth,
       (code: string): Promise<void> =>
-        getUserOAuthConfig(appAuth, code).then((config) => {
-          saveUserCredentials(credentials, config, credentialsPath).catch(
-            (err) => console.error(`Failed to cache credentials: ${err}`)
+        updateAuthFromCode(auth, code).then(() => {
+          saveUserCredentials(credentials, auth, credentialsPath).catch((err) =>
+            console.error(`Failed to cache credentials: ${err}`)
           );
 
-          resolve(new Dropbox({ auth: makeAuth(config) }));
+          resolve(new Dropbox({ auth }));
         })
     );
   });
