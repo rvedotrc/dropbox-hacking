@@ -1,7 +1,10 @@
 import { Dropbox, files } from "dropbox";
 import stream = require("node:stream");
+import limiter from "./limiter";
 
 export const MAX_SINGLE_UPLOAD_SIZE = 150_000_000;
+
+const defaultLimiter = limiter<files.FileMetadata>(5);
 
 export default (
   dbx: Dropbox,
@@ -30,12 +33,14 @@ export default (
       // console.debug(`end, length=${contents.length}`);
 
       resolve(
-        dbx
-          .filesUpload({
-            ...commitInfo,
-            contents,
-          })
-          .then((r) => r.result)
+        defaultLimiter.submit(() =>
+          dbx
+            .filesUpload({
+              ...commitInfo,
+              contents,
+            })
+            .then((r) => r.result)
+        )
       );
     });
   });

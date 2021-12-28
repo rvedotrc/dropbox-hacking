@@ -56,14 +56,14 @@ const conditionalUpload = (args: {
 }): Promise<files.Metadata> =>
   Promise.resolve()
     .then(() => {
-      // console.debug("comparing sizes");
+      // console.debug(args.localPath, "comparing sizes");
       if (args.stat.size !== args.metadata.size) return false;
 
-      // console.debug("comparing mtimes");
+      // console.debug(args.localPath, "comparing mtimes");
       if (formatTime(args.stat.mtime) !== args.metadata.client_modified)
         return false;
 
-      // console.debug("comparing content hashes");
+      // console.debug(args.localPath, "comparing content hashes");
       return calculateContentHash(args.localPath).then(
         (localContentHash) => localContentHash === args.metadata.content_hash
       );
@@ -89,10 +89,12 @@ const syncFile = (args: {
   stat: fs.Stats;
 }): Promise<files.Metadata | undefined> =>
   dropboxMetadata(args.dbx, args.dropboxPath).then((metadata) => {
-    // console.debug({
-    //   stat: args.stat,
-    //   metadata,
-    // });
+    console.debug({
+      localPath: args.localPath,
+      dropboxPath: args.dropboxPath,
+      stat: args.stat,
+      metadata,
+    });
 
     if (metadata !== "not_found" && metadata[".tag"] === "folder") {
       throw "Already exists, and is a folder";

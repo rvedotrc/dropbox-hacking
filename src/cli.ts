@@ -10,6 +10,7 @@ import mvOperation from "./operations/mv";
 import rmOperation from "./operations/rm";
 import syncUploadOperation from "./operations/syncUpload";
 import uploadStdinOperation from "./operations/uploadStdin";
+import retryAndRateLimit from "./retry-and-rate-limit";
 
 const prefix = "./bin/cli";
 
@@ -41,10 +42,10 @@ export const usageFail = (verb?: string): void => {
 };
 
 export default async (argv: string[]): Promise<void> => {
-  // const getter = () => getDropboxClient().then(retryAndRateLimit);
+  const getter = () => getDropboxClient().then(retryAndRateLimit);
 
   const op = operations.find(({ verb }) => verb === argv[0]);
   if (op) {
-    op.handler(getDropboxClient, argv.splice(1));
+    op.handler(getter, argv.splice(1));
   } else usageFail();
 };

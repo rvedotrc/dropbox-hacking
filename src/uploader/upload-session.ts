@@ -5,7 +5,7 @@ import limiter from "./limiter";
 
 const PART_SIZE = 4194304; // 4 MB
 
-const defaultLimiter = limiter<void>(10);
+const defaultLimiter = limiter<void>(5);
 
 export default (
   dbx: Dropbox,
