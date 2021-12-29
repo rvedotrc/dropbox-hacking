@@ -8,6 +8,7 @@ import lsOperation from "./operations/ls";
 import mkdirOperation from "./operations/mkdir";
 import mvOperation from "./operations/mv";
 import rmOperation from "./operations/rm";
+import syncDownloadOperation from "./operations/syncDownload";
 import syncUploadOperation from "./operations/syncUpload";
 import uploadStdinOperation from "./operations/uploadStdin";
 import retryAndRateLimit from "./retry-and-rate-limit";
@@ -25,6 +26,7 @@ const operations: Operation[] = [
   mkdirOperation,
   mvOperation,
   rmOperation,
+  syncDownloadOperation,
   syncUploadOperation,
   uploadStdinOperation,
 ];
