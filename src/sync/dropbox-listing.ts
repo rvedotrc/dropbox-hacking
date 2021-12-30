@@ -1,12 +1,12 @@
 import { Dropbox, files } from "dropbox";
 
-type Items = files.ListFolderResult["entries"];
+export type Items = files.ListFolderResult["entries"];
 
 export default (
   dbx: Dropbox,
   path: string,
   recursive: boolean
-): Promise<Items | "not_found"> =>
+): Promise<Items> =>
   dbx.filesListFolder({ path, recursive }).then(
     (r) => {
       let items: Items = [];
@@ -30,7 +30,7 @@ export default (
             return dbx
               .filesGetMetadata({ path })
               .then((metadata) => [metadata.result]);
-          if (tag == "not_found") return "not_found";
+          if (tag == "not_found") return [];
         }
       }
 

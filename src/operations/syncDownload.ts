@@ -1,37 +1,38 @@
+import { Dropbox } from "dropbox";
 import { DropboxProvider, Handler } from "../types";
 import { usageFail } from "../cli";
-import dropboxListing from "../sync/dropbox-listing";
-import localListing from "../sync/local-listing";
+import * as engine from "../sync/engine";
 
 const verb = "sync-download";
 
 // Does a "mkdir -p" on the destination structure
+
+const syncActionHandler = (
+  _dbx: Dropbox,
+  syncAction: engine.SyncAction
+): Promise<void> => {
+  console.debug(JSON.stringify(syncAction));
+  return Promise.resolve();
+};
 
 const handler: Handler = async (
   dbxp: DropboxProvider,
   argv: string[]
 ): Promise<void> => {
   if (argv.length !== 2) usageFail(verb);
+
+  let dryRun = false;
+  if (argv[0] === "--dry-run") {
+    dryRun = true;
+    argv.shift();
+  }
+
   const dropboxPath = argv[0];
   const localPath = argv[1];
 
-  const dbx = await dbxp();
-
-  await dropboxListing(dbx, dropboxPath, true).then((items) => {
-    if (items === "not_found") {
-      console.debug("remote not found");
-    } else {
-      items.forEach((item) => console.debug(JSON.stringify(item)));
-    }
-  });
-
-  await localListing(localPath, true).then((items) => {
-    if (items === "not_found") {
-      console.debug("local not found");
-    } else {
-      items.forEach((item) => console.debug(JSON.stringify(item)));
-    }
-  });
+  return engine
+    .run(dbxp, dropboxPath, localPath, dryRun, syncActionHandler)
+    .then((success) => process.exit(success ? 0 : 1));
 };
 
 const argsHelp = "DROPBOX_PATH LOCAL_PATH";

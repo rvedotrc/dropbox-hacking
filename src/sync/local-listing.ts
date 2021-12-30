@@ -1,34 +1,31 @@
 import * as fs from "fs";
 import * as path from "path";
 
-type Item = {
+export type Item = {
   path: string;
+  relativeKey: string;
   stat: fs.Stats;
+  tag: "file" | "directory" | "other";
 };
 
-export default (
-  localPath: string,
-  recursive: boolean
-): Promise<Item[] | "not_found"> => {
+export type FileItem = Item & { tag: "file" };
+export type DirectoryItem = Item & { tag: "directory" };
+
+export default (localPath: string, recursive: boolean): Promise<Item[]> => {
   const items: Item[] = [];
 
   const walk = (
     thisLocalPath: string,
+    relativeKey: string,
     catchNotFound: boolean
-  ): Promise<undefined | "not_found"> =>
+  ): Promise<void> =>
     fs.promises.lstat(thisLocalPath).then(
       (stat) => {
-        if (stat.isFile()) {
-          items.push({
-            path: thisLocalPath,
-            stat,
-          });
-          return Promise.resolve(undefined);
-        } else if (stat.isDirectory()) {
+        if (stat.isDirectory()) {
           const canonPath = path.join(thisLocalPath, ".");
-          items.push({ path: canonPath, stat });
+          items.push({ path: canonPath, relativeKey, stat, tag: "directory" });
 
-          if (!recursive) return Promise.resolve(undefined);
+          if (!recursive) return Promise.resolve();
 
           return fs.promises
             .readdir(thisLocalPath)
@@ -38,21 +35,31 @@ export default (
                   if (entry === "." || entry === "..") {
                     return Promise.resolve();
                   } else {
-                    return walk(path.join(canonPath, entry), false);
+                    return walk(
+                      path.join(canonPath, entry),
+                      `${relativeKey}/${entry}`,
+                      false
+                    );
                   }
                 })
               )
             )
             .then(() => undefined);
         } else {
-          return Promise.resolve(undefined);
+          items.push({
+            path: thisLocalPath,
+            relativeKey,
+            stat,
+            tag: stat.isFile() ? "file" : "other",
+          });
+          return;
         }
       },
       (err) => {
-        if (catchNotFound && err.code === "ENOENT") return "not_found";
+        if (catchNotFound && err.code === "ENOENT") return;
         throw err;
       }
     );
 
-  return walk(localPath, true).then((maybeNotFound) => maybeNotFound || items);
+  return walk(localPath, "", true).then(() => items);
 };
