@@ -1,38 +1,55 @@
 import { Dropbox, files } from "dropbox";
 import { DropboxProvider } from "../types";
-import dropboxListing from "../sync/dropbox-listing";
+import dropboxListing, { Item as RemoteItem } from "../sync/dropbox-listing";
 import localListing, {
-  Item as LocalItem,
-  FileItem,
   DirectoryItem,
+  FileItem,
+  Item as LocalItem,
 } from "../sync/local-listing";
 
 // Does a "mkdir -p" on the destination structure
 
 type LocalAndRemoteItems = {
   local: LocalItem[];
-  remote?: files.FileMetadataReference | files.FolderMetadataReference;
+  remote?: Action["remote"];
 };
 
-export type SyncAction = {
-  action?:
-    | {
-        tag: "file";
-        local?: FileItem;
-        remote?: files.FileMetadata;
-      }
-    | {
-        tag: "directory";
-        local?: DirectoryItem;
-        remote?: files.FolderMetadata;
+export type Action =
+  | {
+      tag: "file";
+      local?: FileItem;
+      remote?: { relativePath: string; metadata: files.FileMetadataReference };
+    }
+  | {
+      tag: "directory";
+      local?: DirectoryItem;
+      remote?: {
+        relativePath: string;
+        metadata: files.FolderMetadataReference;
       };
+    };
+
+export type SyncAction = {
+  action?: Action;
   warnings?: string[];
   errors?: string[];
 };
 
 export type SyncActionHandler = (
   dbx: Dropbox,
-  syncAction: SyncAction
+  dropboxPath: string,
+  localPath: string,
+  dryRun: boolean,
+  syncAction: Action
+) => Promise<void>;
+
+type SyncActionsHandler = (
+  dbx: Dropbox,
+  dropboxPath: string,
+  localPath: string,
+  dryRun: boolean,
+  syncActions: SyncAction[],
+  syncActionHandler: SyncActionHandler
 ) => Promise<void>;
 
 const listLocalAndRemote = (args: {
@@ -53,7 +70,7 @@ const listLocalAndRemote = (args: {
     const map = new Map<string, LocalAndRemoteItems>();
 
     for (const localItem of localItems) {
-      const key = localItem.relativeKey.toLowerCase();
+      const key = localItem.relativePath.toLowerCase();
 
       console.debug(
         `calc ${localItem.path} relative to ${localPath} => [${key}]`
@@ -68,18 +85,13 @@ const listLocalAndRemote = (args: {
     }
 
     for (const remoteItem of dropboxItems) {
-      if (remoteItem[".tag"] === "deleted") continue;
-      if (remoteItem.path_lower === undefined) continue;
+      if (!remoteIsFile(remoteItem) && !remoteIsDirectory(remoteItem)) continue;
+      if (remoteItem.metadata.path_lower === undefined) continue;
 
-      const key = remoteItem.path_lower.substring(dropboxPath.length);
-      console.debug(
-        `calc ${remoteItem.path_lower} relative to ${dropboxPath} => [${key}]`
-      );
-
-      const pair = map.get(key);
+      const pair = map.get(remoteItem.relativePath);
       if (pair) pair.remote = remoteItem;
       else
-        map.set(key, {
+        map.set(remoteItem.relativePath, {
           local: [],
           remote: remoteItem,
         });
@@ -98,6 +110,21 @@ const listLocalAndRemote = (args: {
 const localIsFile = (item: LocalItem): item is FileItem => item.tag === "file";
 const localIsDirectory = (item: LocalItem): item is DirectoryItem =>
   item.tag === "directory";
+
+type RemoteFileItem = {
+  relativePath: RemoteItem["relativePath"];
+  metadata: RemoteItem["metadata"] & { ".tag": "file" };
+};
+
+type RemoteFolderItem = {
+  relativePath: RemoteItem["relativePath"];
+  metadata: RemoteItem["metadata"] & { ".tag": "folder" };
+};
+
+const remoteIsFile = (item: RemoteItem): item is RemoteFileItem =>
+  item.metadata[".tag"] === "file";
+const remoteIsDirectory = (item: RemoteItem): item is RemoteFolderItem =>
+  item.metadata[".tag"] === "folder";
 
 const syncActionFor = (key: string, items: LocalAndRemoteItems): SyncAction => {
   const { local, remote } = items;
@@ -122,7 +149,7 @@ const syncActionFor = (key: string, items: LocalAndRemoteItems): SyncAction => {
     if (!remote)
       throw "Somehow ended up being called with no local and no remote";
 
-    if (remote[".tag"] === "file") {
+    if (remoteIsFile(remote)) {
       return {
         action: {
           tag: "file",
@@ -140,10 +167,10 @@ const syncActionFor = (key: string, items: LocalAndRemoteItems): SyncAction => {
       };
     }
   } else if (localIsFile(localItem)) {
-    if (remote && remote[".tag"] === "folder") {
+    if (remote && remoteIsDirectory(remote)) {
       return {
         errors: [
-          `${remote.path_display} is a directory but ${localItem.path} is a file`,
+          `${remote.metadata.path_display} is a directory but ${localItem.path} is a file`,
         ],
       };
     } else {
@@ -156,10 +183,10 @@ const syncActionFor = (key: string, items: LocalAndRemoteItems): SyncAction => {
       };
     }
   } else if (localIsDirectory(localItem)) {
-    if (remote && remote[".tag"] === "file") {
+    if (remote && remoteIsFile(remote)) {
       return {
         errors: [
-          `${remote.path_display} is a file but ${localItem.path} is a directory`,
+          `${remote.metadata.path_display} is a file but ${localItem.path} is a directory`,
         ],
       };
     } else {
@@ -178,13 +205,11 @@ const syncActionFor = (key: string, items: LocalAndRemoteItems): SyncAction => {
         warnings: [`Ignoring non-file non-directory ${localItem.path}`],
       };
     } else {
-      const remoteIsFile = remote && remote[".tag"] === "file";
-
       return {
         errors: [
-          remoteIsFile
-            ? `${remote.path_display} is a file but ${localItem.path} is to be ignored`
-            : `${remote.path_display} is a directory but ${localItem.path} is to be ignored`,
+          remoteIsFile(remote)
+            ? `${remote.metadata.path_display} is a file but ${localItem.path} is to be ignored`
+            : `${remote.metadata.path_display} is a directory but ${localItem.path} is to be ignored`,
         ],
       };
     }
@@ -212,13 +237,22 @@ const showErrors = (syncActions: SyncAction[]): boolean => {
   return anyErrors;
 };
 
-const runActions = (
+export const runActions: SyncActionsHandler = (
   dbx: Dropbox,
+  dropboxPath: string,
+  localPath: string,
+  dryRun: boolean,
   syncActions: SyncAction[],
   syncActionHandler: SyncActionHandler
 ): Promise<void> =>
   Promise.all(
-    syncActions.map((action) => syncActionHandler(dbx, action))
+    syncActions
+      .map((syncAction) => syncAction.action)
+      .map((action) =>
+        action === undefined
+          ? Promise.resolve()
+          : syncActionHandler(dbx, dropboxPath, localPath, dryRun, action)
+      )
   ).then();
 
 export const calculate = async (
@@ -255,10 +289,14 @@ export const run = async (
 
     if (showErrors(syncActions)) {
       return false;
-    } else if (dryRun) {
-      process.stdout.write("dry-run mode, stopping\n");
-      return true;
     } else {
-      return runActions(dbx, syncActions, syncActionHandler).then(() => true);
+      return runActions(
+        dbx,
+        dropboxPath,
+        localPath,
+        dryRun,
+        syncActions,
+        syncActionHandler
+      ).then(() => true);
     }
   });

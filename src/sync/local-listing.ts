@@ -2,8 +2,8 @@ import * as fs from "fs";
 import * as path from "path";
 
 export type Item = {
+  relativePath: string;
   path: string;
-  relativeKey: string;
   stat: fs.Stats;
   tag: "file" | "directory" | "other";
 };
@@ -16,14 +16,14 @@ export default (localPath: string, recursive: boolean): Promise<Item[]> => {
 
   const walk = (
     thisLocalPath: string,
-    relativeKey: string,
+    relativePath: string,
     catchNotFound: boolean
   ): Promise<void> =>
     fs.promises.lstat(thisLocalPath).then(
       (stat) => {
         if (stat.isDirectory()) {
           const canonPath = path.join(thisLocalPath, ".");
-          items.push({ path: canonPath, relativeKey, stat, tag: "directory" });
+          items.push({ path: canonPath, relativePath, stat, tag: "directory" });
 
           if (!recursive) return Promise.resolve();
 
@@ -37,7 +37,7 @@ export default (localPath: string, recursive: boolean): Promise<Item[]> => {
                   } else {
                     return walk(
                       path.join(canonPath, entry),
-                      `${relativeKey}/${entry}`,
+                      `${relativePath}/${entry}`,
                       false
                     );
                   }
@@ -48,7 +48,7 @@ export default (localPath: string, recursive: boolean): Promise<Item[]> => {
         } else {
           items.push({
             path: thisLocalPath,
-            relativeKey,
+            relativePath,
             stat,
             tag: stat.isFile() ? "file" : "other",
           });
