@@ -63,6 +63,20 @@ const listLocalAndRemote = (args: {
         });
     }
 
+    if (dropboxPath === "") {
+      // Dropbox does not provide metadata for the root, so we synthesise it
+      dropboxItems.push({
+        relativePath: "",
+        metadata: {
+          [".tag"]: "folder",
+          id: "",
+          name: "",
+          path_display: "",
+          path_lower: "",
+        },
+      });
+    }
+
     for (const remoteItem of dropboxItems) {
       if (!remoteIsFile(remoteItem) && !remoteIsDirectory(remoteItem)) continue;
       if (remoteItem.metadata.path_lower === undefined) continue;
