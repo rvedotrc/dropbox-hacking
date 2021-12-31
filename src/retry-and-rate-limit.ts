@@ -1,23 +1,61 @@
 import { Dropbox } from "dropbox";
 
-const applyRateLimit = (
-  dbx: Dropbox,
-  methodName: keyof Dropbox,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  args: any[],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  err: any
-): Promise<void> | undefined => {
-  const { status, error } = err;
-  console.debug({ status, error });
-  if (status !== 429 || !error) return;
+let id = 0;
 
+class RateLimitWaiter {
+  private state:
+    | undefined
+    | {
+        queue: (() => void)[];
+        until: number;
+        timer: NodeJS.Timeout;
+      } = undefined;
+
+  public sleep(millis: number): void {
+    console.debug(`RateLimitWaiter - sleep ${millis}`);
+    const newUntil = new Date().getTime() + millis;
+    if (this.state && this.state.until > newUntil) return;
+
+    if (this.state && this.state.timer) clearTimeout(this.state.timer);
+
+    this.state = {
+      queue: this.state?.queue || [],
+      until: newUntil,
+      timer: setTimeout(() => this.wakeUp(), millis),
+    };
+  }
+
+  public wait(message: string): Promise<void> {
+    const t = this; // eslint-disable-line @typescript-eslint/no-this-alias
+
+    return new Promise((resolve) => {
+      if (!t.state) {
+        console.debug(`${message} RateLimitWaiter - no wait`);
+        return resolve();
+      }
+
+      console.debug(`${message} RateLimitWaiter - enqueueing`);
+      t.state.queue.push(() => {
+        console.debug(`${message} RateLimitWaiter - woke up`);
+        resolve();
+      });
+    });
+  }
+
+  private wakeUp() {
+    this.state?.queue.forEach((f) => process.nextTick(f));
+    this.state = undefined;
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const retryError = (error: any, rateLimitWaiter: RateLimitWaiter): boolean => {
   if (
     !error.error ||
     !error.error.reason ||
     error.error.reason[".tag"] !== "too_many_write_operations"
   )
-    return;
+    return false;
 
   let retryAfter: number | undefined = undefined;
   if (error.error && error.error.retry_after)
@@ -25,91 +63,106 @@ const applyRateLimit = (
   console.debug("retryAfter", retryAfter);
 
   const sleepSeconds = retryAfter || 1;
-
-  return new Promise((resolve) =>
-    setInterval(resolve, sleepSeconds * 1000)
-  ).then(() => {
-    const wrappedFunc = dbx[methodName];
-    return wrappedFunc.call(dbx, ...args);
-  });
+  rateLimitWaiter.sleep(sleepSeconds * 1000);
+  return true;
 };
 
-let id = 0;
+const handlePromise = (
+  dbx: Dropbox,
+  methodName: string,
+  real: (...args: unknown[]) => Promise<unknown>,
+  rateLimitWaiter: RateLimitWaiter,
+  callId: number,
+  args: unknown[],
+  promise: Promise<unknown>,
+  sequence: number
+): Promise<unknown> =>
+  promise.then(
+    (value) => {
+      console.debug(`#${callId} [${methodName}] #${sequence} success`);
+      // log success
+      return value;
+    },
+    (err) => {
+      console.debug(`#${callId} [${methodName}] #${sequence} error`);
+
+      if (!retryError(err, rateLimitWaiter)) {
+        console.debug(`#${callId} [${methodName}] #${sequence} rethrow`);
+        throw err;
+      }
+
+      console.debug(`#${callId} [${methodName}] #${sequence} call again`);
+      const nextPromise = rateLimitWaiter
+        .wait(`#${callId} [${methodName}] #${sequence}`)
+        .then(() => real.call(dbx, ...args) as Promise<unknown>);
+
+      return handlePromise(
+        dbx,
+        methodName,
+        real,
+        rateLimitWaiter,
+        callId,
+        args,
+        nextPromise,
+        sequence + 1
+      );
+    }
+  );
+
+const wrapUnknown = <M extends keyof Dropbox>(
+  dbx: Dropbox,
+  methodName: M,
+  rateLimitWaiter: RateLimitWaiter
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): any => {
+  const real = dbx[methodName];
+  if (typeof real !== "function") return real;
+
+  let returnsPromises = false;
+
+  return (...args: Parameters<Dropbox[M]>): ReturnType<Dropbox[M]> => {
+    const callId = ++id;
+    console.debug(`#${callId} [${methodName}] immediate call`);
+    const value = returnsPromises
+      ? rateLimitWaiter
+          .wait(`#${callId} [${methodName}] 0`)
+          .then(() => real.call(dbx, ...args))
+      : real.call(dbx, ...args);
+
+    if (!("then" in value) || !("finally" in value)) {
+      // Not a promise; unwrap
+      console.debug(
+        `#${callId} [${methodName}] not a promise function - unwrapping`
+      );
+      dbx[methodName] = real;
+      return value;
+    }
+
+    // Returned a promise; re-wrap to make it easier next time
+    // wrapPromise(dbx, methodName, real, rateLimitWaiter);
+    returnsPromises = true;
+
+    // Handle the value we just got
+    return handlePromise(
+      dbx,
+      methodName,
+      real,
+      rateLimitWaiter,
+      callId,
+      args,
+      value,
+      0
+    ) as ReturnType<Dropbox[M]>;
+  };
+};
 
 export default (dbx: Dropbox): Dropbox => {
+  const rateLimitWaiter = new RateLimitWaiter();
+
   for (const m in dbx) {
     const methodName = m as keyof Dropbox;
-    const realFunction = dbx[methodName];
-
-    if (typeof realFunction === "function") {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const wrapper = (...args: any): any => {
-        const requestId = ++id;
-        // console.debug(`#${requestId} ${methodName} calling`);
-        // const value = realFunction.call(t, ...args);
-        const value = realFunction.call(dbx, ...args);
-        // console.debug(`#${requestId} ${methodName} returned`);
-
-        if ("then" in value && "catch" in value) {
-          // console.debug(
-          //   `#${requestId} ${methodName} returned promise, appending then-handler`
-          // );
-          return (value as Promise<unknown>).then(
-            (result) => {
-              // console.debug(`#${requestId} ${methodName} resolved`);
-              return result;
-            },
-            (err) => {
-              console.error(
-                `#${requestId} ${methodName} rejected`,
-                JSON.stringify(err, null, 2)
-              );
-
-              const retryingPromise = applyRateLimit(
-                dbx,
-                methodName,
-                args,
-                err
-              );
-              if (retryingPromise) return retryingPromise;
-
-              throw err;
-            }
-          );
-        } else {
-          // console.debug(
-          //   `#${requestId} ${methodName} returned non-promise, unwrapping and returning as-is`
-          // );
-          // Unwrap for next time
-          dbx[methodName] = realFunction as any; // eslint-disable-line @typescript-eslint/no-explicit-any
-          return value;
-        }
-      };
-
-      dbx[methodName] = wrapper as any; // eslint-disable-line @typescript-eslint/no-explicit-any
-    }
+    dbx[methodName] = wrapUnknown(dbx, methodName, rateLimitWaiter);
   }
 
   return dbx;
 };
-
-// TODO: if a promise is rejected with an error like
-// {
-//     error_summary: 'expired_access_token/.',
-//     error: { '.tag': 'expired_access_token' }
-//   }
-// then ... do something.
-
-// fetch rejected {
-//   "message": "request to ...",
-//   "type": "system",
-//   "errno": "ETIMEDOUT",
-//   "code": "ETIMEDOUT"
-// }
-
-// {
-//   "message": "request to ...",
-//   "type": "system",
-//   "errno": "ENOTFOUND",
-//   "code": "ENOTFOUND"
-// }
