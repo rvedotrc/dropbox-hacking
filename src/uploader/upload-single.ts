@@ -33,13 +33,15 @@ export default (
       // console.debug(`end, length=${contents.length}`);
 
       resolve(
-        defaultLimiter.submit(() =>
-          dbx
-            .filesUpload({
-              ...commitInfo,
-              contents,
-            })
-            .then((r) => r.result)
+        defaultLimiter.submit(
+          () =>
+            dbx
+              .filesUpload({
+                ...commitInfo,
+                contents,
+              })
+              .then((r) => r.result),
+          commitInfo.path
         )
       );
     });

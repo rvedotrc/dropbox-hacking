@@ -35,23 +35,6 @@ export type SyncAction = {
   errors?: string[];
 };
 
-export type SyncActionHandler = (
-  dbx: Dropbox,
-  dropboxPath: string,
-  localPath: string,
-  dryRun: boolean,
-  syncAction: Action
-) => Promise<void>;
-
-type SyncActionsHandler = (
-  dbx: Dropbox,
-  dropboxPath: string,
-  localPath: string,
-  dryRun: boolean,
-  syncActions: SyncAction[],
-  syncActionHandler: SyncActionHandler
-) => Promise<void>;
-
 const listLocalAndRemote = (args: {
   dbxp: DropboxProvider;
   dropboxPath: string;
@@ -72,10 +55,6 @@ const listLocalAndRemote = (args: {
     for (const localItem of localItems) {
       const key = localItem.relativePath.toLowerCase();
 
-      console.debug(
-        `calc ${localItem.path} relative to ${localPath} => [${key}]`
-      );
-
       const pair = map.get(key);
       if (pair) pair.local.push(localItem);
       else
@@ -88,10 +67,12 @@ const listLocalAndRemote = (args: {
       if (!remoteIsFile(remoteItem) && !remoteIsDirectory(remoteItem)) continue;
       if (remoteItem.metadata.path_lower === undefined) continue;
 
-      const pair = map.get(remoteItem.relativePath);
+      const key = remoteItem.relativePath.toLowerCase();
+
+      const pair = map.get(key);
       if (pair) pair.remote = remoteItem;
       else
-        map.set(remoteItem.relativePath, {
+        map.set(key, {
           local: [],
           remote: remoteItem,
         });
@@ -101,6 +82,7 @@ const listLocalAndRemote = (args: {
       key,
       value: { remote: null, ...pair },
     }));
+
     console.log(JSON.stringify(payload));
 
     return { map, dbx };
@@ -237,23 +219,12 @@ const showErrors = (syncActions: SyncAction[]): boolean => {
   return anyErrors;
 };
 
-export const runActions: SyncActionsHandler = (
-  dbx: Dropbox,
-  dropboxPath: string,
-  localPath: string,
-  dryRun: boolean,
-  syncActions: SyncAction[],
-  syncActionHandler: SyncActionHandler
-): Promise<void> =>
-  Promise.all(
-    syncActions
-      .map((syncAction) => syncAction.action)
-      .map((action) =>
-        action === undefined
-          ? Promise.resolve()
-          : syncActionHandler(dbx, dropboxPath, localPath, dryRun, action)
-      )
-  ).then();
+export const showErrorsAndWarnings = (
+  syncActions: SyncAction[]
+): { hasErrors: boolean } => {
+  showWarnings(syncActions);
+  return { hasErrors: showErrors(syncActions) };
+};
 
 export const calculate = async (
   dbxp: DropboxProvider,
@@ -275,28 +246,4 @@ export const calculate = async (
     );
 
     return { syncActions, dbx };
-  });
-
-export const run = async (
-  dbxp: DropboxProvider,
-  dropboxPath: string,
-  localPath: string,
-  dryRun: boolean,
-  syncActionHandler: SyncActionHandler
-): Promise<boolean> =>
-  calculate(dbxp, dropboxPath, localPath).then(({ syncActions, dbx }) => {
-    showWarnings(syncActions);
-
-    if (showErrors(syncActions)) {
-      return false;
-    } else {
-      return runActions(
-        dbx,
-        dropboxPath,
-        localPath,
-        dryRun,
-        syncActions,
-        syncActionHandler
-      ).then(() => true);
-    }
   });
