@@ -48,124 +48,117 @@ class RateLimitWaiter {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const retryError = (error: any, rateLimitWaiter: RateLimitWaiter): boolean => {
-  if (
-    !error.error ||
-    !error.error.reason ||
-    error.error.reason[".tag"] !== "too_many_write_operations"
-  )
-    return false;
-
-  let retryAfter: number | undefined = undefined;
-  if (error.error && error.error.retry_after)
-    retryAfter = error.error.retry_after;
-  console.debug("retryAfter", retryAfter);
-
-  const sleepSeconds = retryAfter || 1;
-  rateLimitWaiter.sleep(sleepSeconds * 1000);
-  return true;
-};
-
-const handlePromise = (
-  dbx: Dropbox,
-  methodName: string,
-  real: (...args: unknown[]) => Promise<unknown>,
-  rateLimitWaiter: RateLimitWaiter,
-  callId: number,
-  args: unknown[],
-  promise: Promise<unknown>,
-  sequence: number
-): Promise<unknown> =>
-  promise.then(
-    (value) => {
-      console.debug(`#${callId} [${methodName}] #${sequence} success`);
-      // log success
-      return value;
-    },
-    (err) => {
-      console.debug(`#${callId} [${methodName}] #${sequence} error`);
-
-      if (!retryError(err, rateLimitWaiter)) {
-        console.debug(
-          `#${callId} [${methodName}] #${sequence} rethrow ${JSON.stringify(
-            err
-          )}`
-        );
-        throw err;
-      }
-
-      console.debug(`#${callId} [${methodName}] #${sequence} call again`);
-      const nextPromise = rateLimitWaiter
-        .wait(`#${callId} [${methodName}] #${sequence}`)
-        .then(() => real.call(dbx, ...args) as Promise<unknown>);
-
-      return handlePromise(
-        dbx,
-        methodName,
-        real,
-        rateLimitWaiter,
-        callId,
-        args,
-        nextPromise,
-        sequence + 1
-      );
-    }
-  );
-
-const wrapUnknown = <M extends keyof Dropbox>(
-  dbx: Dropbox,
-  methodName: M,
-  rateLimitWaiter: RateLimitWaiter
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-): any => {
-  const real = dbx[methodName];
-  if (typeof real !== "function") return real;
-
-  let returnsPromises = false;
-
-  return (...args: Parameters<Dropbox[M]>): ReturnType<Dropbox[M]> => {
-    const callId = ++id;
-    console.debug(`#${callId} [${methodName}] immediate call`);
-    const value = returnsPromises
-      ? rateLimitWaiter
-          .wait(`#${callId} [${methodName}] 0`)
-          .then(() => real.call(dbx, ...args))
-      : real.call(dbx, ...args);
-
-    if (!("then" in value) || !("finally" in value)) {
-      // Not a promise; unwrap
-      console.debug(
-        `#${callId} [${methodName}] not a promise function - unwrapping`
-      );
-      dbx[methodName] = real;
-      return value;
-    }
-
-    // Returned a promise; re-wrap to make it easier next time
-    // wrapPromise(dbx, methodName, real, rateLimitWaiter);
-    returnsPromises = true;
-
-    // Handle the value we just got
-    return handlePromise(
-      dbx,
-      methodName,
-      real,
-      rateLimitWaiter,
-      callId,
-      args,
-      value,
-      0
-    ) as ReturnType<Dropbox[M]>;
-  };
-};
-
 export default (dbx: Dropbox): Dropbox => {
   const rateLimitWaiter = new RateLimitWaiter();
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const retryError = (error: any): boolean => {
+    if (
+      !error.error ||
+      !error.error.reason ||
+      error.error.reason[".tag"] !== "too_many_write_operations"
+    )
+      return false;
+
+    let retryAfter: number | undefined = undefined;
+    if (error.error && error.error.retry_after)
+      retryAfter = error.error.retry_after;
+    console.debug("retryAfter", retryAfter);
+
+    const sleepSeconds = retryAfter || 1;
+    rateLimitWaiter.sleep(sleepSeconds * 1000);
+    return true;
+  };
+
+  const handlePromise = (
+    methodName: string,
+    real: (...args: unknown[]) => Promise<unknown>,
+    callId: number,
+    args: unknown[],
+    promise: Promise<unknown>,
+    sequence: number
+  ): Promise<unknown> =>
+    promise.then(
+      (value) => {
+        console.debug(`#${callId} [${methodName}] #${sequence} success`);
+        // log success
+        return value;
+      },
+      (err) => {
+        console.debug(`#${callId} [${methodName}] #${sequence} error`);
+
+        if (!retryError(err)) {
+          console.debug(
+            `#${callId} [${methodName}] #${sequence} rethrow ${JSON.stringify(
+              err
+            )}`
+          );
+          throw err;
+        }
+
+        console.debug(`#${callId} [${methodName}] #${sequence} call again`);
+        const nextPromise = rateLimitWaiter
+          .wait(`#${callId} [${methodName}] #${sequence}`)
+          .then(() => real.call(dbx, ...args) as Promise<unknown>);
+
+        return handlePromise(
+          methodName,
+          real,
+          callId,
+          args,
+          nextPromise,
+          sequence + 1
+        );
+      }
+    );
+
+  const wrapUnknown = <M extends keyof Dropbox>(
+    methodName: M
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ): unknown => {
+    const real = dbx[methodName];
+    if (typeof real !== "function") return real;
+
+    let returnsPromises = false;
+
+    return (...args: Parameters<Dropbox[M]>): ReturnType<Dropbox[M]> => {
+      const callId = ++id;
+      console.debug(`#${callId} [${methodName}] immediate call`);
+      const value = returnsPromises
+        ? rateLimitWaiter
+            .wait(`#${callId} [${methodName}] 0`)
+            .then(() => real.call(dbx, ...args))
+        : real.call(dbx, ...args);
+
+      if (!("then" in value) || !("finally" in value)) {
+        // Not a promise; unwrap
+        console.debug(
+          `#${callId} [${methodName}] not a promise function - unwrapping`
+        );
+        dbx[methodName] = real;
+        return value;
+      }
+
+      // Returned a promise; re-wrap to make it easier next time
+      // wrapPromise(dbx, methodName, real, rateLimitWaiter);
+      returnsPromises = true;
+
+      // Handle the value we just got
+      return handlePromise(
+        methodName,
+        real,
+        callId,
+        args,
+        value,
+        0
+      ) as ReturnType<Dropbox[M]>;
+    };
+  };
+
   for (const m in dbx) {
     const methodName = m as keyof Dropbox;
-    dbx[methodName] = wrapUnknown(dbx, methodName, rateLimitWaiter);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    dbx[methodName] = wrapUnknown(methodName) as any;
   }
 
   return dbx;

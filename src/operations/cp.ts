@@ -1,5 +1,4 @@
 import { DropboxProvider, Handler } from "../types";
-import { usageFail } from "../cli";
 
 const verb = "cp";
 
@@ -7,9 +6,10 @@ const verb = "cp";
 
 const handler: Handler = async (
   dbxp: DropboxProvider,
-  argv: string[]
+  argv: string[],
+  usageFail: () => void
 ): Promise<void> => {
-  if (argv.length !== 2) usageFail(verb);
+  if (argv.length !== 2) usageFail();
   const fromPath = argv[0];
   const toPath = argv[1];
 

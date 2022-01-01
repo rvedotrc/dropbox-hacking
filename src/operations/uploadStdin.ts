@@ -1,5 +1,4 @@
 import { DropboxProvider, Handler } from "../types";
-import { usageFail } from "../cli";
 import { selectUploader } from "../uploader";
 import * as fs from "fs";
 import { files } from "dropbox";
@@ -11,9 +10,10 @@ const verb = "upload-stdin";
 
 const handler: Handler = async (
   dbxp: DropboxProvider,
-  argv: string[]
+  argv: string[],
+  usageFail: () => void
 ): Promise<void> => {
-  if (argv.length !== 1) usageFail(verb);
+  if (argv.length !== 1) usageFail();
   const dropboxPath = argv[0];
 
   const stat = fs.fstatSync(process.stdin.fd);

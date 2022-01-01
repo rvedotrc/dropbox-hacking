@@ -1,40 +1,40 @@
 import * as path from "path";
 import * as fs from "fs";
 
-export const makeMap = (): Map<string, Promise<void>> => new Map();
-
-export const seed = (
-  localPath: string,
-  mkdirPromiseMap: Map<string, Promise<void>>
-): void => {
-  mkdirPromiseMap.set(localPath, Promise.resolve());
+export type Mkdir = {
+  seed: (localPath: string) => void;
+  mkdir: (localPath: string) => Promise<void>;
 };
 
-export const mkdir = (
-  localPath: string,
-  dryRun: boolean,
-  mkdirPromiseMap: Map<string, Promise<void>>
-): Promise<void> => {
-  let promise = mkdirPromiseMap.get(localPath);
-  if (promise) return promise;
+export default (dryRun: boolean): Mkdir => {
+  const mkdirPromiseMap: Map<string, Promise<void>> = new Map();
 
-  const parentPath = path.dirname(localPath);
-  const parentPromise =
-    parentPath !== localPath
-      ? mkdir(parentPath, dryRun, mkdirPromiseMap)
-      : Promise.resolve();
+  const seed = (localPath: string): void => {
+    mkdirPromiseMap.set(localPath, Promise.resolve());
+  };
 
-  promise = parentPromise.then(() => {
-    console.log(`mkdir [${localPath}]`);
-    if (!dryRun)
-      return fs.promises.mkdir(localPath).catch((err) => {
-        if (err.code === "EEXIST" || err.code === "EISDIR") return;
-        throw err;
-      });
-    return;
-  });
+  const mkdir = (localPath: string): Promise<void> => {
+    let promise = mkdirPromiseMap.get(localPath);
+    if (promise) return promise;
 
-  mkdirPromiseMap.set(localPath, promise);
+    const parentPath = path.dirname(localPath);
+    const parentPromise =
+      parentPath !== localPath ? mkdir(parentPath) : Promise.resolve();
 
-  return promise;
+    promise = parentPromise.then(() => {
+      console.log(`mkdir [${localPath}]`);
+      if (!dryRun)
+        return fs.promises.mkdir(localPath).catch((err) => {
+          if (err.code === "EEXIST" || err.code === "EISDIR") return;
+          throw err;
+        });
+      return;
+    });
+
+    mkdirPromiseMap.set(localPath, promise);
+
+    return promise;
+  };
+
+  return { seed, mkdir };
 };

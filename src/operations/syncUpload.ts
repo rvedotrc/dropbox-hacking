@@ -1,5 +1,4 @@
 import { DropboxProvider, Handler } from "../types";
-import { usageFail } from "../cli";
 import * as upload from "../sync/upload";
 
 const verb = "sync-upload";
@@ -8,7 +7,8 @@ const DELETE = "--delete";
 
 const handler: Handler = async (
   dbxp: DropboxProvider,
-  argv: string[]
+  argv: string[],
+  usageFail: () => void
 ): Promise<void> => {
   let dryRun = false;
   let withDelete = false;
@@ -28,7 +28,7 @@ const handler: Handler = async (
     break;
   }
 
-  if (argv.length !== 2) usageFail(verb);
+  if (argv.length !== 2) usageFail();
   const localPath = argv[0];
   const dropboxPath = argv[1];
 

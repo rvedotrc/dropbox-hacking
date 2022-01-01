@@ -1,6 +1,5 @@
 import { DropboxProvider, Handler } from "../types";
 import { files } from "dropbox";
-import { usageFail } from "../cli";
 
 const verb = "ls";
 
@@ -10,7 +9,8 @@ const LATEST = "--latest";
 
 const handler: Handler = async (
   dbxp: DropboxProvider,
-  argv: string[]
+  argv: string[],
+  usageFail: () => void
 ): Promise<void> => {
   let recursive = false;
   let tail = false;
@@ -36,7 +36,7 @@ const handler: Handler = async (
     break;
   }
 
-  if (argv.length !== 1) usageFail(verb);
+  if (argv.length !== 1) usageFail();
   const path = argv[0];
 
   const listFolderArg: files.ListFolderArg = {
