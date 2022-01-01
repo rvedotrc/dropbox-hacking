@@ -1,8 +1,11 @@
 import { Dropbox } from "dropbox";
+import { GlobalOptions } from "./types";
 
 let id = 0;
 
 class RateLimitWaiter {
+  private readonly globalOptions: GlobalOptions;
+
   private state:
     | undefined
     | {
@@ -11,8 +14,12 @@ class RateLimitWaiter {
         timer: NodeJS.Timeout;
       } = undefined;
 
+  constructor(globalOptions: GlobalOptions) {
+    this.globalOptions = globalOptions;
+  }
+
   public sleep(millis: number): void {
-    console.debug(`RateLimitWaiter - sleep ${millis}`);
+    this.debug(`RateLimitWaiter - sleep ${millis}`);
     const newUntil = new Date().getTime() + millis;
     if (this.state && this.state.until > newUntil) return;
 
@@ -30,13 +37,13 @@ class RateLimitWaiter {
 
     return new Promise((resolve) => {
       if (!t.state) {
-        console.debug(`${message} RateLimitWaiter - no wait`);
+        this.debug(`${message} RateLimitWaiter - no wait`);
         return resolve();
       }
 
-      console.debug(`${message} RateLimitWaiter - enqueueing`);
+      this.debug(`${message} RateLimitWaiter - enqueueing`);
       t.state.queue.push(() => {
-        console.debug(`${message} RateLimitWaiter - woke up`);
+        this.debug(`${message} RateLimitWaiter - woke up`);
         resolve();
       });
     });
@@ -46,10 +53,18 @@ class RateLimitWaiter {
     this.state?.queue.forEach((f) => process.nextTick(f));
     this.state = undefined;
   }
+
+  private debug(...args: unknown[]) {
+    if (this.globalOptions.debugErrors) console.debug(...args);
+  }
 }
 
-export default (dbx: Dropbox): Dropbox => {
-  const rateLimitWaiter = new RateLimitWaiter();
+export default (dbx: Dropbox, globalOptions: GlobalOptions): Dropbox => {
+  const rateLimitWaiter = new RateLimitWaiter(globalOptions);
+
+  const debug = (...args: unknown[]) => {
+    if (globalOptions.debugErrors) console.debug(...args);
+  };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const retryError = (error: any): boolean => {
@@ -63,7 +78,7 @@ export default (dbx: Dropbox): Dropbox => {
     let retryAfter: number | undefined = undefined;
     if (error.error && error.error.retry_after)
       retryAfter = error.error.retry_after;
-    console.debug("retryAfter", retryAfter);
+    debug("retryAfter", retryAfter);
 
     const sleepSeconds = retryAfter || 1;
     rateLimitWaiter.sleep(sleepSeconds * 1000);
@@ -80,15 +95,15 @@ export default (dbx: Dropbox): Dropbox => {
   ): Promise<unknown> =>
     promise.then(
       (value) => {
-        console.debug(`#${callId} [${methodName}] #${sequence} success`);
+        debug(`#${callId} [${methodName}] #${sequence} success`);
         // log success
         return value;
       },
       (err) => {
-        console.debug(`#${callId} [${methodName}] #${sequence} error`);
+        debug(`#${callId} [${methodName}] #${sequence} error`);
 
         if (!retryError(err)) {
-          console.debug(
+          debug(
             `#${callId} [${methodName}] #${sequence} rethrow ${JSON.stringify(
               err
             )}`
@@ -96,7 +111,7 @@ export default (dbx: Dropbox): Dropbox => {
           throw err;
         }
 
-        console.debug(`#${callId} [${methodName}] #${sequence} call again`);
+        debug(`#${callId} [${methodName}] #${sequence} call again`);
         const nextPromise = rateLimitWaiter
           .wait(`#${callId} [${methodName}] #${sequence}`)
           .then(() => real.call(dbx, ...args) as Promise<unknown>);
@@ -123,7 +138,7 @@ export default (dbx: Dropbox): Dropbox => {
 
     return (...args: Parameters<Dropbox[M]>): ReturnType<Dropbox[M]> => {
       const callId = ++id;
-      console.debug(`#${callId} [${methodName}] immediate call`);
+      debug(`#${callId} [${methodName}] immediate call`);
       const value = returnsPromises
         ? rateLimitWaiter
             .wait(`#${callId} [${methodName}] 0`)
@@ -132,9 +147,7 @@ export default (dbx: Dropbox): Dropbox => {
 
       if (!("then" in value) || !("finally" in value)) {
         // Not a promise; unwrap
-        console.debug(
-          `#${callId} [${methodName}] not a promise function - unwrapping`
-        );
+        debug(`#${callId} [${methodName}] not a promise function - unwrapping`);
         dbx[methodName] = real;
         return value;
       }

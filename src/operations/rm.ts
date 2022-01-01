@@ -1,4 +1,4 @@
-import { DropboxProvider, Handler } from "../types";
+import { DropboxProvider, GlobalOptions, Handler } from "../types";
 
 const verb = "rm";
 
@@ -7,6 +7,7 @@ const verb = "rm";
 const handler: Handler = async (
   dbxp: DropboxProvider,
   argv: string[],
+  globalOptions: GlobalOptions,
   usageFail: () => void
 ): Promise<void> => {
   if (argv.length !== 1) usageFail();

@@ -1,4 +1,4 @@
-import { DropboxProvider, Handler } from "../types";
+import { DropboxProvider, GlobalOptions, Handler } from "../types";
 import { files } from "dropbox";
 
 const verb = "ls";
@@ -10,6 +10,7 @@ const LATEST = "--latest";
 const handler: Handler = async (
   dbxp: DropboxProvider,
   argv: string[],
+  globalOptions: GlobalOptions,
   usageFail: () => void
 ): Promise<void> => {
   let recursive = false;

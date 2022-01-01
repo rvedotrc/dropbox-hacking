@@ -1,4 +1,4 @@
-import { Operation } from "./types";
+import { GlobalOptions, Operation } from "./types";
 import { getDropboxClient } from "./auth";
 
 import catOperation from "./operations/cat";
@@ -12,8 +12,29 @@ import syncDownloadOperation from "./operations/syncDownload";
 import syncUploadOperation from "./operations/syncUpload";
 import uploadStdinOperation from "./operations/uploadStdin";
 import retryAndRateLimit from "./retry-and-rate-limit";
+import { processOptions } from "./options";
 
 const prefix = "./bin/cli";
+
+const DEBUG_UPLOAD = "--debug-upload";
+const DEBUG_SYNC = "--debug-sync";
+const DEBUG_ERRORS = "--debug-errors";
+
+const getGlobalOptions = (argv: string[]) => {
+  const globalOptions: GlobalOptions = {
+    debugUpload: false,
+    debugSync: false,
+    debugErrors: false,
+  };
+
+  const remainingArgs = processOptions(argv, {
+    [DEBUG_UPLOAD]: () => (globalOptions.debugUpload = true),
+    [DEBUG_SYNC]: () => (globalOptions.debugSync = true),
+    [DEBUG_ERRORS]: () => (globalOptions.debugErrors = true),
+  });
+
+  return { globalOptions, remainingArgs };
+};
 
 export default (argv: string[]): void => {
   // download_zip (could be useful)
@@ -36,22 +57,34 @@ export default (argv: string[]): void => {
 
     for (const op of operations) {
       if (verb === undefined || verb === op.verb) {
-        process.stderr.write(`  ${prefix} ${op.verb} ${op.argsHelp}\n`);
+        process.stderr.write(
+          `  ${prefix} [GLOBAL-OPTIONS] ${op.verb} ${op.argsHelp}\n`
+        );
       }
     }
+
+    process.stderr.write(
+      "Global options are:\n" +
+        `  ${DEBUG_UPLOAD} - enable debugging of large file uploads\n` +
+        `  ${DEBUG_SYNC} - enable debugging of sync operations\n` +
+        `  ${DEBUG_ERRORS} - enable debugging of rate limiting and retrying\n`
+    );
 
     process.exit(2);
   };
 
-  const getter = () => getDropboxClient().then(retryAndRateLimit);
+  const { globalOptions, remainingArgs } = getGlobalOptions(argv);
 
-  const op = operations.find(({ verb }) => verb === argv[0]);
+  const getter = () =>
+    getDropboxClient().then((dbx) => retryAndRateLimit(dbx, globalOptions));
+
+  const op = operations.find(({ verb }) => verb === remainingArgs[0]);
   if (op) {
-    op.handler(getter, argv.splice(1), () => usageFail(op.verb)).catch(
-      (err) => {
-        console.error({ err, stack: err.stack });
-        process.exit(1);
-      }
-    );
+    op.handler(getter, remainingArgs.splice(1), globalOptions, () =>
+      usageFail(op.verb)
+    ).catch((err) => {
+      console.error({ err, stack: err.stack });
+      process.exit(1);
+    });
   } else usageFail();
 };

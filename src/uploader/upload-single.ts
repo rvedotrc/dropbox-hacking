@@ -1,6 +1,7 @@
 import { Dropbox, files } from "dropbox";
 import stream = require("node:stream");
 import limiter from "./limiter";
+import { GlobalOptions } from "../types";
 
 export const MAX_SINGLE_UPLOAD_SIZE = 150_000_000;
 
@@ -9,12 +10,17 @@ const defaultLimiter = limiter<files.FileMetadata>(5);
 export default (
   dbx: Dropbox,
   commitInfo: files.CommitInfo,
-  readable: stream.Readable
+  readable: stream.Readable,
+  globalOptions: GlobalOptions
 ): Promise<files.FileMetadata> =>
   new Promise<files.FileMetadata>((resolve) => {
+    const debug = (...args: unknown[]) => {
+      if (globalOptions.debugUpload) console.debug(...args);
+    };
+
     // Dumb version, where the whole contents goes into memory,
     // and the upload will fail if > 150MB.
-    console.debug("Using single-part upload");
+    debug("Using single-part upload");
 
     const buffers: Buffer[] = [];
 

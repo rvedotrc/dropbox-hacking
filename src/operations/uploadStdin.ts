@@ -1,4 +1,4 @@
-import { DropboxProvider, Handler } from "../types";
+import { DropboxProvider, GlobalOptions, Handler } from "../types";
 import { selectUploader } from "../uploader";
 import * as fs from "fs";
 import { files } from "dropbox";
@@ -11,6 +11,7 @@ const verb = "upload-stdin";
 const handler: Handler = async (
   dbxp: DropboxProvider,
   argv: string[],
+  globalOptions: GlobalOptions,
   usageFail: () => void
 ): Promise<void> => {
   if (argv.length !== 1) usageFail();
@@ -30,7 +31,7 @@ const handler: Handler = async (
 
   const dbx = await dbxp();
 
-  uploader(dbx, commitInfo, process.stdin)
+  uploader(dbx, commitInfo, process.stdin, globalOptions)
     .then((value) => {
       process.stdout.write(JSON.stringify(value) + "\n");
       // console.info(value.result);

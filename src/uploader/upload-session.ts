@@ -2,6 +2,7 @@ import { Dropbox, files } from "dropbox";
 import stream = require("node:stream");
 import fixedChunkStream from "./fixed-chunk-stream";
 import limiter from "./limiter";
+import { GlobalOptions } from "../types";
 
 const PART_SIZE = 4194304; // 4 MB
 
@@ -10,7 +11,8 @@ const defaultLimiter = limiter<void>(5);
 export default (
   dbx: Dropbox,
   commitInfo: files.CommitInfo,
-  readable: stream.Readable
+  readable: stream.Readable,
+  globalOptions: GlobalOptions
 ): Promise<files.FileMetadata> =>
   dbx
     .filesUploadSessionStart({
@@ -20,7 +22,11 @@ export default (
     .then(
       (sessionId) =>
         new Promise<files.FileMetadata>((resolve, reject) => {
-          console.debug(`Using multi-part upload session=${sessionId}`);
+          const debug = (...args: unknown[]) => {
+            if (globalOptions.debugUpload) console.debug(...args);
+          };
+
+          debug(`Using multi-part upload session=${sessionId}`);
 
           const partPromises: Promise<void>[] = [];
 
@@ -37,7 +43,7 @@ export default (
                 throw "Bad non-final buffer size";
 
               const logPrefix = `part offset=${offset} size=${buffer.length} finalPart=${finalPart}`;
-              console.debug(`${logPrefix} starting`);
+              debug(`${logPrefix} starting`);
 
               partPromises.push(
                 defaultLimiter.submit(
@@ -49,10 +55,10 @@ export default (
                         close: finalPart,
                       })
                       .then(() => {
-                        console.debug(`${logPrefix} completed`);
+                        debug(`${logPrefix} completed`);
                       })
                       .catch((err) => {
-                        console.error(`${logPrefix} failed`, err);
+                        debug(`${logPrefix} failed`, err);
                         reject(err);
                       }),
                   logPrefix
@@ -71,9 +77,7 @@ export default (
             flushPrevious(true);
 
             Promise.all(partPromises).then(() => {
-              console.debug(
-                `all parts completed, finish, offset=${totalOffset}`
-              );
+              debug(`all parts completed, finish, offset=${totalOffset}`);
 
               return dbx
                 .filesUploadSessionFinish({
@@ -84,11 +88,11 @@ export default (
                   commit: commitInfo,
                 })
                 .then((r) => {
-                  console.debug("finish completed");
+                  debug("finish completed");
                   resolve(r.result);
                 })
                 .catch((err) => {
-                  console.error(`finish failed`, JSON.stringify(err.error));
+                  debug(`finish failed`, JSON.stringify(err.error));
                   reject(err);
                 });
             });

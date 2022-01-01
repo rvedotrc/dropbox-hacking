@@ -1,4 +1,4 @@
-import { DropboxProvider, Handler } from "../types";
+import { DropboxProvider, GlobalOptions, Handler } from "../types";
 import * as upload from "../sync/upload";
 
 const verb = "sync-upload";
@@ -8,6 +8,7 @@ const DELETE = "--delete";
 const handler: Handler = async (
   dbxp: DropboxProvider,
   argv: string[],
+  globalOptions: GlobalOptions,
   usageFail: () => void
 ): Promise<void> => {
   let dryRun = false;
@@ -33,7 +34,7 @@ const handler: Handler = async (
   const dropboxPath = argv[1];
 
   return upload
-    .main(dbxp, dropboxPath, localPath, dryRun, withDelete)
+    .main(dbxp, dropboxPath, localPath, dryRun, withDelete, globalOptions)
     .then((success) => process.exit(success ? 0 : 1));
 };
 

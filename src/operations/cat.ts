@@ -1,4 +1,4 @@
-import { DropboxProvider, Handler } from "../types";
+import { DropboxProvider, GlobalOptions, Handler } from "../types";
 import * as https from "https";
 
 const verb = "cat";
@@ -6,6 +6,7 @@ const verb = "cat";
 const handler: Handler = async (
   dbxp: DropboxProvider,
   argv: string[],
+  globalOptions: GlobalOptions,
   usageFail: () => void
 ): Promise<void> => {
   if (argv.length !== 1) usageFail();

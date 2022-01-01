@@ -1,4 +1,4 @@
-import { DropboxProvider, Handler } from "../types";
+import { DropboxProvider, GlobalOptions, Handler } from "../types";
 import contentHash from "../uploader/content-hash";
 
 const verb = "content-hash-stdin";
@@ -6,6 +6,7 @@ const verb = "content-hash-stdin";
 const handler: Handler = async (
   _dbxp: DropboxProvider,
   argv: string[],
+  globalOptions: GlobalOptions,
   usageFail: () => void
 ): Promise<void> => {
   if (argv.length !== 0) usageFail();

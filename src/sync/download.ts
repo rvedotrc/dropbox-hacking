@@ -5,7 +5,7 @@ import { formatTime, parseTime } from "../util";
 import contentHash from "../uploader/content-hash";
 import * as engine from "./engine";
 import createMkdir from "./mkdir";
-import { DropboxProvider } from "../types";
+import { DropboxProvider, GlobalOptions } from "../types";
 import downloader from "../downloader";
 import { DirectoryItem, FileItem } from "./local-listing";
 
@@ -14,15 +14,20 @@ export const main = (
   dropboxPath: string,
   localPath: string,
   dryRun: boolean,
-  withDelete: boolean
+  withDelete: boolean,
+  globalOptions: GlobalOptions
 ): Promise<boolean> =>
   engine
-    .calculate(dbxp, dropboxPath, localPath)
+    .calculate(dbxp, dropboxPath, localPath, globalOptions)
     .then(({ syncActions, dbx }) => {
+      const debug = (...args: unknown[]) => {
+        if (globalOptions.debugSync) console.debug(...args);
+      };
+
       const mkdir = createMkdir(dryRun);
 
       const doDelete = (item: FileItem | DirectoryItem): Promise<void> => {
-        console.log(`delete ${item.path}`);
+        debug(`delete ${item.path}`);
         if (dryRun) return Promise.resolve();
 
         // FIXME: need to handle rm-rf, and ENOENT
@@ -37,7 +42,7 @@ export const main = (
         thisLocalPath: string,
         mtime: Date
       ): Promise<void> => {
-        console.debug(`set mtime of ${thisLocalPath} to ${mtime}`);
+        debug(`set mtime of ${thisLocalPath} to ${mtime}`);
         if (dryRun) return Promise.resolve();
 
         return fs.promises.utimes(thisLocalPath, mtime, mtime);
@@ -47,9 +52,7 @@ export const main = (
         thisLocalPath: string,
         remote: files.FileMetadata
       ): Promise<void> => {
-        console.debug(
-          `doDownload from ${remote.path_display} to ${thisLocalPath}`
-        );
+        debug(`doDownload from ${remote.path_display} to ${thisLocalPath}`);
         if (dryRun) return Promise.resolve();
 
         return downloader(dbx, thisLocalPath, remote);
@@ -59,7 +62,7 @@ export const main = (
         thisLocalPath: string,
         remote: files.FileMetadata
       ): Promise<void> => {
-        console.log(
+        debug(
           `unconditional download to [${thisLocalPath}] from ${remote.path_display}`
         );
 
@@ -72,7 +75,7 @@ export const main = (
         remote: files.FileMetadata
       ): Promise<void> =>
         isDownloadNecessary(thisLocalPath, stats, remote).then((truth) => {
-          console.log(
+          debug(
             `conditional download to [${thisLocalPath}] from ${remote.path_display} => ${truth}`
           );
 
@@ -83,7 +86,7 @@ export const main = (
 
           if (truth) return doDownload(thisLocalPath, remote);
 
-          console.debug(
+          debug(
             `no need to download to [${thisLocalPath}] from ${remote.path_display}`
           );
           return;
@@ -134,7 +137,7 @@ export const main = (
               // Local exists, so it must already be a directory.
               // We *could* ensure that the local directory's case is correct
               // (e.g. rename directory foo to Foo).
-              console.log(
+              debug(
                 `already got directory [${thisLocalPath}] (${action.local.path}) for ${remotePathDisplay}`
               );
             } else {
