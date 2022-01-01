@@ -87,7 +87,11 @@ const handlePromise = (
       console.debug(`#${callId} [${methodName}] #${sequence} error`);
 
       if (!retryError(err, rateLimitWaiter)) {
-        console.debug(`#${callId} [${methodName}] #${sequence} rethrow`);
+        console.debug(
+          `#${callId} [${methodName}] #${sequence} rethrow ${JSON.stringify(
+            err
+          )}`
+        );
         throw err;
       }
 
