@@ -1,11 +1,13 @@
 import { DropboxProvider, GlobalOptions, Handler } from "../types";
 import { files } from "dropbox";
+import { processOptions } from "../options";
 
 const verb = "ls";
 
 const RECURSIVE = "--recursive";
 const TAIL = "--tail";
 const LATEST = "--latest";
+const TOTALS = "--totals";
 
 const handler: Handler = async (
   dbxp: DropboxProvider,
@@ -16,25 +18,24 @@ const handler: Handler = async (
   let recursive = false;
   let tail = false;
   let latest = false;
+  let showTotals = false;
 
-  while (true) {
-    if (argv[0] === RECURSIVE) {
-      recursive = true;
-      argv.shift();
-      continue;
-    }
-    if (argv[0] === TAIL) {
-      tail = true;
-      argv.shift();
-      continue;
-    }
-    if (argv[0] === LATEST) {
-      latest = true;
-      argv.shift();
-      continue;
-    }
+  argv = processOptions(argv, {
+    [RECURSIVE]: () => (recursive = true),
+    [TAIL]: () => (tail = true),
+    [LATEST]: () => (latest = true),
+    [TOTALS]: () => (showTotals = true),
+  });
 
-    break;
+  if (latest && !tail) {
+    process.stderr.write(`${LATEST} doesn't make sense without ${TAIL}\n`);
+    process.exit(1);
+  }
+
+  // But maybe we could.  Continuously updating stats? Hmmm.
+  if (showTotals && tail) {
+    process.stderr.write(`${TOTALS} can't be used with ${TAIL}\n`);
+    process.exit(1);
   }
 
   if (argv.length !== 1) usageFail();
@@ -47,10 +48,22 @@ const handler: Handler = async (
 
   const dbx = await dbxp();
 
+  const totals = {
+    files: 0,
+    folders: 0,
+    totalSize: 0,
+  };
+
   const handlePage = (result: files.ListFolderResult) => {
     // console.debug(`showing entries=${result.entries.length}`);
     let s = "";
     for (const object of result.entries) {
+      if (object[".tag"] === "file") {
+        ++totals.files;
+        totals.totalSize += object.size;
+      }
+      if (object[".tag"] === "folder") ++totals.folders;
+
       s = s.concat(JSON.stringify(object) + "\n");
     }
     process.stdout.write(s);
@@ -105,10 +118,14 @@ const handler: Handler = async (
     page = (await dbx.filesListFolderContinue({ cursor: page.cursor })).result;
   }
 
+  if (showTotals) {
+    process.stdout.write(JSON.stringify({ totals }));
+  }
+
   // console.debug("done");
   process.exit(0);
 };
 
-const argsHelp = `[${RECURSIVE}] [${TAIL}] [${LATEST}] DROPBOX_PATH`;
+const argsHelp = `[${RECURSIVE}] [${TOTALS} | ${TAIL} [${LATEST}]] DROPBOX_PATH`;
 
 export default { verb, handler, argsHelp };
