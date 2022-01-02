@@ -7,6 +7,7 @@ import cpOperation from "./operations/cp";
 import lsOperation from "./operations/ls";
 import mkdirOperation from "./operations/mkdir";
 import mvOperation from "./operations/mv";
+import processCameraUploads from "./operations/processCameraUploads";
 import rmOperation from "./operations/rm";
 import syncDownloadOperation from "./operations/syncDownload";
 import syncUploadOperation from "./operations/syncUpload";
@@ -47,6 +48,7 @@ export default (argv: string[]): void => {
     lsOperation,
     mkdirOperation,
     mvOperation,
+    processCameraUploads,
     rmOperation,
     syncDownloadOperation,
     syncUploadOperation,

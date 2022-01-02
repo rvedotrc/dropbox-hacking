@@ -67,13 +67,21 @@ export default (dbx: Dropbox, globalOptions: GlobalOptions): Dropbox => {
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const isRetriable = (input: any): boolean => {
+    // {"name":"DropboxResponseError","status":429,"headers":{},"error":{"error_summary":"too_many_write_operations/","error":{"reason":{".tag":"too_many_write_operations"}}}}
+    // {"name":"DropboxResponseError","status":409,"headers":{},"error":{"error_summary":"from_write/too_many_write_operations/","error":{".tag":"from_write","from_write":{".tag":"too_many_write_operations"}}}}
+
+    // console.debug(JSON.stringify(input));
+
+    if (input?.error?.error_summary?.includes("too_many_write_operations"))
+      return true;
+
+    return false;
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const retryError = (error: any): boolean => {
-    if (
-      !error.error ||
-      !error.error.reason ||
-      error.error.reason[".tag"] !== "too_many_write_operations"
-    )
-      return false;
+    if (!isRetriable(error)) return false;
 
     let retryAfter: number | undefined = undefined;
     if (error.error && error.error.retry_after)
