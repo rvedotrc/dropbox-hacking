@@ -6,6 +6,7 @@ import localListing, {
   FileItem,
   Item as LocalItem,
 } from "../sync/local-listing";
+import { writeStderr } from "../util";
 
 // Does a "mkdir -p" on the destination structure
 
@@ -234,23 +235,27 @@ export const calculate = async (
   });
 };
 
-export const showErrorsAndWarnings = (
+export const showErrorsAndWarnings = async (
   syncActions: SyncAction[]
-): { hasErrors: boolean } => {
+): Promise<{ hasErrors: boolean }> => {
   for (const syncAction of syncActions) {
     if (syncAction.warnings) {
-      process.stderr.write(syncAction.warnings.join("\n") + "\n");
+      await writeStderr(syncAction.warnings.join("\n") + "\n");
     }
   }
 
   let hasErrors = false;
 
+  let s = "";
+
   for (const syncAction of syncActions) {
     if (syncAction.errors && syncAction.errors.length > 0) {
       hasErrors = true;
-      process.stderr.write(syncAction.errors.join("\n") + "\n");
+      s += syncAction.errors.join("\n") + "\n";
     }
   }
+
+  if (s !== "") await writeStderr(s);
 
   return { hasErrors };
 };

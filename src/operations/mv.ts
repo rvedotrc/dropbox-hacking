@@ -1,4 +1,5 @@
 import { DropboxProvider, GlobalOptions, Handler } from "../types";
+import { writeStdout } from "../util";
 
 const verb = "mv";
 
@@ -20,10 +21,8 @@ const handler: Handler = async (
 
   dbx
     .filesMoveV2({ from_path: fromPath, to_path: toPath })
-    .then((response) => {
-      process.stdout.write(JSON.stringify(response.result) + "\n");
-      process.exit(0);
-    })
+    .then((response) => writeStdout(JSON.stringify(response.result) + "\n"))
+    .then(() => process.exit(0))
     .catch((err) => {
       console.error(err);
       process.exit(1);

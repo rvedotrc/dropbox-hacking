@@ -19,7 +19,7 @@ export const main = (
 ): Promise<boolean> =>
   engine
     .calculate(dbxp, dropboxPath, localPath, globalOptions)
-    .then(({ syncActions, dbx }) => {
+    .then(async ({ syncActions, dbx }) => {
       const debug = (...args: unknown[]) => {
         if (globalOptions.debugSync) console.debug(...args);
       };
@@ -151,7 +151,7 @@ export const main = (
         return Promise.resolve();
       };
 
-      if (engine.showErrorsAndWarnings(syncActions).hasErrors) {
+      if ((await engine.showErrorsAndWarnings(syncActions)).hasErrors) {
         return false;
       }
 

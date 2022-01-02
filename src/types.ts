@@ -6,7 +6,7 @@ export type Handler = (
   dbxp: DropboxProvider,
   argv: string[],
   globalOptions: GlobalOptions,
-  usageFail: () => void
+  usageFail: () => Promise<void>
 ) => Promise<void>;
 
 export type Operation = {

@@ -1,4 +1,5 @@
 import { DropboxProvider, GlobalOptions, Handler } from "../types";
+import { writeStdout } from "../util";
 
 const verb = "rm";
 
@@ -17,10 +18,8 @@ const handler: Handler = async (
 
   dbx
     .filesDeleteV2({ path })
-    .then((response) => {
-      process.stdout.write(JSON.stringify(response.result) + "\n");
-      process.exit(0);
-    })
+    .then((response) => writeStdout(JSON.stringify(response.result) + "\n"))
+    .then(() => process.exit(0))
     .catch((err) => {
       console.error(err);
       process.exit(1);

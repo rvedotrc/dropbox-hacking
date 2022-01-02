@@ -1,6 +1,7 @@
 import { DropboxProvider, GlobalOptions, Handler } from "../types";
 import { files } from "dropbox";
 import { processOptions } from "../options";
+import { writeStdout } from "../util";
 
 const verb = "ls";
 
@@ -34,8 +35,11 @@ const handler: Handler = async (
 
   // But maybe we could.  Continuously updating stats? Hmmm.
   if (showTotals && tail) {
-    process.stderr.write(`${TOTALS} can't be used with ${TAIL}\n`);
-    process.exit(1);
+    await new Promise<void>((resolve, reject) =>
+      process.stderr.write(`${TOTALS} can't be used with ${TAIL}\n`, (err) =>
+        err ? reject(err) : resolve()
+      )
+    ).then(() => process.exit(1));
   }
 
   if (argv.length !== 1) usageFail();
@@ -54,7 +58,7 @@ const handler: Handler = async (
     totalSize: 0,
   };
 
-  const handlePage = (result: files.ListFolderResult) => {
+  const handlePage = async (result: files.ListFolderResult) => {
     // console.debug(`showing entries=${result.entries.length}`);
     let s = "";
     for (const object of result.entries) {
@@ -66,7 +70,10 @@ const handler: Handler = async (
 
       s = s.concat(JSON.stringify(object) + "\n");
     }
-    process.stdout.write(s);
+
+    return writeStdout(s);
+    // process.stdout.write(s);
+    // console.debug(`showed entries=${result.entries.length}`);
   };
 
   let page: files.ListFolderResult;
@@ -86,7 +93,8 @@ const handler: Handler = async (
   }
 
   while (true) {
-    handlePage(page);
+    // console.debug("handle page");
+    await handlePage(page);
 
     if (page.has_more) {
       // console.debug("continue");
@@ -109,7 +117,7 @@ const handler: Handler = async (
       const backoff = r.backoff;
 
       if (backoff) {
-        // console.debug(`sleep ${r.backoff}s`);
+        console.debug(`sleep ${r.backoff}s`);
         await new Promise((resolve) => setTimeout(resolve, backoff * 1000));
       }
     }
@@ -119,7 +127,8 @@ const handler: Handler = async (
   }
 
   if (showTotals) {
-    process.stdout.write(JSON.stringify({ totals }));
+    // console.debug("totals");
+    await writeStdout(JSON.stringify({ totals }) + "\n");
   }
 
   // console.debug("done");

@@ -17,8 +17,8 @@ export const main = (
 ): Promise<boolean> =>
   engine
     .calculate(dbxp, dropboxPath, localPath, globalOptions)
-    .then(({ syncActions, dbx }) => {
-      if (engine.showErrorsAndWarnings(syncActions).hasErrors) {
+    .then(async ({ syncActions, dbx }) => {
+      if ((await engine.showErrorsAndWarnings(syncActions)).hasErrors) {
         return false;
       }
 

@@ -2,16 +2,17 @@ import { Dropbox, DropboxAuth } from "dropbox";
 import * as fs from "fs";
 import * as express from "express";
 import * as child_process from "child_process";
+import { writeStderr } from "./util";
 
 const envVar = "DROPBOX_CREDENTIALS_PATH";
 
 const port = 9988;
 const redirectUri = `http://localhost:${port}/auth`; // has to match app's config
 
-const runServer = (
+const runServer = async (
   appAuth: DropboxAuth,
   checkCode: (code: string) => Promise<void>
-): void => {
+): Promise<void> => {
   const app = express();
   const server = app.listen(port, "localhost");
 
@@ -56,10 +57,10 @@ const runServer = (
   });
 
   const startUrl = `http://localhost:${port}/`;
-  process.stderr.write(
-    `To authorize this application to use your Dropbox, please go to the following url:\n`
+  await writeStderr(
+    `To authorize this application to use your Dropbox, please go to the following url:\n` +
+      `${startUrl}\n`
   );
-  process.stderr.write(`${startUrl}\n`);
 
   child_process.spawn("open", [startUrl], {
     stdio: ["ignore", "ignore", "ignore"],

@@ -13,6 +13,7 @@ import syncUploadOperation from "./operations/syncUpload";
 import uploadStdinOperation from "./operations/uploadStdin";
 import retryAndRateLimit from "./retry-and-rate-limit";
 import { processOptions } from "./options";
+import { writeStderr } from "./util";
 
 const prefix = "./bin/cli";
 
@@ -52,25 +53,22 @@ export default (argv: string[]): void => {
     uploadStdinOperation,
   ];
 
-  const usageFail = (verb?: string): void => {
-    process.stderr.write("Usage:\n");
+  const usageFail = async (verb?: string): Promise<void> => {
+    let s = "Usage:\n";
 
     for (const op of operations) {
       if (verb === undefined || verb === op.verb) {
-        process.stderr.write(
-          `  ${prefix} [GLOBAL-OPTIONS] ${op.verb} ${op.argsHelp}\n`
-        );
+        s += `  ${prefix} [GLOBAL-OPTIONS] ${op.verb} ${op.argsHelp}\n`;
       }
     }
 
-    process.stderr.write(
+    s +=
       "Global options are:\n" +
-        `  ${DEBUG_UPLOAD} - enable debugging of large file uploads\n` +
-        `  ${DEBUG_SYNC} - enable debugging of sync operations\n` +
-        `  ${DEBUG_ERRORS} - enable debugging of rate limiting and retrying\n`
-    );
+      `  ${DEBUG_UPLOAD} - enable debugging of large file uploads\n` +
+      `  ${DEBUG_SYNC} - enable debugging of sync operations\n` +
+      `  ${DEBUG_ERRORS} - enable debugging of rate limiting and retrying\n`;
 
-    process.exit(2);
+    writeStderr(s).then(() => process.exit(2));
   };
 
   const { globalOptions, remainingArgs } = getGlobalOptions(argv);
@@ -80,8 +78,11 @@ export default (argv: string[]): void => {
 
   const op = operations.find(({ verb }) => verb === remainingArgs[0]);
   if (op) {
-    op.handler(getter, remainingArgs.splice(1), globalOptions, () =>
-      usageFail(op.verb)
+    op.handler(
+      getter,
+      remainingArgs.splice(1),
+      globalOptions,
+      async () => await usageFail(op.verb)
     ).catch((err) => {
       console.error({ err, stack: err.stack });
       process.exit(1);

@@ -1,5 +1,6 @@
 import { DropboxProvider, GlobalOptions, Handler } from "../types";
 import contentHash from "../uploader/content-hash";
+import { writeStdout } from "../util";
 
 const verb = "content-hash-stdin";
 
@@ -12,10 +13,8 @@ const handler: Handler = async (
   if (argv.length !== 0) usageFail();
 
   return contentHash(process.stdin)
-    .then((hash) => {
-      process.stdout.write(hash + "\n");
-      process.exit(0);
-    })
+    .then((hash) => writeStdout(hash + "\n"))
+    .then(() => process.exit(0))
     .catch((reason) => {
       console.error(reason);
       process.exit(1);

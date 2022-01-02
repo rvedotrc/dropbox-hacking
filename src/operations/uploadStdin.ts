@@ -2,7 +2,7 @@ import { DropboxProvider, GlobalOptions, Handler } from "../types";
 import { selectUploader } from "../uploader";
 import * as fs from "fs";
 import { files } from "dropbox";
-import { formatTime } from "../util";
+import { formatTime, writeStdout } from "../util";
 
 const verb = "upload-stdin";
 
@@ -32,13 +32,10 @@ const handler: Handler = async (
   const dbx = await dbxp();
 
   uploader(dbx, commitInfo, process.stdin, globalOptions)
-    .then((value) => {
-      process.stdout.write(JSON.stringify(value) + "\n");
-      // console.info(value.result);
-      process.exit(0);
-    })
-    .catch((reason) => {
-      console.error(reason);
+    .then((metadata) => writeStdout(JSON.stringify(metadata) + "\n"))
+    .then(() => process.exit(0))
+    .catch((err) => {
+      console.error(err);
       process.exit(1);
     });
 };
