@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import { files } from "dropbox";
-import { formatTime } from "../util";
+import { formatTime, writeStdout } from "../util";
 import contentHash from "../uploader/content-hash";
 import * as engine from "./engine";
 import { DropboxProvider, GlobalOptions } from "../types";
@@ -26,6 +26,13 @@ export const main = (
         if (globalOptions.debugSync) console.debug(...args);
       };
 
+      const syncStats = {
+        filesToDelete: 0,
+        filesToUpload: 0,
+        filesAlreadyOk: 0,
+        totalBytes: 0,
+      };
+
       const mkdir = (remotePath: string): Promise<void> => {
         debug(`mkdir ${remotePath}`);
         if (dryRun) return Promise.resolve();
@@ -37,6 +44,8 @@ export const main = (
 
       const doUpload = (local: FileItem, remotePath: string): Promise<void> => {
         debug(`doUpload from ${local.path} to ${remotePath}`);
+        ++syncStats.filesToUpload;
+        syncStats.totalBytes += local.stat.size;
         if (dryRun) return Promise.resolve();
 
         const readable = fs.createReadStream(local.path);
@@ -76,6 +85,7 @@ export const main = (
           );
 
           if (truth == "set_mtime") {
+            ++syncStats.filesAlreadyOk;
             // TODO, do we have a way of doing this, apart from just re-uploading?
             return Promise.resolve();
           }
@@ -85,6 +95,7 @@ export const main = (
           debug(
             `no need to upload from [${local.path}] to ${remote.path_display}`
           );
+          ++syncStats.filesAlreadyOk;
           return;
         });
 
@@ -135,6 +146,7 @@ export const main = (
         } else if (action.remote && withDelete) {
           const path = action.remote.metadata.path_display;
           debug(`delete ${path}`);
+          ++syncStats.filesToDelete;
           if (!dryRun) {
             // FIXME: catch the not-found case
             return dbx
@@ -152,5 +164,7 @@ export const main = (
             ? syncActionHandler(syncAction.action)
             : Promise.resolve()
         )
-      ).then(() => true);
+      )
+        .then(() => writeStdout(JSON.stringify({ stats: syncStats }) + "\n"))
+        .then(() => true);
     });

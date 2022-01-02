@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import { files } from "dropbox";
-import { formatTime, parseTime } from "../util";
+import { formatTime, parseTime, writeStdout } from "../util";
 import contentHash from "../uploader/content-hash";
 import * as engine from "./engine";
 import createMkdir from "./mkdir";
@@ -26,8 +26,17 @@ export const main = (
 
       const mkdir = createMkdir(dryRun);
 
+      const syncStats = {
+        filesToDelete: 0,
+        filesToDownload: 0,
+        filesToSetMtime: 0,
+        filesAlreadyOk: 0,
+        totalBytes: 0,
+      };
+
       const doDelete = (item: FileItem | DirectoryItem): Promise<void> => {
         debug(`delete ${item.path}`);
+        if (item.tag === "file") ++syncStats.filesToDelete;
         if (dryRun) return Promise.resolve();
 
         // FIXME: need to handle rm-rf, and ENOENT
@@ -43,6 +52,7 @@ export const main = (
         mtime: Date
       ): Promise<void> => {
         debug(`set mtime of ${thisLocalPath} to ${mtime}`);
+        ++syncStats.filesToSetMtime;
         if (dryRun) return Promise.resolve();
 
         return fs.promises.utimes(thisLocalPath, mtime, mtime);
@@ -53,6 +63,8 @@ export const main = (
         remote: files.FileMetadata
       ): Promise<void> => {
         debug(`doDownload from ${remote.path_display} to ${thisLocalPath}`);
+        ++syncStats.filesToDownload;
+        syncStats.totalBytes += remote.size;
         if (dryRun) return Promise.resolve();
 
         return downloader(dbx, thisLocalPath, remote);
@@ -89,6 +101,7 @@ export const main = (
           debug(
             `no need to download to [${thisLocalPath}] from ${remote.path_display}`
           );
+          ++syncStats.filesAlreadyOk;
           return;
         });
 
@@ -168,5 +181,7 @@ export const main = (
             ? syncActionHandler(syncAction.action)
             : Promise.resolve()
         )
-      ).then(() => true);
+      )
+        .then(() => writeStdout(JSON.stringify({ stats: syncStats }) + "\n"))
+        .then(() => true);
     });
