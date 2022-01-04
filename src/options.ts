@@ -1,6 +1,7 @@
 export const processOptions = (
   argv: string[],
-  spec: Record<string, () => void>
+  // eslint-disable-next-line no-shadow
+  spec: Record<string, (argv: string[]) => void>
 ): string[] => {
   const output = [...argv];
 
@@ -9,8 +10,8 @@ export const processOptions = (
     if (opt === undefined) break;
 
     if (!(opt in spec)) break;
-    spec[opt]();
     output.shift();
+    spec[opt](output);
   }
 
   return output;

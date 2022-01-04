@@ -1,6 +1,6 @@
 import { DropboxProvider, GlobalOptions, Handler } from "../types";
 import { processOptions } from "../options";
-import lister from "../lister";
+import lister, { ListerArgs } from "../lister";
 import Mover from "../mover";
 import { files } from "dropbox";
 
@@ -9,6 +9,7 @@ const CAMERA_UPLOADS = "/Camera Uploads";
 
 const TAIL = "--tail";
 const DRY_RUN = "--dry-run";
+// const STATE_FILE = "--state-file";
 
 const targetForFile = (item: files.FileMetadata): string | undefined => {
   if (item.path_display === undefined) return undefined;
@@ -31,6 +32,45 @@ const targetForFile = (item: files.FileMetadata): string | undefined => {
   return undefined;
 };
 
+// type State = {
+//   cursor: string;
+// };
+//
+// const loadState = (stateFile: string): Promise<State | undefined> =>
+//   fs.promises
+//     .readFile(stateFile, { encoding: "utf-8" })
+//     .then((contents) => JSON.parse(contents))
+//     .then((json: unknown) => {
+//       if (json && typeof json === "object" && "cursor" in json) {
+//         // eslint-disable-next-line @typescript-eslint/no-explicit-any
+//         const cursor = (json as any)["cursor"];
+//         if (typeof cursor === "string") {
+//           return { cursor };
+//         }
+//       }
+//
+//       return undefined;
+//     })
+//     .catch((err) => {
+//       if (err.code === "ENOENT") return undefined;
+//       throw err;
+//     });
+//
+// const saveState = (stateFile: string, state: State): Promise<void> => {
+//   const tmpFile = stateFile + `.tmp.${randomUUID().toString()}`;
+//
+//   const w = fs.createWriteStream(tmpFile, { mode: 0o600, flags: "wx" });
+//
+//   return new Promise((resolve, reject) =>
+//     w.write(JSON.stringify(state) + "\n", "utf-8", (err) =>
+//       err ? reject(err) : resolve(undefined)
+//     )
+//   )
+//     .then(() => fs.promises.rename(tmpFile, stateFile))
+//     .finally(() => w.close())
+//     .finally(() => fs.unlink(tmpFile, () => {}));
+// };
+
 const handler: Handler = async (
   dbxp: DropboxProvider,
   argv: string[],
@@ -39,10 +79,12 @@ const handler: Handler = async (
 ): Promise<void> => {
   let tail = false;
   let dryRun = false;
+  // let stateFile: string | undefined = undefined;
 
   argv = processOptions(argv, {
     [TAIL]: () => (tail = true),
     [DRY_RUN]: () => (dryRun = true),
+    // [STATE_FILE]: (args) => (stateFile = args.shift()),
   });
 
   if (argv.length > 1) usageFail();
@@ -117,10 +159,19 @@ const handler: Handler = async (
     ]).then(() => undefined);
   };
 
-  await lister(
+  const initialCursor: string | undefined = undefined;
+  // if (stateFile) {
+  //   initialCursor = (await loadState(stateFile))?.cursor;
+  // }
+
+  const listerArgs: ListerArgs = initialCursor
+    ? { tag: "cursor", cursor: initialCursor, tail }
+    : { tag: "path", path, recursive: true, latest: false, tail };
+
+  await lister({
     dbx,
-    { path, recursive: true, tail, latest: false },
-    async (item) => {
+    listing: listerArgs,
+    onItem: async (item) => {
       console.log(JSON.stringify(item));
 
       if (item[".tag"] === "file" && item.path_lower && item.path_display) {
@@ -131,15 +182,21 @@ const handler: Handler = async (
 
       return Promise.resolve();
     },
-    async (cursor) => console.log({ cursor }),
-    async () => console.log("pause"),
-    async () => console.log("resume")
-  );
+    onCursor: async (cursor) => {
+      console.log({ cursor });
+      // if (stateFile) await saveState(stateFile, { cursor });
+    },
+    onPause: async () => {
+      console.log("pause");
+    },
+    onResume: async () => console.log("resume"),
+  });
 
   await shutdownPromise;
   process.exit(0);
 };
 
+// const argsHelp = `[${TAIL}] [${DRY_RUN}] [${STATE_FILE} FILE] [PATH]`;
 const argsHelp = `[${TAIL}] [${DRY_RUN}] [PATH]`;
 
 export default { verb, handler, argsHelp };

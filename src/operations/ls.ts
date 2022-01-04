@@ -121,20 +121,21 @@ const handler: Handler = async (
     }
   };
 
-  await lister(
+  await lister({
     dbx,
-    {
+    listing: {
+      tag: "path",
       path,
       recursive,
       tail,
       latest,
     },
-    async (object) => {
+    onItem: async (object) => {
       if (object[".tag"] === "file") statsAddFile(object);
       if (object[".tag"] === "folder") statsAddFolder(object);
       await writeStdout(JSON.stringify(object) + "\n");
-    }
-  );
+    },
+  });
 
   if (showPerDirectoryTotals) {
     const payload: Record<string, FolderStats> = {};

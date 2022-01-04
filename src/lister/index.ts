@@ -1,22 +1,31 @@
 import { Dropbox, files } from "dropbox";
 
-export default async (
-  dbx: Dropbox,
-  args: {
-    path: string;
-    tail: boolean;
-    latest: boolean;
-    recursive: boolean;
-    cursor?: string;
-  },
-  onItem: (item: files.ListFolderResult["entries"][0]) => Promise<void>,
-  onCursor?: (cursor: string) => Promise<void>,
-  onPause?: () => Promise<void>,
-  onResume?: () => Promise<void>
-): Promise<void> => {
-  const followCursor = async (cursor: string): Promise<void> => {
-    if (onCursor) await onCursor(cursor);
-    if (onPause) await onPause();
+export type ListerArgs =
+  | {
+      tag: "path";
+      path: string;
+      recursive: boolean;
+      latest: boolean;
+      tail: boolean;
+    }
+  | {
+      tag: "cursor";
+      cursor: string;
+      tail: boolean;
+    };
+
+export default async (args: {
+  dbx: Dropbox;
+  listing: ListerArgs;
+  onItem: (item: files.ListFolderResult["entries"][0]) => Promise<void>;
+  onCursor?: (cursor: string) => Promise<void>;
+  onPause?: (cursor: string) => Promise<void>;
+  onResume?: () => Promise<void>;
+}): Promise<void> => {
+  const { dbx, listing, onItem, onCursor, onPause, onResume } = args;
+
+  const pauseAndFollowCursor = async (cursor: string): Promise<void> => {
+    if (onPause) await onPause(cursor);
 
     while (true) {
       // If stdout was buffered, we'd flush it here
@@ -45,34 +54,36 @@ export default async (
       await onItem(item);
     }
 
+    if (onCursor) await onCursor(page.cursor);
+
     if (page.has_more) {
-      if (onCursor) await onCursor(page.cursor);
       return dbx
         .filesListFolderContinue({ cursor: page.cursor })
         .then((r) => handlePage(r.result));
-    } else if (args.tail) {
-      return followCursor(page.cursor);
+    } else if (listing.tail) {
+      return pauseAndFollowCursor(page.cursor);
     } else {
-      if (onCursor) await onCursor(page.cursor);
       return Promise.resolve();
     }
   };
 
-  if (args.latest) {
-    const cursor = (
-      await dbx.filesListFolderGetLatestCursor({
-        path: args.path,
-        recursive: args.recursive,
+  const firstPage = () => {
+    if (listing.tag === "cursor")
+      return dbx.filesListFolderContinue({ cursor: listing.cursor });
+
+    if (!listing.latest)
+      return dbx.filesListFolder({
+        path: listing.path,
+        recursive: listing.recursive,
+      });
+
+    return dbx
+      .filesListFolderGetLatestCursor({
+        path: listing.path,
+        recursive: listing.recursive,
       })
-    ).result.cursor;
-    return followCursor(cursor);
-  } else if (args.cursor) {
-    return followCursor(args.cursor);
-  } else {
-    const firstPage = await dbx.filesListFolder({
-      path: args.path,
-      recursive: args.recursive,
-    });
-    return handlePage(firstPage.result);
-  }
+      .then((r) => dbx.filesListFolderContinue({ cursor: r.result.cursor }));
+  };
+
+  return firstPage().then((r) => handlePage(r.result));
 };

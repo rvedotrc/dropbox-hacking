@@ -67,7 +67,7 @@ export const main = (
         syncStats.totalBytes += remote.size;
         if (dryRun) return Promise.resolve();
 
-        return downloader(dbx, thisLocalPath, remote);
+        return downloader({ dbx, local: thisLocalPath, remote });
       };
 
       const unconditionalDownload = (

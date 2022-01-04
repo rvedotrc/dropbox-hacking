@@ -8,11 +8,13 @@ import limiter from "../uploader/limiter";
 
 const defaultLimiter = limiter(5);
 
-export default (
-  dbx: Dropbox,
-  local: string,
-  remote: files.FileMetadata
-): Promise<void> => {
+export default (args: {
+  dbx: Dropbox;
+  local: string;
+  remote: files.FileMetadata;
+}): Promise<void> => {
+  const { dbx, local, remote } = args;
+
   const id = randomUUID().toString();
   const tmpLocal = `${local}.tmp.dbxsync.${id}`;
   const mtime = parseTime(remote.client_modified);
