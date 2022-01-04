@@ -45,7 +45,9 @@ const handler: Handler = async (
     [DRY_RUN]: () => (dryRun = true),
   });
 
-  if (argv.length !== 0) usageFail();
+  if (argv.length > 1) usageFail();
+
+  const path = argv[0] || CAMERA_UPLOADS;
 
   const dbx = await dbxp();
 
@@ -117,13 +119,14 @@ const handler: Handler = async (
 
   await lister(
     dbx,
-    { path: CAMERA_UPLOADS, recursive: true, tail, latest: false },
+    { path, recursive: true, tail, latest: false },
     async (item) => {
       console.log(JSON.stringify(item));
 
       if (item[".tag"] === "file" && item.path_lower && item.path_display) {
         const wantedPath = targetForFile(item);
-        if (wantedPath) return shutdownWaitsFor(tryMove(item, wantedPath));
+        if (wantedPath && wantedPath.toLowerCase() !== item.path_lower)
+          return shutdownWaitsFor(tryMove(item, wantedPath));
       }
 
       return Promise.resolve();
@@ -137,6 +140,6 @@ const handler: Handler = async (
   process.exit(0);
 };
 
-const argsHelp = `[${TAIL}] [${DRY_RUN}]`;
+const argsHelp = `[${TAIL}] [${DRY_RUN}] [PATH]`;
 
 export default { verb, handler, argsHelp };
