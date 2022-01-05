@@ -2,6 +2,9 @@ module.exports = {
   root: true,
   ignorePatterns: ["**/jest.config.js", "*.auto.ts", "*.gen.ts", "**/node_modules", "**/dist", ".yarn", ".eslintrc.js"],
   parser: '@typescript-eslint/parser',
+  parserOptions: {
+    "ecmaVersion": "2017"
+  },
   plugins: [
     '@typescript-eslint',
   ],
@@ -11,12 +14,12 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
   ],
   rules: {
-    "no-constant-condition": 0,
-    "no-shadow": 1,
-    "@typescript-eslint/ban-ts-ignore": 0,
+    "no-constant-condition": "off",
+    "no-shadow": "error",
+    "@typescript-eslint/ban-ts-ignore": "off",
     "@typescript-eslint/consistent-type-definitions": ["error", "type"],
     "@typescript-eslint/explicit-module-boundary-types": ["error"],
-    "@typescript-eslint/no-inferrable-types": "off",
+    // "@typescript-eslint/no-inferrable-types": "off",
     "@typescript-eslint/no-empty-function": "off",
     "object-shorthand": "error",
     "no-unused-vars": "off",

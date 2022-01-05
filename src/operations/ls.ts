@@ -135,7 +135,7 @@ const handler: Handler = async (
       if (object[".tag"] === "folder") statsAddFolder(object);
       await writeStdout(JSON.stringify(object) + "\n");
     },
-  });
+  }).promise;
 
   if (showPerDirectoryTotals) {
     const payload: Record<string, FolderStats> = {};

@@ -14,20 +14,23 @@ export type ListerArgs =
       tail: boolean;
     };
 
-export default async (args: {
+export default (args: {
   dbx: Dropbox;
   listing: ListerArgs;
   onItem: (item: files.ListFolderResult["entries"][0]) => Promise<void>;
   onCursor?: (cursor: string) => Promise<void>;
   onPause?: (cursor: string) => Promise<void>;
   onResume?: () => Promise<void>;
-}): Promise<void> => {
+}): { promise: Promise<"complete" | "cancelled">; cancel: () => void } => {
   const { dbx, listing, onItem, onCursor, onPause, onResume } = args;
+  let cancelled = false;
 
-  const pauseAndFollowCursor = async (cursor: string): Promise<void> => {
+  const pauseAndFollowCursor = async (
+    cursor: string
+  ): Promise<Promise<"complete" | "cancelled">> => {
     if (onPause) await onPause(cursor);
 
-    while (true) {
+    while (!cancelled) {
       // If stdout was buffered, we'd flush it here
       // console.debug("long poll");
       const r = (await dbx.filesListFolderLongpoll({ cursor, timeout: 300 }))
@@ -43,18 +46,24 @@ export default async (args: {
       }
     }
 
+    if (cancelled) return "cancelled";
+
     // console.debug("continue");
     if (onResume) await onResume();
     const page = (await dbx.filesListFolderContinue({ cursor })).result;
     return handlePage(page);
   };
 
-  const handlePage = async (page: files.ListFolderResult): Promise<void> => {
+  const handlePage = async (
+    page: files.ListFolderResult
+  ): Promise<"complete" | "cancelled"> => {
     for (const item of page.entries) {
       await onItem(item);
     }
 
     if (onCursor) await onCursor(page.cursor);
+
+    if (cancelled) return "cancelled";
 
     if (page.has_more) {
       return dbx
@@ -63,7 +72,7 @@ export default async (args: {
     } else if (listing.tail) {
       return pauseAndFollowCursor(page.cursor);
     } else {
-      return Promise.resolve();
+      return Promise.resolve("complete");
     }
   };
 
@@ -85,5 +94,8 @@ export default async (args: {
       .then((r) => dbx.filesListFolderContinue({ cursor: r.result.cursor }));
   };
 
-  return firstPage().then((r) => handlePage(r.result));
+  return {
+    promise: firstPage().then((r) => handlePage(r.result)),
+    cancel: () => (cancelled = true),
+  };
 };

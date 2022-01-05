@@ -190,7 +190,7 @@ const handler: Handler = async (
       console.log("pause");
     },
     onResume: async () => console.log("resume"),
-  });
+  }).promise;
 
   await shutdownPromise;
   process.exit(0);
