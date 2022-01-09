@@ -250,7 +250,7 @@ const initHandler: Handler = async (
   });
 
   await r.promise;
-  await stateDir.flush();
+  await stateDir.setReady();
 };
 
 const updateHandler: Handler = async (
@@ -320,7 +320,12 @@ const showHandler: Handler = async (
     ).then(() => process.exit(1));
   }
 
-  await writeStdout(JSON.stringify(state) + "\n");
+  const payload = {
+    ...state,
+    entries: [...state.entries.values()],
+  };
+
+  await writeStdout(JSON.stringify(payload) + "\n");
 };
 
 const handler: Handler = (
