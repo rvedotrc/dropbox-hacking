@@ -36,7 +36,7 @@ export const main = (
       };
 
       const doDelete = (item: FileItem | DirectoryItem): Promise<void> => {
-        debug(`delete ${item.path}`);
+        console.info(`delete ${item.path}`);
         if (item.tag === "file") ++syncStats.filesToDelete;
         if (dryRun) return Promise.resolve();
 
@@ -52,7 +52,7 @@ export const main = (
         thisLocalPath: string,
         mtime: Date
       ): Promise<void> => {
-        debug(`set mtime of ${thisLocalPath} to ${mtime}`);
+        console.info(`set mtime of ${thisLocalPath} to ${mtime}`);
         ++syncStats.filesToSetMtime;
         if (dryRun) return Promise.resolve();
 
@@ -63,7 +63,9 @@ export const main = (
         thisLocalPath: string,
         remote: files.FileMetadata
       ): Promise<void> => {
-        debug(`doDownload from ${remote.path_display} to ${thisLocalPath}`);
+        console.info(
+          `doDownload from ${remote.path_display} to ${thisLocalPath}`
+        );
         ++syncStats.filesToDownload;
         syncStats.totalBytes += remote.size;
         if (dryRun) return Promise.resolve();

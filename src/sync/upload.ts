@@ -35,7 +35,7 @@ export const main = (
       };
 
       const mkdir = (remotePath: string): Promise<void> => {
-        debug(`mkdir ${remotePath}`);
+        console.info(`mkdir ${remotePath}`);
         if (dryRun) return Promise.resolve();
 
         return dbx
@@ -44,7 +44,7 @@ export const main = (
       };
 
       const doUpload = (local: FileItem, remotePath: string): Promise<void> => {
-        debug(`doUpload from ${local.path} to ${remotePath}`);
+        console.info(`doUpload from ${local.path} to ${remotePath}`);
         ++syncStats.filesToUpload;
         syncStats.totalBytes += local.stat.size;
         if (dryRun) return Promise.resolve();
@@ -150,7 +150,7 @@ export const main = (
           }
         } else if (action.remote && withDelete) {
           const path = action.remote.metadata.path_display;
-          debug(`delete ${path}`);
+          console.info(`delete ${path}`);
           ++syncStats.filesToDelete;
           if (!dryRun) {
             // FIXME: catch the not-found case
