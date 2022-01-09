@@ -5,6 +5,7 @@ import catOperation from "./operations/cat";
 import contentHashStdinOperation from "./operations/contentHashStdin";
 import cpOperation from "./operations/cp";
 import lsOperation from "./operations/ls";
+import lsCacheOperation from "./operations/lsCache";
 import mkdirOperation from "./operations/mkdir";
 import mvOperation from "./operations/mv";
 import processCameraUploads from "./operations/processCameraUploads";
@@ -46,6 +47,7 @@ export default (argv: string[]): void => {
     contentHashStdinOperation,
     cpOperation,
     lsOperation,
+    lsCacheOperation,
     mkdirOperation,
     mvOperation,
     processCameraUploads,
@@ -60,7 +62,11 @@ export default (argv: string[]): void => {
 
     for (const op of operations) {
       if (verb === undefined || verb === op.verb) {
-        s += `  ${prefix} [GLOBAL-OPTIONS] ${op.verb} ${op.argsHelp}\n`;
+        const argsHelp =
+          typeof op.argsHelp === "string" ? [op.argsHelp] : op.argsHelp;
+        for (const help of argsHelp) {
+          s += `  ${prefix} [GLOBAL-OPTIONS] ${op.verb} ${help}\n`;
+        }
       }
     }
 

@@ -12,7 +12,7 @@ export type Handler = (
 export type Operation = {
   verb: string;
   handler: Handler;
-  argsHelp: string;
+  argsHelp: string | string[];
 };
 
 export type GlobalOptions = {
