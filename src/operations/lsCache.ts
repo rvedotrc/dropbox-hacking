@@ -18,12 +18,14 @@ type NonDeletedEntries = (
   | files.FolderMetadataReference
 )[];
 
+type NonDeletedEntriesMap = Map<string, NonDeletedEntries[0]>;
+
 type State =
   | { tag: "does_not_exist" }
   | { tag: "starting"; cursor: string }
   | {
       tag: "ready";
-      entries: NonDeletedEntries;
+      entries: NonDeletedEntriesMap;
       cursor: string;
       path: string;
       recursive: boolean;
@@ -32,7 +34,7 @@ type State =
 
 type Data = {
   ready: boolean;
-  entries: NonDeletedEntries;
+  entries: NonDeletedEntriesMap;
   cursor: string;
   path: string;
   recursive: boolean;
@@ -52,7 +54,8 @@ class StateDir {
 
   public async getState(): Promise<State> {
     return this.getData().then((data) => {
-      if (!data || data.correctAsOf === 0) return { tag: "does_not_exist" };
+      if (data === undefined || data.correctAsOf === 0)
+        return { tag: "does_not_exist" };
 
       if (!data.ready)
         return {
@@ -83,7 +86,7 @@ class StateDir {
       .then(() =>
         this.setData({
           ready: false,
-          entries: [],
+          entries: new Map(),
           path,
           recursive,
           cursor: "",
@@ -96,25 +99,16 @@ class StateDir {
     console.debug(`addItem ${item[".tag"]} ${item.path_lower}`);
 
     if (!this.data) throw "No data";
-    let entries = this.data.entries;
+    const entries: Data["entries"] = new Map(this.data.entries);
 
     // Naive approach for now. Will not scale well.
     // - keeps all entries in memory
     // - reserialises and writes on every single item
 
     if (item[".tag"] == "deleted") {
-      entries = entries.filter(
-        (e) =>
-          e.path_lower !== item.path_lower &&
-          !e.path_lower?.startsWith(item.path_lower + "/")
-      );
+      if (item.path_lower !== undefined) entries.delete(item.path_lower);
     } else {
-      entries = [...entries];
-
-      const index = entries.findIndex((e) => e.path_lower === item.path_lower);
-      if (index >= 0) entries.splice(index, 1);
-
-      entries.push(item);
+      if (item.path_lower !== undefined) entries.set(item.path_lower, item);
     }
 
     return this.setData({ ...this.data, entries });
@@ -146,20 +140,49 @@ class StateDir {
           throw err;
         }
       )
-      .then((data) => (this.data = data));
+      .then((data) => {
+        if (data !== undefined) {
+          data = {
+            ...data,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            entries: this.entriesToMap((data as any).entries),
+          };
+        }
+
+        this.data = data;
+
+        return data;
+      });
   }
 
   private setData(data: Data): Promise<void> {
     const tmpFile = this.entriesFile + ".tmp";
-    console.debug(`setData with ${data.entries.length} entries`);
+    console.debug(`setData with ${data.entries.size} entries`);
+    const payload = {
+      ...data,
+      entries: this.entriesToArray(data.entries),
+    };
     return fs.promises
-      .writeFile(tmpFile, JSON.stringify(data) + "\n", {
+      .writeFile(tmpFile, JSON.stringify(payload) + "\n", {
         encoding: "utf-8",
         mode: 0o600,
       })
       .then(() => fs.promises.rename(tmpFile, this.entriesFile))
       .then(() => (this.data = data))
       .then(() => undefined);
+  }
+
+  private entriesToMap(entries: NonDeletedEntries): NonDeletedEntriesMap {
+    const map: NonDeletedEntriesMap = new Map();
+    for (const entry of entries) {
+      if (entry.path_lower !== undefined) map.set(entry.path_lower, entry);
+    }
+
+    return map;
+  }
+
+  private entriesToArray(entries: NonDeletedEntriesMap): NonDeletedEntries {
+    return [...entries.values()];
   }
 }
 
