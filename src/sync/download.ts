@@ -15,6 +15,7 @@ export const main = (
   localPath: string,
   dryRun: boolean,
   withDelete: boolean,
+  checkContentHash: boolean,
   globalOptions: GlobalOptions
 ): Promise<boolean> =>
   engine
@@ -113,12 +114,16 @@ export const main = (
         // We know that they both exist, and are files
         if (stats.size !== remote.size) return Promise.resolve(true);
 
+        const timestampsMatch =
+          formatTime(stats.mtime) === remote.client_modified;
+        if (timestampsMatch && !checkContentHash) return Promise.resolve(false);
+
         return contentHash(
           fs.createReadStream(thisLocalPath, { autoClose: true })
         ).then((hash) => {
           if (hash !== remote.content_hash) return true;
 
-          if (formatTime(stats.mtime) !== remote.client_modified) {
+          if (!timestampsMatch) {
             return "set_mtime";
           }
 
