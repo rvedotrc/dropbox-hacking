@@ -29,7 +29,7 @@ type State =
       cursor: string;
       path: string;
       recursive: boolean;
-      correctAsOf: Date;
+      correctAsOf: number;
     };
 
 type Data = {
@@ -45,89 +45,109 @@ class StateDir {
   private readonly dir: string;
   private readonly entriesFile: string;
   private data: Data | undefined;
+  private dirty: boolean;
+  private lastSaved: number;
 
   constructor(dir: string) {
     this.dir = dir;
     this.entriesFile = `${dir}/entries.json`;
     this.data = undefined;
+    this.dirty = false;
+    this.lastSaved = 0;
+  }
+
+  public load(): Promise<void> {
+    return this.getData().then((data) => {
+      this.data = data;
+      this.dirty = false;
+    });
   }
 
   public async getState(): Promise<State> {
-    return this.getData().then((data) => {
-      if (data === undefined || data.correctAsOf === 0)
-        return { tag: "does_not_exist" };
-
-      if (!data.ready)
-        return {
-          tag: "starting",
-          cursor: data.cursor,
-        };
-
-      return {
-        tag: "ready",
-        entries: data.entries,
-        cursor: data.cursor,
-        path: data.path,
-        recursive: data.recursive,
-        correctAsOf: new Date(data.correctAsOf),
-      };
-    });
+    return Promise.resolve(
+      this.data === undefined
+        ? { tag: "does_not_exist" }
+        : !this.data.ready
+        ? { tag: "starting", cursor: this.data.cursor }
+        : { tag: "ready", ...this.data }
+    );
   }
 
   public initialize(path: string, recursive: boolean): Promise<void> {
     console.debug("initialize");
 
-    return fs.promises
-      .mkdir(this.dir)
-      .catch((err) => {
-        if (err.code === "EEXIST") return;
-        throw err;
-      })
-      .then(() =>
-        this.setData({
-          ready: false,
-          entries: new Map(),
-          path,
-          recursive,
-          cursor: "",
-          correctAsOf: 0,
-        })
-      );
+    this.data = {
+      ready: false,
+      entries: new Map(),
+      path,
+      recursive,
+      cursor: "",
+      correctAsOf: 0,
+    };
+
+    this.dirty = true;
+
+    return this.flush();
   }
 
   public addItem(item: files.ListFolderResult["entries"][0]): Promise<void> {
     console.debug(`addItem ${item[".tag"]} ${item.path_lower}`);
+    if (!item.path_lower) return Promise.resolve();
 
     if (!this.data) throw "No data";
-    const entries: Data["entries"] = new Map(this.data.entries);
 
-    // Naive approach for now. Will not scale well.
-    // - keeps all entries in memory
-    // - reserialises and writes on every single item
+    // Mutates this.data directly; does NOT serialise & save state.
+    // However, at the end of every page, we call setCursor, and that does.
 
     if (item[".tag"] == "deleted") {
-      if (item.path_lower !== undefined) entries.delete(item.path_lower);
+      this.data.entries.delete(item.path_lower);
     } else {
-      if (item.path_lower !== undefined) entries.set(item.path_lower, item);
+      this.data.entries.set(item.path_lower, item);
     }
 
-    return this.setData({ ...this.data, entries });
+    return this.changeMade();
   }
 
   public setCursor(cursor: string): Promise<void> {
     console.debug(`setCursor ${cursor}`);
     if (!this.data) throw "No data";
-    return this.setData({ ...this.data, cursor });
+    this.dirty ||= cursor !== this.data.cursor;
+    this.data.cursor = cursor;
+    if (this.data.cursor !== cursor) {
+      this.data.cursor = cursor;
+      return this.changeMade();
+    } else {
+      return Promise.resolve();
+    }
   }
 
   public setReady(): Promise<void> {
     console.debug("setReady");
     if (!this.data) throw "No data";
-    return this.setData({
-      ...this.data,
-      ready: true,
-      correctAsOf: new Date().getTime(),
+
+    this.data.correctAsOf = new Date().getTime();
+    this.data.ready = true;
+    this.dirty = true;
+
+    return this.flush();
+  }
+
+  public flush(): Promise<void> {
+    if (!this.dirty) return Promise.resolve();
+
+    return this.save().catch((err) => {
+      if (err.code !== "ENOENT") throw err;
+
+      return fs.promises.mkdir(this.dir).then(() => this.save());
     });
+  }
+
+  private changeMade(): Promise<void> {
+    this.dirty = true;
+    const now = new Date().getTime();
+    if (this.lastSaved !== 0 && this.lastSaved < now - 5000)
+      return this.flush();
+    return Promise.resolve();
   }
 
   private getData(): Promise<Data | undefined> {
@@ -155,20 +175,24 @@ class StateDir {
       });
   }
 
-  private setData(data: Data): Promise<void> {
-    const tmpFile = this.entriesFile + ".tmp";
-    console.debug(`setData with ${data.entries.size} entries`);
+  private save(): Promise<void> {
+    if (!this.data) return Promise.resolve(); // Should we unlink instead?
+
+    console.debug(`save with ${this.data.entries.size} entries`);
     const payload = {
-      ...data,
-      entries: this.entriesToArray(data.entries),
+      ...this.data,
+      entries: this.entriesToArray(this.data.entries),
     };
+
+    const tmpFile = this.entriesFile + ".tmp";
     return fs.promises
       .writeFile(tmpFile, JSON.stringify(payload) + "\n", {
         encoding: "utf-8",
         mode: 0o600,
       })
       .then(() => fs.promises.rename(tmpFile, this.entriesFile))
-      .then(() => (this.data = data))
+      .then(() => (this.dirty = false))
+      .then(() => (this.lastSaved = new Date().getTime()))
       .then(() => undefined);
   }
 
@@ -204,8 +228,9 @@ const initHandler: Handler = async (
   if (argv.length !== 2) return usageFail();
 
   const dropboxPath = argv[0];
-  const stateDir = new StateDir(argv[1]);
+  const statePath = argv[1];
 
+  const stateDir = new StateDir(statePath);
   await stateDir.initialize(dropboxPath, recursive);
 
   const dbx = await dbxp();
@@ -242,9 +267,12 @@ const updateHandler: Handler = async (
 
   if (argv.length !== 1) return usageFail();
 
-  const stateDir = new StateDir(argv[0]);
+  const statePath = argv[0];
 
+  const stateDir = new StateDir(statePath);
+  await stateDir.load();
   const state = await stateDir.getState();
+
   if (state.tag === "does_not_exist") {
     await writeStderr(`Error: no existing state, use '${subInit}' first\n`);
     await usageFail();
@@ -263,13 +291,13 @@ const updateHandler: Handler = async (
     },
     onItem: (item) => stateDir.addItem(item),
     onCursor: (cursor) => stateDir.setCursor(cursor),
-    onPause: () => stateDir.setReady(),
+    onPause: () => stateDir.flush(),
   });
 
   await r.promise;
 };
 
-const showHandler: Handler = (
+const showHandler: Handler = async (
   dbxp: DropboxProvider,
   argv: string[],
   globalOptions: GlobalOptions,
@@ -278,17 +306,19 @@ const showHandler: Handler = (
   // `${subShow} STATE_DIR`
   if (argv.length !== 1) return usageFail();
 
-  const stateDir = new StateDir(argv[0]);
+  const statePath = argv[0];
 
-  return stateDir.getState().then(async (state) => {
-    if (state.tag !== "ready") {
-      return writeStderr(
-        "Error: no listing available - use 'update' first\n"
-      ).then(() => process.exit(1));
-    }
+  const stateDir = new StateDir(statePath);
+  await stateDir.load();
+  const state = await stateDir.getState();
 
-    await writeStdout(JSON.stringify(state) + "\n");
-  });
+  if (state.tag !== "ready") {
+    return writeStderr(
+      "Error: no listing available - use 'update' first\n"
+    ).then(() => process.exit(1));
+  }
+
+  await writeStdout(JSON.stringify(state) + "\n");
 };
 
 const handler: Handler = (
