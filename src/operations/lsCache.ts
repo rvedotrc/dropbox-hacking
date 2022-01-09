@@ -250,6 +250,7 @@ const initHandler: Handler = async (
   });
 
   await r.promise;
+  await stateDir.flush();
 };
 
 const updateHandler: Handler = async (
@@ -295,6 +296,7 @@ const updateHandler: Handler = async (
   });
 
   await r.promise;
+  await stateDir.flush();
 };
 
 const showHandler: Handler = async (
