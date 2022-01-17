@@ -190,6 +190,7 @@ const handler: Handler = async (
       console.log("pause");
     },
     onResume: async () => console.log("resume"),
+    globalOptions,
   }).promise;
 
   await shutdownPromise;

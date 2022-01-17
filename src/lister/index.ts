@@ -1,4 +1,5 @@
 import { Dropbox, files } from "dropbox";
+import { GlobalOptions } from "../types";
 
 export type ListerArgs =
   | {
@@ -21,8 +22,10 @@ export default (args: {
   onCursor?: (cursor: string) => Promise<void>;
   onPause?: (cursor: string) => Promise<void>;
   onResume?: () => Promise<void>;
+  globalOptions: GlobalOptions;
 }): { promise: Promise<"complete" | "cancelled">; cancel: () => void } => {
-  const { dbx, listing, onItem, onCursor, onPause, onResume } = args;
+  const { dbx, listing, onItem, onCursor, onPause, onResume, globalOptions } =
+    args;
   let cancelled = false;
 
   const pauseAndFollowCursor = async (
@@ -32,23 +35,25 @@ export default (args: {
 
     while (!cancelled) {
       // If stdout was buffered, we'd flush it here
-      // console.debug("long poll");
+      if (globalOptions.debugPoll) console.debug("long poll");
+
       const r = (await dbx.filesListFolderLongpoll({ cursor, timeout: 300 }))
         .result;
 
+      if (globalOptions.debugPoll) console.debug(`poll result`, r);
       if (r.changes) break;
 
       const backoff = r.backoff;
 
       if (backoff) {
-        console.debug(`sleep ${r.backoff}s`);
+        if (globalOptions.debugPoll) console.debug(`sleep ${r.backoff}s`);
         await new Promise((resolve) => setTimeout(resolve, backoff * 1000));
       }
     }
 
     if (cancelled) return "cancelled";
 
-    // console.debug("continue");
+    // if (globalOptions.debugPoll) console.debug("continue");
     if (onResume) await onResume();
     const page = (await dbx.filesListFolderContinue({ cursor })).result;
     return handlePage(page);

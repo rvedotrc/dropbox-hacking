@@ -22,18 +22,21 @@ const prefix = "./bin/cli";
 const DEBUG_UPLOAD = "--debug-upload";
 const DEBUG_SYNC = "--debug-sync";
 const DEBUG_ERRORS = "--debug-errors";
+const DEBUG_POLL = "--debug-poll";
 
 const getGlobalOptions = (argv: string[]) => {
   const globalOptions: GlobalOptions = {
     debugUpload: false,
     debugSync: false,
     debugErrors: false,
+    debugPoll: false,
   };
 
   const remainingArgs = processOptions(argv, {
     [DEBUG_UPLOAD]: () => (globalOptions.debugUpload = true),
     [DEBUG_SYNC]: () => (globalOptions.debugSync = true),
     [DEBUG_ERRORS]: () => (globalOptions.debugErrors = true),
+    [DEBUG_POLL]: () => (globalOptions.debugPoll = true),
   });
 
   return { globalOptions, remainingArgs };
@@ -74,7 +77,8 @@ export default (argv: string[]): void => {
       "Global options are:\n" +
       `  ${DEBUG_UPLOAD} - enable debugging of large file uploads\n` +
       `  ${DEBUG_SYNC} - enable debugging of sync operations\n` +
-      `  ${DEBUG_ERRORS} - enable debugging of rate limiting and retrying\n`;
+      `  ${DEBUG_ERRORS} - enable debugging of rate limiting and retrying\n` +
+      `  ${DEBUG_POLL} - enable debugging of long-polling\n`;
 
     writeStderr(s).then(() => process.exit(2));
   };

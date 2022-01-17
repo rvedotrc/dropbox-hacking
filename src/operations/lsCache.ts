@@ -247,6 +247,7 @@ const initHandler: Handler = async (
     onItem: (item) => stateDir.addItem(item),
     onCursor: (cursor) => stateDir.setCursor(cursor),
     onPause: () => stateDir.setReady(),
+    globalOptions,
   });
 
   await r.promise;
@@ -293,6 +294,7 @@ const updateHandler: Handler = async (
     onItem: (item) => stateDir.addItem(item),
     onCursor: (cursor) => stateDir.setCursor(cursor),
     onPause: () => stateDir.flush(),
+    globalOptions,
   });
 
   await r.promise;
