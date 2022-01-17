@@ -26,6 +26,44 @@ export default (args: {
 }): { promise: Promise<"complete" | "cancelled">; cancel: () => void } => {
   const { dbx, listing, onItem, onCursor, onPause, onResume, globalOptions } =
     args;
+
+  const doLongPoll = (
+    longPollArgs: files.ListFolderLongpollArg,
+    timeoutMillis: number
+  ): Promise<files.ListFolderLongpollResult> => {
+    let timer: NodeJS.Timer | undefined = undefined;
+
+    let requestPromise = dbx
+      .filesListFolderLongpoll(longPollArgs)
+      .then((r) => r.result);
+
+    if (globalOptions.debugPoll)
+      requestPromise = requestPromise.then(
+        (r) => {
+          console.debug("longpoll returned", r);
+          return r;
+        },
+        (e) => {
+          console.debug("longpoll threw", e);
+          throw e;
+        }
+      );
+
+    const timeoutPromise = new Promise<files.ListFolderLongpollResult>(
+      (resolve) => {
+        timer = setTimeout(() => {
+          if (globalOptions.debugPoll)
+            console.debug("long poll took too long, synthesising a response");
+          resolve({ changes: false });
+        }, timeoutMillis);
+      }
+    );
+
+    return Promise.race([requestPromise, timeoutPromise]).finally(() => {
+      if (timer) clearTimeout(timer);
+    });
+  };
+
   let cancelled = false;
 
   const pauseAndFollowCursor = async (
@@ -37,8 +75,7 @@ export default (args: {
       // If stdout was buffered, we'd flush it here
       if (globalOptions.debugPoll) console.debug("long poll");
 
-      const r = (await dbx.filesListFolderLongpoll({ cursor, timeout: 300 }))
-        .result;
+      const r = await doLongPoll({ cursor }, 300000);
 
       if (globalOptions.debugPoll) console.debug(`poll result`, r);
       if (r.changes) break;
