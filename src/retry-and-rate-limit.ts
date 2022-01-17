@@ -67,7 +67,7 @@ export default (dbx: Dropbox, globalOptions: GlobalOptions): Dropbox => {
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const isRetriable = (input: any): boolean => {
+  const isRateLimit = (input: any): boolean => {
     // {"name":"DropboxResponseError","status":429,"headers":{},"error":{"error_summary":"too_many_write_operations/","error":{"reason":{".tag":"too_many_write_operations"}}}}
     // {"name":"DropboxResponseError","status":409,"headers":{},"error":{"error_summary":"from_write/too_many_write_operations/","error":{".tag":"from_write","from_write":{".tag":"too_many_write_operations"}}}}
 
@@ -79,9 +79,18 @@ export default (dbx: Dropbox, globalOptions: GlobalOptions): Dropbox => {
     return false;
   };
 
+  // err: FetchError: request to https://notify.dropboxapi.com/2/files/list_folder/longpoll failed, reason: getaddrinfo ENOTFOUND notify.dropboxapi.com
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const isNetworkError = (input: any): boolean => {
+    const msg = input?.err;
+    if (typeof msg !== "string") return false;
+
+    return msg.includes("getaddrinfo");
+  };
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const retryError = (error: any): boolean => {
-    if (!isRetriable(error)) return false;
+    if (!isRateLimit(error)) return false;
 
     let retryAfter: number | undefined = undefined;
     if (error.error && error.error.retry_after)
@@ -90,6 +99,15 @@ export default (dbx: Dropbox, globalOptions: GlobalOptions): Dropbox => {
 
     const sleepSeconds = retryAfter || 1;
     rateLimitWaiter.sleep(sleepSeconds * 1000);
+    return true;
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const networkError = (error: any): boolean => {
+    if (!isNetworkError(error)) return false;
+
+    debug(`offline (${error.err.split("\n")[0]}), retryAfter 60`);
+    rateLimitWaiter.sleep(60);
     return true;
   };
 
@@ -110,28 +128,29 @@ export default (dbx: Dropbox, globalOptions: GlobalOptions): Dropbox => {
       (err) => {
         debug(`#${callId} [${methodName}] #${sequence} error`);
 
-        if (!retryError(err)) {
-          debug(
-            `#${callId} [${methodName}] #${sequence} rethrow ${JSON.stringify(
-              err
-            )}`
+        if (retryError(err) || networkError(err)) {
+          debug(`#${callId} [${methodName}] #${sequence} call again`);
+          const nextPromise = rateLimitWaiter
+            .wait(`#${callId} [${methodName}] #${sequence}`)
+            .then(() => real.call(dbx, ...args) as Promise<unknown>);
+
+          return handlePromise(
+            methodName,
+            real,
+            callId,
+            args,
+            nextPromise,
+            sequence + 1
           );
-          throw err;
         }
 
-        debug(`#${callId} [${methodName}] #${sequence} call again`);
-        const nextPromise = rateLimitWaiter
-          .wait(`#${callId} [${methodName}] #${sequence}`)
-          .then(() => real.call(dbx, ...args) as Promise<unknown>);
-
-        return handlePromise(
-          methodName,
-          real,
-          callId,
-          args,
-          nextPromise,
-          sequence + 1
+        debug(
+          `#${callId} [${methodName}] #${sequence} rethrow ${JSON.stringify(
+            err
+          )}`
         );
+
+        throw err;
       }
     );
 
