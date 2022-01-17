@@ -118,7 +118,7 @@ const handler: Handler = async (
     // console.log(` == ${JSON.stringify(existing)}`);
 
     if (existing === undefined) {
-      console.log(`  -> ${wantedPath}`);
+      console.log(`  ${item.path_display} -> ${wantedPath}`);
 
       if (!dryRun) {
         return mover.submit({
