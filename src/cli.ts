@@ -13,7 +13,7 @@ import rmOperation from "./operations/rm";
 import syncDownloadOperation from "./operations/syncDownload";
 import syncUploadOperation from "./operations/syncUpload";
 import uploadStdinOperation from "./operations/uploadStdin";
-import retryAndRateLimit from "./retry-and-rate-limit";
+import { retrier } from "./retry-and-rate-limit";
 import { processOptions } from "./options";
 import { writeStderr } from "./util";
 
@@ -86,7 +86,7 @@ export default (argv: string[]): void => {
   const { globalOptions, remainingArgs } = getGlobalOptions(argv);
 
   const getter = () =>
-    getDropboxClient().then((dbx) => retryAndRateLimit(dbx, globalOptions));
+    getDropboxClient().then((dbx) => retrier(dbx, globalOptions));
 
   const op = operations.find(({ verb }) => verb === remainingArgs[0]);
   if (op) {

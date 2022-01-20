@@ -140,6 +140,7 @@ export const getDropboxClient = async (): Promise<Dropbox> =>
 
       // console.debug("checkAndRefreshAccessToken", JSON.stringify(auth));
 
+      // Incorrect signature; actually returns Promise<void>
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return (auth.checkAndRefreshAccessToken() as any as Promise<void>)
         .then(() => {
