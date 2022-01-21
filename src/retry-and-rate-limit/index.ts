@@ -1,6 +1,7 @@
 import { Dropbox } from "dropbox";
 import { GlobalOptions } from "../types";
 import WrappedMethod from "./wrapped-method";
+import { cancel } from "./retrying-promise";
 
 export default (dbx: Dropbox, globalOptions: GlobalOptions): Dropbox => {
   for (const m in dbx) {
@@ -16,6 +17,4 @@ export default (dbx: Dropbox, globalOptions: GlobalOptions): Dropbox => {
   return dbx;
 };
 
-// export const cancel = (promise: Promise<unknown>): void => {
-//     if
-// };
+export { cancel };

@@ -1,5 +1,6 @@
 import { Dropbox, files } from "dropbox";
 import { GlobalOptions } from "../types";
+import { cancel } from "../retry-and-rate-limit";
 
 export type ListerArgs =
   | {
@@ -27,15 +28,17 @@ export default (args: {
   const { dbx, listing, onItem, onCursor, onPause, onResume, globalOptions } =
     args;
 
+  // Synthesise a response if it seems to take forever. Is this problem
+  // *specific* to the long poll, or simply more likely, because that's
+  // where most of the time is spent?
   const doLongPoll = (
     longPollArgs: files.ListFolderLongpollArg,
     timeoutMillis: number
   ): Promise<files.ListFolderLongpollResult> => {
     let timer: NodeJS.Timer | undefined = undefined;
 
-    let requestPromise = dbx
-      .filesListFolderLongpoll(longPollArgs)
-      .then((r) => r.result);
+    const primaryPromise = dbx.filesListFolderLongpoll(longPollArgs);
+    let requestPromise = primaryPromise.then((r) => r.result);
 
     if (globalOptions.debugPoll)
       requestPromise = requestPromise.then(
@@ -54,6 +57,7 @@ export default (args: {
         timer = setTimeout(() => {
           if (globalOptions.debugPoll)
             console.debug("long poll took too long, synthesising a response");
+          cancel(primaryPromise);
           resolve({ changes: false });
         }, timeoutMillis);
       }
