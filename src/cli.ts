@@ -13,7 +13,7 @@ import rmOperation from "./operations/rm";
 import syncDownloadOperation from "./operations/syncDownload";
 import syncUploadOperation from "./operations/syncUpload";
 import uploadStdinOperation from "./operations/uploadStdin";
-import { retrier } from "./retry-and-rate-limit";
+import retrier from "./retry-and-rate-limit";
 import { processOptions } from "./options";
 import { writeStderr } from "./util";
 
