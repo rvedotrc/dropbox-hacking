@@ -74,7 +74,7 @@ export default class WrappedMethod<M extends keyof Dropbox> {
     };
 
     // wrapped.__proto__ = this.real;
-    console.debug("wrap", this.methodName, this.real, wrapped);
+    // console.debug("wrap", this.methodName, this.real, wrapped);
 
     this.dbx[this.methodName] = wrapped as Dropbox[M];
   }
