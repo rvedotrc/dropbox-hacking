@@ -28,15 +28,15 @@ const handler: Handler = async (
   const dropboxPath = argv[1];
 
   return upload
-    .main(
+    .main({
       dbxp,
       dropboxPath,
       localPath,
       dryRun,
       withDelete,
       checkContentHash,
-      globalOptions
-    )
+      globalOptions,
+    })
     .then((success) => process.exit(success ? 0 : 1));
 };
 

@@ -9,16 +9,30 @@ import { DropboxProvider, GlobalOptions } from "../types";
 import downloader from "../downloader";
 import { DirectoryItem, FileItem } from "./local-listing";
 
-export const main = (
-  dbxp: DropboxProvider,
-  dropboxPath: string,
-  localPath: string,
-  dryRun: boolean,
-  withDelete: boolean,
-  checkContentHash: boolean,
-  globalOptions: GlobalOptions
-): Promise<boolean> =>
-  engine
+export type DownloadArgs = {
+  dbxp: DropboxProvider;
+  dropboxPath: string;
+  localPath: string;
+  dryRun: boolean;
+  withDelete: boolean;
+  checkContentHash: boolean;
+  globalOptions: GlobalOptions;
+  remoteFilter?: RegExp;
+};
+
+export const main = (downloadArgs: DownloadArgs): Promise<boolean> => {
+  const {
+    dbxp,
+    dropboxPath,
+    localPath,
+    dryRun,
+    withDelete,
+    checkContentHash,
+    globalOptions,
+    remoteFilter,
+  } = downloadArgs;
+
+  return engine
     .calculate(dbxp, dropboxPath, localPath, globalOptions)
     .then(async ({ syncActions, dbx }) => {
       const debug = (...args: unknown[]) => {
@@ -138,6 +152,15 @@ export const main = (
           const thisLocalPath = localPath + action.remote.relativePath;
           const remotePathDisplay = action.remote.metadata.path_display;
 
+          if (
+            action.remote &&
+            remoteFilter &&
+            !remoteFilter.exec(action.remote.metadata.name)
+          ) {
+            debug(`filtering out ${action.remote.metadata.path_display}`);
+            return Promise.resolve();
+          }
+
           if (action.tag === "file") {
             const metadata = action.remote.metadata;
 
@@ -192,3 +215,4 @@ export const main = (
         .then(() => writeStdout(JSON.stringify({ stats: syncStats }) + "\n"))
         .then(() => true);
     });
+};

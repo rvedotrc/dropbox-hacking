@@ -7,16 +7,27 @@ import { DropboxProvider, GlobalOptions } from "../types";
 import * as uploader from "../uploader";
 import { FileItem } from "./local-listing";
 
-export const main = (
-  dbxp: DropboxProvider,
-  dropboxPath: string,
-  localPath: string,
-  dryRun: boolean,
-  withDelete: boolean,
-  checkContentHash: boolean,
-  globalOptions: GlobalOptions
-): Promise<boolean> =>
-  engine
+export type UploadArgs = {
+  dbxp: DropboxProvider;
+  dropboxPath: string;
+  localPath: string;
+  dryRun: boolean;
+  withDelete: boolean;
+  checkContentHash: boolean;
+  globalOptions: GlobalOptions;
+};
+
+export const main = (uploadArgs: UploadArgs): Promise<boolean> => {
+  const {
+    dbxp,
+    dropboxPath,
+    localPath,
+    dryRun,
+    withDelete,
+    checkContentHash,
+    globalOptions,
+  } = uploadArgs;
+  return engine
     .calculate(dbxp, dropboxPath, localPath, globalOptions)
     .then(async ({ syncActions, dbx }) => {
       if ((await engine.showErrorsAndWarnings(syncActions)).hasErrors) {
@@ -173,3 +184,4 @@ export const main = (
         .then(() => writeStdout(JSON.stringify({ stats: syncStats }) + "\n"))
         .then(() => true);
     });
+};
