@@ -8,6 +8,8 @@ import { Buffer } from "buffer";
 import { ReadStream } from "fs";
 import { ExifDB } from "./exif/exifDB";
 
+type FileLimiter = Limiter<[string, ExifData]>;
+
 const exifFromStream = (r: ReadStream): Promise<ExifData> =>
   new Promise<ExifData>((resolve, reject) => {
     let exifBuffer = Buffer.alloc(0);
@@ -39,34 +41,34 @@ const exifFromStream = (r: ReadStream): Promise<ExifData> =>
 const processFile = (
   filename: string,
   stats: fs.Stats,
-  fileLimiter: Limiter<void>,
+  fileLimiter: FileLimiter,
   exifDB: ExifDB
 ): Promise<void> => {
   if (!filename.toLowerCase().endsWith(".jpg")) return Promise.resolve();
 
-  return fileLimiter.submit(
-    () =>
-      exifDB.seenFileId(stats).then((seen) => {
-        if (seen) {
-          console.log(
-            `Already seen ${stats.dev}.${stats.ino} (${filename}), skipping`
-          );
-          return Promise.resolve();
-        }
+  return exifDB.seenFileId(stats).then((seen) => {
+    if (seen) {
+      // console.log(
+      //   `Already seen ${stats.dev}.${stats.ino} (${filename}), skipping`
+      // );
+      return Promise.resolve();
+    }
 
+    return fileLimiter
+      .submit(() => {
         const r = fs.createReadStream(filename);
 
-        return Promise.all([makeContentHash(r), exifFromStream(r)]).then(
-          ([hash, exifData]) => exifDB.store(stats, hash, exifData, filename)
-        );
-      }),
-    filename
-  );
+        return Promise.all([makeContentHash(r), exifFromStream(r)]);
+      }, filename)
+      .then(([hash, exifData]) =>
+        exifDB.store(stats, hash, exifData, filename)
+      );
+  });
 };
 
 const scanDir = (
   dir: string,
-  fileLimiter: Limiter<void>,
+  fileLimiter: FileLimiter,
   exifDB: ExifDB
 ): Promise<void> =>
   fs.promises
@@ -83,7 +85,7 @@ const scanDir = (
 
 const statAndProcess = (
   item: string,
-  fileLimiter: Limiter<void>,
+  fileLimiter: FileLimiter,
   exifDB: ExifDB
 ): Promise<void> =>
   fs.promises
@@ -97,7 +99,7 @@ const statAndProcess = (
     );
 
 const main = () => {
-  const fileLimiter = limiter<void>(4);
+  const fileLimiter: FileLimiter = limiter(5);
   const exifDB = new ExifDB("var/exifdb");
 
   Promise.all(
