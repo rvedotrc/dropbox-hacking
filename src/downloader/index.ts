@@ -19,12 +19,12 @@ export default (args: {
   const tmpLocal = `${local}.tmp.dbxsync.${id}`;
   const mtime = parseTime(remote.client_modified);
 
-  const log =
-    <T>(message: string) =>
-    (result: T): T => {
-      console.debug(`download ${local}: ${message}`);
-      return result;
-    };
+  // const log =
+  //   <T>(message: string) =>
+  //   (result: T): T => {
+  //     console.debug(`download ${local}: ${message}`);
+  //     return result;
+  //   };
 
   return defaultLimiter
     .submit(() => {
@@ -34,13 +34,11 @@ export default (args: {
 
       return dbx
         .filesGetTemporaryLink({ path: `rev:${remote.rev}` })
-        .then(log(`got link`))
         .then((r) => r.result.link)
         .then((uri) =>
           new Promise<void>((resolve, reject) => {
             const req = https
               .get(uri, {}, (res: http.IncomingMessage) => {
-                console.log(`download ${local}: piping`);
                 res.pipe(w);
                 res.on("error", reject);
                 res.on("end", resolve);
@@ -54,13 +52,9 @@ export default (args: {
             }, 300 * 1000);
           }).finally(() => timer && clearTimeout(timer))
         )
-        .then(log(`utimes`))
         .then(() => fs.promises.utimes(tmpLocal, mtime, mtime))
-        .then(log(`chmod`))
         .then(() => fs.promises.chmod(tmpLocal, 0o644))
-        .then(log(`rename`))
         .then(() => fs.promises.rename(tmpLocal, local))
-        .then(log(`finally`))
         .finally(() => w.close())
         .finally(() => fs.unlink(tmpLocal, () => {}));
     }, `download ${remote.path_display} => ${local}`)
