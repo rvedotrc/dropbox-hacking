@@ -5,7 +5,7 @@ type Entry<T> = {
   tag: unknown;
 };
 
-type Limiter<T> = {
+export type Limiter<T> = {
   submit: (makePromise: () => Promise<T>, tag?: unknown) => Promise<T>;
 };
 
