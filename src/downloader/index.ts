@@ -37,13 +37,17 @@ export default (args: {
         .then(
           (uri) =>
             new Promise<void>((resolve, reject) => {
-              https.get(uri, {}, (res: http.IncomingMessage) => {
-                console.log(`download ${local}: piping`);
-                res.pipe(w);
-                res.on("error", reject);
-                res.on("end", resolve);
-                w.on("error", reject);
-              });
+              https
+                .get(uri, {}, (res: http.IncomingMessage) => {
+                  console.log(`download ${local}: piping`);
+                  res.pipe(w);
+                  res.on("error", reject);
+                  res.on("end", resolve);
+                  w.on("error", reject);
+                })
+                .on("error", reject)
+                .on("abort", reject)
+                .on("timeout", reject);
             })
         )
         .then(log(`utimes`))
