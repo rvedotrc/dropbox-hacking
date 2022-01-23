@@ -1,4 +1,5 @@
 type Entry<T> = {
+  id: number;
   makePromise: () => Promise<T>;
   resolve: (value: T | PromiseLike<T>) => void;
   reject: (reason?: any) => void; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -13,17 +14,30 @@ export default <T>(size: number): Limiter<T> => {
   let free = size;
   const queue: Entry<T>[] = [];
 
+  const inFlight = new Set<Entry<T>>();
+  const describe = () =>
+    [...inFlight]
+      .map((e) => e.id)
+      .sort()
+      .join(",");
+
   const tryStart = () => {
     while (free > 0) {
       const entry = queue.shift();
       if (!entry) break;
 
       --free;
-      const { makePromise, resolve, reject, tag } = entry;
-      console.debug(`limiter start job ${tag}`);
+      const { id, makePromise, resolve, reject, tag } = entry;
+      inFlight.add(entry);
+      console.debug(
+        `limiter start job #${id} ${tag} (in flight: ${describe()})`
+      );
       makePromise()
         .finally(() => {
-          console.debug(`limiter end job ${tag}`);
+          inFlight.delete(entry);
+          console.debug(
+            `limiter end job #${id} ${tag} (in flight: ${describe()})`
+          );
           ++free;
           tryStart();
         })
@@ -31,10 +45,13 @@ export default <T>(size: number): Limiter<T> => {
     }
   };
 
+  let nextId = 0;
+
   const submit = (makePromise: () => Promise<T>, tag?: unknown): Promise<T> => {
-    console.debug(`limiter submit job ${tag}`);
+    const id = nextId++;
+    console.debug(`limiter submit job #${id} ${tag}`);
     return new Promise((resolve, reject) => {
-      queue.push({ makePromise, resolve, reject, tag });
+      queue.push({ id, makePromise, resolve, reject, tag });
       tryStart();
     });
   };
