@@ -20,7 +20,7 @@ type NonDeletedEntries = (
 
 type NonDeletedEntriesMap = Map<string, NonDeletedEntries[0]>;
 
-type State =
+export type State =
   | { tag: "does_not_exist" }
   | { tag: "starting"; cursor: string }
   | {
@@ -41,7 +41,7 @@ type Data = {
   correctAsOf: number;
 };
 
-class StateDir {
+export class StateDir {
   private readonly dir: string;
   private readonly entriesFile: string;
   private data: Data | undefined;
