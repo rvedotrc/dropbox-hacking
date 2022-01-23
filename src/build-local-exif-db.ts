@@ -193,10 +193,10 @@ const exifFromStream = (r: ReadStream): Promise<ExifData> =>
 
     r.on("end", () => {
       try {
-        console.log(`Exif parsing from`, exifBuffer);
+        // console.log(`Exif parsing from`, exifBuffer);
         const parser = ExifParserFactory.create(exifBuffer);
         const exifData = parser.parse();
-        console.log({ exifData });
+        // console.log({ exifData });
         resolve(exifData);
       } catch (e) {
         reject(e);

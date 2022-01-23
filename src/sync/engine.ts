@@ -117,10 +117,11 @@ export const calculate = async (
       }
 
       if (globalOptions.debugSync) {
-        const payload = Array.from(map.entries()).map(([key, pair]) => ({
-          key,
-          value: { remote: null, ...pair },
-        }));
+        // const payload = Array.from(map.entries()).map(([key, pair]) => ({
+        //   key,
+        //   value: { remote: null, ...pair },
+        // }));
+        const payload = {};
 
         console.log(JSON.stringify(payload));
       }
