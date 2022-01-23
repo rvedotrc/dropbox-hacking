@@ -238,10 +238,11 @@ const initHandler: Handler = async (
   const r = lister({
     dbx,
     listing: {
-      tag: "path",
-      path: dropboxPath,
-      recursive,
-      latest: false,
+      tag: "from_start",
+      args: {
+        path: dropboxPath,
+        recursive,
+      },
       tail,
     },
     onItem: (item) => stateDir.addItem(item),
@@ -288,7 +289,9 @@ const updateHandler: Handler = async (
     dbx,
     listing: {
       tag: "cursor",
-      cursor: startCursor,
+      args: {
+        cursor: startCursor,
+      },
       tail,
     },
     onItem: (item) => stateDir.addItem(item),

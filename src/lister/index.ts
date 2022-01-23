@@ -2,19 +2,20 @@ import { Dropbox, files } from "dropbox";
 import { GlobalOptions } from "../types";
 import { cancel } from "../retry-and-rate-limit";
 
-export type ListerArgs =
+export type ListerArgs = (
   | {
-      tag: "path";
-      path: string;
-      recursive: boolean;
-      latest: boolean;
-      tail: boolean;
+      tag: "from_start";
+      args: files.ListFolderArg;
+    }
+  | {
+      tag: "from_latest";
+      args: files.ListFolderArg;
     }
   | {
       tag: "cursor";
-      cursor: string;
-      tail: boolean;
-    };
+      args: files.ListFolderContinueArg;
+    }
+) & { tail: boolean };
 
 export default (args: {
   dbx: Dropbox;
@@ -124,19 +125,12 @@ export default (args: {
 
   const firstPage = () => {
     if (listing.tag === "cursor")
-      return dbx.filesListFolderContinue({ cursor: listing.cursor });
+      return dbx.filesListFolderContinue(listing.args);
 
-    if (!listing.latest)
-      return dbx.filesListFolder({
-        path: listing.path,
-        recursive: listing.recursive,
-      });
+    if (listing.tag === "from_start") return dbx.filesListFolder(listing.args);
 
     return dbx
-      .filesListFolderGetLatestCursor({
-        path: listing.path,
-        recursive: listing.recursive,
-      })
+      .filesListFolderGetLatestCursor(listing.args)
       .then((r) => dbx.filesListFolderContinue({ cursor: r.result.cursor }));
   };
 

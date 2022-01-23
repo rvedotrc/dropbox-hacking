@@ -165,8 +165,8 @@ const handler: Handler = async (
   // }
 
   const listerArgs: ListerArgs = initialCursor
-    ? { tag: "cursor", cursor: initialCursor, tail }
-    : { tag: "path", path, recursive: true, latest: false, tail };
+    ? { tag: "cursor", args: { cursor: initialCursor }, tail }
+    : { tag: "from_start", args: { path, recursive: true }, tail };
 
   await lister({
     dbx,
