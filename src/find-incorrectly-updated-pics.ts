@@ -1,5 +1,6 @@
 import { StateDir } from "./operations/lsCache";
 import { parseTime } from "./util";
+import { ExifDB } from "./exif/exifDB";
 
 const getTimeFromFilename = (name: string): Date | undefined => {
   const m = name.match(/^(\d\d\d\d-\d\d-\d\d) (\d\d).(\d\d)\.(\d\d)\.jpg$/);
@@ -18,11 +19,18 @@ const main = async (): Promise<void> => {
   await stateDir.load();
   const state = await stateDir.getState();
 
+  const exifDB = new ExifDB("var/exifdb");
+  const allExif = await exifDB.readAll();
+  console.log(allExif.size);
+
+  console.log(state.tag);
+
   if (state.tag === "ready") {
+    console.log(state.entries.size);
     for (const entry of state.entries.values()) {
       if (entry[".tag"] !== "file") continue;
       if (!entry.path_lower?.endsWith(".jpg")) continue;
-      if (!entry.path_lower?.startsWith("/pics/camera/sliced")) continue;
+      if (!entry.path_lower?.startsWith("/pics/")) continue;
 
       // Time sources:
       // client_modified
@@ -31,26 +39,53 @@ const main = async (): Promise<void> => {
       // the directory it's in
       // maybe EXIF (requires content)
 
+      const exif =
+        entry.content_hash === undefined
+          ? undefined
+          : allExif.get(entry.content_hash);
+      const exifDateNum = exif?.exifData?.tags?.CreateDate;
+      const exifTime = exifDateNum ? new Date(exifDateNum * 1000) : null;
+
       // If client_modified matches the basename,
       // then everything's probably fine.
 
       const clientModified = parseTime(entry.client_modified);
       const filenameTime = getTimeFromFilename(entry.name);
-      let offset: number | undefined = undefined;
+      let filenameToMtimeOffset: number | undefined = undefined;
 
       if (filenameTime) {
-        offset = filenameTime.getTime() - clientModified.getTime();
+        filenameToMtimeOffset =
+          clientModified.getTime() - filenameTime.getTime();
 
-        if (offset === 0 || offset === 3600000 || offset === 7200000) {
-          continue;
-        }
+        // if (offset === 0 || offset === 3600000 || offset === 7200000) {
+        //   continue;
+        // }
+      }
+
+      let exifToMtimeOffset: number | undefined = undefined;
+      if (exifTime !== null) {
+        exifToMtimeOffset = clientModified.getTime() - exifTime.getTime();
       }
 
       console.log(
-        JSON.stringify({ entry, clientModified, filenameTime, offset })
+        JSON.stringify({
+          entry,
+          clientModified,
+          filenameTime: filenameTime || null,
+          filenameToMtimeOffset: filenameToMtimeOffset || null,
+          exifTime: exifTime || null,
+          exifToMtimeOffset: exifToMtimeOffset || null,
+          exifToFilenameOffset:
+            exifTime && filenameTime
+              ? clientModified.getTime() - exifTime.getTime()
+              : null,
+        })
       );
     }
   }
 };
 
-main();
+main().catch((err) => {
+  console.error(err);
+  throw err;
+});
