@@ -84,7 +84,21 @@ export const main = (downloadArgs: DownloadArgs): Promise<boolean> => {
         syncStats.totalBytes += remote.size;
         if (dryRun) return Promise.resolve();
 
-        return downloader({ dbx, local: thisLocalPath, remote });
+        let attempt = 0;
+        const makePromise = () =>
+          downloader({ dbx, local: thisLocalPath, remote });
+
+        const tryAgain = (): Promise<void> =>
+          makePromise().catch((err) => {
+            console.error(
+              `download #${attempt} of ${remote.path_display} failed`,
+              err
+            );
+            ++attempt;
+            return tryAgain();
+          });
+
+        return tryAgain();
       };
 
       const unconditionalDownload = (
