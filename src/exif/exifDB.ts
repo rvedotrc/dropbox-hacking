@@ -29,7 +29,7 @@ export class ExifDB {
   private loadPromise: Promise<void> | undefined = undefined;
   private flushPromise: Promise<void> = Promise.resolve();
 
-  constructor(private dir: string, private maxUnwritten = 100) {}
+  constructor(private dir: string, private maxUnwritten = 1000) {}
 
   public seenFileId(stats: fs.Stats): Promise<boolean> {
     return this.load().then(() => {
