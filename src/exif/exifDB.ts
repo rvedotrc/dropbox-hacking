@@ -1,0 +1,209 @@
+import { ExifData } from "ts-exif-parser";
+import * as fs from "fs";
+
+export type ContentHash = string;
+
+export type ExifFromHash = {
+  exifData: ExifData;
+  addedAt: Date;
+  firstSeenFilename: string;
+};
+
+type UnwrittenExifFromHash = Map<ContentHash, ExifFromHash>;
+
+type SeenLocalFileId = string;
+
+type SeenLocalFile = {
+  contentHash: string;
+  addedAt: Date;
+  firstSeenFilename: string;
+};
+
+type SeenLocalFiles = Map<SeenLocalFileId, SeenLocalFile>;
+
+export class ExifDB {
+  private unwrittenExifFromHash: UnwrittenExifFromHash = new Map();
+
+  private seenLocalFiles: SeenLocalFiles | undefined = undefined;
+
+  private loadPromise: Promise<void> | undefined = undefined;
+  private flushPromise: Promise<void> = Promise.resolve();
+
+  constructor(private dir: string, private maxUnwritten = 100) {}
+
+  public seenFileId(stats: fs.Stats): Promise<boolean> {
+    return this.load().then(() => {
+      if (!this.seenLocalFiles) throw "no seenIds";
+
+      return this.seenLocalFiles.has(ExifDB.fileIdFromStats(stats));
+    });
+  }
+
+  public readAll(): Promise<Map<ContentHash, ExifFromHash>> {
+    return fs.promises
+      .readFile(`${this.dir}/exif_by_content_hash.json`, { encoding: "utf-8" })
+      .catch((err) => {
+        if (err.code === "ENOENT") return "{}";
+        throw err;
+      })
+      .then((json) => JSON.parse(json))
+      .then((data) => {
+        const map = new Map<ContentHash, ExifFromHash>();
+
+        for (const hash in data) {
+          const value = data[hash];
+          const e = value.exifData;
+
+          const exifData = new ExifData(
+            e.startMarker,
+            e.tags,
+            e.imageSize,
+            e.thumbnailOffset,
+            e.thumbnailLength,
+            e.thumbnailType,
+            e.app1Offset
+          );
+
+          map.set(hash, {
+            exifData,
+            addedAt: new Date(value.addedAt),
+            firstSeenFilename: value.firstSeenFilename,
+          });
+        }
+
+        return map;
+      });
+  }
+
+  public store(
+    stats: fs.Stats,
+    contentHash: string,
+    exifData: ExifData,
+    localFilename: string
+  ): Promise<void> {
+    return this.load().then(() => {
+      if (!this.seenLocalFiles) throw "no seenIds";
+
+      const fileId = ExifDB.fileIdFromStats(stats);
+      console.log(
+        `store ${fileId} ${contentHash} ${exifData.tags?.ExposureTime} ${localFilename}`
+      );
+      this.unwrittenExifFromHash.set(contentHash, {
+        exifData,
+        addedAt: new Date(),
+        firstSeenFilename: localFilename,
+      });
+      this.seenLocalFiles.set(fileId, {
+        contentHash,
+        addedAt: new Date(),
+        firstSeenFilename: localFilename,
+      });
+
+      if (this.unwrittenExifFromHash.size >= this.maxUnwritten) this.flush();
+    });
+  }
+
+  public flush(): Promise<void> {
+    return (this.flushPromise = this.flushPromise
+      .then(() => this.load())
+      .then(() => {
+        if (!this.seenLocalFiles) throw "no seenIds";
+
+        const unwritten = this.unwrittenExifFromHash;
+        const seenLocalFiles = new Map(this.seenLocalFiles);
+        this.unwrittenExifFromHash = new Map();
+
+        console.log(
+          `flush called with ${unwritten.size} unwritten items and ${seenLocalFiles.size} files`
+        );
+
+        return this.writeUnwritten(unwritten).then(() =>
+          this.saveSeenLocalFiles(seenLocalFiles)
+        );
+      }));
+  }
+
+  private writeUnwritten(unwritten: UnwrittenExifFromHash): Promise<void> {
+    const file = `${this.dir}/exif_by_content_hash.json`;
+    const tmp = `${file}.tmp`;
+
+    return fs.promises
+      .readFile(file, { encoding: "utf-8" })
+      .catch((err) => {
+        if (err.code === "ENOENT") return "{}";
+        throw err;
+      })
+      .then((json) => JSON.parse(json))
+      .then((data) => {
+        for (const [contentHash, item] of unwritten) {
+          data[contentHash] = {
+            ...item,
+            addedAt: item.addedAt.toISOString(),
+          };
+        }
+
+        return data;
+      })
+      .then((data) =>
+        fs.promises.writeFile(tmp, JSON.stringify(data) + "\n", {
+          encoding: "utf-8",
+          mode: 0o600,
+        })
+      )
+      .then(() => fs.promises.rename(tmp, file));
+  }
+
+  private saveSeenLocalFiles(seenLocalFiles: SeenLocalFiles): Promise<void> {
+    const file = `${this.dir}/seen_local_files.json`;
+    const tmp = `${file}.tmp`;
+
+    const data: Record<string, unknown> = {};
+
+    for (const [k, v] of seenLocalFiles) {
+      data[k] = {
+        ...v,
+        addedAt: v.addedAt.toISOString(),
+      };
+    }
+
+    return fs.promises
+      .writeFile(tmp, JSON.stringify(data) + "\n", {
+        encoding: "utf-8",
+        mode: 0o600,
+      })
+      .then(() => fs.promises.rename(tmp, file));
+  }
+
+  private static fileIdFromStats(stats: fs.Stats): string {
+    return `${stats.dev}.${stats.ino}`;
+  }
+
+  private load(): Promise<void> {
+    if (this.seenLocalFiles !== undefined) return Promise.resolve();
+    if (this.loadPromise !== undefined) return this.loadPromise;
+
+    return (this.loadPromise = fs.promises
+      .readFile(`${this.dir}/seen_local_files.json`, { encoding: "utf-8" })
+      .catch((err) => {
+        if (err.code === "ENOENT") return "{}";
+        throw err;
+      })
+      .then((text) => JSON.parse(text))
+      .then((data) => {
+        const map: SeenLocalFiles = new Map();
+        for (const k in data) {
+          const v = data[k];
+          map.set(k, {
+            contentHash: v.contentHash,
+            addedAt: new Date(v.addedAt),
+            firstSeenFilename: v.firstSeenFilename,
+          });
+        }
+        return map;
+      })
+      .then((seenLocalFiles: SeenLocalFiles) => {
+        this.seenLocalFiles = seenLocalFiles;
+        this.loadPromise = undefined;
+      }));
+  }
+}
