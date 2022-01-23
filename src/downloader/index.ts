@@ -28,7 +28,7 @@ export default (args: {
 
   return defaultLimiter
     .submit(() => {
-      const w = fs.createWriteStream(tmpLocal, { mode: 0o600, flags: "wx" });
+      const w = fs.createWriteStream(tmpLocal, { mode: 0o644, flags: "wx" });
 
       let timer: NodeJS.Timeout | undefined;
 
@@ -53,7 +53,6 @@ export default (args: {
           }).finally(() => timer && clearTimeout(timer))
         )
         .then(() => fs.promises.utimes(tmpLocal, mtime, mtime))
-        .then(() => fs.promises.chmod(tmpLocal, 0o644))
         .then(() => fs.promises.rename(tmpLocal, local))
         .finally(() => w.close())
         .finally(() => fs.unlink(tmpLocal, () => {}));
