@@ -124,11 +124,12 @@ const handler: Handler = async (
   await lister({
     dbx,
     listing: {
-      tag: "path",
-      path,
-      recursive,
+      tag: latest ? "from_latest" : "from_start",
+      args: {
+        path,
+        recursive,
+      },
       tail,
-      latest,
     },
     onItem: async (object) => {
       if (object[".tag"] === "file") statsAddFile(object);
