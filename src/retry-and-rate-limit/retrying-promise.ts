@@ -144,12 +144,65 @@ export default class RetryingPromise<M extends keyof Dropbox> {
     // 2022-01-21 19:30:03.682369500   code: 'ENOTFOUND'
     // 2022-01-21 19:30:03.682369500 }
 
+    // {
+    //   err: FetchError: request to https://api.dropboxapi.com/2/files/get_temporary_link failed, reason: connect ETIMEDOUT 162.125.71.19:443
+    //       at ClientRequest.<anonymous> (/Users/rachel/git/github.com/rvedotrc/dropbox-hacking/node_modules/node-fetch/lib/index.js:1483:11)
+    //       at ClientRequest.emit (node:events:390:28)
+    //       at TLSSocket.socketErrorListener (node:_http_client:447:9)
+    //       at TLSSocket.emit (node:events:390:28)
+    //       at emitErrorNT (node:internal/streams/destroy:164:8)
+    //       at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    //       at processTicksAndRejections (node:internal/process/task_queues:83:21) {
+    //     type: 'system',
+    //     errno: 'ETIMEDOUT',
+    //     code: 'ETIMEDOUT'
+    //   },
+    //   stack: 'FetchError: request to https://api.dropboxapi.com/2/files/get_temporary_link failed, reason: connect ETIMEDOUT 162.125.71.19:443\n' +
+    //     '    at ClientRequest.<anonymous> (/Users/rachel/git/github.com/rvedotrc/dropbox-hacking/node_modules/node-fetch/lib/index.js:1483:11)\n' +
+    //     '    at ClientRequest.emit (node:events:390:28)\n' +
+    //     '    at TLSSocket.socketErrorListener (node:_http_client:447:9)\n' +
+    //     '    at TLSSocket.emit (node:events:390:28)\n' +
+    //     '    at emitErrorNT (node:internal/streams/destroy:164:8)\n' +
+    //     '    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n' +
+    //     '    at processTicksAndRejections (node:internal/process/task_queues:83:21)'
+    // }
+
+    // 2022-01-23 10:41:04.122354500 save with 172131 entries
+    // 2022-01-23 11:17:49.377195500 {
+    // 2022-01-23 11:17:49.377196500   err: FetchError: request to https://notify.dropboxapi.com/2/files/list_folder/longpoll failed, reason: read ECONNRESET
+    // 2022-01-23 11:17:49.377196500       at ClientRequest.<anonymous> (/Users/rachel/git/github.com/rvedotrc/dropbox-hacking/node_modules/node-fetch/lib/index.js:1483:11)
+    // 2022-01-23 11:17:49.377197500       at ClientRequest.emit (node:events:390:28)
+    // 2022-01-23 11:17:49.377197500       at TLSSocket.socketErrorListener (node:_http_client:447:9)
+    // 2022-01-23 11:17:49.377197500       at TLSSocket.emit (node:events:390:28)
+    // 2022-01-23 11:17:49.377197500       at emitErrorNT (node:internal/streams/destroy:164:8)
+    // 2022-01-23 11:17:49.377198500       at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    // 2022-01-23 11:17:49.377198500       at processTicksAndRejections (node:internal/process/task_queues:83:21) {
+    // 2022-01-23 11:17:49.377198500     type: 'system',
+    // 2022-01-23 11:17:49.377198500     errno: 'ECONNRESET',
+    // 2022-01-23 11:17:49.377198500     code: 'ECONNRESET'
+    // 2022-01-23 11:17:49.377199500   },
+    // 2022-01-23 11:17:49.377199500   stack: 'FetchError: request to https://notify.dropboxapi.com/2/files/list_folder/longpoll failed, reason: read ECONNRESET\n' +
+    // 2022-01-23 11:17:49.377199500     '    at ClientRequest.<anonymous> (/Users/rachel/git/github.com/rvedotrc/dropbox-hacking/node_modules/node-fetch/lib/index.js:1483:11)\n' +
+    // 2022-01-23 11:17:49.377200500     '    at ClientRequest.emit (node:events:390:28)\n' +
+    // 2022-01-23 11:17:49.377200500     '    at TLSSocket.socketErrorListener (node:_http_client:447:9)\n' +
+    // 2022-01-23 11:17:49.377209500     '    at TLSSocket.emit (node:events:390:28)\n' +
+    // 2022-01-23 11:17:49.377209500     '    at emitErrorNT (node:internal/streams/destroy:164:8)\n' +
+    // 2022-01-23 11:17:49.377210500     '    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n' +
+    // 2022-01-23 11:17:49.377210500     '    at processTicksAndRejections (node:internal/process/task_queues:83:21)'
+    // 2022-01-23 11:17:49.377210500 }
+
     console.debug({ error });
     console.debug({ error_message: error.message });
     console.debug({ interpolate: `${error}` });
     console.debug({ toString: error.toString() });
 
-    if (!`${error}`.includes("getaddrinfo")) return false;
+    const errorString = `${error}`;
+    if (
+      !errorString.includes("getaddrinfo") &&
+      !errorString.includes("ECONNRESET") &&
+      !errorString.includes("connect ETIMEDOUT")
+    )
+      return false;
 
     this.debug(`network error, wait 60`);
     this.waiter.sleep(60 * 1000);
