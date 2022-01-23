@@ -30,25 +30,29 @@ export default (args: {
     .submit(() => {
       const w = fs.createWriteStream(tmpLocal, { mode: 0o600, flags: "wx" });
 
+      let timer: NodeJS.Timeout | undefined;
+
       return dbx
         .filesGetTemporaryLink({ path: `rev:${remote.rev}` })
         .then(log(`got link`))
         .then((r) => r.result.link)
-        .then(
-          (uri) =>
-            new Promise<void>((resolve, reject) => {
-              https
-                .get(uri, {}, (res: http.IncomingMessage) => {
-                  console.log(`download ${local}: piping`);
-                  res.pipe(w);
-                  res.on("error", reject);
-                  res.on("end", resolve);
-                  w.on("error", reject);
-                })
-                .on("error", reject)
-                .on("abort", reject)
-                .on("timeout", reject);
-            })
+        .then((uri) =>
+          new Promise<void>((resolve, reject) => {
+            const req = https
+              .get(uri, {}, (res: http.IncomingMessage) => {
+                console.log(`download ${local}: piping`);
+                res.pipe(w);
+                res.on("error", reject);
+                res.on("end", resolve);
+                w.on("error", reject);
+              })
+              .on("error", reject)
+              .on("abort", reject)
+              .on("timeout", reject);
+            timer = setTimeout(() => {
+              req.destroy(new Error("Timeout hit, aborting"));
+            }, 300 * 1000);
+          }).finally(() => timer && clearTimeout(timer))
         )
         .then(log(`utimes`))
         .then(() => fs.promises.utimes(tmpLocal, mtime, mtime))
