@@ -8,8 +8,7 @@
     "build": "yarn prettier && yarn lint && yarn compile",
     "rebuild": "rebuild package.json tsconfig.json .eslintrc .eslintrc.js src -- yarn build",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --max-warnings=0",
-    "lint:report": "yarn lint --format json --output-file .eslint/report.json",
-    "cli": "node dist/main.js"
+    "lint:report": "yarn lint --format json --output-file .eslint/report.json"
   },
   "contributors": [
     "Rachel Evans <git@rve.org.uk>"

@@ -4,12 +4,9 @@ import { getDropboxClient } from "./auth";
 import catOperation from "./operations/cat";
 import contentHashStdinOperation from "./operations/contentHashStdin";
 import cpOperation from "./operations/cp";
-import exifCacheOperation from "./operations/exifCache";
 import lsOperation from "./operations/ls";
-import lsCacheOperation from "./operations/lsCache";
 import mkdirOperation from "./operations/mkdir";
 import mvOperation from "./operations/mv";
-import processCameraUploads from "./operations/processCameraUploads";
 import rmOperation from "./operations/rm";
 import syncDownloadOperation from "./operations/syncDownload";
 import syncUploadOperation from "./operations/syncUpload";
@@ -25,7 +22,9 @@ const DEBUG_SYNC = "--debug-sync";
 const DEBUG_ERRORS = "--debug-errors";
 const DEBUG_POLL = "--debug-poll";
 
-const getGlobalOptions = (argv: string[]) => {
+export const getGlobalOptions = (
+  argv: string[]
+): { globalOptions: GlobalOptions; remainingArgs: string[] } => {
   const globalOptions: GlobalOptions = {
     debugUpload: false,
     debugSync: false,
@@ -50,12 +49,9 @@ export default (argv: string[]): void => {
     catOperation,
     contentHashStdinOperation,
     cpOperation,
-    exifCacheOperation,
     lsOperation,
-    lsCacheOperation,
     mkdirOperation,
     mvOperation,
-    processCameraUploads,
     rmOperation,
     syncDownloadOperation,
     syncUploadOperation,

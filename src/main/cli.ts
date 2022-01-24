@@ -1,3 +1,3 @@
-import cli from "./cli";
+import cli from "../cli";
 
 cli(process.argv.splice(2));
