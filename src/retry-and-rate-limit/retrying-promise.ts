@@ -117,13 +117,20 @@ export default class RetryingPromise<M extends keyof Dropbox> {
     // {"name":"DropboxResponseError","status":409,"headers":{},"error":{"error_summary":"from_write/too_many_write_operations/","error":{".tag":"from_write","from_write":{".tag":"too_many_write_operations"}}}}
 
     // https://www.dropbox.com/developers/documentation/http/documentation "Errors by status code"
-    if (error?.status !== 409 || error?.status !== 429) return false;
+    if (error?.status !== 409 && error?.status !== 429) return false;
 
     const rateLimitError: auth.RateLimitError = error?.error;
 
     console.debug({ rateLimitError });
     console.debug({ rateLimitError_reason: rateLimitError.reason });
     console.debug({ rateLimitError_retry_after: rateLimitError.retry_after });
+
+    if (
+      (
+        rateLimitError as unknown as { error_summary: string | undefined }
+      ).error_summary?.startsWith("path/not_found/")
+    )
+      return false;
 
     this.waiter.sleep((rateLimitError.retry_after || 1) * 1000);
     return true;
