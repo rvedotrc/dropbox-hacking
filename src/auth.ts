@@ -2,7 +2,7 @@ import { Dropbox, DropboxAuth } from "dropbox";
 import * as fs from "fs";
 import * as express from "express";
 import * as child_process from "child_process";
-import { writeStderr } from "./util";
+import { writeStderr } from "./util/logging";
 
 const envVar = "DROPBOX_CREDENTIALS_PATH";
 

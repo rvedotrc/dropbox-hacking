@@ -1,13 +1,13 @@
 import { DropboxProvider, GlobalOptions, Handler } from "../types";
 import { processOptions } from "../options";
-import { writeStderr, writeStdout } from "../util";
+import { writeStderr, writeStdout } from "../util/logging";
 import lister, { ListerArgs } from "../lister";
 import { ExifDB } from "../exif/exifDB";
 import { StateDir } from "../exif/stateDir";
 import { Dropbox, files } from "dropbox";
 import { ExifParserFactory } from "ts-exif-parser";
 import FileMetadata = files.FileMetadata;
-import limiter from "../uploader/limiter";
+import { makePromiseLimiter } from "../util/promises/promiseLimiter";
 import Fetcher, { Fetcher as F } from "../exif/fetcher";
 
 const verb = "exif-cache";
@@ -55,8 +55,8 @@ const makeLister = (
   stateDir: StateDir,
   globalOptions: GlobalOptions
 ) => {
-  const exifLimiter = limiter<void>(5);
-  const fetcher = Fetcher(dbx, exifLimiter, globalOptions);
+  const limiter = makePromiseLimiter<void>(5);
+  const fetcher = Fetcher(dbx, limiter, globalOptions);
 
   return lister({
     dbx,

@@ -3,10 +3,10 @@ import { randomUUID } from "crypto";
 import * as fs from "fs";
 import * as https from "https";
 import * as http from "http";
-import { parseTime } from "../util";
-import limiter from "../uploader/limiter";
+import { parseTime } from "../util/time";
+import { makePromiseLimiter } from "../util/promises/promiseLimiter";
 
-const defaultLimiter = limiter(5);
+const defaultLimiter = makePromiseLimiter(5);
 
 export default (args: {
   dbx: Dropbox;

@@ -16,7 +16,7 @@ import syncUploadOperation from "./operations/syncUpload";
 import uploadStdinOperation from "./operations/uploadStdin";
 import retrier from "./retry-and-rate-limit";
 import { processOptions } from "./options";
-import { writeStderr } from "./util";
+import { writeStderr } from "./util/logging";
 
 const prefix = "./bin/cli";
 

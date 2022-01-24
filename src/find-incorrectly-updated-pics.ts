@@ -1,5 +1,5 @@
 import { StateDir } from "./lsCache";
-import { parseTime } from "./util";
+import { parseTime } from "./util/time";
 import { ExifDB } from "./exif/exifDB";
 
 const getTimeFromFilename = (name: string): Date | undefined => {

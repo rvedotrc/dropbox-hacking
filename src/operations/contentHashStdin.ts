@@ -1,6 +1,6 @@
 import { DropboxProvider, GlobalOptions, Handler } from "../types";
 import contentHash from "../uploader/content-hash";
-import { writeStdout } from "../util";
+import { writeStdout } from "../util/logging";
 
 const verb = "content-hash-stdin";
 

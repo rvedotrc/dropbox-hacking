@@ -6,7 +6,7 @@ import localListing, {
   FileItem,
   Item as LocalItem,
 } from "../sync/local-listing";
-import { writeStderr } from "../util";
+import { writeStderr } from "../util/logging";
 
 // Does a "mkdir -p" on the destination structure
 

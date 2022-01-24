@@ -2,7 +2,8 @@ import { DropboxProvider, GlobalOptions, Handler } from "../types";
 import { selectUploader } from "../uploader";
 import * as fs from "fs";
 import { files } from "dropbox";
-import { formatTime, writeStdout } from "../util";
+import { formatTime } from "../util/time";
+import { writeStdout } from "../util/logging";
 
 const verb = "upload-stdin";
 

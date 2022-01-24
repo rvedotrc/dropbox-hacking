@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import { files } from "dropbox";
-import { formatTime, writeStdout } from "../util";
+import { formatTime } from "../util/time";
+import { writeStdout } from "../util/logging";
 import contentHash from "../uploader/content-hash";
 import * as engine from "./engine";
 import { DropboxProvider, GlobalOptions } from "../types";

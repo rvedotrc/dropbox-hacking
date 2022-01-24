@@ -1,7 +1,7 @@
 import { files } from "dropbox";
 import { DropboxProvider, GlobalOptions, Handler } from "../types";
 import { processOptions } from "../options";
-import { writeStderr, writeStdout } from "../util";
+import { writeStderr, writeStdout } from "../util/logging";
 import lister from "../lister";
 
 type FolderStats = {

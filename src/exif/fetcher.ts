@@ -1,31 +1,13 @@
 import { Dropbox, files } from "dropbox";
 import { GlobalOptions } from "../types";
-import { Limiter } from "../uploader/limiter";
+import { PromiseLimiter } from "../util/promises/promiseLimiter";
+import { simplePromiseRetrier } from "../util/promises/simplePromiseRetrier";
 import FileMetadata = files.FileMetadata;
 import * as https from "https";
 import * as http from "http";
 
 export type Fetcher = {
   fetch: (item: FileMetadata) => Promise<Buffer>;
-};
-
-const simplePromiseRetrier = <T>(
-  makePromise: () => Promise<T>,
-  tag?: string
-): Promise<T> => {
-  let attempt = 0;
-
-  const tryAgain: () => Promise<T> = () =>
-    makePromise().catch((err) => {
-      console.error(
-        `attempt #${attempt} of ${tag || "anonymous promise"} failed`,
-        err
-      );
-      ++attempt;
-      return tryAgain();
-    });
-
-  return tryAgain();
 };
 
 const first64KBOf = async (
@@ -67,7 +49,7 @@ const first64KBOf = async (
 
 export default <T>(
   dbx: Dropbox,
-  limiter: Limiter<T>,
+  limiter: PromiseLimiter<T>,
   globalOptions: GlobalOptions,
   fetchSize = 65536,
   timeoutMillis = 300000

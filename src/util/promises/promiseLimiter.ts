@@ -6,11 +6,11 @@ type Entry<T> = {
   tag: unknown;
 };
 
-export type Limiter<T> = {
+export type PromiseLimiter<T> = {
   submit: (makePromise: () => Promise<T>, tag?: unknown) => Promise<T>;
 };
 
-export default <T>(size: number): Limiter<T> => {
+export const makePromiseLimiter = <T>(size: number): PromiseLimiter<T> => {
   let free = size;
   const queue: Entry<T>[] = [];
 

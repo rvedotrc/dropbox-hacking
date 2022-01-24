@@ -1,5 +1,8 @@
 import { ExifParserFactory } from "ts-exif-parser";
-import limiter, { Limiter } from "./uploader/limiter";
+import {
+  PromiseLimiter,
+  makePromiseLimiter,
+} from "./util/promises/promiseLimiter";
 import * as fs from "fs";
 import * as path from "path";
 import makeContentHash from "./uploader/content-hash";
@@ -8,7 +11,7 @@ import { Buffer } from "buffer";
 import { ReadStream } from "fs";
 import { ExifDB } from "./exif/exifDB";
 
-type FileLimiter = Limiter<[string, ExifData]>;
+type FileLimiter = PromiseLimiter<[string, ExifData]>;
 
 const exifFromStream = (r: ReadStream): Promise<ExifData> =>
   new Promise<ExifData>((resolve, reject) => {
@@ -99,11 +102,11 @@ const statAndProcess = (
     );
 
 const main = () => {
-  const fileLimiter: FileLimiter = limiter(5);
+  const limiter: FileLimiter = makePromiseLimiter(5);
   const exifDB = new ExifDB("var/exifdb");
 
   Promise.all(
-    process.argv.slice(2).map((dir) => statAndProcess(dir, fileLimiter, exifDB))
+    process.argv.slice(2).map((dir) => statAndProcess(dir, limiter, exifDB))
   )
     .then(() => exifDB.flush())
     .then(() => console.log("done"))

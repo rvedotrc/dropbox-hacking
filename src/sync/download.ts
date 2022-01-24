@@ -1,7 +1,8 @@
 import * as fs from "fs";
 import * as path from "path";
 import { files } from "dropbox";
-import { formatTime, parseTime, writeStdout } from "../util";
+import { formatTime, parseTime } from "../util/time";
+import { writeStdout } from "../util/logging";
 import contentHash from "../uploader/content-hash";
 import * as engine from "./engine";
 import createMkdir from "./mkdir";

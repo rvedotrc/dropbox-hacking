@@ -1,5 +1,5 @@
 import { DropboxProvider, GlobalOptions, Handler } from "../types";
-import { writeStdout } from "../util";
+import { writeStdout } from "../util/logging";
 
 const verb = "mv";
 
