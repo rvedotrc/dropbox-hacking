@@ -21,12 +21,8 @@ const main = async (): Promise<void> => {
 
   const exifDB = new ExifDB("var/exifdb");
   const allExif = await exifDB.readAll();
-  console.log(allExif.size);
-
-  console.log(state.tag);
 
   if (state.tag === "ready") {
-    console.log(state.entries.size);
     for (const entry of state.entries.values()) {
       if (entry[".tag"] !== "file") continue;
       if (!entry.path_lower?.endsWith(".jpg")) continue;
