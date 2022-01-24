@@ -1,4 +1,4 @@
-import { StateDir } from "./operations/lsCache";
+import { StateDir } from "./lsCache";
 import { parseTime } from "./util";
 import { ExifDB } from "./exif/exifDB";
 
