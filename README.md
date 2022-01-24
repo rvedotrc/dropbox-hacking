@@ -4,16 +4,16 @@ For now, this is me hacking around with the Dropbox v2 API in Typescript.
 
 Primarily this comes in the form of a simple command-line interface to a handful of operations:
 
- - upload-stdin: upload file
  - cat: download file
+ - content-hash-stdin: calculate the Dropbox content_hash
  - cp: copy
+ - ls: list directory
+ - mkdir
  - mv: move
  - rm: delete
- - mkdir
- - ls: list directory
  - sync-download: recursive download
  - sync-upload: recursive upload
- - content-hash-stdin: calculate the Dropbox content_hash
+ - upload-stdin: upload file
  
 ```shell
 yarn
@@ -54,3 +54,9 @@ Then do something, e.g. list the root directory of your dropbox:
 ```shell
 ./bin/cli ls ""
 ```
+
+## Other tools
+
+ * `./bin/process-camera-uploads` - move files around automatically
+ * `./bin/exif-cache` - maintain a cache of EXIF data from all `*.jpg` files
+ * `./bin/ls-cache` - maintain a cache of all or part of a dropbox
