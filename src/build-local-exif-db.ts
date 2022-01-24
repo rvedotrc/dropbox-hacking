@@ -61,7 +61,7 @@ const processFile = (
         return Promise.all([makeContentHash(r), exifFromStream(r)]);
       }, filename)
       .then(([hash, exifData]) =>
-        exifDB.store(stats, hash, exifData, filename)
+        exifDB.storeFromLocal(stats, hash, exifData, filename)
       );
   });
 };

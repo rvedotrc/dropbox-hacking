@@ -2,10 +2,15 @@ import { DropboxProvider, GlobalOptions, Handler } from "../types";
 import { processOptions } from "../options";
 import { writeStderr, writeStdout } from "../util";
 import lister, { ListerArgs } from "../lister";
-import { StateDir } from "../lsCache";
-import { Dropbox } from "dropbox";
+import { ExifDB } from "../exif/exifDB";
+import { StateDir } from "../exif/stateDir";
+import { Dropbox, files } from "dropbox";
+import { ExifParserFactory } from "ts-exif-parser";
+import FileMetadata = files.FileMetadata;
+import limiter from "../uploader/limiter";
+import Fetcher, { Fetcher as F } from "../exif/fetcher";
 
-const verb = "ls-cache";
+const verb = "exif-cache";
 
 const subInit = "init";
 const subUpdate = "update";
@@ -13,20 +18,61 @@ const subShow = "show";
 const RECURSIVE = "--recursive";
 const TAIL = "--tail";
 
+let pendingItems: Promise<void>[] = [];
+
+const flush = () =>
+  Promise.all(pendingItems).then(() => {
+    pendingItems = [];
+  });
+
+const doItem = async (
+  dbx: Dropbox,
+  item: FileMetadata,
+  stateDir: StateDir,
+  fetcher: F
+): Promise<void> => {
+  if (item.content_hash === undefined) return;
+  if (item.path_lower === undefined) return;
+  if (item.path_display === undefined) return;
+  if (!item.path_lower.endsWith(".jpg")) return;
+
+  if (stateDir.hasContentHash(item.content_hash)) return;
+
+  const contentHash = item.content_hash;
+  const pathDisplay = item.path_display;
+
+  pendingItems.push(
+    fetcher
+      .fetch(item)
+      .then((buffer) => ExifParserFactory.create(buffer).parse())
+      .then((exifData) => stateDir.addFile(contentHash, exifData, pathDisplay))
+  );
+};
+
 const makeLister = (
   dbx: Dropbox,
   listerArgs: ListerArgs,
   stateDir: StateDir,
   globalOptions: GlobalOptions
-) =>
-  lister({
+) => {
+  const exifLimiter = limiter<void>(5);
+  const fetcher = Fetcher(dbx, exifLimiter, globalOptions);
+
+  return lister({
     dbx,
     listing: listerArgs,
-    onItem: (item) => stateDir.addItem(item),
-    onCursor: (cursor) => stateDir.setCursor(cursor),
-    onPause: () => stateDir.setReady(),
+    onItem: async (item) => {
+      if (item[".tag"] === "file") await doItem(dbx, item, stateDir, fetcher);
+    },
+    onCursor: (cursor) =>
+      stateDir
+        .setCursor(cursor)
+        .then(() => flush())
+        .then(() => stateDir.flush()),
+    onPause: () => flush().then(() => stateDir.setReady()),
     globalOptions,
   });
+};
 
 const initHandler: Handler = async (
   dbxp: DropboxProvider,
@@ -43,12 +89,14 @@ const initHandler: Handler = async (
     [TAIL]: () => (tail = true),
   });
 
-  if (argv.length !== 2) return usageFail();
+  if (argv.length !== 3) return usageFail();
 
   const dropboxPath = argv[0];
   const statePath = argv[1];
+  const exifPath = argv[2];
 
-  const stateDir = new StateDir(statePath);
+  const exifDb = new ExifDB(exifPath);
+  const stateDir = new StateDir(statePath, exifDb);
   await stateDir.initialize(dropboxPath, recursive);
 
   const dbx = await dbxp();
@@ -68,6 +116,7 @@ const initHandler: Handler = async (
   );
 
   await r.promise;
+  await flush();
   await stateDir.setReady();
 };
 
@@ -84,11 +133,13 @@ const updateHandler: Handler = async (
     [TAIL]: () => (tail = true),
   });
 
-  if (argv.length !== 1) return usageFail();
+  if (argv.length !== 2) return usageFail();
 
   const statePath = argv[0];
+  const exifPath = argv[1];
 
-  const stateDir = new StateDir(statePath);
+  const exifDb = new ExifDB(exifPath);
+  const stateDir = new StateDir(statePath, exifDb);
   await stateDir.load();
   const state = await stateDir.getState();
 
@@ -115,6 +166,7 @@ const updateHandler: Handler = async (
   );
 
   await r.promise;
+  await flush();
   await stateDir.flush();
 };
 
@@ -125,11 +177,13 @@ const showHandler: Handler = async (
   usageFail: () => Promise<void>
 ): Promise<void> => {
   // `${subShow} STATE_DIR`
-  if (argv.length !== 1) return usageFail();
+  if (argv.length !== 2) return usageFail();
 
   const statePath = argv[0];
+  const exifPath = argv[1];
 
-  const stateDir = new StateDir(statePath);
+  const exifDb = new ExifDB(exifPath);
+  const stateDir = new StateDir(statePath, exifDb);
   await stateDir.load();
   const state = await stateDir.getState();
 
@@ -141,7 +195,6 @@ const showHandler: Handler = async (
 
   const payload = {
     ...state,
-    entries: [...state.entries.values()],
   };
 
   await writeStdout(JSON.stringify(payload) + "\n");
@@ -163,9 +216,9 @@ const handler: Handler = (
 };
 
 const argsHelp = [
-  `${subInit} [${RECURSIVE}] [${TAIL}] DROPBOX_PATH STATE_DIR`,
-  `${subUpdate} [${TAIL}] STATE_DIR`,
-  `${subShow} STATE_DIR`,
+  `${subInit} [${RECURSIVE}] [${TAIL}] DROPBOX_PATH STATE_DIR EXIF_DIR`,
+  `${subUpdate} [${TAIL}] STATE_DIR EXIF_DIR`,
+  `${subShow} STATE_DIR EXIF_DIR`,
 ];
 
 export default { verb, handler, argsHelp };

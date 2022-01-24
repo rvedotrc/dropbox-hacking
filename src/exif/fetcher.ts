@@ -1,0 +1,88 @@
+import { Dropbox, files } from "dropbox";
+import { GlobalOptions } from "../types";
+import { Limiter } from "../uploader/limiter";
+import FileMetadata = files.FileMetadata;
+import * as https from "https";
+import * as http from "http";
+
+export type Fetcher = {
+  fetch: (item: FileMetadata) => Promise<Buffer>;
+};
+
+const simplePromiseRetrier = <T>(
+  makePromise: () => Promise<T>,
+  tag?: string
+): Promise<T> => {
+  let attempt = 0;
+
+  const tryAgain: () => Promise<T> = () =>
+    makePromise().catch((err) => {
+      console.error(
+        `attempt #${attempt} of ${tag || "anonymous promise"} failed`,
+        err
+      );
+      ++attempt;
+      return tryAgain();
+    });
+
+  return tryAgain();
+};
+
+const first64KBOf = async (
+  uri: string,
+  fetchSize: number,
+  timeoutMillis: number
+): Promise<Buffer> => {
+  let timer: NodeJS.Timeout | undefined;
+
+  return await new Promise<Buffer>((resolve, reject) => {
+    let buffer = Buffer.alloc(0);
+
+    const headers = {
+      Range: `bytes=0-${fetchSize - 1}`,
+    };
+
+    const req = https
+      .get(uri, { headers }, (res: http.IncomingMessage) => {
+        res.on("data", (chunk: Buffer) => {
+          if (buffer.length < fetchSize) {
+            buffer = Buffer.concat([
+              buffer,
+              chunk.slice(0, fetchSize - buffer.length),
+            ]);
+          }
+        });
+        res.on("error", reject);
+        res.on("end", () => resolve(buffer));
+      })
+      .on("error", reject)
+      .on("abort", reject)
+      .on("timeout", reject);
+
+    timer = setTimeout(() => {
+      req.destroy(new Error("Timeout hit, aborting"));
+    }, timeoutMillis);
+  }).finally(() => timer && clearTimeout(timer));
+};
+
+export default <T>(
+  dbx: Dropbox,
+  limiter: Limiter<T>,
+  globalOptions: GlobalOptions,
+  fetchSize = 65536,
+  timeoutMillis = 300000
+): Fetcher => {
+  return {
+    fetch: (item: FileMetadata): Promise<Buffer> => {
+      return dbx
+        .filesGetTemporaryLink({ path: `rev:${item.rev}` })
+        .then((r) => r.result.link)
+        .then((uri) =>
+          simplePromiseRetrier(
+            () => first64KBOf(uri, fetchSize, timeoutMillis),
+            `get head of ${item.path_lower}`
+          )
+        );
+    },
+  };
+};

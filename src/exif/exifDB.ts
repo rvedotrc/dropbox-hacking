@@ -23,8 +23,8 @@ type SeenLocalFiles = Map<SeenLocalFileId, SeenLocalFile>;
 
 export class ExifDB {
   private unwrittenExifFromHash: UnwrittenExifFromHash = new Map();
-
   private seenLocalFiles: SeenLocalFiles | undefined = undefined;
+  private dirty = false;
 
   private loadPromise: Promise<void> | undefined = undefined;
   private flushPromise: Promise<void> = Promise.resolve();
@@ -75,28 +75,47 @@ export class ExifDB {
       });
   }
 
-  public store(
+  public storeFromLocal(
     stats: fs.Stats,
     contentHash: string,
     exifData: ExifData,
     localFilename: string
   ): Promise<void> {
-    return this.load().then(() => {
+    const seen = this.load().then(() => {
       if (!this.seenLocalFiles) throw "no seenIds";
 
       const fileId = ExifDB.fileIdFromStats(stats);
-      console.log(
-        `store ${fileId} ${contentHash} ${exifData.tags?.ExposureTime} ${localFilename}`
-      );
-      this.unwrittenExifFromHash.set(contentHash, {
-        exifData,
-        addedAt: new Date(),
-        firstSeenFilename: localFilename,
-      });
+
+      console.log(`storeFromLocal ${fileId} ${contentHash} ${localFilename}`);
+
       this.seenLocalFiles.set(fileId, {
         contentHash,
         addedAt: new Date(),
         firstSeenFilename: localFilename,
+      });
+
+      this.dirty = true;
+    });
+
+    const hash = this.storeFromHash(contentHash, exifData, localFilename);
+
+    return Promise.all([seen, hash]).then(() => undefined);
+  }
+
+  public storeFromHash(
+    contentHash: string,
+    exifData: ExifData,
+    seenAs: string
+  ): Promise<void> {
+    return this.load().then(() => {
+      console.log(
+        `storeFromHash ${contentHash} ${exifData.tags?.CreateDate} ${seenAs}`
+      );
+
+      this.unwrittenExifFromHash.set(contentHash, {
+        exifData,
+        addedAt: new Date(),
+        firstSeenFilename: seenAs,
       });
 
       if (this.unwrittenExifFromHash.size >= this.maxUnwritten) this.flush();
@@ -124,6 +143,8 @@ export class ExifDB {
   }
 
   private writeUnwritten(unwritten: UnwrittenExifFromHash): Promise<void> {
+    if (unwritten.size === 0) return Promise.resolve();
+
     const file = `${this.dir}/exif_by_content_hash.json`;
     const tmp = `${file}.tmp`;
 
@@ -142,6 +163,8 @@ export class ExifDB {
           };
         }
 
+        console.log(`saving ${Object.keys(data).length} entries to ${file}`);
+
         return data;
       })
       .then((data) =>
@@ -154,6 +177,8 @@ export class ExifDB {
   }
 
   private saveSeenLocalFiles(seenLocalFiles: SeenLocalFiles): Promise<void> {
+    if (!this.dirty) return Promise.resolve();
+
     const file = `${this.dir}/seen_local_files.json`;
     const tmp = `${file}.tmp`;
 
@@ -171,7 +196,10 @@ export class ExifDB {
         encoding: "utf-8",
         mode: 0o600,
       })
-      .then(() => fs.promises.rename(tmp, file));
+      .then(() => fs.promises.rename(tmp, file))
+      .then(() => {
+        this.dirty = false;
+      });
   }
 
   private static fileIdFromStats(stats: fs.Stats): string {

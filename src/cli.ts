@@ -4,6 +4,7 @@ import { getDropboxClient } from "./auth";
 import catOperation from "./operations/cat";
 import contentHashStdinOperation from "./operations/contentHashStdin";
 import cpOperation from "./operations/cp";
+import exifCacheOperation from "./operations/exifCache";
 import lsOperation from "./operations/ls";
 import lsCacheOperation from "./operations/lsCache";
 import mkdirOperation from "./operations/mkdir";
@@ -49,6 +50,7 @@ export default (argv: string[]): void => {
     catOperation,
     contentHashStdinOperation,
     cpOperation,
+    exifCacheOperation,
     lsOperation,
     lsCacheOperation,
     mkdirOperation,
