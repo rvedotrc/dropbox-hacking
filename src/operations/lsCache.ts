@@ -1,8 +1,8 @@
 import { DropboxProvider, GlobalOptions, Handler } from "../types";
 import { processOptions } from "../options";
 import { writeStderr, writeStdout } from "../util/logging";
-import lister, { ListerArgs } from "../lister";
-import { StateDir } from "../lsCache";
+import lister, { ListerArgs } from "../components/lister";
+import { StateDir } from "../components/lsCache";
 import { Dropbox } from "dropbox";
 
 const verb = "ls-cache";

@@ -1,14 +1,14 @@
 import { DropboxProvider, GlobalOptions, Handler } from "../types";
 import { processOptions } from "../options";
 import { writeStderr, writeStdout } from "../util/logging";
-import lister, { ListerArgs } from "../lister";
-import { ExifDB } from "../exif/exifDB";
-import { StateDir } from "../exif/stateDir";
+import lister, { ListerArgs } from "../components/lister";
+import { ExifDB } from "../components/exif/exifDB";
+import { StateDir } from "../components/exif/stateDir";
 import { Dropbox, files } from "dropbox";
 import { ExifParserFactory } from "ts-exif-parser";
 import FileMetadata = files.FileMetadata;
 import { makePromiseLimiter } from "../util/promises/promiseLimiter";
-import Fetcher, { Fetcher as F } from "../exif/fetcher";
+import Fetcher, { Fetcher as F } from "../components/exif/fetcher";
 
 const verb = "exif-cache";
 

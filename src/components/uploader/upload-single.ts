@@ -1,7 +1,7 @@
 import { Dropbox, files } from "dropbox";
 import stream = require("node:stream");
-import { makePromiseLimiter } from "../util/promises/promiseLimiter";
-import { GlobalOptions } from "../types";
+import { makePromiseLimiter } from "../../util/promises/promiseLimiter";
+import { GlobalOptions } from "../../types";
 
 export const MAX_SINGLE_UPLOAD_SIZE = 150_000_000;
 

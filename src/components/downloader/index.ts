@@ -3,8 +3,8 @@ import { randomUUID } from "crypto";
 import * as fs from "fs";
 import * as https from "https";
 import * as http from "http";
-import { parseTime } from "../util/time";
-import { makePromiseLimiter } from "../util/promises/promiseLimiter";
+import { parseTime } from "../../util/time";
+import { makePromiseLimiter } from "../../util/promises/promiseLimiter";
 
 const defaultLimiter = makePromiseLimiter(5);
 

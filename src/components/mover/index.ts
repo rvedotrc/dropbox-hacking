@@ -1,5 +1,5 @@
 import { Dropbox, files } from "dropbox";
-import { GlobalOptions } from "../types";
+import { GlobalOptions } from "../../types";
 
 type Entry = {
   job: files.RelocationPath;

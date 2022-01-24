@@ -5,11 +5,11 @@ import {
 } from "./util/promises/promiseLimiter";
 import * as fs from "fs";
 import * as path from "path";
-import makeContentHash from "./uploader/content-hash";
+import makeContentHash from "./components/uploader/content-hash";
 import { ExifData } from "ts-exif-parser";
 import { Buffer } from "buffer";
 import { ReadStream } from "fs";
-import { ExifDB } from "./exif/exifDB";
+import { ExifDB } from "./components/exif/exifDB";
 
 type FileLimiter = PromiseLimiter<[string, ExifData]>;
 

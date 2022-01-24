@@ -1,7 +1,7 @@
 import { DropboxProvider, GlobalOptions, Handler } from "../types";
 import { processOptions } from "../options";
-import lister, { ListerArgs } from "../lister";
-import Mover from "../mover";
+import lister, { ListerArgs } from "../components/lister";
+import Mover from "../components/mover";
 import { files } from "dropbox";
 
 const verb = "process-camera-uploads";

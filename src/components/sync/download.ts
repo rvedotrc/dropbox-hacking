@@ -1,12 +1,12 @@
 import * as fs from "fs";
 import * as path from "path";
 import { files } from "dropbox";
-import { formatTime, parseTime } from "../util/time";
-import { writeStdout } from "../util/logging";
+import { formatTime, parseTime } from "../../util/time";
+import { writeStdout } from "../../util/logging";
 import contentHash from "../uploader/content-hash";
 import * as engine from "./engine";
 import createMkdir from "./mkdir";
-import { DropboxProvider, GlobalOptions } from "../types";
+import { DropboxProvider, GlobalOptions } from "../../types";
 import downloader from "../downloader";
 import { DirectoryItem, FileItem } from "./local-listing";
 

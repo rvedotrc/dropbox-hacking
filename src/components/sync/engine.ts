@@ -1,12 +1,12 @@
 import { Dropbox, files } from "dropbox";
-import { DropboxProvider, GlobalOptions } from "../types";
-import dropboxListing, { Item as RemoteItem } from "../sync/dropbox-listing";
+import { DropboxProvider, GlobalOptions } from "../../types";
+import dropboxListing, { Item as RemoteItem } from "./dropbox-listing";
 import localListing, {
   DirectoryItem,
   FileItem,
   Item as LocalItem,
-} from "../sync/local-listing";
-import { writeStderr } from "../util/logging";
+} from "./local-listing";
+import { writeStderr } from "../../util/logging";
 
 // Does a "mkdir -p" on the destination structure
 

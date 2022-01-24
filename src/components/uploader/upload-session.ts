@@ -1,8 +1,8 @@
 import { Dropbox, files } from "dropbox";
 import stream = require("node:stream");
 import fixedChunkStream from "./fixed-chunk-stream";
-import { makePromiseLimiter } from "../util/promises/promiseLimiter";
-import { GlobalOptions } from "../types";
+import { makePromiseLimiter } from "../../util/promises/promiseLimiter";
+import { GlobalOptions } from "../../types";
 
 const PART_SIZE = 4194304; // 4 MB
 

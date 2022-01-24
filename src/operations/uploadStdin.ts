@@ -1,5 +1,5 @@
 import { DropboxProvider, GlobalOptions, Handler } from "../types";
-import { selectUploader } from "../uploader";
+import { selectUploader } from "../components/uploader";
 import * as fs from "fs";
 import { files } from "dropbox";
 import { formatTime } from "../util/time";

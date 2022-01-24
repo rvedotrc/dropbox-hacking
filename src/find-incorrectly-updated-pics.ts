@@ -1,6 +1,6 @@
-import { StateDir } from "./lsCache";
+import { StateDir } from "./components/lsCache";
 import { parseTime } from "./util/time";
-import { ExifDB } from "./exif/exifDB";
+import { ExifDB } from "./components/exif/exifDB";
 
 const getTimeFromFilename = (name: string): Date | undefined => {
   const m = name.match(/^(\d\d\d\d-\d\d-\d\d) (\d\d).(\d\d)\.(\d\d)\.jpg$/);

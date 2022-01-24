@@ -1,5 +1,5 @@
 import { DropboxProvider, GlobalOptions, Handler } from "../types";
-import * as download from "../sync/download";
+import * as download from "../components/sync/download";
 import { processOptions } from "../options";
 
 const verb = "sync-download";

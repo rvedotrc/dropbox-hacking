@@ -1,10 +1,10 @@
 import * as fs from "fs";
 import { files } from "dropbox";
-import { formatTime } from "../util/time";
-import { writeStdout } from "../util/logging";
+import { formatTime } from "../../util/time";
+import { writeStdout } from "../../util/logging";
 import contentHash from "../uploader/content-hash";
 import * as engine from "./engine";
-import { DropboxProvider, GlobalOptions } from "../types";
+import { DropboxProvider, GlobalOptions } from "../../types";
 import * as uploader from "../uploader";
 import { FileItem } from "./local-listing";
 

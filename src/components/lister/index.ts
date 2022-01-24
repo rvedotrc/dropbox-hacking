@@ -1,6 +1,6 @@
 import { Dropbox, files } from "dropbox";
-import { GlobalOptions } from "../types";
-import { cancel } from "../retry-and-rate-limit";
+import { GlobalOptions } from "../../types";
+import { cancel } from "../../retry-and-rate-limit";
 
 export type ListerArgs = (
   | {

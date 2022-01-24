@@ -1,7 +1,7 @@
 import { Dropbox, files } from "dropbox";
-import { GlobalOptions } from "../types";
-import { PromiseLimiter } from "../util/promises/promiseLimiter";
-import { simplePromiseRetrier } from "../util/promises/simplePromiseRetrier";
+import { GlobalOptions } from "../../types";
+import { PromiseLimiter } from "../../util/promises/promiseLimiter";
+import { simplePromiseRetrier } from "../../util/promises/simplePromiseRetrier";
 import FileMetadata = files.FileMetadata;
 import * as https from "https";
 import * as http from "http";

@@ -1,5 +1,5 @@
 import { DropboxProvider, GlobalOptions, Handler } from "../types";
-import * as upload from "../sync/upload";
+import * as upload from "../components/sync/upload";
 import { processOptions } from "../options";
 
 const verb = "sync-upload";
