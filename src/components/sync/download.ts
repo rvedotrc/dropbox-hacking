@@ -3,7 +3,7 @@ import * as path from "path";
 import { files } from "dropbox";
 import { formatTime, parseTime } from "../../util/time";
 import { writeStdout } from "../../util/logging";
-import contentHash from "../uploader/content-hash";
+import makeContentHash from "../uploader/make-content-hash";
 import * as engine from "./engine";
 import createMkdir from "./mkdir";
 import { DropboxProvider, GlobalOptions } from "../../types";
@@ -149,7 +149,7 @@ export const main = (downloadArgs: DownloadArgs): Promise<boolean> => {
           formatTime(stats.mtime) === remote.client_modified;
         if (timestampsMatch && !checkContentHash) return Promise.resolve(false);
 
-        return contentHash(
+        return makeContentHash(
           fs.createReadStream(thisLocalPath, { autoClose: true })
         ).then((hash) => {
           if (hash !== remote.content_hash) return true;
