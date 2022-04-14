@@ -1,6 +1,15 @@
 module.exports = {
   root: true,
-  ignorePatterns: ["**/jest.config.js", "*.auto.ts", "*.gen.ts", "**/node_modules", "**/dist", ".yarn", ".eslintrc.js"],
+  ignorePatterns: [
+    "**/jest.config.js",
+    "*.auto.ts",
+    "*.gen.ts",
+    "**/node_modules",
+    "**/dist",
+    ".yarn",
+    ".eslintrc.js",
+    "photo-manager-client"
+  ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     "ecmaVersion": "2017"

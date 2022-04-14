@@ -8,7 +8,8 @@
     "build": "yarn prettier && yarn lint && yarn compile",
     "rebuild": "rebuild package.json tsconfig.json .eslintrc .eslintrc.js src -- yarn build",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --max-warnings=0",
-    "lint:report": "yarn lint --format json --output-file .eslint/report.json"
+    "lint:report": "yarn lint --format json --output-file .eslint/report.json",
+    "server": "node ./dist/photo-manager/server/main.js"
   },
   "contributors": [
     "Rachel Evans <git@rve.org.uk>"
@@ -23,7 +24,7 @@
   },
   "dependencies": {
     "dropbox": "^10.23.0",
-    "express": "^4.17.2",
+    "express": "^4.17.3",
     "stream-json": "^1.7.3",
     "ts-exif-parser": "^0.2.2"
   },
