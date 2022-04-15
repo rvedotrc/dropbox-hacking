@@ -1,9 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import Calendar from "./calendar";
 
 document.addEventListener('DOMContentLoaded', () => {
     ReactDOM.render(
-        <div>Hello!</div>,
+        <Calendar/>,
         document.getElementById("react_container")
     );
 });

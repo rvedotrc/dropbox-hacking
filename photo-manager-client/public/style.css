@@ -1,0 +1,26 @@
+.twelveMonths {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    padding: 0.5em;
+}
+
+.oneOfTwelveMonths {
+    border: 1px solid lightblue;
+    padding: 0.5em;
+}
+
+.monthBox {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    padding: 0.5em;
+}
+
+.dayInMonthBox {
+    border: 1px solid steelblue;
+    padding: 0.5em;
+    text-align: center;
+}
+
+.dayInMonthBox.col1, .dayInMonthBox.col7 {
+    background: #eee;
+}
