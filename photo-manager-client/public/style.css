@@ -17,10 +17,40 @@
 
 .dayInMonthBox {
     border: 1px solid steelblue;
-    padding: 0.5em;
     text-align: center;
 }
 
 .dayInMonthBox.col1, .dayInMonthBox.col7 {
     background: #eee;
+}
+
+.dayInMonthBox a {
+    display: block;
+    text-decoration: none;
+}
+
+.dayInMonthBox a:hover {
+    background: #ccc;
+}
+
+.photoList {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.photoItem {
+    border: 1px solid lightblue;
+    padding: 0.5em;
+}
+
+.photoItem .clientModified {
+    display: block;
+}
+
+.photoItem .name {
+    display: block;
+}
+
+.photoItem .makeAndModel {
+    display: block;
 }

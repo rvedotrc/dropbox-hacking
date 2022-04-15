@@ -9,19 +9,9 @@ type Year = { yearString: string, yearNumber: number, counts: Map<string, number
 export default () => {
     const [countsByDate, setCountsByDate] = useState<CountsByDate>();
 
-    console.log("render", { countsByDate });
-
     if (!countsByDate) {
         fetch("/api/counts_by_date")
-            .then(r => {
-                console.log({ r });
-                return r;
-            })
             .then(r => r.json())
-            .then(data => {
-                console.log({ data });
-                return data;
-            })
             .then(data => setCountsByDate(data.counts_by_date));
 
         return <div>Loading...</div>;
@@ -72,7 +62,9 @@ export default () => {
                                             const dateString = `${year.yearString}-${zeroPad(monthNumber + 1, 2)}-${zeroPad(dayNumber, 2)}`;
                                             const count = year.counts.get(dateString);
                                             if (count) {
-                                                return <div title={dateString}>{count}</div>
+                                                return <div title={dateString}>
+                                                    <a href={`/day.html?date=${dateString}`}>{count}</a>
+                                                </div>
                                             } else {
                                                 return <div title={dateString}>&nbsp;</div>;
                                             }
