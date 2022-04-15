@@ -28,7 +28,7 @@ export default (props: { date: string }) => {
         <div className={"photoList"}>
             {photos.map(photo =>
                 <div className={"photoItem"} key={photo.id}>
-                    <img src={`/api/thumbnail${photo.path_lower}`}/>
+                    <img src={`/api/thumbnail/128/rev/${photo.rev}`}/>
                     <div className={"clientModified"}>{photo.client_modified}</div>
                     <div className={"name"}>{photo.name}</div>
                     <div className={"makeAndModel"}>{photo.exif.exifData.tags?.Make} {photo.exif.exifData.tags?.Model}</div>

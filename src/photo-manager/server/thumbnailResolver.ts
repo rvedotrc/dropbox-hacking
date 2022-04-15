@@ -1,4 +1,5 @@
 import { Dropbox, files } from "dropbox";
+import ThumbnailSize = files.ThumbnailSize;
 
 type PromiseEtc = {
   resolve: (value: string | PromiseLike<string>) => void;
@@ -12,6 +13,7 @@ export default class ThumbnailResolver {
 
   constructor(
     public readonly dbx: Dropbox,
+    public readonly thumbnailSize: ThumbnailSize,
     public readonly maxDelayMillis: number,
     public readonly maxBatchSize = 25 // the maximum
   ) {}
@@ -40,15 +42,17 @@ export default class ThumbnailResolver {
     const request: files.GetThumbnailBatchArg = {
       entries: [...toSend.entries()].map(([k, _v]) => ({
         path: k,
-        size: { ".tag": "w128h128" },
+        size: this.thumbnailSize,
       })),
     };
+
+    console.log(`filesGetThumbnailBatch for ${request.entries.length} items`);
 
     this.dbx.filesGetThumbnailBatch(request).then((result) => {
       for (const entry of result.result.entries) {
         if (entry[".tag"] === "success") {
           if (entry.metadata.path_lower) {
-            const promiseEtc = toSend.get(entry.metadata.path_lower);
+            const promiseEtc = toSend.get(`rev:${entry.metadata.rev}`);
             if (promiseEtc) {
               promiseEtc.resolve(entry.thumbnail);
             }
@@ -56,8 +60,8 @@ export default class ThumbnailResolver {
         }
       }
 
-      for (const [_path, v] of toSend.entries()) {
-        v.reject("Failed");
+      for (const [path, v] of toSend.entries()) {
+        v.reject(`Failed (no successful thumbnail for ${path})`);
       }
     });
   }

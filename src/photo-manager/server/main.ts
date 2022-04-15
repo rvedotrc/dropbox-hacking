@@ -94,23 +94,28 @@ app.get("/api/photos/:date(\\d\\d\\d\\d-\\d\\d-\\d\\d)", (req, res) => {
   });
 });
 
-let thumbnailResolver: ThumbnailResolver | undefined;
+let thumbnailResolver128: ThumbnailResolver | undefined;
 getDropboxClient().then(
-  (dbx) => (thumbnailResolver = new ThumbnailResolver(dbx, 500))
+  (dbx) =>
+    (thumbnailResolver128 = new ThumbnailResolver(
+      dbx,
+      { ".tag": "w128h128" },
+      200
+    ))
 );
 
-app.get("/api/thumbnail/*", (req, res) => {
-  const pathLower = "/" + (req.params as unknown as string[])[0];
-
+app.get("/api/thumbnail/128/rev/:rev", (req, res) => {
   // Ugh
-  thumbnailResolver?.getForPath(pathLower).then((base64Thumbnail) => {
-    const buffer = Buffer.from(base64Thumbnail, "base64");
+  thumbnailResolver128
+    ?.getForPath(`rev:${req.params.rev}`)
+    .then((base64Thumbnail) => {
+      const buffer = Buffer.from(base64Thumbnail, "base64");
 
-    res.status(200);
-    res.setHeader("Cache-Control", "private; max-age=60");
-    res.contentType("image/jpeg"); // presumably
-    res.send(buffer);
-  });
+      res.status(200);
+      res.setHeader("Cache-Control", "private; max-age=60");
+      res.contentType("image/jpeg");
+      res.send(buffer);
+    });
 });
 
 app.listen(4000, () => {
