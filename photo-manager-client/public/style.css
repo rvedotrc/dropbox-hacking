@@ -45,6 +45,18 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-end;
+    text-decoration: none;
+}
+
+.photoItem:hover {
+    background: #ccc;
+}
+
+.photoItem:hover .clientModified,
+.photoItem:hover .name,
+.photoItem:hover .makeAndModel
+{
+    color: #444;
 }
 
 .photoItem .clientModified {

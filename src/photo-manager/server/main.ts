@@ -5,6 +5,8 @@ import * as LsCache from "../../components/lsCache";
 import { CountsByDate, Photo } from "../shared/types";
 import { getDropboxClient } from "../../auth";
 import ThumbnailResolver from "./thumbnailResolver";
+import { files } from "dropbox";
+import ThumbnailSize = files.ThumbnailSize;
 
 const app = express();
 
@@ -94,29 +96,63 @@ app.get("/api/photos/:date(\\d\\d\\d\\d-\\d\\d-\\d\\d)", (req, res) => {
   });
 });
 
-let thumbnailResolver128: ThumbnailResolver | undefined;
-getDropboxClient().then(
-  (dbx) =>
-    (thumbnailResolver128 = new ThumbnailResolver(
-      dbx,
-      { ".tag": "w128h128" },
-      200
-    ))
-);
+type ThumbnailSizeTag = ThumbnailSize[".tag"];
 
-app.get("/api/thumbnail/128/rev/:rev", (req, res) => {
-  // Ugh
-  thumbnailResolver128
-    ?.getForPath(`rev:${req.params.rev}`)
+const thumbnailResolvers = new Map<
+  ThumbnailSizeTag,
+  Promise<ThumbnailResolver>
+>();
+
+const getThumbnailResolver = (
+  sizeTag: ThumbnailSizeTag
+): Promise<ThumbnailResolver> => {
+  const r = thumbnailResolvers.get(sizeTag);
+  if (r) return r;
+
+  const promise = getDropboxClient().then(
+    (dbx) => new ThumbnailResolver(dbx, { [".tag"]: sizeTag }, 200)
+  );
+  thumbnailResolvers.set(sizeTag, promise);
+  return promise;
+};
+
+app.get("/api/thumbnail/128/rev/:rev", (req, res) =>
+  getThumbnailResolver("w128h128")
+    .then((thumbnailResolver) =>
+      thumbnailResolver.getForPath(`rev:${req.params.rev}`)
+    )
     .then((base64Thumbnail) => {
       const buffer = Buffer.from(base64Thumbnail, "base64");
 
       res.status(200);
-      res.setHeader("Cache-Control", "private; max-age=60");
+      res.setHeader(
+        "Expires",
+        new Date(new Date().getTime() + 3600 * 1000).toUTCString()
+      );
+      res.setHeader("Cache-Control", "private; max-age=3600");
       res.contentType("image/jpeg");
       res.send(buffer);
-    });
-});
+    })
+);
+
+app.get("/api/thumbnail/640/rev/:rev", (req, res) =>
+  getThumbnailResolver("w640h480")
+    .then((thumbnailResolver) =>
+      thumbnailResolver.getForPath(`rev:${req.params.rev}`)
+    )
+    .then((base64Thumbnail) => {
+      const buffer = Buffer.from(base64Thumbnail, "base64");
+
+      res.status(200);
+      res.setHeader(
+        "Expires",
+        new Date(new Date().getTime() + 3600 * 1000).toUTCString()
+      );
+      res.setHeader("Cache-Control", "private; max-age=3600");
+      res.contentType("image/jpeg");
+      res.send(buffer);
+    })
+);
 
 app.listen(4000, () => {
   console.log("listening on port 4000");
