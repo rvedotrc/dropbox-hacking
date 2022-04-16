@@ -7,6 +7,7 @@ import { getDropboxClient } from "../../auth";
 import ThumbnailResolver from "./thumbnailResolver";
 import { files } from "dropbox";
 import ThumbnailSize = files.ThumbnailSize;
+import * as https from "https";
 
 const app = express();
 
@@ -152,6 +153,101 @@ app.get("/api/thumbnail/640/rev/:rev", (req, res) =>
       res.contentType("image/jpeg");
       res.send(buffer);
     })
+);
+
+app.get("/api/photo/rev/:rev", (req, res) =>
+  Promise.all([getLsState(), getExifDb()]).then(([state, exif]) => {
+    if (state.tag !== "ready") {
+      res.status(503);
+      res.json({ error: `ls cache not ready (${state.tag})` });
+      return;
+    }
+
+    const findPhoto = (rev: string): files.FileMetadataReference | null => {
+      for (const metadata of state.entries.values()) {
+        if (metadata[".tag"] === "file" && metadata.rev === rev)
+          return metadata;
+      }
+
+      return null;
+    };
+
+    const file = findPhoto(req.params.rev);
+    const exifData =
+      file && file.content_hash ? exif.get(file.content_hash) : undefined;
+
+    if (!file || !exifData) {
+      res.status(404);
+      res.json({ error: `Photo not found` });
+      return;
+    }
+
+    const photo: Photo = { ...file, exif: exifData };
+    res.setHeader(
+      "Expires",
+      new Date(new Date().getTime() + 3600 * 1000).toUTCString()
+    );
+    res.setHeader("Cache-Control", "private; max-age=3600");
+    res.json({ photo });
+  })
+);
+
+app.get("/image/rev/:rev", (req, res) =>
+  getLsState().then((state) => {
+    if (state.tag !== "ready") {
+      res.status(503);
+      res.json({ error: `ls cache not ready (${state.tag})` });
+      return;
+    }
+
+    const findPhoto = (rev: string): files.FileMetadataReference | null => {
+      for (const metadata of state.entries.values()) {
+        if (metadata[".tag"] === "file" && metadata.rev === rev)
+          return metadata;
+      }
+
+      return null;
+    };
+
+    const file = findPhoto(req.params.rev);
+
+    if (!file) {
+      res.status(404);
+      res.json({ error: `Photo not found` });
+      return;
+    }
+
+    // const expirySeconds = 4 * 3600; // dbx docs
+    // const expiresAt = new Date(new Date().getTime() + expirySeconds * 1000);
+
+    return getDropboxClient()
+      .then((dbx) => dbx.filesGetTemporaryLink({ path: `rev:${file.rev}` }))
+      .then((r) => r.result.link)
+      .then((url) => {
+        https.get(url, {}, (imageRes) => {
+          if (imageRes.statusCode !== 200) {
+            res.status(500);
+            res.json({ error: `Expected 200 got ${imageRes.statusCode}` });
+            return;
+          }
+
+          res.status(200);
+          if (imageRes.headers["content-type"])
+            res.contentType(imageRes.headers["content-type"]);
+          if (imageRes.headers["content-encoding"])
+            res.setHeader(
+              "Content-Encoding",
+              imageRes.headers["content-encoding"]
+            );
+          res.setHeader("Content-Disposition", "inline");
+
+          imageRes.on("error", (err) => {
+            console.error(err);
+          });
+          imageRes.pipe(res);
+        });
+      });
+  })
 );
 
 app.listen(4000, () => {
