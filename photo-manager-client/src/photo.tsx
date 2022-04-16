@@ -31,8 +31,12 @@ export default (props: { rev: string }) => {
             </a>
         </div>
 
+        <p>
+          <a href={`https://www.dropbox.com/preview${photo.path_lower}?context=browse&role=personal`}>View in Dropbox</a>
+        </p>
+
         {gps &&
-            <a href={gps.googleMapsUrl({ zoom: 15 })}>Google Maps</a>
+          <p><a href={gps.googleMapsUrl({ zoom: 15 })}>Google Maps</a></p>
         }
 
         <pre>{JSON.stringify(photo, null, 2)}</pre>
