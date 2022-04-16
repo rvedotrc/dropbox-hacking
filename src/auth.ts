@@ -87,6 +87,8 @@ const updateAuthFromCode = (auth: DropboxAuth, code: string): Promise<void> => {
   });
 };
 
+let saveSeq = 0;
+
 const saveUserCredentials = (
   credentials: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   auth: DropboxAuth,
@@ -101,7 +103,7 @@ const saveUserCredentials = (
     },
   };
 
-  const tmpFile = credentialsPath + ".tmp"; // unsafe
+  const tmpFile = credentialsPath + `.tmp.${saveSeq++}`;
 
   return fs.promises
     .writeFile(tmpFile, JSON.stringify(newPayload, null, 2) + "\n", {
@@ -141,8 +143,7 @@ export const getDropboxClient = async (): Promise<Dropbox> =>
       // console.debug("checkAndRefreshAccessToken", JSON.stringify(auth));
 
       // Incorrect signature; actually returns Promise<void>
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return (auth.checkAndRefreshAccessToken() as any as Promise<void>)
+      return (auth.checkAndRefreshAccessToken() as unknown as Promise<void>)
         .then(() => {
           // console.debug("after refresh", JSON.stringify(auth));
           saveUserCredentials(credentials, auth, credentialsPath);
