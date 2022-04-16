@@ -2,12 +2,13 @@ import * as express from "express";
 import * as path from "path";
 import { ExifDB } from "../../components/exif/exifDB";
 import * as LsCache from "../../components/lsCache";
-import { CountsByDate, Photo } from "../shared/types";
+import { CountsByDate, Photo, ThumbnailsByRev } from "../shared/types";
 import { getDropboxClient } from "../../auth";
 import ThumbnailResolver from "./thumbnailResolver";
 import { files } from "dropbox";
 import ThumbnailSize = files.ThumbnailSize;
 import * as https from "https";
+import GetThumbnailBatchArg = files.GetThumbnailBatchArg;
 
 const app = express();
 
@@ -134,6 +135,37 @@ app.get("/api/thumbnail/128/rev/:rev", (req, res) =>
       res.contentType("image/jpeg");
       res.send(buffer);
     })
+);
+
+app.get("/api/thumbnail/128/revs/:revs", (req, res) =>
+  getDropboxClient().then((dbx) => {
+    const request: GetThumbnailBatchArg = {
+      entries: req.params.revs.split(/,/).map((rev) => ({
+        path: `rev:${rev}`,
+        size: { [".tag"]: "w128h128" },
+      })),
+    };
+
+    return dbx.filesGetThumbnailBatch(request).then((dbxRes) => {
+      const answer: ThumbnailsByRev = {
+        thumbnails_by_rev: [],
+      };
+
+      for (const e of dbxRes.result.entries) {
+        if (e[".tag"] === "success") {
+          answer.thumbnails_by_rev.push({
+            rev: e.metadata.rev,
+            thumbnail: e.thumbnail,
+          });
+        }
+      }
+
+      const expires = new Date(new Date().getTime() + 86400 * 1000);
+      res.setHeader("Expires", expires.toUTCString());
+      res.setHeader("Cache-Control", "private; max-age=86400");
+      res.json(answer);
+    });
+  })
 );
 
 app.get("/api/thumbnail/640/rev/:rev", (req, res) =>
