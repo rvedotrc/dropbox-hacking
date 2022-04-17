@@ -39,7 +39,11 @@ export default (app: Application, context: Context): void => {
           a.id.localeCompare(b.id)
       );
 
-      res.setHeader("Cache-Control", "private; max-age=10");
+      const maxAge = 3600;
+      const expires = new Date(new Date().getTime() + maxAge * 1000);
+      res.setHeader("Expires", expires.toUTCString());
+      res.setHeader("Cache-Control", `private; max-age=${maxAge}`);
+
       res.json({ photos });
     });
   });

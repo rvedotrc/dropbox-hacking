@@ -54,6 +54,11 @@ export default (app: Application, context: Context): void => {
                 );
               res.setHeader("Content-Disposition", "inline");
 
+              const maxAge = 86400;
+              const expires = new Date(new Date().getTime() + maxAge * 1000);
+              res.setHeader("Expires", expires.toUTCString());
+              res.setHeader("Cache-Control", `private; max-age=${maxAge}`);
+
               imageRes.on("error", (err) => {
                 console.error(err);
               });

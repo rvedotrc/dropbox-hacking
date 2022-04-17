@@ -32,11 +32,12 @@ export default (app: Application, context: Context): void => {
       }
 
       const photo: Photo = { ...file, exif: exifData };
-      res.setHeader(
-        "Expires",
-        new Date(new Date().getTime() + 3600 * 1000).toUTCString()
-      );
-      res.setHeader("Cache-Control", "private; max-age=3600");
+
+      const maxAge = 86400;
+      const expires = new Date(new Date().getTime() + maxAge * 1000);
+      res.setHeader("Expires", expires.toUTCString());
+      res.setHeader("Cache-Control", `private; max-age=${maxAge}`);
+
       res.json({ photo });
     })
   );

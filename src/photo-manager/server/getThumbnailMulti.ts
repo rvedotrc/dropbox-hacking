@@ -28,9 +28,11 @@ export default (app: Application, context: Context): void => {
           }
         }
 
-        const expires = new Date(new Date().getTime() + 86400 * 1000);
+        const maxAge = 86400;
+        const expires = new Date(new Date().getTime() + maxAge * 1000);
         res.setHeader("Expires", expires.toUTCString());
-        res.setHeader("Cache-Control", "private; max-age=86400");
+        res.setHeader("Cache-Control", `private; max-age=${maxAge}`);
+
         res.json(answer);
       });
     })

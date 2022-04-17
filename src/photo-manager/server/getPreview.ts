@@ -16,11 +16,12 @@ export default (app: Application, context: Context): void => {
           ];
 
           res.status(200);
-          res.setHeader(
-            "Expires",
-            new Date(new Date().getTime() + 3600 * 1000).toUTCString()
-          );
-          res.setHeader("Cache-Control", "private; max-age=3600");
+
+          const maxAge = 86400;
+          const expires = new Date(new Date().getTime() + maxAge * 1000);
+          res.setHeader("Expires", expires.toUTCString());
+          res.setHeader("Cache-Control", `private; max-age=${maxAge}`);
+
           res.contentType("image/jpeg");
           res.send(buffer);
         })

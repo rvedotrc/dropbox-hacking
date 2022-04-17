@@ -24,7 +24,11 @@ export default (app: Application, context: Context): void => {
         .sort()
         .map((date) => ({ date, count: dates.get(date) || 0 }));
 
-      res.setHeader("Cache-Control", "private; max-age=10");
+      const maxAge = 300;
+      const expires = new Date(new Date().getTime() + maxAge * 1000);
+      res.setHeader("Expires", expires.toUTCString());
+      res.setHeader("Cache-Control", `private; max-age=${maxAge}`);
+
       res.json({ counts_by_date: countsByDate });
     });
   });
