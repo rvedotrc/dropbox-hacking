@@ -65,37 +65,43 @@ app.get("/api/counts_by_date", (req, res) => {
 app.get("/api/photos/:date(\\d\\d\\d\\d-\\d\\d-\\d\\d)", (req, res) => {
   const date = req.params.date;
 
-  Promise.all([getLsState(), getExifDb()]).then(([state, exif]) => {
-    if (state.tag !== "ready") {
-      res.status(503);
-      res.json({ error: `ls cache not ready (${state.tag})` });
-      return;
-    }
+  Promise.all([getLsState(), getExifDb()])
+    .then(([state, exif]) => {
+      if (state.tag !== "ready") {
+        res.status(503);
+        res.json({ error: `ls cache not ready (${state.tag})` });
+        return;
+      }
 
-    const photos: Photo[] = [];
+      const photos: Photo[] = [];
 
-    for (const entry of state.entries.values()) {
-      if (entry[".tag"] !== "file") continue;
-      if (!entry.path_lower?.endsWith(".jpg")) continue;
+      for (const entry of state.entries.values()) {
+        if (entry[".tag"] !== "file") continue;
+        if (!entry.path_lower?.endsWith(".jpg")) continue;
 
-      if (!entry.content_hash) continue;
+        if (!entry.content_hash) continue;
 
-      const thisExif = exif.get(entry.content_hash);
-      if (!thisExif) return;
+        const thisExif = exif.get(entry.content_hash);
+        if (!thisExif) {
+          console.log(
+            `No exif data yet for ${entry.content_hash} (${entry.path_lower})`
+          );
+          continue;
+        }
 
-      const thisDate = entry.client_modified.substring(0, 10);
-      if (thisDate === date) photos.push({ ...entry, exif: thisExif });
-    }
+        const thisDate = entry.client_modified.substring(0, 10);
+        if (thisDate === date) photos.push({ ...entry, exif: thisExif });
+      }
 
-    photos.sort(
-      (a, b) =>
-        a.client_modified.localeCompare(b.client_modified) ||
-        a.id.localeCompare(b.id)
-    );
+      photos.sort(
+        (a, b) =>
+          a.client_modified.localeCompare(b.client_modified) ||
+          a.id.localeCompare(b.id)
+      );
 
-    res.setHeader("Cache-Control", "private; max-age=10");
-    res.json({ photos });
-  });
+      res.setHeader("Cache-Control", "private; max-age=10");
+      res.json({ photos });
+    });
 });
 
 type ThumbnailSizeTag = ThumbnailSize[".tag"];
