@@ -90,9 +90,13 @@ export default (props: { date: string }) => {
         <div className={"photoList"}>
             {photosWithThumbnails.map(photo =>
                 <a className={"photoItem"} key={photo.id} href={`/photo.html?rev=${photo.rev}`}>
-                    <img src={
-                        photo.thumbnail ? `data:image/jpeg;base64,${photo.thumbnail}` : `/placeholder.png`
-                    }/>
+                    <img
+                        src={photo.thumbnail ? `data:image/jpeg;base64,${photo.thumbnail}` : `/placeholder.png`}
+                        style={{
+                            width: photo.thumbnail ? undefined : '128px',
+                            height: photo.thumbnail ? undefined : '128px',
+                        }}
+                    />
                     <div className={"clientModified"}>{photo.client_modified}</div>
                     <div className={"name"}>{photo.name}</div>
                     <div className={"makeAndModel"}>{photo.exif.exifData.tags?.Make} {photo.exif.exifData.tags?.Model}</div>
