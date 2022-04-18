@@ -8,13 +8,46 @@ export default (props: { date: string }) => {
     const [revToThumbnail, setRevToThumbnail] = useState(new Map<string, string | undefined>());
     const [dayMetadata, setDayMetadata] = useState<DayMetadata>();
 
-    // console.log("render day");
+    // const getStats = () => {
+    //     const p = photos || [];
+    //     const wanted = new Set(p.map(ph => ph.rev));
+    //     const got = new Set(revToThumbnail.keys());
     //
-    // for (const k of [...revToThumbnail.keys()].sort()) {
-    //     console.log({ rev: k, thumbnail: revToThumbnail.get(k) });
-    // }
-    // console.log("end of revs");
+    //     const numWanted = [...wanted].filter(rev => !revToThumbnail.has(rev)).length;
+    //     const numRequested = [...wanted].filter(rev => revToThumbnail.has(rev) && revToThumbnail.get(rev) === undefined).length;
+    //     const numGot = [...wanted].filter(rev => revToThumbnail.has(rev) && revToThumbnail.get(rev) !== undefined).length;
+    //     const numUnwanted = [...got].filter(rev => !wanted.has(rev)).length;
+    //
+    //     return { numWanted, numRequested, numGot, numUnwanted };
+    // };
+    //
+    // console.log(
+    //     "render day",
+    //     {
+    //         date: props.date,
+    //         revs: (photos === undefined) ? undefined : [...photos.map(p => p.rev)].sort().join(','),
+    //         metadataLoaded: (dayMetadata !== undefined),
+    //         thumbRevs: [...revToThumbnail.keys()].sort().join(','),
+    //         ...getStats(),
+    //     }
+    // );
 
+    // Discard any unwanted thumbnails
+    useEffect(() => {
+        const wantedRevs = new Set((photos || []).map(p => p.rev));
+
+        let changed = false;
+        for (const rev of revToThumbnail.keys()) {
+            if (!wantedRevs.has(rev)) {
+                revToThumbnail.delete(rev);
+                changed = true;
+            }
+        }
+
+        if (changed) setRevToThumbnail(new Map(revToThumbnail));
+    }, [photos, revToThumbnail]);
+
+    // Fetch the list of photos & metadata
     useEffect(() => {
         fetch(`/api/photos/${props.date}`)
             .then(r => r.json())
@@ -25,40 +58,19 @@ export default (props: { date: string }) => {
             .then(data => setDayMetadata(data.day_metadata));
     }, [props.date]);
 
-    if (!photos || !dayMetadata) {
-        useEffect(() => undefined);
-        return <div>Loading...</div>;
-    }
-
-    if (photos.length === 0) {
-        useEffect(() => {
-            if (revToThumbnail.size > 0) setRevToThumbnail(new Map());
-        });
-
-        return <>
-            <h1>{props.date}</h1>
-            <div>No data</div>
-        </>;
-    }
-
-    const photosWithThumbnails = photos.map(photo => ({ ...photo, thumbnail: revToThumbnail.get(photo.rev) }));
-
+    // Load any missing thumbnails
     useEffect(() => {
+        if (photos === undefined) return;
+
         const photoRevs = new Set(photos.map(photo => photo.rev));
         let changed = false;
-
-        for (const rev of revToThumbnail.keys()) {
-            if (!photoRevs.has(rev)) {
-                revToThumbnail.delete(rev);
-                changed = true;
-            }
-        }
 
         const needToRequest: string[] = [];
 
         for (const rev of photoRevs) {
             if (!revToThumbnail.has(rev)) {
                 needToRequest.push(rev);
+                // Use undefined to record the fact that we have made the request
                 revToThumbnail.set(rev, undefined);
             }
         }
@@ -69,25 +81,41 @@ export default (props: { date: string }) => {
             const slice = needToRequest.splice(0, 25);
             if (slice.length === 0) break;
 
-            console.log(`Requesting ${slice.join(',')}`);
+            // console.log(`Requesting ${slice.join(',')}`);
 
             fetch(`/api/thumbnail/128/revs/${slice.join(',')}`)
                 .then(res => res.json() as Promise<ThumbnailsByRev>)
                 .then(data => {
-                    console.log(`Got response for ${slice.join(',')}`, data);
+                    // console.log(`Got response for ${slice.join(',')}`, data);
 
                     for (const r of data.thumbnails_by_rev) {
-                        console.log(`got thumbnail for ${r.rev}`)
+                        // console.log(`got thumbnail for ${r.rev}`)
                         revToThumbnail.set(r.rev, r.thumbnail);
                     }
 
                     setRevToThumbnail(new Map(revToThumbnail));
-                    console.log("fetch complete");
+                    // console.log("fetch complete");
                 });
         }
 
         if (changed) setRevToThumbnail(new Map(revToThumbnail));
-    });
+    }, [photos, revToThumbnail]);
+
+    if (!photos || !dayMetadata) {
+        return <>
+            <h1>{props.date}</h1>
+            <div>Loading...</div>
+        </>;
+    }
+
+    if (photos.length === 0) {
+        return <>
+            <h1>{props.date}</h1>
+            <div>No data</div>
+        </>;
+    }
+
+    const photosWithThumbnails = photos.map(photo => ({ ...photo, thumbnail: revToThumbnail.get(photo.rev) }));
 
     return <>
         <h1>{props.date}</h1>
