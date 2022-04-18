@@ -27,7 +27,7 @@ export default (props: { rev: string }) => {
 
         <div>
             <a href={`/image/rev/${photo.rev}`}>
-                <img src={`/api/thumbnail/640/rev/${photo.rev}`}/>
+                <img src={`/api/thumbnail/640/rev/${photo.rev}`} alt={"preview"}/>
             </a>
         </div>
 

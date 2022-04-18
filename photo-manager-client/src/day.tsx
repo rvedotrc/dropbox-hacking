@@ -1,25 +1,32 @@
 import * as React from 'react';
 import {useEffect, useState} from "react";
 import {Photo, ThumbnailsByRev} from "../../src/photo-manager/shared/types";
+import {DayMetadata} from "../../src/photo-manager/server/dayDb";
 
 export default (props: { date: string }) => {
     const [photos, setPhotos] = useState<Photo[]>();
     const [revToThumbnail, setRevToThumbnail] = useState(new Map<string, string | undefined>());
+    const [dayMetadata, setDayMetadata] = useState<DayMetadata>();
 
-    console.log("render day");
+    // console.log("render day");
+    //
+    // for (const k of [...revToThumbnail.keys()].sort()) {
+    //     console.log({ rev: k, thumbnail: revToThumbnail.get(k) });
+    // }
+    // console.log("end of revs");
 
-    for (const k of [...revToThumbnail.keys()].sort()) {
-        console.log({ rev: k, thumbnail: revToThumbnail.get(k) });
-    }
-    console.log("end of revs");
-
-    if (!photos) {
-        useEffect(() => undefined);
-
+    useEffect(() => {
         fetch(`/api/photos/${props.date}`)
             .then(r => r.json())
             .then(data => setPhotos(data.photos));
 
+        fetch(`/api/day/${props.date}`)
+            .then(r => r.json())
+            .then(data => setDayMetadata(data.day_metadata));
+    }, [props.date]);
+
+    if (!photos || !dayMetadata) {
+        useEffect(() => undefined);
         return <div>Loading...</div>;
     }
 
@@ -85,6 +92,8 @@ export default (props: { date: string }) => {
     return <>
         <h1>{props.date}</h1>
 
+        <pre>{JSON.stringify(dayMetadata)}</pre>
+
         <p>{photos.length} photos</p>
 
         <div className={"photoList"}>
@@ -92,6 +101,7 @@ export default (props: { date: string }) => {
                 <a className={"photoItem"} key={photo.id} href={`/photo.html?rev=${photo.rev}`}>
                     <img
                         src={photo.thumbnail ? `data:image/jpeg;base64,${photo.thumbnail}` : `/placeholder.png`}
+                        alt={"thumbnail"}
                         style={{
                             width: photo.thumbnail ? undefined : '128px',
                             height: photo.thumbnail ? undefined : '128px',
@@ -104,4 +114,4 @@ export default (props: { date: string }) => {
             )}
         </div>
     </>;
-}
+};

@@ -8,6 +8,7 @@ import getPhotoMetadata from "./getPhotoMetadata";
 import getThumbnailMulti from "./getThumbnailMulti";
 import contextBuilder from "./contextBuilder";
 import getPreview from "./getPreview";
+import getSetDayMetadata from "./getSetDayMetadata";
 
 const app = express();
 
@@ -17,12 +18,15 @@ app.use(
   express.static(path.join(__dirname, "../../../photo-manager-client/public"))
 );
 
+app.use(express.json());
+
 getCountsByDate(app, context);
 getPhotosOnDate(app, context);
 getFullImage(app, context);
 getPhotoMetadata(app, context);
 getThumbnailMulti(app, context);
 getPreview(app, context);
+getSetDayMetadata(app, context);
 
 app.listen(4000, () => {
   console.log("listening on port 4000");
