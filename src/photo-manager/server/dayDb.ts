@@ -39,6 +39,6 @@ export default class DayDb {
     return fs.promises
       .writeFile(tmpFile, args.content, { encoding: "utf-8", mode: 0o644 })
       .then(() => fs.promises.rename(tmpFile, args.path))
-      .finally(() => fs.promises.unlink(tmpFile));
+      .finally(() => fs.promises.unlink(tmpFile).catch(() => null));
   }
 }

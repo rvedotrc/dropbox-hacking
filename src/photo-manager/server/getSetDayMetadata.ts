@@ -15,10 +15,22 @@ export default (app: Application, context: Context): void => {
   );
 
   app.patch("/api/day/:date(\\d\\d\\d\\d-\\d\\d-\\d\\d)", (req, res) => {
-    console.log({ req });
     const body = req.body;
-    console.log({ body });
 
-    res.send("todo");
+    if (typeof body["description"] === "string") {
+      const description = body["description"];
+
+      const r = { date: req.params.date, description };
+
+      context.dayDb
+        .then((dayDb) => dayDb.setDay(r))
+        .then(() => {
+          res.status(200);
+          res.json({ day_metadata: r });
+        });
+    } else {
+      res.status(400);
+      res.json({ error: "No description" });
+    }
   });
 };

@@ -1,7 +1,8 @@
 import * as React from 'react';
 import {useEffect, useState} from "react";
-import {Photo, ThumbnailsByRev} from "../../src/photo-manager/shared/types";
+import {DayMetadataResponse, Photo, ThumbnailsByRev} from "../../src/photo-manager/shared/types";
 import {DayMetadata} from "../../src/photo-manager/server/dayDb";
+import EditableTextField from "./editableTextField";
 
 export default (props: { date: string }) => {
     const [photos, setPhotos] = useState<Photo[]>();
@@ -54,7 +55,7 @@ export default (props: { date: string }) => {
             .then(data => setPhotos(data.photos));
 
         fetch(`/api/day/${props.date}`)
-            .then(r => r.json())
+            .then(res => res.json() as Promise<DayMetadataResponse>)
             .then(data => setDayMetadata(data.day_metadata));
     }, [props.date]);
 
@@ -108,19 +109,26 @@ export default (props: { date: string }) => {
         </>;
     }
 
-    if (photos.length === 0) {
-        return <>
-            <h1>{props.date}</h1>
-            <div>No data</div>
-        </>;
-    }
-
     const photosWithThumbnails = photos.map(photo => ({ ...photo, thumbnail: revToThumbnail.get(photo.rev) }));
 
     return <>
         <h1>{props.date}</h1>
 
-        <pre>{JSON.stringify(dayMetadata)}</pre>
+        <EditableTextField
+            value={dayMetadata.description}
+            onSave={newText =>
+                fetch(`/api/day/${props.date}`, {
+                    method: 'PATCH',
+                    cache: 'no-cache',
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ description: newText })
+                })
+                    .then(res => res.json() as Promise<DayMetadataResponse>)
+                    .then(newData => setDayMetadata(newData.day_metadata))
+            }
+            />
 
         <p>{photos.length} photos</p>
 
