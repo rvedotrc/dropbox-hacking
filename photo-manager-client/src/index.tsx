@@ -4,6 +4,7 @@ import * as ReactDOM from 'react-dom';
 import Calendar from "./calendar";
 import Day from "./day";
 import Photo from "./photo";
+import ListOfDays from "./listOfDays";
 
 const toRender = (href: string) => {
     const url = new URL(href);
@@ -12,6 +13,9 @@ const toRender = (href: string) => {
 
     if (path === '/' && queryString === '')
         return <Calendar/>;
+
+    if (path === '/' && queryString === '?mode=list')
+        return <ListOfDays/>;
 
     if (path === '/day.html') {
         const m = queryString.match(/^\?date=(?<date>\d\d\d\d-\d\d-\d\d)$/);

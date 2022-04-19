@@ -1,6 +1,6 @@
 import { Application } from "express";
 import { Context } from "./context";
-import { ThumbnailsByRev } from "../shared/types";
+import { ThumbnailsByRevResponse } from "../shared/types";
 import { files } from "dropbox";
 import GetThumbnailBatchArg = files.GetThumbnailBatchArg;
 
@@ -15,7 +15,7 @@ export default (app: Application, context: Context): void => {
       };
 
       return dbx.filesGetThumbnailBatch(request).then((dbxRes) => {
-        const answer: ThumbnailsByRev = {
+        const answer: ThumbnailsByRevResponse = {
           thumbnails_by_rev: [],
         };
 

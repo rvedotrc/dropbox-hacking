@@ -1,4 +1,4 @@
-import { CountsByDate } from "../shared/types";
+import { CountsByDate, CountsByDateResponse } from "../shared/types";
 import { Application } from "express";
 import { Context } from "./context";
 
@@ -29,7 +29,8 @@ export default (app: Application, context: Context): void => {
       res.setHeader("Expires", expires.toUTCString());
       res.setHeader("Cache-Control", `private; max-age=${maxAge}`);
 
-      res.json({ counts_by_date: countsByDate });
+      const r: CountsByDateResponse = { counts_by_date: countsByDate };
+      res.json(r);
     });
   });
 };

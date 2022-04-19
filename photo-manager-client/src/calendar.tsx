@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {useState} from "react";
-import {CountsByDate} from "../../src/photo-manager/shared/types";
+import {CountsByDate, CountsByDateResponse} from "../../src/photo-manager/shared/types";
 import MonthBox from "./monthBox";
 import TwelveMonths from "./twelveMonths";
 
@@ -11,7 +11,7 @@ export default () => {
 
     if (!countsByDate) {
         fetch("/api/counts_by_date")
-            .then(r => r.json())
+            .then(r => r.json() as Promise<CountsByDateResponse>)
             .then(data => setCountsByDate(data.counts_by_date));
 
         return <div>Loading...</div>;
@@ -42,6 +42,11 @@ export default () => {
 
     return <div>
         <h1>Calendar</h1>
+
+        <p>
+            <a href={"/?mode=list"}>List of days</a>
+        </p>
+
         {
             [...years.keys()].sort()
                 .map(key => years.get(key))

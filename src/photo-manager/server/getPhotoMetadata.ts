@@ -1,4 +1,4 @@
-import { Photo } from "../shared/types";
+import { Photo, PhotoResponse } from "../shared/types";
 import { Application } from "express";
 import { Context } from "./context";
 import { files } from "dropbox";
@@ -38,7 +38,8 @@ export default (app: Application, context: Context): void => {
       res.setHeader("Expires", expires.toUTCString());
       res.setHeader("Cache-Control", `private; max-age=${maxAge}`);
 
-      res.json({ photo });
+      const r: PhotoResponse = { photo };
+      res.json(r);
     })
   );
 };

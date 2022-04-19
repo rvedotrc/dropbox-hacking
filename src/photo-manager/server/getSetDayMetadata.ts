@@ -1,7 +1,15 @@
 import { Application } from "express";
 import { Context } from "./context";
+import { DayMetadataResponse, DaysMetadataResponse } from "../shared/types";
 
 export default (app: Application, context: Context): void => {
+  app.get("/api/day/all", (req, res) =>
+    context.dayDb
+      .then((dayDb) => dayDb.days)
+      .then((days) => ({ days_metadata: days }))
+      .then((data: DaysMetadataResponse) => res.json(data))
+  );
+
   app.get("/api/day/:date(\\d\\d\\d\\d-\\d\\d-\\d\\d)", (req, res) =>
     context.dayDb
       .then((dayDb) => dayDb.days)
@@ -20,13 +28,14 @@ export default (app: Application, context: Context): void => {
     if (typeof body["description"] === "string") {
       const description = body["description"];
 
-      const r = { date: req.params.date, description };
+      const r: DayMetadataResponse = {
+        day_metadata: { date: req.params.date, description },
+      };
 
       context.dayDb
-        .then((dayDb) => dayDb.setDay(r))
+        .then((dayDb) => dayDb.setDay(r.day_metadata))
         .then(() => {
-          res.status(200);
-          res.json({ day_metadata: r });
+          res.json(r);
         });
     } else {
       res.status(400);

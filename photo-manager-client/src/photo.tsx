@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {useState} from "react";
-import {Photo} from "../../src/photo-manager/shared/types";
+import {Photo, PhotoResponse} from "../../src/photo-manager/shared/types";
 import GPSLatLong from "./gpsLatLong";
 
 export default (props: { rev: string }) => {
@@ -8,8 +8,7 @@ export default (props: { rev: string }) => {
 
     if (photo === undefined) {
         fetch(`/api/photo/rev/${props.rev}`)
-            .then(r => { console.log({ r }); return r; })
-            .then(r => r.json())
+            .then(r => r.json() as Promise<PhotoResponse>)
             .then(data => setPhoto(data.photo));
 
         return <div>Loading...</div>;

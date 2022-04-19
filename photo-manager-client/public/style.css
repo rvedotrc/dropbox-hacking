@@ -79,3 +79,26 @@
     color: #cccccc;
     margin: 0.25em 0.25em 0.5em;
 }
+
+.listOfDays {
+    list-style: none;
+}
+
+.listOfDays li:hover {
+    background: #eed;
+}
+
+
+.listOfDays a {
+    display: flex;
+}
+
+.listOfDays .date {
+    margin-right: 0.5em;
+}
+
+.listOfDays .count {
+    margin-right: 1em;
+    text-align: right;
+    width: 2em;
+}

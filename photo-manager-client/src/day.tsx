@@ -1,6 +1,11 @@
 import * as React from 'react';
 import {useEffect, useState} from "react";
-import {DayMetadataResponse, Photo, ThumbnailsByRev} from "../../src/photo-manager/shared/types";
+import {
+    DayMetadataResponse,
+    Photo,
+    PhotosResponse,
+    ThumbnailsByRevResponse
+} from "../../src/photo-manager/shared/types";
 import {DayMetadata} from "../../src/photo-manager/server/dayDb";
 import EditableTextField from "./editableTextField";
 
@@ -51,7 +56,7 @@ export default (props: { date: string }) => {
     // Fetch the list of photos & metadata
     useEffect(() => {
         fetch(`/api/photos/${props.date}`)
-            .then(r => r.json())
+            .then(r => r.json() as Promise<PhotosResponse>)
             .then(data => setPhotos(data.photos));
 
         fetch(`/api/day/${props.date}`)
@@ -85,7 +90,7 @@ export default (props: { date: string }) => {
             // console.log(`Requesting ${slice.join(',')}`);
 
             fetch(`/api/thumbnail/128/revs/${slice.join(',')}`)
-                .then(res => res.json() as Promise<ThumbnailsByRev>)
+                .then(res => res.json() as Promise<ThumbnailsByRevResponse>)
                 .then(data => {
                     // console.log(`Got response for ${slice.join(',')}`, data);
 
