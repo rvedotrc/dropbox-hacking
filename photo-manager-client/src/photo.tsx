@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {useState} from "react";
 import {Photo, PhotoResponse} from "../../src/photo-manager/shared/types";
-import GPSLatLong from "./gpsLatLong";
+import GPSLatLong from "../../src/photo-manager/shared/gpsLatLong";
 
 export default (props: { rev: string }) => {
     const [photo, setPhoto] = useState<Photo | false | undefined>();

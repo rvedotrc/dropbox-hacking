@@ -2,7 +2,11 @@ import { files } from "dropbox";
 import { ExifFromHash } from "../../components/exif/exifDB";
 import { DayMetadata } from "../server/dayDb";
 
-export type CountsByDateEntry = { date: string; count: number };
+export type CountsByDateEntry = {
+  date: string;
+  count: number;
+  countWithGps: number;
+};
 export type CountsByDate = CountsByDateEntry[];
 export type CountsByDateResponse = { counts_by_date: CountsByDate };
 
