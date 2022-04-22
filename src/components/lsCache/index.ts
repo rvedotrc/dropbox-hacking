@@ -110,7 +110,7 @@ export class StateDir {
   }
 
   public setReady(): Promise<void> {
-    console.debug("setReady");
+    console.debug("lsCache setReady");
     if (!this.data) throw "No data";
 
     this.data.correctAsOf = new Date().getTime();
@@ -166,7 +166,7 @@ export class StateDir {
   private save(): Promise<void> {
     if (!this.data) return Promise.resolve(); // Should we unlink instead?
 
-    console.debug(`save with ${this.data.entries.size} entries`);
+    console.debug(`save lsCache with ${this.data.entries.size} entries`);
     const payload = {
       ...this.data,
       entries: this.entriesToArray(this.data.entries),

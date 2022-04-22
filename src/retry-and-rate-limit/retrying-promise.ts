@@ -121,9 +121,13 @@ export default class RetryingPromise<M extends keyof Dropbox> {
 
     const rateLimitError: auth.RateLimitError = error?.error;
 
-    console.debug({ rateLimitError });
-    console.debug({ rateLimitError_reason: rateLimitError.reason });
-    console.debug({ rateLimitError_retry_after: rateLimitError.retry_after });
+    this.debug(JSON.stringify({ rateLimitError }));
+    this.debug(
+      JSON.stringify({ rateLimitError_reason: rateLimitError.reason })
+    );
+    this.debug(
+      JSON.stringify({ rateLimitError_retry_after: rateLimitError.retry_after })
+    );
 
     if (
       (
@@ -198,10 +202,10 @@ export default class RetryingPromise<M extends keyof Dropbox> {
     // 2022-01-23 11:17:49.377210500     '    at processTicksAndRejections (node:internal/process/task_queues:83:21)'
     // 2022-01-23 11:17:49.377210500 }
 
-    console.debug({ error });
-    console.debug({ error_message: error.message });
-    console.debug({ interpolate: `${error}` });
-    console.debug({ toString: error.toString() });
+    this.debug(JSON.stringify({ error }));
+    this.debug(JSON.stringify({ error_message: error.message }));
+    this.debug(JSON.stringify({ interpolate: `${error}` }));
+    this.debug(JSON.stringify({ toString: error.toString() }));
 
     const errorString = `${error}`;
     if (

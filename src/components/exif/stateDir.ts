@@ -110,7 +110,7 @@ export class StateDir {
   }
 
   public setReady(): Promise<void> {
-    console.debug("setReady");
+    console.debug("setReady exif state");
     if (!this.data) throw "No data";
 
     this.data.correctAsOf = new Date().getTime();
@@ -169,7 +169,9 @@ export class StateDir {
   private save(): Promise<void> {
     if (!this.data) return Promise.resolve(); // Should we unlink instead?
 
-    console.debug(`save`);
+    console.debug(
+      `save exif state ${this.data.cursor} ${this.data.correctAsOf}`
+    );
     const payload = this.data;
 
     const tmpFile = this.stateFile + ".tmp";
