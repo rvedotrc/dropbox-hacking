@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {CountsByDate, CountsByDateResponse} from "../../src/photo-manager/shared/types";
 import MonthBox from "./monthBox";
 import TwelveMonths from "./twelveMonths";
@@ -9,11 +9,16 @@ type Year = { yearString: string, yearNumber: number, counts: Map<string, number
 export default () => {
     const [countsByDate, setCountsByDate] = useState<CountsByDate>();
 
-    if (!countsByDate) {
-        fetch("/api/counts_by_date")
-            .then(r => r.json() as Promise<CountsByDateResponse>)
-            .then(data => setCountsByDate(data.counts_by_date));
+    useEffect(() => {
+        if (!countsByDate) {
+            fetch("/api/counts_by_date")
+                .then(r => r.json() as Promise<CountsByDateResponse>)
+                .then(data => setCountsByDate(data.counts_by_date));
 
+        }
+    }, []);
+
+    if (!countsByDate) {
         return <div>Loading...</div>;
     }
 

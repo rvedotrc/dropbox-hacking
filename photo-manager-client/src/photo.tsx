@@ -1,16 +1,20 @@
 import * as React from 'react';
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {Photo, PhotoResponse} from "../../src/photo-manager/shared/types";
 import GPSLatLong from "../../src/photo-manager/shared/gpsLatLong";
 
 export default (props: { rev: string }) => {
     const [photo, setPhoto] = useState<Photo | false | undefined>();
 
-    if (photo === undefined) {
-        fetch(`/api/photo/rev/${props.rev}`)
-            .then(r => r.json() as Promise<PhotoResponse>)
-            .then(data => setPhoto(data.photo));
+    useEffect(() => {
+        if (photo === undefined) {
+            fetch(`/api/photo/rev/${props.rev}`)
+                .then(r => r.json() as Promise<PhotoResponse>)
+                .then(data => setPhoto(data.photo));
+        }
+    }, [props.rev]);
 
+    if (photo === undefined) {
         return <div>Loading...</div>;
     }
 
