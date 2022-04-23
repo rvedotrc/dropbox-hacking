@@ -1,8 +1,8 @@
 import { Application } from "express";
-import { Context } from "./context";
+import { Context } from "../context";
 
 export default (app: Application, context: Context): void => {
-  app.get("/api/thumbnail/640/rev/:rev", (req, res) =>
+  app.get("/image/rev/:rev/640", (req, res) =>
     context.dropboxClient.then((dbx) =>
       dbx
         .filesGetThumbnailV2({

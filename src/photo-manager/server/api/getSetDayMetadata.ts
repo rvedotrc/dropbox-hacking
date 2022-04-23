@@ -1,6 +1,6 @@
 import { Application } from "express";
-import { Context } from "./context";
-import { DayMetadataResponse, DaysMetadataResponse } from "../shared/types";
+import { Context } from "../context";
+import { DayMetadataResponse, DaysMetadataResponse } from "../../shared/types";
 
 export default (app: Application, context: Context): void => {
   app.get("/api/day/all", (req, res) =>

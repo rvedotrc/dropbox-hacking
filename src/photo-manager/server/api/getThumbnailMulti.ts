@@ -1,6 +1,6 @@
 import { Application } from "express";
-import { Context } from "./context";
-import { ThumbnailsByRevResponse } from "../shared/types";
+import { Context } from "../context";
+import { ThumbnailsByRevResponse } from "../../shared/types";
 import { files } from "dropbox";
 import GetThumbnailBatchArg = files.GetThumbnailBatchArg;
 

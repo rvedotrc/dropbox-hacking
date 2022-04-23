@@ -1,17 +1,12 @@
 import * as express from "express";
 import * as path from "path";
 
-import getCountsByDate from "./getCountsByDate";
-import getPhotosOnDate from "./getPhotosOnDate";
-import getFullImage from "./getFullImage";
-import getPhotoMetadata from "./getPhotoMetadata";
-import getThumbnailMulti from "./getThumbnailMulti";
 import contextBuilder from "./contextBuilder";
-import getPreview from "./getPreview";
-import getSetDayMetadata from "./getSetDayMetadata";
 import getRoot from "./getRoot";
 import getPages from "./getPages";
 import legacyRedirects from "./legacyRedirects";
+import api from "./api";
+import image from "./image";
 
 const app = express();
 
@@ -30,13 +25,8 @@ getRoot(app, context);
 getPages(app, context);
 legacyRedirects(app, context);
 
-getCountsByDate(app, context);
-getPhotosOnDate(app, context);
-getFullImage(app, context);
-getPhotoMetadata(app, context);
-getThumbnailMulti(app, context);
-getPreview(app, context);
-getSetDayMetadata(app, context);
+api(app, context);
+image(app, context);
 
 app.listen(context.port, () => {
   console.log(`listening on port ${context.port}`);

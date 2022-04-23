@@ -1,6 +1,6 @@
-import { Photo, PhotoResponse } from "../shared/types";
+import { Photo, PhotoResponse } from "../../shared/types";
 import { Application } from "express";
-import { Context } from "./context";
+import { Context } from "../context";
 import { files } from "dropbox";
 
 export default (app: Application, context: Context): void => {

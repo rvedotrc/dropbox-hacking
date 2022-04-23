@@ -1,6 +1,6 @@
-import { Photo, PhotosResponse } from "../shared/types";
+import { Photo, PhotosResponse } from "../../shared/types";
 import { Application } from "express";
-import { Context } from "./context";
+import { Context } from "../context";
 
 export default (app: Application, context: Context): void => {
   app.get("/api/photos/:date(\\d\\d\\d\\d-\\d\\d-\\d\\d)", (req, res) => {

@@ -2,10 +2,10 @@ import {
   CountsByDateEntry,
   CountsByDateResponse,
   Photo,
-} from "../shared/types";
+} from "../../shared/types";
 import { Application } from "express";
-import { Context } from "./context";
-import GPSLatLong from "../shared/gpsLatLong";
+import { Context } from "../context";
+import GPSLatLong from "../../shared/gpsLatLong";
 
 const samplePhotos = (photos: Photo[]): Photo[] => {
   if (photos.length === 0) return photos;
