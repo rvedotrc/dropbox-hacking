@@ -5,7 +5,10 @@ import { getDropboxClient } from "../../auth";
 import * as fs from "fs";
 import DayDb from "./dayDb";
 
-export default (): Context => {
+export default (args: {
+  port: number;
+  baseUrlWithoutSlash: string;
+}): Context => {
   const exifDbDir = process.env.EXIF_DB_DIR;
   if (exifDbDir === undefined) throw "Need EXIF_DB_DIR";
 
@@ -26,6 +29,8 @@ export default (): Context => {
   });
 
   return {
+    port: args.port,
+    baseUrlWithoutSlash: args.baseUrlWithoutSlash,
     get dropboxClient() {
       return getDropboxClient();
     },

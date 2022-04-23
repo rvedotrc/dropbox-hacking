@@ -125,7 +125,7 @@ export default () => {
         <h1>List of Days</h1>
 
         <p>
-            <a href={"/"}>Calendar</a>
+            <a href={"/calendar"}>Calendar</a>
         </p>
 
         <p>

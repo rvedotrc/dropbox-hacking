@@ -2,6 +2,22 @@ import { files } from "dropbox";
 import { ExifFromHash } from "../../components/exif/exifDB";
 import { DayMetadata } from "../server/dayDb";
 
+export type Payload =
+  | {
+      route: "calendar";
+    }
+  | {
+      route: "days";
+    }
+  | {
+      route: "day";
+      date: string;
+    }
+  | {
+      route: "photo";
+      rev: string;
+    };
+
 export type CountsByDateEntry = {
   date: string;
   count: number;

@@ -49,7 +49,7 @@ export default () => {
         <h1>Calendar</h1>
 
         <p>
-            <a href={"/?mode=list"}>List of days</a>
+            <a href={"/days"}>List of days</a>
         </p>
 
         {

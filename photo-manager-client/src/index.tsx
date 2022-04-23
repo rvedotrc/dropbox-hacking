@@ -5,36 +5,25 @@ import Calendar from "./calendar";
 import Day from "./day";
 import Photo from "./photo";
 import ListOfDays from "./listOfDays";
+import {Payload} from "../../src/photo-manager/shared/types";
 
-const toRender = (href: string) => {
-    const url = new URL(href);
-    const path = url.pathname;
-    const queryString = url.search;
-
-    if (path === '/' && queryString === '')
-        return <Calendar/>;
-
-    if (path === '/' && queryString === '?mode=list')
-        return <ListOfDays/>;
-
-    if (path === '/day.html') {
-        const m = queryString.match(/^\?date=(?<date>\d\d\d\d-\d\d-\d\d)$/);
-        if (m && m.groups) return <Day date={m.groups.date}/>;
-    }
-
-    if (path === '/photo.html') {
-        const m = queryString.match(/^\?rev=(?<rev>[0-9a-f]+)$/);
-        if (m && m.groups) return <Photo rev={m.groups.rev}/>;
-    }
-
-    window.location.href = '/';
-    return <>Redirecting...</>;
+const toRender = (payload: Payload) => {
+    if (payload.route === 'calendar') return <Calendar/>;
+    if (payload.route === 'days') return <ListOfDays/>;
+    if (payload.route === 'day') return <Day date={payload.date}/>;
+    if (payload.route === 'photo') return <Photo rev={payload.rev}/>;
+    return <span>Routing error</span>;
 };
 
-
 document.addEventListener('DOMContentLoaded', () => {
-    ReactDOM.render(
-        toRender(window.location.href),
-        document.getElementById("react_container")
-    );
+    const ele = document.getElementById('payload-script');
+
+    if (ele) {
+        const payload = JSON.parse(ele.getAttribute("data-payload") || 'null');
+
+        ReactDOM.render(
+            toRender(payload),
+            document.getElementById("react_container")
+        );
+    }
 });
