@@ -6,6 +6,7 @@ export type CountsByDateEntry = {
   date: string;
   count: number;
   countWithGps: number;
+  samplePhotos: Photo[];
 };
 export type CountsByDate = CountsByDateEntry[];
 export type CountsByDateResponse = { counts_by_date: CountsByDate };

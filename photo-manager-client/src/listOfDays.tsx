@@ -1,11 +1,17 @@
 import * as React from 'react';
 import {useEffect, useState} from "react";
-import {CountsByDate, CountsByDateResponse, DaysMetadataResponse} from "../../src/photo-manager/shared/types";
+import {
+    CountsByDate,
+    CountsByDateResponse,
+    DaysMetadataResponse,
+    ThumbnailsByRevResponse
+} from "../../src/photo-manager/shared/types";
 import {DayMetadata} from "../../src/photo-manager/server/dayDb";
 
 export default () => {
     const [countsByDate, setCountsByDate] = useState<CountsByDate>();
     const [dayMetadata, setDayMetadata] = useState<DayMetadata[]>();
+    const [revToThumbnail, setRevToThumbnail] = useState(new Map<string, string | undefined>());
 
     useEffect(() => {
         if (!countsByDate) {
@@ -23,6 +29,70 @@ export default () => {
         }
 
     }, [dayMetadata]);
+
+    // Discard any unwanted thumbnails
+    useEffect(() => {
+        if (countsByDate) {
+            const wantedRevs = new Set(
+                [...countsByDate.values()].flatMap(e => e.samplePhotos).map(p => p.rev)
+            );
+
+            let changed = false;
+            for (const rev of revToThumbnail.keys()) {
+                if (!wantedRevs.has(rev)) {
+                    revToThumbnail.delete(rev);
+                    changed = true;
+                }
+            }
+
+            if (changed) setRevToThumbnail(new Map(revToThumbnail));
+        }
+    }, [countsByDate, revToThumbnail]);
+
+    // Load any missing thumbnails
+    useEffect(() => {
+        if (countsByDate === undefined) return;
+
+        const wantedRevs = new Set(
+            [...countsByDate.values()].flatMap(e => e.samplePhotos).map(p => p.rev)
+        );
+        let changed = false;
+
+        const needToRequest: string[] = [];
+
+        for (const rev of wantedRevs) {
+            if (!revToThumbnail.has(rev)) {
+                needToRequest.push(rev);
+                // Use undefined to record the fact that we have made the request
+                revToThumbnail.set(rev, undefined);
+            }
+        }
+
+        needToRequest.sort();
+
+        while (true) {
+            const slice = needToRequest.splice(0, 25);
+            if (slice.length === 0) break;
+
+            // console.log(`Requesting ${slice.join(',')}`);
+
+            fetch(`/api/thumbnail/128/revs/${slice.join(',')}`)
+                .then(res => res.json() as Promise<ThumbnailsByRevResponse>)
+                .then(data => {
+                    // console.log(`Got response for ${slice.join(',')}`, data);
+
+                    for (const r of data.thumbnails_by_rev) {
+                        // console.log(`got thumbnail for ${r.rev}`)
+                        revToThumbnail.set(r.rev, r.thumbnail);
+                    }
+
+                    setRevToThumbnail(new Map(revToThumbnail));
+                    // console.log("fetch complete");
+                });
+        }
+
+        if (changed) setRevToThumbnail(new Map(revToThumbnail));
+    }, [countsByDate, revToThumbnail]);
 
     if (!countsByDate || !dayMetadata) {
         return <div>Loading...</div>;
@@ -76,6 +146,20 @@ export default () => {
                         <span className={"count"}>{day.count}</span>
                         <span className={"countWithGps"}>{day.countWithGps}</span>
                         <span className={"description"}>{day.description === undefined ? '-' : day.description}</span>
+                        <span className={"samples"}>
+                            {day.samplePhotos.map(photo => {
+                                const thumbnail = revToThumbnail.get(photo.rev);
+                                return <img
+                                    key={photo.rev}
+                                    src={thumbnail ? `data:image/jpeg;base64,${thumbnail}` : `/placeholder.png`}
+                                    alt={"thumbnail"}
+                                    style={{
+                                        width: thumbnail ? undefined : '128px',
+                                        height: thumbnail ? undefined : '128px',
+                                    }}
+                                />
+                            })}
+                        </span>
                     </a>
                 </li>
             ))}

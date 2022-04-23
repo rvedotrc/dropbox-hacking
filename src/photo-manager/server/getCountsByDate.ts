@@ -1,7 +1,22 @@
-import { CountsByDateEntry, CountsByDateResponse } from "../shared/types";
+import {
+  CountsByDateEntry,
+  CountsByDateResponse,
+  Photo,
+} from "../shared/types";
 import { Application } from "express";
 import { Context } from "./context";
 import GPSLatLong from "../shared/gpsLatLong";
+
+const samplePhotos = (photos: Photo[]): Photo[] => {
+  if (photos.length === 0) return photos;
+
+  const n = Math.ceil(Math.log(photos.length) / Math.log(2.0));
+
+  return [...new Array(n).keys()].map(() => {
+    const i = Math.floor(Math.random() * photos.length);
+    return photos[i];
+  });
+};
 
 export default (app: Application, context: Context): void => {
   app.get("/api/counts_by_date", (req, res) => {
@@ -20,24 +35,33 @@ export default (app: Application, context: Context): void => {
           if (!entry.path_lower?.endsWith(".jpg")) continue;
 
           const date = entry.client_modified.substring(0, 10);
-          const tags = exifDb.get(entry.content_hash)?.exifData.tags;
+          const exif = exifDb.get(entry.content_hash);
+          if (!exif) continue;
+
+          const tags = exif.exifData.tags;
           const gps = tags ? GPSLatLong.fromExifTags(tags) : null;
 
           const existing = dates.get(date) || {
             date,
             count: 0,
             countWithGps: 0,
+            samplePhotos: [],
           };
           dates.set(date, {
             date,
             count: existing.count + 1,
             countWithGps: existing.countWithGps + (gps !== null ? 1 : 0),
+            samplePhotos: [...existing.samplePhotos, { ...entry, exif }],
           });
         }
 
         const countsByDate = [...dates.values()].sort((a, b) =>
           a.date.localeCompare(b.date)
         );
+
+        for (const d of countsByDate) {
+          d.samplePhotos = samplePhotos(d.samplePhotos);
+        }
 
         const maxAge = 300;
         const expires = new Date(new Date().getTime() + maxAge * 1000);
