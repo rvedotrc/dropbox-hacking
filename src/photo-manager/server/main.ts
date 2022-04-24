@@ -29,5 +29,5 @@ api(app, context);
 image(app, context);
 
 app.listen(context.port, () => {
-  console.log(`listening on port ${context.port}`);
+  console.log(`Listening on port ${context.port}`);
 });

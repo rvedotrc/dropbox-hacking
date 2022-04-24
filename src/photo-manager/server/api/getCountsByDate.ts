@@ -10,11 +10,13 @@ import GPSLatLong from "../../shared/gpsLatLong";
 const samplePhotos = (photos: Photo[]): Photo[] => {
   if (photos.length === 0) return photos;
 
-  const n = Math.ceil(Math.log(photos.length) / Math.log(2.0));
+  photos = [...photos];
+  let n = Math.ceil(Math.log(photos.length) / Math.log(2.0));
+  if (n < 1) n = 1;
 
   return [...new Array(n).keys()].map(() => {
     const i = Math.floor(Math.random() * photos.length);
-    return photos[i];
+    return photos.splice(i, 1)[0];
   });
 };
 
