@@ -43,4 +43,13 @@ export default class GPSLatLong {
     const s = this.asSigned();
     return `https://www.google.com/maps/search/?api=1&query=${s.lat}%2C${s.long}`;
   }
+
+  public geoHackUrl(args: { title: string }): string {
+    // GeoHack also accepts dd_mm_ss
+    return (
+      `https://geohack.toolforge.org/geohack.php` +
+      `?pagename=${encodeURIComponent(args.title)}` +
+      `&params=${this.pos.lat}_${this.pos.latRef}_${this.pos.long}_${this.pos.longRef}`
+    );
+  }
 }

@@ -39,7 +39,11 @@ export default (props: { rev: string }) => {
         </p>
 
         {gps &&
-          <p><a href={gps.googleMapsUrl({ zoom: 15 })}>Google Maps</a></p>
+          <p>
+            <a href={gps.googleMapsUrl({ zoom: 15 })}>Google Maps</a>
+            {' | '}
+            <a href={gps.geoHackUrl({ title: photo.rev })}>GeoHack</a>
+          </p>
         }
 
         <pre>{JSON.stringify(photo, null, 2)}</pre>
