@@ -19,6 +19,15 @@ const handler: Handler = async (
   dbx
     .filesDeleteV2({ path })
     .then((response) => writeStdout(JSON.stringify(response.result) + "\n"))
+    .catch((err) => {
+      if (
+        err.status === 409 &&
+        err.error?.error_summary.includes("path_lookup/not_found")
+      )
+        return undefined;
+
+      throw err;
+    })
     .then(() => process.exit(0))
     .catch((err) => {
       console.error(err);

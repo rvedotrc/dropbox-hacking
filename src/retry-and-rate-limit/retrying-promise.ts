@@ -138,6 +138,14 @@ export default class RetryingPromise<M extends keyof Dropbox> {
     )
       return false;
 
+    // Maybe replaces "path/not_found/"
+    if (
+      (
+        rateLimitError as unknown as { error_summary: string | undefined }
+      ).error_summary?.startsWith("path_lookup/not_found/")
+    )
+      return false;
+
     this.waiter.sleep((rateLimitError.retry_after || 1) * 1000);
     return true;
   }
