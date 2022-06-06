@@ -123,10 +123,12 @@ export default class RetryingPromise<M extends keyof Dropbox> {
 
     this.debug(JSON.stringify({ rateLimitError }));
     this.debug(
-      JSON.stringify({ rateLimitError_reason: rateLimitError.reason })
+      JSON.stringify({ rateLimitError_reason: rateLimitError.reason || null })
     );
     this.debug(
-      JSON.stringify({ rateLimitError_retry_after: rateLimitError.retry_after })
+      JSON.stringify({
+        rateLimitError_retry_after: rateLimitError.retry_after || null,
+      })
     );
 
     if (

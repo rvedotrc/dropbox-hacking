@@ -30,7 +30,7 @@ export default class WrappedMethod<M extends keyof Dropbox> {
   }
 
   public debugTag(callId: number, attempt: number): string {
-    return `#${callId} [${this.methodName}] #${attempt}`;
+    return `call-${callId} [${this.methodName}] #${attempt}`;
   }
 
   public debugTagged(
@@ -47,7 +47,17 @@ export default class WrappedMethod<M extends keyof Dropbox> {
   public wrap(): void {
     const wrapped = (...args: unknown[]) => {
       const callId = nextCallId++;
-      const callReal = () => this.real.call(this.dbx, ...args);
+      const callReal = () => {
+        const copyOfArgs = [...args];
+
+        // dbx.filesUpload *deletes* 'contents' from the passed first arg,
+        // which of course then makes it impossible to retry.
+        // If the first arg is an object, clone it.
+        if (copyOfArgs.length > 0)
+          copyOfArgs[0] = WrappedMethod.cloneIfStruct(copyOfArgs[0]);
+
+        return this.real.call(this.dbx, ...copyOfArgs);
+      };
       this.debugTagged(callId, 0, "wrapped function called with", args);
 
       if (this.returnsPromises === undefined) {
@@ -77,5 +87,12 @@ export default class WrappedMethod<M extends keyof Dropbox> {
     // console.debug("wrap", this.methodName, this.real, wrapped);
 
     this.dbx[this.methodName] = wrapped as Dropbox[M];
+  }
+
+  private static cloneIfStruct(thing: unknown): unknown {
+    if (!thing) return thing;
+    if (typeof thing !== "object") return thing;
+    if (Array.isArray(thing)) return thing;
+    return { ...thing };
   }
 }
