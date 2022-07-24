@@ -3,6 +3,7 @@ import { processOptions } from "../options";
 import lister, { ListerArgs } from "../components/lister";
 import Mover from "../components/mover";
 import { files } from "dropbox";
+import path = require("node:path");
 
 const verb = "process-camera-uploads";
 const CAMERA_UPLOADS = "/Camera Uploads";
@@ -11,22 +12,39 @@ const TAIL = "--tail";
 const DRY_RUN = "--dry-run";
 // const STATE_FILE = "--state-file";
 
-const targetForFile = (item: files.FileMetadata): string | undefined => {
+const targetForRemoteFile = (item: files.FileMetadata): string | undefined => {
   if (item.path_display === undefined) return undefined;
   if (item.path_lower === undefined) return undefined;
+  if (item.content_hash === undefined) return undefined;
 
-  const yyyy = item.client_modified.substring(0, 4);
-  const yyyymm = item.client_modified.substring(0, 7);
-  const yyyymmdd = item.client_modified.substring(0, 10);
-  const parts = item.path_display.split("/");
-  const basename = parts[parts.length - 1];
+  return targetForFile(item.name, item.content_hash, item.client_modified);
+};
 
-  if (item.path_lower.endsWith(".jpg") || item.path_lower.endsWith(".png")) {
-    return `/pics/camera/sliced/${yyyy}/${yyyymm}/${yyyymmdd}/${basename}`;
+const picsExts = new Set([".jpg", ".png", ".heic"]);
+const videosExts = new Set([".mov", ".mp4", ".srt"]);
+
+export const targetForFile = (
+  basename: string,
+  contentHash: string,
+  clientModified: string
+): string | undefined => {
+  const yyyy = clientModified.substring(0, 4);
+  const yyyymm = clientModified.substring(0, 7);
+  const yyyymmdd = clientModified.substring(0, 10);
+
+  const ext = path.extname(basename);
+
+  let nameWithHash = basename;
+  if (!nameWithHash.toLowerCase().endsWith(`.${contentHash}${ext}`)) {
+    nameWithHash = `${path.basename(basename, ext)}.${contentHash}${ext}`;
   }
 
-  if (item.path_lower.endsWith(".mov") || item.path_lower.endsWith(".mp4")) {
-    return `/pics/videos/sliced/${yyyy}/${yyyymm}/${yyyymmdd}/${basename}`;
+  if (picsExts.has(ext.toLowerCase())) {
+    return `/pics/camera/sliced/${yyyy}/${yyyymm}/${yyyymmdd}/${nameWithHash}`;
+  }
+
+  if (videosExts.has(ext.toLowerCase())) {
+    return `/pics/videos/sliced/${yyyy}/${yyyymm}/${yyyymmdd}/${nameWithHash}`;
   }
 
   return undefined;
@@ -89,7 +107,7 @@ const handler: Handler = async (
 
   if (argv.length > 1) usageFail();
 
-  const path = argv[0] || CAMERA_UPLOADS;
+  const localPath = argv[0] || CAMERA_UPLOADS;
 
   const dbx = await dbxp();
 
@@ -166,7 +184,7 @@ const handler: Handler = async (
 
   const listerArgs: ListerArgs = initialCursor
     ? { tag: "cursor", args: { cursor: initialCursor }, tail }
-    : { tag: "from_start", args: { path, recursive: true }, tail };
+    : { tag: "from_start", args: { path: localPath, recursive: true }, tail };
 
   await lister({
     dbx,
@@ -175,7 +193,7 @@ const handler: Handler = async (
       console.log(JSON.stringify(item));
 
       if (item[".tag"] === "file" && item.path_lower && item.path_display) {
-        const wantedPath = targetForFile(item);
+        const wantedPath = targetForRemoteFile(item);
         if (wantedPath && wantedPath.toLowerCase() !== item.path_lower)
           return shutdownWaitsFor(tryMove(item, wantedPath));
       }
