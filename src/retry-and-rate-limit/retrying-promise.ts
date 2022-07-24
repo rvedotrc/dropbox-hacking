@@ -221,6 +221,8 @@ export default class RetryingPromise<M extends keyof Dropbox> {
     if (
       !errorString.includes("getaddrinfo") &&
       !errorString.includes("ECONNRESET") &&
+      !errorString.includes("ECONNREFUSED") &&
+      !errorString.includes("ECONNABORTED") &&
       !errorString.includes("connect ETIMEDOUT")
     )
       return false;
