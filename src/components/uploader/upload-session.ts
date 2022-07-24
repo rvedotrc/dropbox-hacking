@@ -42,7 +42,7 @@ export default (
               if (!finalPart && buffer.length !== PART_SIZE)
                 throw "Bad non-final buffer size";
 
-              const logPrefix = `part offset=${offset} size=${buffer.length} finalPart=${finalPart}`;
+              const logPrefix = `${commitInfo.path} part offset=${offset} size=${buffer.length} finalPart=${finalPart}`;
               debug(`${logPrefix} starting`);
 
               partPromises.push(
