@@ -5,7 +5,10 @@ import { GlobalOptions } from "../../types";
 
 export const MAX_SINGLE_UPLOAD_SIZE = 150_000_000;
 
-const defaultLimiter = makePromiseLimiter<files.FileMetadata>(5);
+const defaultLimiter = makePromiseLimiter<files.FileMetadata>(
+  5,
+  "single-upload-limiter"
+);
 
 export default (
   dbx: Dropbox,

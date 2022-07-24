@@ -55,7 +55,7 @@ const makeLister = (
   stateDir: StateDir,
   globalOptions: GlobalOptions
 ) => {
-  const limiter = makePromiseLimiter<void>(5);
+  const limiter = makePromiseLimiter<void>(5, "exif-cache-limiter");
   const fetcher = Fetcher(dbx, limiter, globalOptions);
 
   return lister({

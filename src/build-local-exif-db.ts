@@ -102,7 +102,7 @@ const statAndProcess = (
     );
 
 const main = () => {
-  const limiter: FileLimiter = makePromiseLimiter(5);
+  const limiter: FileLimiter = makePromiseLimiter(5, "exif-limiter");
   const exifDB = new ExifDB("var/exifdb");
 
   Promise.all(

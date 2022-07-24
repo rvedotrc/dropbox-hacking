@@ -6,7 +6,7 @@ import { GlobalOptions } from "../../types";
 
 const PART_SIZE = 4194304; // 4 MB
 
-const defaultLimiter = makePromiseLimiter<void>(5);
+const defaultLimiter = makePromiseLimiter<void>(5, "part-limiter");
 
 export default (
   dbx: Dropbox,

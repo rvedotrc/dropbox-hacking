@@ -7,6 +7,7 @@ import * as engine from "./engine";
 import { DropboxProvider, GlobalOptions } from "../../types";
 import * as uploader from "../uploader";
 import { FileItem } from "./local-listing";
+import { makePromiseLimiter } from "../../util/promises/promiseLimiter";
 
 export type UploadArgs = {
   dbxp: DropboxProvider;
@@ -17,6 +18,8 @@ export type UploadArgs = {
   checkContentHash: boolean;
   globalOptions: GlobalOptions;
 };
+
+const defaultLimiter = makePromiseLimiter<void>(10, "sync-upload-limiter");
 
 export const main = (uploadArgs: UploadArgs): Promise<boolean> => {
   const {
@@ -68,15 +71,19 @@ export const main = (uploadArgs: UploadArgs): Promise<boolean> => {
           mode: { ".tag": "overwrite" },
         };
 
-        return uploader
-          .selectUploader(local.stat.size)(
-            dbx,
-            commitInfo,
-            readable,
-            globalOptions
-          )
-          .then(() => undefined)
-          .finally(() => readable.close());
+        return defaultLimiter.submit(
+          () =>
+            uploader
+              .selectUploader(local.stat.size)(
+                dbx,
+                commitInfo,
+                readable,
+                globalOptions
+              )
+              .then(() => undefined)
+              .finally(() => readable.close()),
+          `${local.path} => ${remotePath}`
+        );
       };
 
       const unconditionalUpload = (

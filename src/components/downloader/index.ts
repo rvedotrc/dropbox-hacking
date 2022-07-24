@@ -6,7 +6,7 @@ import * as http from "http";
 import { parseTime } from "../../util/time";
 import { makePromiseLimiter } from "../../util/promises/promiseLimiter";
 
-const defaultLimiter = makePromiseLimiter(5);
+const defaultLimiter = makePromiseLimiter(2, "download-limiter");
 
 export default (args: {
   dbx: Dropbox;
