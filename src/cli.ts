@@ -1,4 +1,4 @@
-import { GlobalOptions, Operation } from "./types";
+import { Operation } from "./types";
 import { getDropboxClient } from "./auth";
 
 import catOperation from "./operations/cat";
@@ -12,35 +12,14 @@ import syncDownloadOperation from "./operations/syncDownload";
 import syncUploadOperation from "./operations/syncUpload";
 import uploadStdinOperation from "./operations/uploadStdin";
 import retrier from "./retry-and-rate-limit";
-import { processOptions } from "./options";
 import { writeStderr } from "./util/logging";
+import {
+  getGlobalOptions,
+  GlobalOptionsSingleton,
+  HELP,
+} from "./globalOptions";
 
 const prefix = "./bin/cli";
-
-const DEBUG_UPLOAD = "--debug-upload";
-const DEBUG_SYNC = "--debug-sync";
-const DEBUG_ERRORS = "--debug-errors";
-const DEBUG_POLL = "--debug-poll";
-
-export const getGlobalOptions = (
-  argv: string[]
-): { globalOptions: GlobalOptions; remainingArgs: string[] } => {
-  const globalOptions: GlobalOptions = {
-    debugUpload: false,
-    debugSync: false,
-    debugErrors: false,
-    debugPoll: false,
-  };
-
-  const remainingArgs = processOptions(argv, {
-    [DEBUG_UPLOAD]: () => (globalOptions.debugUpload = true),
-    [DEBUG_SYNC]: () => (globalOptions.debugSync = true),
-    [DEBUG_ERRORS]: () => (globalOptions.debugErrors = true),
-    [DEBUG_POLL]: () => (globalOptions.debugPoll = true),
-  });
-
-  return { globalOptions, remainingArgs };
-};
 
 export default (argv: string[]): void => {
   // download_zip (could be useful)
@@ -71,17 +50,13 @@ export default (argv: string[]): void => {
       }
     }
 
-    s +=
-      "Global options are:\n" +
-      `  ${DEBUG_UPLOAD} - enable debugging of large file uploads\n` +
-      `  ${DEBUG_SYNC} - enable debugging of sync operations\n` +
-      `  ${DEBUG_ERRORS} - enable debugging of rate limiting and retrying\n` +
-      `  ${DEBUG_POLL} - enable debugging of long-polling\n`;
+    s += "Global options are:\n" + HELP.map((line) => `  ${line}\n`).join("");
 
     writeStderr(s).then(() => process.exit(2));
   };
 
   const { globalOptions, remainingArgs } = getGlobalOptions(argv);
+  GlobalOptionsSingleton.set(globalOptions);
 
   const getter = () =>
     getDropboxClient().then((dbx) => retrier(dbx, globalOptions));

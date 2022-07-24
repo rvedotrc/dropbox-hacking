@@ -1,6 +1,6 @@
 import { getDropboxClient } from "./auth";
 import retrier from "./retry-and-rate-limit";
-import { getGlobalOptions } from "./cli";
+import { getGlobalOptions, GlobalOptionsSingleton } from "./globalOptions";
 import { writeStderr } from "./util/logging";
 import { Operation } from "./types";
 
@@ -8,6 +8,7 @@ export default (op: Operation): void => {
   const argv = process.argv.slice(2);
 
   const { globalOptions, remainingArgs } = getGlobalOptions(argv);
+  GlobalOptionsSingleton.set(globalOptions);
 
   const getter = () =>
     getDropboxClient().then((dbx) => retrier(dbx, globalOptions));

@@ -1,3 +1,5 @@
+import { GlobalOptionsSingleton } from "../../globalOptions";
+
 type Entry<T> = {
   id: number;
   makePromise: () => Promise<T>;
@@ -10,7 +12,10 @@ export type PromiseLimiter<T> = {
   submit: (makePromise: () => Promise<T>, tag?: unknown) => Promise<T>;
 };
 
-export const makePromiseLimiter = <T>(size: number): PromiseLimiter<T> => {
+export const makePromiseLimiter = <T>(
+  size: number,
+  name = "limiter"
+): PromiseLimiter<T> => {
   let free = size;
   const queue: Entry<T>[] = [];
 
@@ -29,15 +34,17 @@ export const makePromiseLimiter = <T>(size: number): PromiseLimiter<T> => {
       --free;
       const { id, makePromise, resolve, reject, tag } = entry;
       inFlight.add(entry);
-      console.debug(
-        `limiter start job #${id} ${tag} (in flight: ${describe()})`
-      );
+      if (GlobalOptionsSingleton.get()?.debugLimiter)
+        console.debug(
+          `${name} start job #${id}/${nextId} ${tag} (in flight: ${describe()})`
+        );
       makePromise()
         .finally(() => {
           inFlight.delete(entry);
-          console.debug(
-            `limiter end job #${id} ${tag} (in flight: ${describe()})`
-          );
+          if (GlobalOptionsSingleton.get()?.debugLimiter)
+            console.debug(
+              `${name} end job #${id}/${nextId} ${tag} (in flight: ${describe()})`
+            );
           ++free;
           tryStart();
         })
@@ -49,7 +56,8 @@ export const makePromiseLimiter = <T>(size: number): PromiseLimiter<T> => {
 
   const submit = (makePromise: () => Promise<T>, tag?: unknown): Promise<T> => {
     const id = nextId++;
-    console.debug(`limiter submit job #${id} ${tag}`);
+    if (GlobalOptionsSingleton.get()?.debugLimiter)
+      console.debug(`${name} submit job #${id} ${tag}`);
     return new Promise((resolve, reject) => {
       queue.push({ id, makePromise, resolve, reject, tag });
       tryStart();

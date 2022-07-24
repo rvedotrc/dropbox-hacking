@@ -20,4 +20,5 @@ export type GlobalOptions = {
   debugSync: boolean;
   debugErrors: boolean;
   debugPoll: boolean;
+  debugLimiter: boolean;
 };
