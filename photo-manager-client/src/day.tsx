@@ -8,6 +8,7 @@ import {
 } from "../../src/photo-manager/shared/types";
 import {DayMetadata} from "../../src/photo-manager/server/dayDb";
 import EditableTextField from "./editableTextField";
+import path = require("node:path");
 
 export default (props: { date: string }) => {
     const [photos, setPhotos] = useState<Photo[]>();
@@ -116,6 +117,14 @@ export default (props: { date: string }) => {
 
     const photosWithThumbnails = photos.map(photo => ({ ...photo, thumbnail: revToThumbnail.get(photo.rev) }));
 
+    const cleanedName = (photo: Photo) => {
+        if (photo.content_hash) {
+            return photo.name.replace(photo.content_hash, "#");
+        }
+
+        return photo.name;
+    };
+
     return <>
         <h1>{props.date}</h1>
 
@@ -149,7 +158,7 @@ export default (props: { date: string }) => {
                         }}
                     />
                     <div className={"clientModified"}>{photo.client_modified}</div>
-                    <div className={"name"}>{photo.name}</div>
+                    <div className={"name"}>{cleanedName(photo)}</div>
                     <div className={"makeAndModel"}>{photo.exif.exifData.tags?.Make} {photo.exif.exifData.tags?.Model}</div>
                 </a>
             )}
