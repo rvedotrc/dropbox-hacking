@@ -1,7 +1,7 @@
 import { DropboxProvider, GlobalOptions, Handler } from "../types";
 import { processOptions } from "../options";
 import { StateDir } from "../components/lsCache";
-import localListing from "../components/sync/local-listing";
+import localListing, { Item } from "../components/sync/local-listing";
 import makeContentHash from "../components/uploader/make-content-hash";
 import * as fs from "fs";
 import { makePromiseLimiter } from "../util/promises/promiseLimiter";
@@ -14,8 +14,7 @@ import { targetForFile } from "./processCameraUploads";
 const verb = "upload-missing";
 
 const DRY_RUN = "--dry-run";
-
-// const extensionsToHash = new Set([".jpg", ".png", ".mov", ".mp4", ".srt"]);
+const DELETE = "--delete";
 
 const cannotUpload = new Set([".DS_Store"]);
 
@@ -26,9 +25,11 @@ const handler: Handler = async (
   usageFail: () => void
 ): Promise<void> => {
   let dryRun = false;
+  let withDelete = false;
 
   argv = processOptions(argv, {
     [DRY_RUN]: () => (dryRun = true),
+    [DELETE]: () => (withDelete = true),
   });
 
   if (argv.length < 3) usageFail();
@@ -54,6 +55,19 @@ const handler: Handler = async (
 
   const contentHashLimiter = makePromiseLimiter<string>(5);
   const uploadLimiter = makePromiseLimiter<void>(5);
+
+  const maybeDelete = (localItem: Item): Promise<void> => {
+    if (!withDelete) return Promise.resolve();
+
+    return fs.promises.unlink(localItem.path).then(() =>
+      console.log(
+        JSON.stringify({
+          code: "deleted",
+          local: localItem.path,
+        })
+      )
+    );
+  };
 
   await Promise.all(
     sources.map((source) =>
@@ -82,7 +96,7 @@ const handler: Handler = async (
                     })
                   );
 
-                  return Promise.resolve();
+                  return maybeDelete(localItem);
                 } else if (cannotUpload.has(path.basename(localItem.path))) {
                   console.log(
                     JSON.stringify({
@@ -152,6 +166,8 @@ const handler: Handler = async (
                               remoteMetadata,
                             })
                           );
+
+                          return maybeDelete(localItem);
                         });
                     });
                   }
@@ -166,6 +182,6 @@ const handler: Handler = async (
   process.exit(0);
 };
 
-const argsHelp = `[${DRY_RUN}] LSCACHE_PATH TARGET_DIR SOURCE [SOURCE ...]`;
+const argsHelp = `[${DRY_RUN}] [${DELETE}] LSCACHE_PATH TARGET_DIR SOURCE [SOURCE ...]`;
 
 export default { verb, handler, argsHelp };
