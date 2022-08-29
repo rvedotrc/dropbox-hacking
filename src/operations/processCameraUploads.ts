@@ -20,7 +20,7 @@ const targetForRemoteFile = (item: files.FileMetadata): string | undefined => {
   return targetForFile(item.name, item.content_hash, item.client_modified);
 };
 
-const picsExts = new Set([".jpg", ".png", ".heic"]);
+const picsExts = new Set([".jpg", ".png", ".heic", ".dng"]);
 const videosExts = new Set([".mov", ".mp4", ".srt"]);
 
 export const targetForFile = (
