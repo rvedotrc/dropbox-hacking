@@ -9,6 +9,12 @@ import createMkdir from "./mkdir";
 import { DropboxProvider, GlobalOptions } from "../../types";
 import downloader from "../downloader";
 import { DirectoryItem, FileItem } from "./local-listing";
+import FileMetadata = files.FileMetadata;
+import { randomUUID } from "crypto";
+
+export type AlternateProvider = (
+  remote: FileMetadata
+) => Promise<string | undefined>;
 
 export type DownloadArgs = {
   dbxp: DropboxProvider;
@@ -19,6 +25,7 @@ export type DownloadArgs = {
   checkContentHash: boolean;
   globalOptions: GlobalOptions;
   remoteFilter?: RegExp;
+  alternateProvider?: AlternateProvider;
 };
 
 export const main = (downloadArgs: DownloadArgs): Promise<boolean> => {
@@ -74,13 +81,56 @@ export const main = (downloadArgs: DownloadArgs): Promise<boolean> => {
         return fs.promises.utimes(thisLocalPath, mtime, mtime);
       };
 
-      const doDownload = (
+      const useAlternate = (
+        thisLocalPath: string,
+        remote: files.FileMetadata,
+        alternatePath: string
+      ): Promise<void> => {
+        console.info(
+          `useAlternate from ${remote.path_display} to ${thisLocalPath} using ${alternatePath}`
+        );
+        if (dryRun) return Promise.resolve();
+
+        return fs.promises
+          .link(alternatePath, thisLocalPath)
+          .catch((linkErr) => {
+            if (linkErr.code === "EXDEV") {
+              const id = randomUUID().toString();
+              const tmpLocal = `${thisLocalPath}.tmp.dbxsync.${id}`;
+              const mtime = parseTime(remote.client_modified);
+
+              return fs.promises
+                .copyFile(alternatePath, tmpLocal)
+                .then(() => fs.promises.chmod(tmpLocal, 0o644))
+                .then(() => fs.promises.utimes(tmpLocal, mtime, mtime))
+                .then(() => fs.promises.rename(tmpLocal, thisLocalPath))
+                .catch((copyErr) => {
+                  const reraise = () => {
+                    throw copyErr;
+                  };
+                  return fs.promises.unlink(tmpLocal).then(reraise, reraise);
+                });
+            }
+
+            throw linkErr;
+          });
+      };
+
+      const doDownload = async (
         thisLocalPath: string,
         remote: files.FileMetadata
       ): Promise<void> => {
         console.info(
           `doDownload from ${remote.path_display} to ${thisLocalPath}`
         );
+
+        const alternatePath = downloadArgs.alternateProvider
+          ? await downloadArgs.alternateProvider(remote)
+          : undefined;
+        if (alternatePath !== undefined) {
+          return useAlternate(thisLocalPath, remote, alternatePath);
+        }
+
         ++syncStats.filesToDownload;
         syncStats.totalBytes += remote.size;
         if (dryRun) return Promise.resolve();
