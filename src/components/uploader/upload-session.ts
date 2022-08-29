@@ -31,6 +31,8 @@ export default (
           const partPromises: Promise<void>[] = [];
 
           let totalOffset = 0;
+          let totalParts = 0;
+          let partsCompleted = 0;
           let previous: { buffer: Buffer; offset: number } | undefined =
             undefined;
 
@@ -44,6 +46,7 @@ export default (
 
               const logPrefix = `${commitInfo.path} part offset=${offset} size=${buffer.length} finalPart=${finalPart}`;
               debug(`${logPrefix} starting`);
+              ++totalParts;
 
               partPromises.push(
                 defaultLimiter.submit(
@@ -55,7 +58,10 @@ export default (
                         close: finalPart,
                       })
                       .then(() => {
-                        debug(`${logPrefix} completed`);
+                        ++partsCompleted;
+                        debug(
+                          `${logPrefix} completed (${partsCompleted}/${totalParts} parts)`
+                        );
                       })
                       .catch((err) => {
                         debug(`${logPrefix} failed`, err);
