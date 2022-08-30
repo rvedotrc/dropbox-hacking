@@ -5,16 +5,16 @@ type Entry<T> = {
   makePromise: () => Promise<T>;
   resolve: (value: T | PromiseLike<T>) => void;
   reject: (reason?: any) => void; // eslint-disable-line @typescript-eslint/no-explicit-any
-  tag: unknown;
+  tag: string;
 };
 
 export type PromiseLimiter<T> = {
-  submit: (makePromise: () => Promise<T>, tag?: unknown) => Promise<T>;
+  submit: (makePromise: () => Promise<T>, tag: string) => Promise<T>;
 };
 
 export const makePromiseLimiter = <T>(
   size: number,
-  name = "limiter"
+  name: string
 ): PromiseLimiter<T> => {
   let free = size;
   const queue: Entry<T>[] = [];
@@ -54,7 +54,7 @@ export const makePromiseLimiter = <T>(
 
   let nextId = 0;
 
-  const submit = (makePromise: () => Promise<T>, tag?: unknown): Promise<T> => {
+  const submit = (makePromise: () => Promise<T>, tag: string): Promise<T> => {
     const id = nextId++;
     if (GlobalOptionsSingleton.get()?.debugLimiter)
       console.debug(`${name} submit job #${id} ${tag}`);

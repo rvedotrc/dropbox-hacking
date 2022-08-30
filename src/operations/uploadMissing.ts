@@ -53,8 +53,8 @@ const handler: Handler = async (
 
   const dbx = await dbxp();
 
-  const contentHashLimiter = makePromiseLimiter<string>(5);
-  const uploadLimiter = makePromiseLimiter<void>(5);
+  const contentHashLimiter = makePromiseLimiter<string>(5, "contentHash");
+  const uploadLimiter = makePromiseLimiter<void>(5, "upload");
 
   const maybeDelete = (localItem: Item): Promise<void> => {
     if (!withDelete) return Promise.resolve();
@@ -77,10 +77,12 @@ const handler: Handler = async (
             if (localItem.tag !== "file") return Promise.resolve();
 
             return contentHashLimiter
-              .submit(() =>
-                makeContentHash(
-                  fs.createReadStream(localItem.path, { autoClose: true })
-                )
+              .submit(
+                () =>
+                  makeContentHash(
+                    fs.createReadStream(localItem.path, { autoClose: true })
+                  ),
+                `calculate hash ${localItem.path}`
               )
               .then((localContentHash) => {
                 const alreadyAtRemotePath =
@@ -169,7 +171,7 @@ const handler: Handler = async (
 
                           return maybeDelete(localItem);
                         });
-                    });
+                    }, `upload ${localItem.path}`);
                   }
                 }
               });
