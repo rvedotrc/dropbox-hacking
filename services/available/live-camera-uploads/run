@@ -1,0 +1,5 @@
+#!/bin/bash
+exec 2>&1
+set -eux
+cd "$( git rev-parse --show-toplevel )"
+exec ./with-live ./bin/process-camera-uploads --tail
