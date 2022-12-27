@@ -1,0 +1,4 @@
+#!/bin/bash
+set -x
+trap './bin/svdown' 0
+svscan ./services/scan
