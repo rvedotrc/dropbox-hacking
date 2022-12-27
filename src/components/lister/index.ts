@@ -74,7 +74,10 @@ export default (args: {
   const pauseAndFollowCursor = async (
     cursor: string
   ): Promise<Promise<"complete" | "cancelled">> => {
-    if (onPause) await onPause(cursor);
+    if (onPause) {
+      if (globalOptions.debugLister) console.debug(`lister: await onPause`);
+      await onPause(cursor);
+    }
 
     while (!cancelled) {
       // If stdout was buffered, we'd flush it here
@@ -93,10 +96,19 @@ export default (args: {
       }
     }
 
-    if (cancelled) return "cancelled";
+    if (cancelled) {
+      if (globalOptions.debugLister) console.debug(`lister: cancelled`);
+      return "cancelled";
+    }
 
     // if (globalOptions.debugPoll) console.debug("continue");
-    if (onResume) await onResume();
+    if (onResume) {
+      if (globalOptions.debugLister) console.debug(`lister: await onResume`);
+      await onResume();
+    }
+
+    if (globalOptions.debugLister)
+      console.debug(`lister: continuing from cursor`);
     const page = (await dbx.filesListFolderContinue({ cursor })).result;
     return handlePage(page);
   };
@@ -104,21 +116,40 @@ export default (args: {
   const handlePage = async (
     page: files.ListFolderResult
   ): Promise<"complete" | "cancelled"> => {
+    if (globalOptions.debugLister)
+      console.debug(
+        `lister: handlePage ${page.entries.length} entries, cursor=${page.cursor}`
+      );
+
     for (const item of page.entries) {
+      if (globalOptions.debugLister)
+        console.debug(`lister: await onItem`, item);
       await onItem(item);
     }
 
-    if (onCursor) await onCursor(page.cursor);
+    if (onCursor) {
+      if (globalOptions.debugLister) console.debug(`lister: await onCursor`);
+      await onCursor(page.cursor);
+    }
 
-    if (cancelled) return "cancelled";
+    if (cancelled) {
+      if (globalOptions.debugLister) console.debug(`lister: cancelled`);
+      return "cancelled";
+    }
 
     if (page.has_more) {
+      if (globalOptions.debugLister)
+        console.debug(`lister: has_more, requesting next page`);
       return dbx
         .filesListFolderContinue({ cursor: page.cursor })
         .then((r) => handlePage(r.result));
     } else if (listing.tail) {
+      if (globalOptions.debugLister)
+        console.debug(`lister: !has_more, polling tail`);
       return pauseAndFollowCursor(page.cursor);
     } else {
+      if (globalOptions.debugLister)
+        console.debug(`lister: !has_more, !polling => complete`);
       return Promise.resolve("complete");
     }
   };

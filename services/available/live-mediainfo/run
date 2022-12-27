@@ -3,7 +3,7 @@ exec 2>&1
 set -eux
 cd "$( git rev-parse --show-toplevel )"
 if [ -f ./var/live/mediainfo/state.json ] ; then
-        exec ./with-live ./bin/mediainfo-cache --debug-limiter update --tail var/live/mediainfo var/live/mediainfo
+        exec ./with-live ./bin/mediainfo-cache --debug-limiter --debug-lister update --tail var/live/mediainfo var/live/mediainfo
 else
-        exec ./with-live ./bin/mediainfo-cache --debug-limiter init --tail --recursive "" var/live/mediainfo var/live/mediainfo
+        exec ./with-live ./bin/mediainfo-cache --debug-limiter --debug-lister init --tail --recursive "" var/live/mediainfo var/live/mediainfo
 fi

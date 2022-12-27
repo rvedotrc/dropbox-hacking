@@ -21,4 +21,5 @@ export type GlobalOptions = {
   debugErrors: boolean;
   debugPoll: boolean;
   debugLimiter: boolean;
+  debugLister: boolean;
 };
