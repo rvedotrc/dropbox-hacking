@@ -1,0 +1,2 @@
+#!/bin/bash
+exec svstat services/available/* services/available/*/log
