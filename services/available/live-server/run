@@ -2,4 +2,4 @@
 exec 2>&1
 set -eux
 cd "$( git rev-parse --show-toplevel )"
-exec ./with-live env EXIF_DB_DIR=$PWD/var/live-exif-db LS_CACHE_DIR=$PWD/var/live-root-cache DAY_DB_DIR=var/live-day-db yarn server
+exec ./with-live env EXIF_DB_DIR=$PWD/var/live/exif LS_CACHE_DIR=$PWD/var/live/ls DAY_DB_DIR=var/live/day-db yarn server

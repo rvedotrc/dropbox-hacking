@@ -2,4 +2,4 @@
 exec 2>&1
 set -eux
 cd "$( git rev-parse --show-toplevel )"
-exec ./with-live ./bin/ls-cache update --tail ./var/live-root-cache
+exec ./with-live ./bin/ls-cache update --tail ./var/live/ls
