@@ -1,10 +1,11 @@
 import * as React from 'react';
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {Photo, PhotoResponse} from "../../src/photo-manager/shared/types";
 import GPSLatLong from "../../src/photo-manager/shared/gpsLatLong";
 
 export default (props: { rev: string }) => {
     const [photo, setPhoto] = useState<Photo | false | undefined>();
+    const [previewSizes, setPreviewSizes] = useState<string[]>();
 
     useEffect(() => {
         if (photo === undefined) {
@@ -13,6 +14,14 @@ export default (props: { rev: string }) => {
                 .then(data => setPhoto(data.photo));
         }
     }, [props.rev]);
+
+    useEffect(() => {
+        if (previewSizes === undefined) {
+            fetch("/api/config/preview-sizes")
+                .then(r => r.json() as Promise<string[]>)
+                .then(setPreviewSizes);
+        }
+    }, []);
 
     if (photo === undefined) {
         return <div>Loading...</div>;
@@ -37,6 +46,10 @@ export default (props: { rev: string }) => {
         <p>
           <a href={`https://www.dropbox.com/preview${photo.path_lower}?context=browse&role=personal`}>View in Dropbox</a>
         </p>
+
+        {previewSizes && <ol>
+            {previewSizes.map(previewSize => <li key={previewSize}><a href={`/image/rev/${photo.rev}/${previewSize}`}>{previewSize}</a></li>)}
+        </ol>}
 
         {gps &&
           <p>

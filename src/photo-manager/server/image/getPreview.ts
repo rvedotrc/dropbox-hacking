@@ -15,6 +15,14 @@ const ALLOWED_SIZES = [
 ];
 
 export default (app: Application, context: Context): void => {
+  app.get("/api/config/preview-sizes", (_, res) => {
+    const maxAge = 86400;
+    const expires = new Date(new Date().getTime() + maxAge * 1000);
+    res.setHeader("Expires", expires.toUTCString());
+    res.setHeader("Cache-Control", `private; max-age=${maxAge}`);
+    res.json(ALLOWED_SIZES);
+  });
+
   app.get("/image/rev/:rev/:size", (req, res) => {
     if (ALLOWED_SIZES.indexOf(req.params.size) < 0) {
       return Promise.resolve()
