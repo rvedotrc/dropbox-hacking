@@ -1,7 +1,10 @@
 import { DropboxProvider, GlobalOptions, Handler } from "../types";
 import * as https from "https";
+import { processOptions } from "../options";
 
 const verb = "cat";
+
+const SHOW_LINK = "--show-link";
 
 const handler: Handler = async (
   dbxp: DropboxProvider,
@@ -9,6 +12,12 @@ const handler: Handler = async (
   globalOptions: GlobalOptions,
   usageFail: () => void
 ): Promise<void> => {
+  let showLink = false;
+
+  argv = processOptions(argv, {
+    [SHOW_LINK]: () => (showLink = true),
+  });
+
   if (argv.length !== 1) usageFail();
   const path = argv[0];
 
@@ -16,6 +25,8 @@ const handler: Handler = async (
   const response = (await dbx.filesGetTemporaryLink({ path })).result;
 
   process.stderr.write(JSON.stringify(response.metadata) + "\n");
+
+  if (showLink) return console.log(response.link);
 
   https.get(response.link, {}, (res) => {
     res.on("error", (err) => {
@@ -29,6 +40,6 @@ const handler: Handler = async (
   });
 };
 
-const argsHelp = `DROPBOX_PATH`;
+const argsHelp = `[${SHOW_LINK}] DROPBOX_PATH`;
 
 export default { verb, handler, argsHelp };
