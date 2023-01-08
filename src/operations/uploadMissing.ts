@@ -69,6 +69,13 @@ const handler: Handler = async (
     );
   };
 
+  const stats = {
+    countNeedToUpload: 0,
+    bytesNeedToUpload: 0,
+    countAlreadyGotIt: 0,
+    bytesAlreadyGotIt: 0,
+  };
+
   await Promise.all(
     sources.map((source) =>
       localListing(source, true).then((localItems) =>
@@ -89,6 +96,9 @@ const handler: Handler = async (
                   seenContentHashes.get(localContentHash);
 
                 if (alreadyAtRemotePath) {
+                  ++stats.countAlreadyGotIt;
+                  stats.bytesAlreadyGotIt += localItem.stat.size;
+
                   console.log(
                     JSON.stringify({
                       code: "already_got_it",
@@ -122,6 +132,9 @@ const handler: Handler = async (
                   // } else {
                   //   uploadTo = `${targetDir}/${path.basename(localItem.path)}`;
                   // }
+
+                  ++stats.countNeedToUpload;
+                  stats.bytesNeedToUpload += localItem.stat.size;
 
                   const clientModified = formatTime(localItem.stat.mtime);
                   const uploadTo =
@@ -180,6 +193,8 @@ const handler: Handler = async (
       )
     )
   );
+
+  console.log(JSON.stringify({ stats }));
 
   process.exit(0);
 };
