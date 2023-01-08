@@ -1,4 +1,4 @@
 #!/bin/bash
-set -x
+exec 2> >( exec readproctitle .................................................................................................... )
 trap './bin/svdown' 0
 svscan ./services/scan
