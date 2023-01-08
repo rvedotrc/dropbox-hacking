@@ -1,6 +1,6 @@
 import { DropboxProvider, GlobalOptions, Handler } from "../types";
 import { processOptions } from "../options";
-import lister, { ListerArgs } from "../components/lister";
+import lister from "../components/lister";
 import Mover from "../components/mover";
 import { files } from "dropbox";
 import path = require("node:path");
@@ -8,9 +8,9 @@ import path = require("node:path");
 const verb = "process-camera-uploads";
 const CAMERA_UPLOADS = "/Camera Uploads";
 
+const TIDY = "--tidy";
 const TAIL = "--tail";
 const DRY_RUN = "--dry-run";
-// const STATE_FILE = "--state-file";
 
 const targetForRemoteFile = (item: files.FileMetadata): string | undefined => {
   if (item.path_display === undefined) return undefined;
@@ -22,6 +22,16 @@ const targetForRemoteFile = (item: files.FileMetadata): string | undefined => {
 
 const picsExts = new Set([".jpg", ".png", ".heic", ".dng", ".cr3"]);
 const videosExts = new Set([".mov", ".mp4", ".srt"]);
+
+type WithPath = { path_lower: string; path_display: string };
+const hasPath = <T extends { path_lower?: string; path_display?: string }>(
+  item: T
+): item is T & WithPath => !!item.path_lower && !!item.path_display;
+
+// type FileMetadataWithPath = FileMetadata & { path_lower: string; path_display: string };
+// type FolderMetadataWithPath = FolderMetadata & { path_lower: string; path_display: string };
+// const fileHasPath = (item: FileMetadata): item is FileMetadataWithPath => !!item.path_lower && !!item.path_display;
+// const folderHasPath = (item: FolderMetadata): item is FileMetadataWithPath => !!item.path_lower && !!item.path_display;
 
 export const targetForFile = (
   basename: string,
@@ -50,59 +60,20 @@ export const targetForFile = (
   return undefined;
 };
 
-// type State = {
-//   cursor: string;
-// };
-//
-// const loadState = (stateFile: string): Promise<State | undefined> =>
-//   fs.promises
-//     .readFile(stateFile, { encoding: "utf-8" })
-//     .then((contents) => JSON.parse(contents))
-//     .then((json: unknown) => {
-//       if (json && typeof json === "object" && "cursor" in json) {
-//         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-//         const cursor = (json as any)["cursor"];
-//         if (typeof cursor === "string") {
-//           return { cursor };
-//         }
-//       }
-//
-//       return undefined;
-//     })
-//     .catch((err) => {
-//       if (err.code === "ENOENT") return undefined;
-//       throw err;
-//     });
-//
-// const saveState = (stateFile: string, state: State): Promise<void> => {
-//   const tmpFile = stateFile + `.tmp.${randomUUID().toString()}`;
-//
-//   const w = fs.createWriteStream(tmpFile, { mode: 0o600, flags: "wx" });
-//
-//   return new Promise((resolve, reject) =>
-//     w.write(JSON.stringify(state) + "\n", "utf-8", (err) =>
-//       err ? reject(err) : resolve(undefined)
-//     )
-//   )
-//     .then(() => fs.promises.rename(tmpFile, stateFile))
-//     .finally(() => w.close())
-//     .finally(() => fs.unlink(tmpFile, () => {}));
-// };
-
 const handler: Handler = async (
   dbxp: DropboxProvider,
   argv: string[],
   globalOptions: GlobalOptions,
   usageFail: () => void
 ): Promise<void> => {
+  let tidy = false;
   let tail = false;
   let dryRun = false;
-  // let stateFile: string | undefined = undefined;
 
   argv = processOptions(argv, {
+    [TIDY]: () => (tidy = true),
     [TAIL]: () => (tail = true),
     [DRY_RUN]: () => (dryRun = true),
-    // [STATE_FILE]: (args) => (stateFile = args.shift()),
   });
 
   if (argv.length > 1) usageFail();
@@ -177,45 +148,98 @@ const handler: Handler = async (
     ]).then(() => undefined);
   };
 
-  const initialCursor: string | undefined = undefined;
-  // if (stateFile) {
-  //   initialCursor = (await loadState(stateFile))?.cursor;
-  // }
+  if (tidy) {
+    const fileItems: (files.FileMetadata & WithPath)[] = [];
+    const folderItems: (files.FolderMetadata & WithPath)[] = [];
 
-  const listerArgs: ListerArgs = initialCursor
-    ? { tag: "cursor", args: { cursor: initialCursor }, tail }
-    : { tag: "from_start", args: { path: localPath, recursive: true }, tail };
+    await lister({
+      dbx,
+      listing: {
+        tag: "from_start",
+        args: { path: localPath, recursive: true },
+        tail: false,
+      },
+      onItem: (item) => {
+        if (item[".tag"] === "file" && hasPath(item)) fileItems.push(item);
+        if (item[".tag"] === "folder" && hasPath(item)) folderItems.push(item);
+        return Promise.resolve();
+      },
+      globalOptions,
+    }).promise;
 
-  await lister({
-    dbx,
-    listing: listerArgs,
-    onItem: async (item) => {
-      console.log(JSON.stringify(item));
+    const paths = new Set<string>();
+    fileItems.forEach((item) => paths.add(item.path_lower));
+    folderItems.forEach((item) => paths.add(item.path_lower));
 
-      if (item[".tag"] === "file" && item.path_lower && item.path_display) {
-        const wantedPath = targetForRemoteFile(item);
-        if (wantedPath && wantedPath.toLowerCase() !== item.path_lower)
-          return shutdownWaitsFor(tryMove(item, wantedPath));
+    const shouldDeleteFile = (file: files.FileMetadata & WithPath): boolean =>
+      file.path_lower.endsWith(".ctg") ||
+      file.name.toLowerCase() === "fseventsd-uuid" ||
+      file.name.toLowerCase() === ".trashes";
+
+    await Promise.all(
+      fileItems
+        .filter(shouldDeleteFile)
+        .map((item) =>
+          dbx
+            .filesDeleteV2({ path: item.path_lower })
+            .then(() => paths.delete(item.path_lower))
+        )
+    );
+
+    console.log([...paths.values()].sort().join("\n"));
+
+    folderItems.sort((a, b) => a.path_lower.localeCompare(b.path_lower));
+    folderItems.shift(); // The Camera Uploads folder itself
+
+    const hasChild = (parentPath: string): boolean => {
+      for (const childPath of paths) {
+        if (childPath.startsWith(parentPath + "/")) return true;
       }
 
-      return Promise.resolve();
-    },
-    onCursor: async (cursor) => {
-      console.log({ cursor });
-      // if (stateFile) await saveState(stateFile, { cursor });
-    },
-    onPause: async () => {
-      console.log("pause");
-    },
-    onResume: async () => console.log("resume"),
-    globalOptions,
-  }).promise;
+      return false;
+    };
+
+    for (const item of [...folderItems].reverse()) {
+      if (!hasChild(item.path_lower)) {
+        console.log(`rmdir ${item.path_lower}`);
+        await dbx.filesDeleteV2({ path: item.path_lower });
+        paths.delete(item.path_lower);
+      }
+    }
+  } else {
+    await lister({
+      dbx,
+      listing: {
+        tag: "from_start",
+        args: { path: localPath, recursive: true },
+        tail,
+      },
+      onItem: async (item) => {
+        console.log(JSON.stringify(item));
+
+        if (item[".tag"] === "file" && item.path_lower && item.path_display) {
+          const wantedPath = targetForRemoteFile(item);
+          if (wantedPath && wantedPath.toLowerCase() !== item.path_lower)
+            return shutdownWaitsFor(tryMove(item, wantedPath));
+        }
+
+        return Promise.resolve();
+      },
+      onCursor: async (cursor) => {
+        console.log({ cursor });
+      },
+      onPause: async () => {
+        console.log("pause");
+      },
+      onResume: async () => console.log("resume"),
+      globalOptions,
+    }).promise;
+  }
 
   await shutdownPromise;
   process.exit(0);
 };
 
-// const argsHelp = `[${TAIL}] [${DRY_RUN}] [${STATE_FILE} FILE] [PATH]`;
-const argsHelp = `[${TAIL}] [${DRY_RUN}] [PATH]`;
+const argsHelp = `[${TIDY}] [${TAIL}] [${DRY_RUN}] [PATH]`;
 
 export default { verb, handler, argsHelp };
