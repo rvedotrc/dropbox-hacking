@@ -3,4 +3,4 @@ set -x
 shopt -s nullglob
 svc -dx ./services/available/*
 sleep 1
-svc -dx ./services/available/*/log
+exec svc -dx ./services/available/*/log
