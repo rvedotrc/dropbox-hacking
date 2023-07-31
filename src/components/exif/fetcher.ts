@@ -2,9 +2,9 @@ import { Dropbox, files } from "dropbox";
 import { GlobalOptions } from "../../types";
 import { PromiseLimiter } from "../../util/promises/promiseLimiter";
 import { simplePromiseRetrier } from "../../util/promises/simplePromiseRetrier";
-import FileMetadata = files.FileMetadata;
 import * as https from "https";
 import * as http from "http";
+import FileMetadata = files.FileMetadata;
 
 export type Fetcher = {
   fetch: (item: FileMetadata) => Promise<Buffer>;
@@ -47,24 +47,25 @@ const first64KBOf = async (
   }).finally(() => timer && clearTimeout(timer));
 };
 
-export default <T>(
+export default (
   dbx: Dropbox,
-  limiter: PromiseLimiter<T>,
+  limiter: PromiseLimiter<Buffer>,
   globalOptions: GlobalOptions,
   fetchSize = 65536,
-  timeoutMillis = 300000
-): Fetcher => {
-  return {
-    fetch: (item: FileMetadata): Promise<Buffer> => {
-      return dbx
-        .filesGetTemporaryLink({ path: `rev:${item.rev}` })
-        .then((r) => r.result.link)
-        .then((uri) =>
-          simplePromiseRetrier(
-            () => first64KBOf(uri, fetchSize, timeoutMillis),
-            `get head of ${item.path_lower}`
-          )
-        );
-    },
-  };
-};
+  timeoutMillis = 20000
+): Fetcher => ({
+  fetch: (item: FileMetadata) =>
+    limiter.submit(
+      () =>
+        dbx
+          .filesGetTemporaryLink({ path: `rev:${item.rev}` })
+          .then((r) => r.result.link)
+          .then((uri) =>
+            simplePromiseRetrier(
+              () => first64KBOf(uri, fetchSize, timeoutMillis),
+              `get head of ${item.path_lower}`
+            )
+          ),
+      `fetch ${item.path_display}`
+    ),
+});
