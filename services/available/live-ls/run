@@ -2,4 +2,8 @@
 exec 2>&1
 set -eux
 cd "$( git rev-parse --show-toplevel )"
+if ! [ -e ./var/live/ls/entries.json ] ; then
+	mkdir -p ./var/live/ls
+	exec ./with-live ./bin/ls-cache init --recursive "" ./var/live/ls
+fi
 exec ./with-live ./bin/ls-cache update --tail ./var/live/ls
