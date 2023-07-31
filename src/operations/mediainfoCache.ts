@@ -2,7 +2,10 @@ import { DropboxProvider, GlobalOptions, Handler } from "../types";
 import { processOptions } from "../options";
 import { writeStderr, writeStdout } from "../util/logging";
 import lister, { ListerArgs } from "../components/lister";
-import { MediainfoDB } from "../components/mediainfo/mediainfoDB";
+import {
+  MediainfoDB,
+  MediainfoFromHash,
+} from "../components/mediainfo/mediainfoDB";
 import { StateDir } from "../components/mediainfo/stateDir";
 import { Dropbox, files } from "dropbox";
 import FileMetadata = files.FileMetadata;
@@ -213,8 +216,15 @@ const showHandler: Handler = async (
     ).then(() => process.exit(1));
   }
 
+  const db = await mediainfoDb.readAll();
+  const dbAsJson: Record<string, MediainfoFromHash> = {};
+  for (const [k, v] of db.entries()) {
+    dbAsJson[k] = v;
+  }
+
   const payload = {
     ...state,
+    db: dbAsJson,
   };
 
   await writeStdout(JSON.stringify(payload) + "\n");
