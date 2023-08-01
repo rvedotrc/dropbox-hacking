@@ -20,13 +20,20 @@ export default class WrappedMethod<M extends keyof Dropbox> {
   private readonly waiter: Waiter;
   private readonly real: Dropbox[M];
   private returnsPromises: true | undefined = undefined;
+  private readonly timeout: number | undefined;
 
-  constructor(dbx: Dropbox, methodName: M, globalOptions: GlobalOptions) {
+  constructor(
+    dbx: Dropbox,
+    methodName: M,
+    globalOptions: GlobalOptions,
+    timeout?: number
+  ) {
     this.dbx = dbx;
     this.methodName = methodName;
     this.globalOptions = globalOptions;
     this.waiter = new Waiter(globalOptions);
     this.real = this.dbx[this.methodName];
+    this.timeout = timeout;
   }
 
   public debugTag(callId: number, attempt: number): string {
@@ -69,9 +76,15 @@ export default class WrappedMethod<M extends keyof Dropbox> {
         if (isPromise(value)) {
           this.debugTagged(callId, 0, "returned a promise");
           this.returnsPromises = true;
-          return new RetryingPromise(this, callReal, this.waiter, callId).chain(
-            value
-          );
+          return new RetryingPromise(
+            this,
+            callReal,
+            this.waiter,
+            callId,
+            0,
+            undefined,
+            this.timeout
+          ).chain(value);
         } else {
           this.debugTagged(callId, 0, "did not return a promise; unwrapping");
           // No point wrapping this; restore the real function
@@ -79,7 +92,15 @@ export default class WrappedMethod<M extends keyof Dropbox> {
           return value;
         }
       } else {
-        return new RetryingPromise(this, callReal, this.waiter, callId).call();
+        return new RetryingPromise(
+          this,
+          callReal,
+          this.waiter,
+          callId,
+          0,
+          undefined,
+          this.timeout
+        ).call();
       }
     };
 

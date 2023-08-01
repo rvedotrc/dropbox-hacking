@@ -30,6 +30,18 @@ export const cancel = (promise: Promise<unknown>): void => {
   if (isCancelable(promise)) promise.cancel();
 };
 
+export const withTimeout = <T>(
+  promise: Promise<T>,
+  timeoutMillis: number
+): Promise<T> =>
+  new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      cancel(promise);
+      reject("promise timeout hit");
+    }, timeoutMillis);
+    promise.then(resolve, reject).finally(() => clearTimeout(timer));
+  });
+
 export default class RetryingPromise<M extends keyof Dropbox> {
   private readonly wrappedMethod: WrappedMethod<M>;
   private readonly callReal: () => Promise<unknown>;
@@ -37,6 +49,7 @@ export default class RetryingPromise<M extends keyof Dropbox> {
   private readonly callId: number;
   private readonly attempt: number;
   private readonly canceller: Canceller;
+  private readonly timeout: number | undefined;
 
   constructor(
     wrappedMethod: WrappedMethod<M>,
@@ -44,7 +57,8 @@ export default class RetryingPromise<M extends keyof Dropbox> {
     waiter: Waiter,
     callId: number,
     attempt = 0,
-    canceller?: Canceller
+    canceller?: Canceller,
+    timeout?: number
   ) {
     this.wrappedMethod = wrappedMethod;
     this.callReal = callReal;
@@ -52,6 +66,7 @@ export default class RetryingPromise<M extends keyof Dropbox> {
     this.callId = callId;
     this.attempt = attempt;
     this.canceller = canceller || makeCanceller();
+    this.timeout = timeout;
   }
 
   public chain(promise: Promise<unknown>): Promise<unknown> & Cancelable {
@@ -71,7 +86,8 @@ export default class RetryingPromise<M extends keyof Dropbox> {
             this.waiter,
             this.callId,
             this.attempt + 1,
-            this.canceller
+            this.canceller,
+            this.timeout
           ).call();
         } else {
           this.debug("not retriable, rethrowing");
@@ -94,7 +110,8 @@ export default class RetryingPromise<M extends keyof Dropbox> {
           throw "cancelled";
         }
         this.debug("calling now");
-        return this.callReal();
+        const promise = this.callReal();
+        return this.timeout ? withTimeout(promise, this.timeout) : promise;
       });
     return this.chain(v);
   }
