@@ -28,7 +28,7 @@ export const GlobalOptionsSingleton = (() => {
 })();
 
 export const getGlobalOptions = (
-  argv: string[]
+  argv: string[],
 ): { globalOptions: GlobalOptions; remainingArgs: string[] } => {
   const globalOptions: GlobalOptions = {
     debugUpload: false,

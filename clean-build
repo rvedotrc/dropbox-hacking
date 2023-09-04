@@ -3,14 +3,8 @@
 set -eu
 
 rm -rf node_modules */node_modules
+rm -rf dropbox-hacking-*/dist
+rm -rf dropbox-hacking-*/*.tsbuildinfo
 
 yarn
 yarn build
-
-(
-	cd photo-manager-client
-	yarn
-	yarn build
-)
-
-svc -t ./services/available/live-server

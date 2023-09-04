@@ -1,5 +1,6 @@
-/dist/
-/node_modules/
+dist/
+node_modules/
+tsconfig.tsbuildinfo
 /with-*
 /var/
 /services/scan/
