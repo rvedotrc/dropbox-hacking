@@ -1,4 +1,5 @@
 import { Dropbox } from "dropbox";
+import { GlobalOptions } from "dropbox-hacking-util";
 
 export type DropboxProvider = () => Promise<Dropbox>;
 
@@ -6,7 +7,7 @@ export type Handler = (
   dbxp: DropboxProvider,
   argv: string[],
   globalOptions: GlobalOptions,
-  usageFail: () => Promise<void>
+  usageFail: () => Promise<void>,
 ) => Promise<void>;
 
 export type Operation = {
@@ -14,4 +15,3 @@ export type Operation = {
   handler: Handler;
   argsHelp: string | string[];
 };
-

@@ -1,2 +1,2 @@
 #!/bin/bash
-exec node ./dist/main/cli.js "$@"
+exec node ./dropbox-hacking-cli/dist/main/cli.js "$@"

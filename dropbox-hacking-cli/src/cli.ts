@@ -1,23 +1,23 @@
 import { Operation } from "./types";
-import { getDropboxClient } from "./auth";
 
 import catOperation from "./operations/cat";
-import contentHashStdinOperation from "./operations/contentHashStdin";
-import cpOperation from "./operations/cp";
-import lsOperation from "./operations/ls";
-import mkdirOperation from "./operations/mkdir";
-import mvOperation from "./operations/mv";
-import rmOperation from "./operations/rm";
-import syncDownloadOperation from "./operations/syncDownload";
-import syncUploadOperation from "./operations/syncUpload";
-import uploadStdinOperation from "./operations/uploadStdin";
-import retrier from "./retry-and-rate-limit";
-import { writeStderr } from "./util/logging";
 import {
+  getDropboxClient,
   getGlobalOptions,
   GlobalOptionsSingleton,
-  HELP,
-} from "./globalOptions";
+  retrier,
+  writeStderr,
+} from "dropbox-hacking-util";
+import { HELP } from "dropbox-hacking-util/dist/global-options/globalOptions";
+// import contentHashStdinOperation from "./operations/contentHashStdin";
+// import cpOperation from "./operations/cp";
+// import lsOperation from "./operations/ls";
+// import mkdirOperation from "./operations/mkdir";
+// import mvOperation from "./operations/mv";
+// import rmOperation from "./operations/rm";
+// import syncDownloadOperation from "./operations/syncDownload";
+// import syncUploadOperation from "./operations/syncUpload";
+// import uploadStdinOperation from "./operations/uploadStdin";
 
 const prefix = "./bin/cli";
 
@@ -26,15 +26,15 @@ export default (argv: string[]): void => {
   // get_metadata (is this different from "ls"?)
   const operations: Operation[] = [
     catOperation,
-    contentHashStdinOperation,
-    cpOperation,
-    lsOperation,
-    mkdirOperation,
-    mvOperation,
-    rmOperation,
-    syncDownloadOperation,
-    syncUploadOperation,
-    uploadStdinOperation,
+    // contentHashStdinOperation,
+    // cpOperation,
+    // lsOperation,
+    // mkdirOperation,
+    // mvOperation,
+    // rmOperation,
+    // syncDownloadOperation,
+    // syncUploadOperation,
+    // uploadStdinOperation,
   ];
 
   const usageFail = async (verb?: string): Promise<void> => {
@@ -67,7 +67,7 @@ export default (argv: string[]): void => {
       getter,
       remainingArgs.splice(1),
       globalOptions,
-      async () => await usageFail(op.verb)
+      async () => await usageFail(op.verb),
     ).catch((err) => {
       console.error({ err, stack: err.stack });
       process.exit(1);

@@ -1,6 +1,7 @@
-import { DropboxProvider, GlobalOptions, Handler } from "../types";
+import { DropboxProvider, Handler } from "../types";
 import * as https from "https";
-import { processOptions } from "../options";
+import { processOptions } from "dropbox-hacking-util/dist/global-options/options";
+import { GlobalOptions } from "dropbox-hacking-util";
 
 const verb = "cat";
 
@@ -10,7 +11,7 @@ const handler: Handler = async (
   dbxp: DropboxProvider,
   argv: string[],
   globalOptions: GlobalOptions,
-  usageFail: () => void
+  usageFail: () => void,
 ): Promise<void> => {
   let showLink = false;
 
