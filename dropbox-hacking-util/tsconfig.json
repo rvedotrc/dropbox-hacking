@@ -1,13 +1,7 @@
 {
+  "extends": "../tsconfig.base.json",
   "compilerOptions": {
-    "composite": true,
-    "declaration": true,
-    "incremental": true,
-    "module": "NodeNext",
-    "moduleResolution": "nodenext",
     "outDir": "dist",
-    "rootDir": "src",
-    "strictNullChecks": true,
-    "target": "ES2021"
+    "rootDir": "src"
   }
 }

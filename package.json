@@ -7,7 +7,7 @@
   "private": true,
   "repository": "https://github.com/rvedotrc/dropbox-hacking",
   "scripts": {
-    "build": "yarn workspace dropbox-hacking-util build && yarn workspace dropbox-hacking-lister build && yarn workspace dropbox-hacking-ls-cache build && yarn workspace dropbox-hacking-uploader build && yarn workspaces run build"
+    "build": "./build.sh"
   },
   "version": "1.0.0",
   "workspaces": [
