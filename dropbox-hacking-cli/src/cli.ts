@@ -10,14 +10,14 @@ import {
 } from "dropbox-hacking-util";
 import { HELP } from "dropbox-hacking-util/dist/global-options/globalOptions";
 import contentHashStdinOperation from "./operations/contentHashStdin";
-// import cpOperation from "./operations/cp";
+import cpOperation from "./operations/cp";
 // import lsOperation from "./operations/ls";
-// import mkdirOperation from "./operations/mkdir";
-// import mvOperation from "./operations/mv";
-// import rmOperation from "./operations/rm";
+import mkdirOperation from "./operations/mkdir";
+import mvOperation from "./operations/mv";
+import rmOperation from "./operations/rm";
 // import syncDownloadOperation from "./operations/syncDownload";
 // import syncUploadOperation from "./operations/syncUpload";
-// import uploadStdinOperation from "./operations/uploadStdin";
+import uploadStdinOperation from "./operations/uploadStdin";
 
 const prefix = "./bin/cli";
 
@@ -27,14 +27,14 @@ export default (argv: string[]): void => {
   const operations: Operation[] = [
     catOperation,
     contentHashStdinOperation,
-    // cpOperation,
+    cpOperation,
     // lsOperation,
-    // mkdirOperation,
-    // mvOperation,
-    // rmOperation,
+    mkdirOperation,
+    mvOperation,
+    rmOperation,
     // syncDownloadOperation,
     // syncUploadOperation,
-    // uploadStdinOperation,
+    uploadStdinOperation,
   ];
 
   const usageFail = async (verb?: string): Promise<void> => {

@@ -1,5 +1,5 @@
-import { DropboxProvider, GlobalOptions, Handler } from "../types";
-import { writeStdout } from "../util/logging";
+import { DropboxProvider, Handler } from "../types";
+import { GlobalOptions, writeStdout } from "dropbox-hacking-util";
 
 const verb = "rm";
 
@@ -9,7 +9,7 @@ const handler: Handler = async (
   dbxp: DropboxProvider,
   argv: string[],
   globalOptions: GlobalOptions,
-  usageFail: () => void
+  usageFail: () => void,
 ): Promise<void> => {
   if (argv.length !== 1) usageFail();
   const path = argv[0];

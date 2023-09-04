@@ -1,9 +1,8 @@
-import { DropboxProvider, GlobalOptions, Handler } from "../types";
-import { selectUploader } from "../components/uploader";
+import { DropboxProvider, Handler } from "../types";
 import * as fs from "fs";
 import { files } from "dropbox";
-import { formatTime } from "../util/time";
-import { writeStdout } from "../util/logging";
+import { selectUploader } from "dropbox-hacking-uploader";
+import { formatTime, GlobalOptions, writeStdout } from "dropbox-hacking-util";
 
 const verb = "upload-stdin";
 
@@ -13,7 +12,7 @@ const handler: Handler = async (
   dbxp: DropboxProvider,
   argv: string[],
   globalOptions: GlobalOptions,
-  usageFail: () => void
+  usageFail: () => void,
 ): Promise<void> => {
   if (argv.length !== 1) usageFail();
   const dropboxPath = argv[0];
