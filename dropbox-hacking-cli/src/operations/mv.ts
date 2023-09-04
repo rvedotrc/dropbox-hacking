@@ -1,5 +1,9 @@
-import { DropboxProvider, Handler } from "../types";
-import { GlobalOptions, writeStdout } from "dropbox-hacking-util";
+import { Handler } from "../types";
+import {
+  DropboxProvider,
+  GlobalOptions,
+  writeStdout,
+} from "dropbox-hacking-util";
 
 const verb = "mv";
 

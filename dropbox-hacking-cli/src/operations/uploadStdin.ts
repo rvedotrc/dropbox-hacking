@@ -1,8 +1,13 @@
-import { DropboxProvider, Handler } from "../types";
+import { Handler } from "../types";
 import * as fs from "fs";
 import { files } from "dropbox";
 import { selectUploader } from "dropbox-hacking-uploader";
-import { formatTime, GlobalOptions, writeStdout } from "dropbox-hacking-util";
+import {
+  DropboxProvider,
+  formatTime,
+  GlobalOptions,
+  writeStdout,
+} from "dropbox-hacking-util";
 
 const verb = "upload-stdin";
 

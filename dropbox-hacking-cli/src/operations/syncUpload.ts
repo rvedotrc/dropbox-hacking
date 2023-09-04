@@ -1,6 +1,10 @@
-import { DropboxProvider, GlobalOptions, Handler } from "../types";
-import * as upload from "../components/sync/upload";
-import { processOptions } from "../options";
+import { Handler } from "../types";
+import { upload } from "dropbox-hacking-sync";
+import {
+  DropboxProvider,
+  GlobalOptions,
+  processOptions,
+} from "dropbox-hacking-util";
 
 const verb = "sync-upload";
 const DRY_RUN = "--dry-run";
@@ -11,7 +15,7 @@ const handler: Handler = async (
   dbxp: DropboxProvider,
   argv: string[],
   globalOptions: GlobalOptions,
-  usageFail: () => void
+  usageFail: () => void,
 ): Promise<void> => {
   let dryRun = false;
   let withDelete = false;

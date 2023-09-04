@@ -7,6 +7,7 @@
     "moduleResolution": "nodenext",
     "outDir": "dist",
     "rootDir": "src",
+    "strictNullChecks": true,
     "target": "ES2021"
   }
 }

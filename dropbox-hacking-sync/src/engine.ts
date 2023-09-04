@@ -1,12 +1,15 @@
 import { Dropbox, files } from "dropbox";
-import { DropboxProvider, GlobalOptions } from "../../types";
 import dropboxListing, { Item as RemoteItem } from "./dropbox-listing";
 import localListing, {
   DirectoryItem,
   FileItem,
   Item as LocalItem,
 } from "./local-listing";
-import { writeStderr } from "../../util/logging";
+import {
+  GlobalOptions,
+  writeStderr,
+  DropboxProvider,
+} from "dropbox-hacking-util";
 
 // Does a "mkdir -p" on the destination structure
 
@@ -61,10 +64,10 @@ export const calculate = async (
   dbxp: DropboxProvider,
   dropboxPath: string,
   localPath: string,
-  globalOptions: GlobalOptions
+  globalOptions: GlobalOptions,
 ): Promise<{ syncActions: SyncAction[]; dbx: Dropbox }> => {
   const listLocalAndRemote = (
-    recurse: boolean
+    recurse: boolean,
   ): Promise<{ dbx: Dropbox; map: Map<string, LocalAndRemoteItems> }> => {
     const promiseOfDbx = dbxp();
 
@@ -132,7 +135,7 @@ export const calculate = async (
 
   const syncActionFor = (
     key: string,
-    items: LocalAndRemoteItems
+    items: LocalAndRemoteItems,
   ): SyncAction => {
     const { local, remote } = items;
 
@@ -141,7 +144,7 @@ export const calculate = async (
       return {
         errors: [
           `Found names which differ only in case (must be a case-sensitive filesystem). Not handling this yet. ${names.join(
-            " "
+            " ",
           )}`,
         ],
       };
@@ -225,11 +228,11 @@ export const calculate = async (
 
   return listLocalAndRemote(true).then(({ dbx, map }) => {
     const sortedEntries = Array.from(map.entries()).sort((a, b) =>
-      a[0].localeCompare(b[0])
+      a[0].localeCompare(b[0]),
     );
 
     const syncActions = sortedEntries.map(([key, items]) =>
-      syncActionFor(key, items)
+      syncActionFor(key, items),
     );
 
     return { syncActions, dbx };
@@ -237,7 +240,7 @@ export const calculate = async (
 };
 
 export const showErrorsAndWarnings = async (
-  syncActions: SyncAction[]
+  syncActions: SyncAction[],
 ): Promise<{ hasErrors: boolean }> => {
   for (const syncAction of syncActions) {
     if (syncAction.warnings) {

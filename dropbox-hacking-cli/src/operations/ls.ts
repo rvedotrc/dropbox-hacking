@@ -1,8 +1,13 @@
 import { files } from "dropbox";
-import { DropboxProvider, Handler } from "../types";
+import { Handler } from "../types";
 import lister from "dropbox-hacking-lister";
-import { GlobalOptions, writeStderr, writeStdout } from "dropbox-hacking-util";
-import { processOptions } from "dropbox-hacking-util/dist/global-options/options";
+import {
+  DropboxProvider,
+  GlobalOptions,
+  writeStderr,
+  writeStdout,
+  processOptions,
+} from "dropbox-hacking-util";
 
 type FolderStats = {
   childFileCount: number;

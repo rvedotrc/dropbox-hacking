@@ -12,8 +12,11 @@
   "version": "1.0.0",
   "workspaces": [
     "dropbox-hacking-cli",
+    "dropbox-hacking-downloader",
     "dropbox-hacking-lister",
     "dropbox-hacking-ls-cache",
+    "dropbox-hacking-mover",
+    "dropbox-hacking-sync",
     "dropbox-hacking-uploader",
     "dropbox-hacking-util"
   ]

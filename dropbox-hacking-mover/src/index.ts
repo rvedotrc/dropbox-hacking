@@ -1,5 +1,5 @@
 import { Dropbox, files } from "dropbox";
-import { GlobalOptions } from "../../types";
+import { GlobalOptions } from "dropbox-hacking-util";
 
 type Entry = {
   job: files.RelocationPath;
@@ -45,7 +45,7 @@ export default class Mover {
     const dbx = this.dbx;
 
     const complete = (
-      entries: files.RelocationBatchResultEntry[]
+      entries: files.RelocationBatchResultEntry[],
     ): Promise<void> => {
       entries.forEach((entry, index) => {
         const job = copy[index];
@@ -57,7 +57,7 @@ export default class Mover {
           entry.failure[".tag"] === "too_many_write_operations"
         ) {
           console.debug(
-            `${JSON.stringify(job.job)} got rate limited, resubmitting`
+            `${JSON.stringify(job.job)} got rate limited, resubmitting`,
           );
           setTimeout(() => job.resolve(this.submit(job.job)), 3000);
         } else {
@@ -75,9 +75,9 @@ export default class Mover {
         .then((status) =>
           status[".tag"] === "in_progress"
             ? new Promise((resolve) => setTimeout(resolve, 5000)).then(() =>
-                poll(asyncJobId)
+                poll(asyncJobId),
               )
-            : complete(status.entries)
+            : complete(status.entries),
         );
 
     dbx
@@ -88,7 +88,7 @@ export default class Mover {
       .then((result) =>
         result[".tag"] === "async_job_id"
           ? poll(result.async_job_id)
-          : complete(result.entries)
+          : complete(result.entries),
       )
       .catch((err) => copy.forEach((e) => e.reject(err)));
   }

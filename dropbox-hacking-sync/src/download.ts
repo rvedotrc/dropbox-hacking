@@ -1,19 +1,23 @@
 import * as fs from "fs";
 import * as path from "path";
 import { files } from "dropbox";
-import { formatTime, parseTime } from "../../util/time";
-import { writeStdout } from "../../util/logging";
-import makeContentHash from "../uploader/make-content-hash";
 import * as engine from "./engine";
 import createMkdir from "./mkdir";
-import { DropboxProvider, GlobalOptions } from "../../types";
-import downloader from "../downloader";
 import { DirectoryItem, FileItem } from "./local-listing";
 import FileMetadata = files.FileMetadata;
 import { randomUUID } from "crypto";
+import {
+  DropboxProvider,
+  formatTime,
+  GlobalOptions,
+  parseTime,
+  writeStdout,
+} from "dropbox-hacking-util";
+import { makeContentHash } from "dropbox-hacking-uploader";
+import { default as downloader } from "dropbox-hacking-downloader";
 
 export type AlternateProvider = (
-  remote: FileMetadata
+  remote: FileMetadata,
 ) => Promise<string | undefined>;
 
 export type DownloadArgs = {
@@ -72,7 +76,7 @@ export const main = (downloadArgs: DownloadArgs): Promise<boolean> => {
 
       const doSetMtime = (
         thisLocalPath: string,
-        mtime: Date
+        mtime: Date,
       ): Promise<void> => {
         console.info(`set mtime of ${thisLocalPath} to ${mtime}`);
         ++syncStats.filesToSetMtime;
@@ -84,10 +88,10 @@ export const main = (downloadArgs: DownloadArgs): Promise<boolean> => {
       const useAlternate = (
         thisLocalPath: string,
         remote: files.FileMetadata,
-        alternatePath: string
+        alternatePath: string,
       ): Promise<void> => {
         console.info(
-          `useAlternate from ${remote.path_display} to ${thisLocalPath} using ${alternatePath}`
+          `useAlternate from ${remote.path_display} to ${thisLocalPath} using ${alternatePath}`,
         );
         if (dryRun) return Promise.resolve();
 
@@ -118,10 +122,10 @@ export const main = (downloadArgs: DownloadArgs): Promise<boolean> => {
 
       const doDownload = async (
         thisLocalPath: string,
-        remote: files.FileMetadata
+        remote: files.FileMetadata,
       ): Promise<void> => {
         console.info(
-          `doDownload from ${remote.path_display} to ${thisLocalPath}`
+          `doDownload from ${remote.path_display} to ${thisLocalPath}`,
         );
 
         const alternatePath = downloadArgs.alternateProvider
@@ -143,7 +147,7 @@ export const main = (downloadArgs: DownloadArgs): Promise<boolean> => {
           makePromise().catch((err) => {
             console.error(
               `download #${attempt} of ${remote.path_display} failed`,
-              err
+              err,
             );
             ++attempt;
             return tryAgain();
@@ -154,10 +158,10 @@ export const main = (downloadArgs: DownloadArgs): Promise<boolean> => {
 
       const unconditionalDownload = (
         thisLocalPath: string,
-        remote: files.FileMetadata
+        remote: files.FileMetadata,
       ): Promise<void> => {
         debug(
-          `unconditional download to [${thisLocalPath}] from ${remote.path_display}`
+          `unconditional download to [${thisLocalPath}] from ${remote.path_display}`,
         );
 
         return doDownload(thisLocalPath, remote);
@@ -166,11 +170,11 @@ export const main = (downloadArgs: DownloadArgs): Promise<boolean> => {
       const conditionalDownload = (
         thisLocalPath: string,
         stats: fs.Stats,
-        remote: files.FileMetadata
+        remote: files.FileMetadata,
       ): Promise<void> =>
         isDownloadNecessary(thisLocalPath, stats, remote).then((truth) => {
           debug(
-            `conditional download to [${thisLocalPath}] from ${remote.path_display} => ${truth}`
+            `conditional download to [${thisLocalPath}] from ${remote.path_display} => ${truth}`,
           );
 
           if (truth == "set_mtime") {
@@ -181,7 +185,7 @@ export const main = (downloadArgs: DownloadArgs): Promise<boolean> => {
           if (truth) return doDownload(thisLocalPath, remote);
 
           debug(
-            `no need to download to [${thisLocalPath}] from ${remote.path_display}`
+            `no need to download to [${thisLocalPath}] from ${remote.path_display}`,
           );
           ++syncStats.filesAlreadyOk;
           return;
@@ -190,7 +194,7 @@ export const main = (downloadArgs: DownloadArgs): Promise<boolean> => {
       const isDownloadNecessary = (
         thisLocalPath: string,
         stats: fs.Stats,
-        remote: files.FileMetadata
+        remote: files.FileMetadata,
       ): Promise<boolean | "set_mtime"> => {
         // We know that they both exist, and are files
         if (stats.size !== remote.size) return Promise.resolve(true);
@@ -200,7 +204,7 @@ export const main = (downloadArgs: DownloadArgs): Promise<boolean> => {
         if (timestampsMatch && !checkContentHash) return Promise.resolve(false);
 
         return makeContentHash(
-          fs.createReadStream(thisLocalPath, { autoClose: true })
+          fs.createReadStream(thisLocalPath, { autoClose: true }),
         ).then((hash) => {
           if (hash !== remote.content_hash) return true;
 
@@ -233,7 +237,7 @@ export const main = (downloadArgs: DownloadArgs): Promise<boolean> => {
               return conditionalDownload(
                 thisLocalPath,
                 action.local.stat,
-                metadata
+                metadata,
               );
             } else {
               return mkdir
@@ -246,7 +250,7 @@ export const main = (downloadArgs: DownloadArgs): Promise<boolean> => {
               // We *could* ensure that the local directory's case is correct
               // (e.g. rename directory foo to Foo).
               debug(
-                `already got directory [${thisLocalPath}] (${action.local.path}) for ${remotePathDisplay}`
+                `already got directory [${thisLocalPath}] (${action.local.path}) for ${remotePathDisplay}`,
               );
             } else {
               return mkdir.mkdir(thisLocalPath);
@@ -274,8 +278,8 @@ export const main = (downloadArgs: DownloadArgs): Promise<boolean> => {
         syncActions.map((syncAction) =>
           syncAction.action
             ? syncActionHandler(syncAction.action)
-            : Promise.resolve()
-        )
+            : Promise.resolve(),
+        ),
       )
         .then(() => writeStdout(JSON.stringify({ stats: syncStats }) + "\n"))
         .then(() => true);

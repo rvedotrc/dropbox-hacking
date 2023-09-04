@@ -1,7 +1,4 @@
-import { Dropbox } from "dropbox";
-import { GlobalOptions } from "dropbox-hacking-util";
-
-export type DropboxProvider = () => Promise<Dropbox>;
+import { DropboxProvider, GlobalOptions } from "dropbox-hacking-util";
 
 export type Handler = (
   dbxp: DropboxProvider,

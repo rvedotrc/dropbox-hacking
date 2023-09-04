@@ -3,13 +3,5 @@
     "**/node_modules"
   ],
   "files": [],
-  "include": [],
-  "references": [
-    {
-      "path": "./dropbox-hacking-util"
-    },
-    {
-      "path": "./dropbox-hacking-cli"
-    }
-  ]
+  "include": []
 }

@@ -22,7 +22,7 @@ const addRelativePath = (metadata: Item["metadata"], path: string): Item => {
 export default (
   dbx: Dropbox,
   path: string,
-  recursive: boolean
+  recursive: boolean,
 ): Promise<Item[]> =>
   dbx.filesListFolder({ path, recursive }).then(
     (r) => {
@@ -55,5 +55,5 @@ export default (
       }
 
       throw err;
-    }
+    },
   );

@@ -17,7 +17,7 @@ export default (localPath: string, recursive: boolean): Promise<Item[]> => {
   const walk = (
     thisLocalPath: string,
     relativePath: string,
-    catchNotFound: boolean
+    catchNotFound: boolean,
   ): Promise<void> =>
     fs.promises.lstat(thisLocalPath).then(
       (stat) => {
@@ -38,11 +38,11 @@ export default (localPath: string, recursive: boolean): Promise<Item[]> => {
                     return walk(
                       path.join(canonPath, entry),
                       `${relativePath}/${entry}`,
-                      false
+                      false,
                     );
                   }
-                })
-              )
+                }),
+              ),
             )
             .then(() => undefined);
         } else {
@@ -58,7 +58,7 @@ export default (localPath: string, recursive: boolean): Promise<Item[]> => {
       (err) => {
         if (catchNotFound && err.code === "ENOENT") return;
         throw err;
-      }
+      },
     );
 
   return walk(localPath, "", true).then(() => items);

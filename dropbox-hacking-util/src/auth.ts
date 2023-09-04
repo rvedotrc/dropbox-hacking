@@ -9,6 +9,8 @@ const envVar = "DROPBOX_CREDENTIALS_PATH";
 const port = 9988;
 const redirectUri = `http://localhost:${port}/auth`; // has to match app's config
 
+export type DropboxProvider = () => Promise<Dropbox>;
+
 const runServer = async (
   appAuth: DropboxAuth,
   checkCode: (code: string) => Promise<void>,

@@ -1,5 +1,5 @@
-import { DropboxProvider, Handler } from "../types";
-import { GlobalOptions } from "dropbox-hacking-util";
+import { Handler } from "../types";
+import { DropboxProvider, GlobalOptions } from "dropbox-hacking-util";
 
 const verb = "mkdir";
 

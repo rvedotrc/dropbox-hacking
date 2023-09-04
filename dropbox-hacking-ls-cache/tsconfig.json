@@ -3,13 +3,16 @@
     "composite": true,
     "declaration": true,
     "incremental": true,
-    "lib": [
-      "dom"
-    ],
     "module": "NodeNext",
     "moduleResolution": "nodenext",
     "outDir": "dist",
     "rootDir": "src",
+    "strictNullChecks": true,
     "target": "ES2021"
-  }
+  },
+  "references": [
+    {
+      "path": "../dropbox-hacking-util"
+    }
+  ]
 }

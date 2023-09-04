@@ -12,6 +12,12 @@
   },
   "references": [
     {
+      "path": "../dropbox-hacking-downloader"
+    },
+    {
+      "path": "../dropbox-hacking-uploader"
+    },
+    {
       "path": "../dropbox-hacking-util"
     }
   ]

@@ -7,6 +7,7 @@
     "moduleResolution": "nodenext",
     "outDir": "dist",
     "rootDir": "src",
+    "strictNullChecks": true,
     "target": "ES2021"
   },
   "references": [
@@ -15,6 +16,9 @@
     },
     {
       "path": "../dropbox-hacking-ls-cache"
+    },
+    {
+      "path": "../dropbox-hacking-sync"
     },
     {
       "path": "../dropbox-hacking-uploader"

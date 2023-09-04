@@ -3,8 +3,7 @@ import { randomUUID } from "crypto";
 import * as fs from "fs";
 import * as https from "https";
 import * as http from "http";
-import { parseTime } from "../../util/time";
-import { makePromiseLimiter } from "../../util/promises/promiseLimiter";
+import { makePromiseLimiter, parseTime } from "dropbox-hacking-util";
 
 const defaultLimiter = makePromiseLimiter(2, "download-limiter");
 
@@ -50,7 +49,7 @@ export default (args: {
             timer = setTimeout(() => {
               req.destroy(new Error("Timeout hit, aborting"));
             }, 300 * 1000);
-          }).finally(() => timer && clearTimeout(timer))
+          }).finally(() => timer && clearTimeout(timer)),
         )
         .then(() => fs.promises.utimes(tmpLocal, mtime, mtime))
         .then(() => fs.promises.rename(tmpLocal, local))

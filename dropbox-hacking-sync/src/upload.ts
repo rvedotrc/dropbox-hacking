@@ -1,13 +1,16 @@
 import * as fs from "fs";
 import { files } from "dropbox";
-import { formatTime } from "../../util/time";
-import { writeStdout } from "../../util/logging";
-import makeContentHash from "../uploader/make-content-hash";
 import * as engine from "./engine";
-import { DropboxProvider, GlobalOptions } from "../../types";
-import * as uploader from "../uploader";
 import { FileItem } from "./local-listing";
-import { makePromiseLimiter } from "../../util/promises/promiseLimiter";
+import {
+  formatTime,
+  GlobalOptions,
+  makePromiseLimiter,
+  writeStdout,
+  DropboxProvider,
+} from "dropbox-hacking-util";
+import * as uploader from "dropbox-hacking-uploader";
+import { makeContentHash } from "dropbox-hacking-uploader";
 
 export type UploadArgs = {
   dbxp: DropboxProvider;
@@ -78,17 +81,17 @@ export const main = (uploadArgs: UploadArgs): Promise<boolean> => {
                 dbx,
                 commitInfo,
                 readable,
-                globalOptions
+                globalOptions,
               )
               .then(() => undefined)
               .finally(() => readable.close()),
-          `${local.path} => ${remotePath}`
+          `${local.path} => ${remotePath}`,
         );
       };
 
       const unconditionalUpload = (
         local: FileItem,
-        remotePath: string
+        remotePath: string,
       ): Promise<void> => {
         debug(`unconditional upload from [${local.path}] to ${remotePath}`);
 
@@ -97,11 +100,11 @@ export const main = (uploadArgs: UploadArgs): Promise<boolean> => {
 
       const conditionalUpload = (
         local: FileItem,
-        remote: files.FileMetadata
+        remote: files.FileMetadata,
       ): Promise<void> =>
         isUploadNecessary(local.path, local.stat, remote).then((truth) => {
           debug(
-            `conditional upload from [${local.path}] to ${remote.path_display} => ${truth}`
+            `conditional upload from [${local.path}] to ${remote.path_display} => ${truth}`,
           );
 
           if (truth == "set_mtime") {
@@ -113,7 +116,7 @@ export const main = (uploadArgs: UploadArgs): Promise<boolean> => {
           if (truth) return doUpload(local, remote.id);
 
           debug(
-            `no need to upload from [${local.path}] to ${remote.path_display}`
+            `no need to upload from [${local.path}] to ${remote.path_display}`,
           );
           ++syncStats.filesAlreadyOk;
           return;
@@ -122,7 +125,7 @@ export const main = (uploadArgs: UploadArgs): Promise<boolean> => {
       const isUploadNecessary = (
         thisLocalPath: string,
         stats: fs.Stats,
-        remote: files.FileMetadata
+        remote: files.FileMetadata,
       ): Promise<boolean | "set_mtime"> => {
         // We know that they both exist, and are files
         if (stats.size !== remote.size) return Promise.resolve(true);
@@ -132,7 +135,7 @@ export const main = (uploadArgs: UploadArgs): Promise<boolean> => {
         if (timestampsMatch && !checkContentHash) return Promise.resolve(false);
 
         return makeContentHash(
-          fs.createReadStream(thisLocalPath, { autoClose: true })
+          fs.createReadStream(thisLocalPath, { autoClose: true }),
         ).then((hash) => {
           if (hash !== remote.content_hash) return true;
 
@@ -161,7 +164,7 @@ export const main = (uploadArgs: UploadArgs): Promise<boolean> => {
               // We *could* ensure that the local directory's case is correct
               // (e.g. rename directory foo to Foo).
               debug(
-                `already got directory [${action.remote.metadata.path_display}] for ${thisLocalPath}`
+                `already got directory [${action.remote.metadata.path_display}] for ${thisLocalPath}`,
               );
             } else {
               return mkdir(thisRemotePath);
@@ -186,8 +189,8 @@ export const main = (uploadArgs: UploadArgs): Promise<boolean> => {
         syncActions.map((syncAction) =>
           syncAction.action
             ? syncActionHandler(syncAction.action)
-            : Promise.resolve()
-        )
+            : Promise.resolve(),
+        ),
       )
         .then(() => writeStdout(JSON.stringify({ stats: syncStats }) + "\n"))
         .then(() => true);

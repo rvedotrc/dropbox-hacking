@@ -1,6 +1,5 @@
 import { Dropbox, files } from "dropbox";
-import { GlobalOptions } from "dropbox-hacking-util";
-import { cancel } from "dropbox-hacking-util/dist/retry-and-rate-limit";
+import { GlobalOptions, cancel } from "dropbox-hacking-util";
 
 export type ListerArgs = (
   | {
