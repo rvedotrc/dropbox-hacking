@@ -1,9 +1,9 @@
 import { DropboxProvider, Handler } from "../types";
-import lister, { ListerArgs } from "../components/lister";
-import { StateDir } from "../components/lsCache";
+import { StateDir } from "dropbox-hacking-ls-cache";
 import { Dropbox } from "dropbox";
-import {GlobalOptions, writeStderr, writeStdout} from "dropbox-hacking-util";
-import {processOptions} from "dropbox-hacking-util/dist/global-options/options";
+import { GlobalOptions, writeStderr, writeStdout } from "dropbox-hacking-util";
+import { processOptions } from "dropbox-hacking-util/dist/global-options/options";
+import { ListerArgs, default as lister } from "dropbox-hacking-lister";
 
 const verb = "ls-cache";
 
@@ -17,7 +17,7 @@ const makeLister = (
   dbx: Dropbox,
   listerArgs: ListerArgs,
   stateDir: StateDir,
-  globalOptions: GlobalOptions
+  globalOptions: GlobalOptions,
 ) =>
   lister({
     dbx,
@@ -32,7 +32,7 @@ const initHandler: Handler = async (
   dbxp: DropboxProvider,
   argv: string[],
   globalOptions: GlobalOptions,
-  usageFail: () => Promise<void>
+  usageFail: () => Promise<void>,
 ): Promise<void> => {
   // `${subInit} [${RECURSIVE}] ${TAIL}] DROPBOX_PATH STATE_DIR`
   let recursive = false;
@@ -64,7 +64,7 @@ const initHandler: Handler = async (
       tail,
     },
     stateDir,
-    globalOptions
+    globalOptions,
   );
 
   await r.promise;
@@ -75,7 +75,7 @@ const updateHandler: Handler = async (
   dbxp: DropboxProvider,
   argv: string[],
   globalOptions: GlobalOptions,
-  usageFail: () => Promise<void>
+  usageFail: () => Promise<void>,
 ): Promise<void> => {
   // `${subUpdate} [${TAIL}] STATE_DIR`
   let tail = false;
@@ -111,7 +111,7 @@ const updateHandler: Handler = async (
       tail,
     },
     stateDir,
-    globalOptions
+    globalOptions,
   );
 
   await r.promise;
@@ -122,7 +122,7 @@ const showHandler: Handler = async (
   dbxp: DropboxProvider,
   argv: string[],
   globalOptions: GlobalOptions,
-  usageFail: () => Promise<void>
+  usageFail: () => Promise<void>,
 ): Promise<void> => {
   // `${subShow} STATE_DIR`
   if (argv.length !== 1) return usageFail();
@@ -135,7 +135,7 @@ const showHandler: Handler = async (
 
   if (state.tag !== "ready") {
     return writeStderr(
-      "Error: no listing available - use 'update' first\n"
+      "Error: no listing available - use 'update' first\n",
     ).then(() => process.exit(1));
   }
 
@@ -151,7 +151,7 @@ const handler: Handler = (
   dbxp: DropboxProvider,
   argv: string[],
   globalOptions: GlobalOptions,
-  usageFail: () => Promise<void>
+  usageFail: () => Promise<void>,
 ): Promise<void> => {
   if (argv[0] === subInit)
     return initHandler(dbxp, argv.slice(1), globalOptions, usageFail);

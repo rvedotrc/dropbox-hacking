@@ -57,7 +57,7 @@ export class StateDir {
         ? { tag: "does_not_exist" }
         : !this.data.ready
         ? { tag: "starting", cursor: this.data.cursor }
-        : { tag: "ready", ...this.data }
+        : { tag: "ready", ...this.data },
     );
   }
 
@@ -146,7 +146,7 @@ export class StateDir {
         (err) => {
           if (err.code === "ENOENT") return undefined;
           throw err;
-        }
+        },
       )
       .then((data) => {
         if (data !== undefined) {
