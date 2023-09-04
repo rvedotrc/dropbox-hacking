@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -eu
+
+rm -rf node_modules */node_modules
+
+yarn
+yarn build
+
+(
+	cd photo-manager-client
+	yarn
+	yarn build
+)
+
+svc -t ./services/available/live-server
