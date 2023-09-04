@@ -9,7 +9,7 @@ import {
   writeStderr,
 } from "dropbox-hacking-util";
 import { HELP } from "dropbox-hacking-util/dist/global-options/globalOptions";
-// import contentHashStdinOperation from "./operations/contentHashStdin";
+import contentHashStdinOperation from "./operations/contentHashStdin";
 // import cpOperation from "./operations/cp";
 // import lsOperation from "./operations/ls";
 // import mkdirOperation from "./operations/mkdir";
@@ -26,7 +26,7 @@ export default (argv: string[]): void => {
   // get_metadata (is this different from "ls"?)
   const operations: Operation[] = [
     catOperation,
-    // contentHashStdinOperation,
+    contentHashStdinOperation,
     // cpOperation,
     // lsOperation,
     // mkdirOperation,

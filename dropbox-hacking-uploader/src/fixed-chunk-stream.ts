@@ -5,7 +5,7 @@ export default (
   readable: stream.Readable,
   onChunk: (chunk: Buffer) => void,
   onEnd: () => void,
-  onError: (err: Error) => void
+  onError: (err: Error) => void,
 ): void => {
   if (isNaN(chunkSize)) throw "Invalid chunkSize";
 
@@ -33,7 +33,7 @@ export default (
     if (chunk.length > neededToFill) {
       // Split into two writes
       console.debug(
-        `Splitting: bufferedSize=${bufferedSize} chunk=${chunk.length} neededToFill=${neededToFill}`
+        `Splitting: bufferedSize=${bufferedSize} chunk=${chunk.length} neededToFill=${neededToFill}`,
       );
 
       addChunk(chunk.slice(0, neededToFill));

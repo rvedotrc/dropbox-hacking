@@ -7,13 +7,5 @@
     "outDir": "dist",
     "rootDir": "src",
     "target": "ES2021"
-  },
-  "references": [
-    {
-      "path": "../dropbox-hacking-uploader"
-    },
-    {
-      "path": "../dropbox-hacking-util"
-    }
-  ]
+  }
 }

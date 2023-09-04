@@ -7,3 +7,5 @@ const selectUploader = (size: number | undefined): typeof uploadSingle =>
     : uploadSession;
 
 export { MAX_SINGLE_UPLOAD_SIZE, uploadSingle, uploadSession, selectUploader };
+
+export { default as makeContentHash } from "./make-content-hash";

@@ -1,20 +1,19 @@
 import { Dropbox, files } from "dropbox";
 import stream = require("node:stream");
-import { makePromiseLimiter } from "../../util/promises/promiseLimiter";
-import { GlobalOptions } from "../../types";
+import { GlobalOptions, makePromiseLimiter } from "dropbox-hacking-util";
 
 export const MAX_SINGLE_UPLOAD_SIZE = 150_000_000;
 
 const defaultLimiter = makePromiseLimiter<files.FileMetadata>(
   5,
-  "single-upload-limiter"
+  "single-upload-limiter",
 );
 
 export default (
   dbx: Dropbox,
   commitInfo: files.CommitInfo,
   readable: stream.Readable,
-  globalOptions: GlobalOptions
+  globalOptions: GlobalOptions,
 ): Promise<files.FileMetadata> =>
   new Promise<files.FileMetadata>((resolve) => {
     const debug = (...args: unknown[]) => {
@@ -50,8 +49,8 @@ export default (
                 contents,
               })
               .then((r) => r.result),
-          commitInfo.path
-        )
+          commitInfo.path,
+        ),
       );
     });
   });

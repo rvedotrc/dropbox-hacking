@@ -1,8 +1,7 @@
 import { Dropbox, files } from "dropbox";
 import stream = require("node:stream");
 import fixedChunkStream from "./fixed-chunk-stream";
-import { makePromiseLimiter } from "../../util/promises/promiseLimiter";
-import { GlobalOptions } from "../../types";
+import { GlobalOptions, makePromiseLimiter } from "dropbox-hacking-util";
 
 const PART_SIZE = 4194304; // 4 MB
 
@@ -12,7 +11,7 @@ export default (
   dbx: Dropbox,
   commitInfo: files.CommitInfo,
   readable: stream.Readable,
-  globalOptions: GlobalOptions
+  globalOptions: GlobalOptions,
 ): Promise<files.FileMetadata> =>
   dbx
     .filesUploadSessionStart({
@@ -60,15 +59,15 @@ export default (
                       .then(() => {
                         ++partsCompleted;
                         debug(
-                          `${logPrefix} completed (${partsCompleted}/${totalParts} parts)`
+                          `${logPrefix} completed (${partsCompleted}/${totalParts} parts)`,
                         );
                       })
                       .catch((err) => {
                         debug(`${logPrefix} failed`, err);
                         reject(err);
                       }),
-                  logPrefix
-                )
+                  logPrefix,
+                ),
               );
             }
           };
@@ -105,5 +104,5 @@ export default (
           };
 
           fixedChunkStream(PART_SIZE, readable, onChunk, onEnd, reject);
-        })
+        }),
     );
