@@ -1,15 +1,21 @@
-import { DropboxProvider, GlobalOptions, Handler } from "../types";
-import { processOptions } from "../options";
-import { StateDir } from "../components/lsCache";
-import localListing, { Item } from "../components/sync/local-listing";
-import makeContentHash from "../components/uploader/make-content-hash";
+import { Handler } from "../types";
 import * as fs from "fs";
-import { makePromiseLimiter } from "../util/promises/promiseLimiter";
-import { selectUploader } from "../components/uploader";
-import { formatTime } from "../util/time";
 import { files } from "dropbox";
 import path = require("node:path");
 import { targetForFile } from "./processCameraUploads";
+import {
+  DropboxProvider,
+  GlobalOptions,
+  makePromiseLimiter,
+  processOptions,
+  formatTime,
+} from "dropbox-hacking-util";
+import { StateDir } from "dropbox-hacking-ls-cache";
+import {
+  Item,
+  default as localListing,
+} from "dropbox-hacking-sync/dist/local-listing";
+import { makeContentHash, selectUploader } from "dropbox-hacking-uploader";
 
 const verb = "upload-missing";
 
@@ -22,7 +28,7 @@ const handler: Handler = async (
   dbxp: DropboxProvider,
   argv: string[],
   globalOptions: GlobalOptions,
-  usageFail: () => void
+  usageFail: () => void,
 ): Promise<void> => {
   let dryRun = false;
   let withDelete = false;
@@ -64,8 +70,8 @@ const handler: Handler = async (
         JSON.stringify({
           code: "deleted",
           local: localItem.path,
-        })
-      )
+        }),
+      ),
     );
   };
 
@@ -87,9 +93,9 @@ const handler: Handler = async (
               .submit(
                 () =>
                   makeContentHash(
-                    fs.createReadStream(localItem.path, { autoClose: true })
+                    fs.createReadStream(localItem.path, { autoClose: true }),
                   ),
-                `calculate hash ${localItem.path}`
+                `calculate hash ${localItem.path}`,
               )
               .then((localContentHash) => {
                 const alreadyAtRemotePath =
@@ -105,7 +111,7 @@ const handler: Handler = async (
                       local: localItem.path,
                       contentHash: localContentHash,
                       remote: alreadyAtRemotePath,
-                    })
+                    }),
                   );
 
                   return maybeDelete(localItem);
@@ -115,7 +121,7 @@ const handler: Handler = async (
                       code: "cannot_upload_this_filename",
                       local: localItem.path,
                       contentHash: localContentHash,
-                    })
+                    }),
                   );
 
                   return Promise.resolve();
@@ -141,7 +147,7 @@ const handler: Handler = async (
                     targetForFile(
                       path.basename(localItem.path),
                       localContentHash,
-                      clientModified
+                      clientModified,
                     ) || `${targetDir}/${path.basename(localItem.path)}`;
 
                   const commitInfo: files.CommitInfo = {
@@ -157,7 +163,7 @@ const handler: Handler = async (
                         local: localItem.path,
                         contentHash: localContentHash,
                         remote: uploadTo,
-                      })
+                      }),
                     );
 
                     return Promise.resolve();
@@ -168,7 +174,7 @@ const handler: Handler = async (
                         dbx,
                         commitInfo,
                         readable,
-                        globalOptions
+                        globalOptions,
                       )
                         .finally(() => readable.close())
                         .then((remoteMetadata) => {
@@ -179,7 +185,7 @@ const handler: Handler = async (
                               contentHash: localContentHash,
                               remote: uploadTo,
                               remoteMetadata,
-                            })
+                            }),
                           );
 
                           return maybeDelete(localItem);
@@ -188,10 +194,10 @@ const handler: Handler = async (
                   }
                 }
               });
-          })
-        )
-      )
-    )
+          }),
+        ),
+      ),
+    ),
   );
 
   console.log(JSON.stringify({ stats }));

@@ -1,10 +1,17 @@
-import { DropboxProvider, GlobalOptions, Handler } from "../types";
-import * as download from "../components/sync/download";
-import { processOptions } from "../options";
-import { AlternateProvider } from "../components/sync/download";
-import localListing, { Item } from "../components/sync/local-listing";
-import makeContentHash from "../components/uploader/make-content-hash";
+import { Handler } from "../types";
 import * as fs from "fs";
+import { makeContentHash } from "dropbox-hacking-uploader/dist";
+import { AlternateProvider } from "dropbox-hacking-sync/dist/download";
+import * as download from "dropbox-hacking-sync/dist/download";
+import {
+  Item,
+  default as localListing,
+} from "dropbox-hacking-sync/dist/local-listing";
+import {
+  DropboxProvider,
+  GlobalOptions,
+  processOptions,
+} from "dropbox-hacking-util/dist";
 
 const verb = "sync-download";
 const DRY_RUN = "--dry-run";
@@ -37,7 +44,7 @@ const makeAlternateProvider = (localDirs: string[]): AlternateProvider => {
     if (!remoteContentHash) return Promise.resolve(undefined);
 
     promiseOfLocalBySize ||= Promise.all(
-      localDirs.map((localDir) => localListing(localDir, true))
+      localDirs.map((localDir) => localListing(localDir, true)),
     ).then((listings) => {
       const bySize = new Map<number, Item[]>();
 
@@ -74,7 +81,7 @@ const handler: Handler = async (
   dbxp: DropboxProvider,
   argv: string[],
   globalOptions: GlobalOptions,
-  usageFail: () => void
+  usageFail: () => void,
 ): Promise<void> => {
   let dryRun = false;
   let withDelete = false;
@@ -86,7 +93,7 @@ const handler: Handler = async (
     [CHECK_CONTENT]: () => (checkContentHash = true),
   });
 
-  let remoteFilter = undefined;
+  let remoteFilter: RegExp | undefined = undefined;
   const alternateSources: string[] = [];
 
   while (true) {

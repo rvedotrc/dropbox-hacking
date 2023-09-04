@@ -15,7 +15,7 @@ import lsOperation from "./operations/ls";
 import mkdirOperation from "./operations/mkdir";
 import mvOperation from "./operations/mv";
 import rmOperation from "./operations/rm";
-// import syncDownloadOperation from "./operations/syncDownload";
+import syncDownloadOperation from "./operations/syncDownload";
 import syncUploadOperation from "./operations/syncUpload";
 import uploadStdinOperation from "./operations/uploadStdin";
 
@@ -32,7 +32,7 @@ export default (argv: string[]): void => {
     mkdirOperation,
     mvOperation,
     rmOperation,
-    // syncDownloadOperation,
+    syncDownloadOperation,
     syncUploadOperation,
     uploadStdinOperation,
   ];

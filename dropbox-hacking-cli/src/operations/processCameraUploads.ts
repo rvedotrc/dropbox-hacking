@@ -1,9 +1,13 @@
-import { DropboxProvider, GlobalOptions, Handler } from "../types";
-import { processOptions } from "../options";
-import lister from "../components/lister";
-import Mover from "../components/mover";
+import { Handler } from "../types";
 import { files } from "dropbox";
 import path = require("node:path");
+import {
+  DropboxProvider,
+  GlobalOptions,
+  processOptions,
+} from "dropbox-hacking-util";
+import lister from "dropbox-hacking-lister";
+import Mover from "dropbox-hacking-mover";
 
 const verb = "process-camera-uploads";
 const CAMERA_UPLOADS = "/Camera Uploads";
@@ -25,7 +29,7 @@ const videosExts = new Set([".mov", ".mp4", ".srt"]);
 
 type WithPath = { path_lower: string; path_display: string };
 const hasPath = <T extends { path_lower?: string; path_display?: string }>(
-  item: T
+  item: T,
 ): item is T & WithPath => !!item.path_lower && !!item.path_display;
 
 // type FileMetadataWithPath = FileMetadata & { path_lower: string; path_display: string };
@@ -36,7 +40,7 @@ const hasPath = <T extends { path_lower?: string; path_display?: string }>(
 export const targetForFile = (
   basename: string,
   contentHash: string,
-  clientModified: string
+  clientModified: string,
 ): string | undefined => {
   const yyyy = clientModified.substring(0, 4);
   const yyyymm = clientModified.substring(0, 7);
@@ -64,7 +68,7 @@ const handler: Handler = async (
   dbxp: DropboxProvider,
   argv: string[],
   globalOptions: GlobalOptions,
-  usageFail: () => void
+  usageFail: () => void,
 ): Promise<void> => {
   let tidy = false;
   let tail = false;
@@ -86,7 +90,7 @@ const handler: Handler = async (
 
   const tryMove = async (
     item: files.FileMetadata,
-    wantedPath: string
+    wantedPath: string,
   ): Promise<void> => {
     if (!item.path_display) return;
 
@@ -101,7 +105,7 @@ const handler: Handler = async (
 
         console.log(JSON.stringify({ get_existing: err }));
         throw err;
-      }
+      },
     );
 
     // console.log(` == ${JSON.stringify(existing)}`);
@@ -125,7 +129,7 @@ const handler: Handler = async (
             console.log(`  identical - will remove source`);
             if (!dryRun) {
               shutdownWaitsFor(
-                dbx.filesDeleteV2({ path: item.id }).catch(() => undefined)
+                dbx.filesDeleteV2({ path: item.id }).catch(() => undefined),
               );
             }
           } else {
@@ -182,8 +186,8 @@ const handler: Handler = async (
         .map((item) =>
           dbx
             .filesDeleteV2({ path: item.path_lower })
-            .then(() => paths.delete(item.path_lower))
-        )
+            .then(() => paths.delete(item.path_lower)),
+        ),
     );
 
     console.log([...paths.values()].sort().join("\n"));
