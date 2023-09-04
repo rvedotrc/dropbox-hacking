@@ -1,5 +1,5 @@
 import { Dropbox } from "dropbox";
-import { GlobalOptions } from "../types";
+import { GlobalOptions } from "../global-options";
 import WrappedMethod from "./wrapped-method";
 import { cancel } from "./retrying-promise";
 

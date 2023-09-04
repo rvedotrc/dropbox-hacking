@@ -1,4 +1,4 @@
-import { GlobalOptions } from "../types";
+import { GlobalOptions } from "../global-options";
 
 export default class Waiter {
   private readonly globalOptions: GlobalOptions;

@@ -2,7 +2,7 @@ import { Dropbox, DropboxAuth } from "dropbox";
 import * as fs from "fs";
 import * as express from "express";
 import * as child_process from "child_process";
-import { writeStderr } from "./util/logging";
+import { writeStderr } from "./logging";
 
 const envVar = "DROPBOX_CREDENTIALS_PATH";
 
@@ -11,7 +11,7 @@ const redirectUri = `http://localhost:${port}/auth`; // has to match app's confi
 
 const runServer = async (
   appAuth: DropboxAuth,
-  checkCode: (code: string) => Promise<void>
+  checkCode: (code: string) => Promise<void>,
 ): Promise<void> => {
   const app = express();
   const server = app.listen(port, "localhost");
@@ -41,7 +41,7 @@ const runServer = async (
       () => {
         res.writeHead(200);
         res.write(
-          "Dropbox authorization successful. You may close this window."
+          "Dropbox authorization successful. You may close this window.",
         );
         res.end();
 
@@ -52,14 +52,14 @@ const runServer = async (
         res.writeHead(500);
         res.write(`${err}`);
         res.end();
-      }
+      },
     );
   });
 
   const startUrl = `http://localhost:${port}/`;
   await writeStderr(
     `To authorize this application to use your Dropbox, please go to the following url:\n` +
-      `${startUrl}\n`
+      `${startUrl}\n`,
   );
 
   child_process.spawn("open", [startUrl], {
@@ -92,7 +92,7 @@ let saveSeq = 0;
 const saveUserCredentials = (
   credentials: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   auth: DropboxAuth,
-  credentialsPath: string
+  credentialsPath: string,
 ): Promise<void> => {
   const newPayload = {
     ...credentials,
@@ -136,7 +136,7 @@ export const getDropboxClient = async (): Promise<Dropbox> =>
 
       auth.setAccessToken(userOAuthConfig.access_token);
       auth.setAccessTokenExpiresAt(
-        new Date(userOAuthConfig.access_token_expires_at)
+        new Date(userOAuthConfig.access_token_expires_at),
       );
       auth.setRefreshToken(userOAuthConfig.refresh_token);
 
@@ -160,10 +160,10 @@ export const getDropboxClient = async (): Promise<Dropbox> =>
       (code: string): Promise<void> =>
         updateAuthFromCode(auth, code).then(() => {
           saveUserCredentials(credentials, auth, credentialsPath).catch((err) =>
-            console.error(`Failed to cache credentials: ${err}`)
+            console.error(`Failed to cache credentials: ${err}`),
           );
 
           resolve(new Dropbox({ auth }));
-        })
+        }),
     );
   });

@@ -1,2 +1,2 @@
-export { getGlobalOptions } from "./globalOptions";
+export { getGlobalOptions, GlobalOptionsSingleton } from "./globalOptions";
 export { GlobalOptions } from "./types";

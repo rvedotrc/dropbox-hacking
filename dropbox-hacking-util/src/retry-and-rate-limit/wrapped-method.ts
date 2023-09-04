@@ -1,5 +1,5 @@
 import { Dropbox } from "dropbox";
-import { GlobalOptions } from "../types";
+import { GlobalOptions } from "../global-options";
 import Waiter from "./waiter";
 import RetryingPromise from "./retrying-promise";
 
@@ -26,7 +26,7 @@ export default class WrappedMethod<M extends keyof Dropbox> {
     dbx: Dropbox,
     methodName: M,
     globalOptions: GlobalOptions,
-    timeout?: number
+    timeout?: number,
   ) {
     this.dbx = dbx;
     this.methodName = methodName;
@@ -83,7 +83,7 @@ export default class WrappedMethod<M extends keyof Dropbox> {
             callId,
             0,
             undefined,
-            this.timeout
+            this.timeout,
           ).chain(value);
         } else {
           this.debugTagged(callId, 0, "did not return a promise; unwrapping");
@@ -99,7 +99,7 @@ export default class WrappedMethod<M extends keyof Dropbox> {
           callId,
           0,
           undefined,
-          this.timeout
+          this.timeout,
         ).call();
       }
     };

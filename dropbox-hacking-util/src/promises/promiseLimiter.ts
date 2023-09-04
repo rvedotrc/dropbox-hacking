@@ -1,4 +1,4 @@
-import { GlobalOptionsSingleton } from "../../globalOptions";
+import { GlobalOptionsSingleton } from "../global-options";
 
 type Tag = string | (() => string);
 
@@ -18,7 +18,7 @@ const tagToString = (tag: Tag) => (typeof tag === "string" ? tag : tag());
 
 export const makePromiseLimiter = <T>(
   size: number,
-  name: string
+  name: string,
 ): PromiseLimiter<T> => {
   let free = size;
   const queue: Entry<T>[] = [];
@@ -41,8 +41,8 @@ export const makePromiseLimiter = <T>(
       if (GlobalOptionsSingleton.get()?.debugLimiter)
         console.debug(
           `${name} start job #${id}/${nextId} ${tagToString(
-            tag
-          )} (in flight: ${describe()})`
+            tag,
+          )} (in flight: ${describe()})`,
         );
       makePromise()
         .finally(() => {
@@ -50,8 +50,8 @@ export const makePromiseLimiter = <T>(
           if (GlobalOptionsSingleton.get()?.debugLimiter)
             console.debug(
               `${name} end job #${id}/${nextId} ${tagToString(
-                tag
-              )} (in flight: ${describe()})`
+                tag,
+              )} (in flight: ${describe()})`,
             );
           ++free;
           tryStart();

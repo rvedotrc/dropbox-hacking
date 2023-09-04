@@ -1,6 +1,6 @@
 export const simplePromiseRetrier = <T>(
   makePromise: () => Promise<T>,
-  tag?: string
+  tag?: string,
 ): Promise<T> => {
   let attempt = 0;
 
@@ -8,7 +8,7 @@ export const simplePromiseRetrier = <T>(
     makePromise().catch((err) => {
       console.error(
         `attempt #${attempt} of ${tag || "anonymous promise"} failed`,
-        err
+        err,
       );
       ++attempt;
       return tryAgain();

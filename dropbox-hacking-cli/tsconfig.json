@@ -2,8 +2,11 @@
   "compilerOptions": {
     "composite": true,
     "declaration": true,
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
     "outDir": "dist",
-    "rootDir": "src"
+    "rootDir": "src",
+    "target": "ES2021"
   },
   "references": [
     {

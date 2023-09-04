@@ -32,7 +32,7 @@ export const cancel = (promise: Promise<unknown>): void => {
 
 export const withTimeout = <T>(
   promise: Promise<T>,
-  timeoutMillis: number
+  timeoutMillis: number,
 ): Promise<T> =>
   new Promise((resolve, reject) => {
     const timer = setTimeout(() => {
@@ -58,7 +58,7 @@ export default class RetryingPromise<M extends keyof Dropbox> {
     callId: number,
     attempt = 0,
     canceller?: Canceller,
-    timeout?: number
+    timeout?: number,
   ) {
     this.wrappedMethod = wrappedMethod;
     this.callReal = callReal;
@@ -87,13 +87,13 @@ export default class RetryingPromise<M extends keyof Dropbox> {
             this.callId,
             this.attempt + 1,
             this.canceller,
-            this.timeout
+            this.timeout,
           ).call();
         } else {
           this.debug("not retriable, rethrowing");
           throw error;
         }
-      }
+      },
     );
 
     const c = r as Promise<unknown> & Cancelable;
@@ -140,12 +140,12 @@ export default class RetryingPromise<M extends keyof Dropbox> {
 
     this.debug(JSON.stringify({ rateLimitError }));
     this.debug(
-      JSON.stringify({ rateLimitError_reason: rateLimitError.reason || null })
+      JSON.stringify({ rateLimitError_reason: rateLimitError.reason || null }),
     );
     this.debug(
       JSON.stringify({
         rateLimitError_retry_after: rateLimitError.retry_after || null,
-      })
+      }),
     );
 
     if (
