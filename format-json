@@ -1,0 +1,1 @@
+for file in $( git ls-files | grep \\.json$ ) ; do jq -S < "$file" > "$file.new" && mv -v "$file.new" "$file" ; done

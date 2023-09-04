@@ -1,25 +1,30 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "es2015",
-    "lib": ["dom", "es2015", "es2016", "es2017"],
-    "moduleResolution": "node",
-    "sourceMap": true,
     "declaration": false,
+    "lib": [
+      "dom",
+      "es2015",
+      "es2016",
+      "es2017"
+    ],
+    "module": "commonjs",
+    "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noUnusedLocals": true,
-    "strictNullChecks": true,
     "outDir": "dist",
-    "rootDir": "src"
+    "rootDir": "src",
+    "sourceMap": true,
+    "strictNullChecks": true,
+    "target": "es2015"
   },
-  "include": [
-    "src/**/*.ts"
-  ],
   "exclude": [
     "node_modules",
     "photo-manager-client"
+  ],
+  "include": [
+    "src/**/*.ts"
   ]
 }

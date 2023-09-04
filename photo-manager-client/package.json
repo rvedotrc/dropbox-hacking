@@ -1,11 +1,5 @@
 {
-  "name": "dropbox-hacking-photo-manager",
-  "description": "Do stuff with photos in Dropbox",
-  "version": "1.0.0",
-  "main": "index.js",
-  "directories": {
-    "lib": "lib"
-  },
+  "author": "Rachel Evans <rachel@rachelevans.org>",
   "dependencies": {
     "array-uniq": "^2.1.0",
     "i18next": "^19.0.2",
@@ -14,6 +8,7 @@
     "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4"
   },
+  "description": "Do stuff with photos in Dropbox",
   "devDependencies": {
     "@babel/core": "^7.7.4",
     "@babel/preset-env": "^7.7.4",
@@ -47,19 +42,20 @@
     "ts-loader": "^9.4.4",
     "typescript": "^5.2.2"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/rvedotrc/dropbox-hacking"
+  "directories": {
+    "lib": "lib"
   },
+  "license": "MIT",
+  "main": "index.js",
+  "name": "photo-manager-client",
   "scripts": {
     "build": "yarn prettier && yarn run lint && webpack --mode development",
     "lint": "npx eslint --ext .jsx,.js,.tsx,.ts --max-warnings 0 src",
     "prettier": "prettier --write src",
-    "relint": "rebuild package.json package-lock.json tsconfig.json .babelrc .eslintrc.js src -- npm run-script lint",
     "rebuild": "rebuild package.json package-lock.json tsconfig.json .babelrc webpack.config.js src .git/refs -- npm run-script build",
+    "relint": "rebuild package.json package-lock.json tsconfig.json .babelrc .eslintrc.js src -- npm run-script lint",
     "retest": "rebuild package.json package-lock.json tsconfig.json .babelrc webpack.config.js src jest.config.js -- npm run-script test",
     "test": "jest src"
   },
-  "author": "Rachel Evans <rachel@rachelevans.org>",
-  "license": "ISC"
+  "version": "1.0.0"
 }
