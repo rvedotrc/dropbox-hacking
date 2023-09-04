@@ -10,6 +10,9 @@
   },
   "references": [
     {
+      "path": "../dropbox-hacking-lister"
+    },
+    {
       "path": "../dropbox-hacking-uploader"
     },
     {

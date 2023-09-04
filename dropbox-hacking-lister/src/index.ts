@@ -1,6 +1,6 @@
 import { Dropbox, files } from "dropbox";
-import { GlobalOptions } from "../../types";
-import { cancel } from "../../retry-and-rate-limit";
+import { GlobalOptions } from "dropbox-hacking-util";
+import { cancel } from "dropbox-hacking-util/dist/retry-and-rate-limit";
 
 export type ListerArgs = (
   | {
@@ -34,9 +34,9 @@ export default (args: {
   // where most of the time is spent?
   const doLongPoll = (
     longPollArgs: files.ListFolderLongpollArg,
-    timeoutMillis: number
+    timeoutMillis: number,
   ): Promise<files.ListFolderLongpollResult> => {
-    let timer: NodeJS.Timer | undefined = undefined;
+    let timer: ReturnType<typeof setTimeout> | undefined = undefined;
 
     const primaryPromise = dbx.filesListFolderLongpoll(longPollArgs);
     let requestPromise = primaryPromise.then((r) => r.result);
@@ -50,7 +50,7 @@ export default (args: {
         (e) => {
           console.debug("longpoll threw", e);
           throw e;
-        }
+        },
       );
 
     const timeoutPromise = new Promise<files.ListFolderLongpollResult>(
@@ -61,7 +61,7 @@ export default (args: {
           cancel(primaryPromise);
           resolve({ changes: false });
         }, timeoutMillis);
-      }
+      },
     );
 
     return Promise.race([requestPromise, timeoutPromise]).finally(() => {
@@ -72,7 +72,7 @@ export default (args: {
   let cancelled = false;
 
   const pauseAndFollowCursor = async (
-    cursor: string
+    cursor: string,
   ): Promise<Promise<"complete" | "cancelled">> => {
     if (onPause) {
       if (globalOptions.debugLister) console.debug(`lister: await onPause`);
@@ -114,11 +114,11 @@ export default (args: {
   };
 
   const handlePage = async (
-    page: files.ListFolderResult
+    page: files.ListFolderResult,
   ): Promise<"complete" | "cancelled"> => {
     if (globalOptions.debugLister)
       console.debug(
-        `lister: handlePage ${page.entries.length} entries, cursor=${page.cursor}`
+        `lister: handlePage ${page.entries.length} entries, cursor=${page.cursor}`,
       );
 
     for (const item of page.entries) {

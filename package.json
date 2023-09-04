@@ -7,11 +7,12 @@
   "private": true,
   "repository": "https://github.com/rvedotrc/dropbox-hacking",
   "scripts": {
-    "build": "yarn workspace dropbox-hacking-util build && yarn workspace dropbox-hacking-uploader build && yarn workspaces run build"
+    "build": "yarn workspace dropbox-hacking-util build && yarn workspace dropbox-hacking-lister build && yarn workspace dropbox-hacking-uploader build && yarn workspaces run build"
   },
   "version": "1.0.0",
   "workspaces": [
     "dropbox-hacking-cli",
+    "dropbox-hacking-lister",
     "dropbox-hacking-uploader",
     "dropbox-hacking-util"
   ]

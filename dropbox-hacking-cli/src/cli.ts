@@ -11,7 +11,7 @@ import {
 import { HELP } from "dropbox-hacking-util/dist/global-options/globalOptions";
 import contentHashStdinOperation from "./operations/contentHashStdin";
 import cpOperation from "./operations/cp";
-// import lsOperation from "./operations/ls";
+import lsOperation from "./operations/ls";
 import mkdirOperation from "./operations/mkdir";
 import mvOperation from "./operations/mv";
 import rmOperation from "./operations/rm";
@@ -28,7 +28,7 @@ export default (argv: string[]): void => {
     catOperation,
     contentHashStdinOperation,
     cpOperation,
-    // lsOperation,
+    lsOperation,
     mkdirOperation,
     mvOperation,
     rmOperation,

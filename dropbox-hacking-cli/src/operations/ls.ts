@@ -1,8 +1,8 @@
 import { files } from "dropbox";
-import { DropboxProvider, GlobalOptions, Handler } from "../types";
-import { processOptions } from "../options";
-import { writeStderr, writeStdout } from "../util/logging";
-import lister from "../components/lister";
+import { DropboxProvider, Handler } from "../types";
+import lister from "dropbox-hacking-lister";
+import { GlobalOptions, writeStderr, writeStdout } from "dropbox-hacking-util";
+import { processOptions } from "dropbox-hacking-util/dist/global-options/options";
 
 type FolderStats = {
   childFileCount: number;
@@ -34,7 +34,7 @@ const handler: Handler = async (
   dbxp: DropboxProvider,
   argv: string[],
   globalOptions: GlobalOptions,
-  usageFail: () => void
+  usageFail: () => void,
 ): Promise<void> => {
   let recursive = false;
   let tail = false;
@@ -58,7 +58,7 @@ const handler: Handler = async (
   // But maybe we could.  Continuously updating stats? Hmmm.
   if ((showTotals || showPerDirectoryTotals) && tail) {
     await writeStderr(
-      `${TOTALS} / ${PER_DIRECTORY_TOTALS} can't be used with ${TAIL}\n`
+      `${TOTALS} / ${PER_DIRECTORY_TOTALS} can't be used with ${TAIL}\n`,
     );
     process.exit(1);
   }
