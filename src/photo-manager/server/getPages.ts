@@ -24,8 +24,8 @@ export default (app: Application, _context: Context): void => {
         </head>
         <body>
             <div id="react_container"></div>
-            <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
-            <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+            <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+            <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
             <script id="payload-script" src="/dist/main.js" data-payload="${htmlEncode(
               JSON.stringify(payload)
             )}"></script>
