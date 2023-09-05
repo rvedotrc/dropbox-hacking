@@ -3,4 +3,10 @@ exec 2>&1
 set -eux
 cd "$( git rev-parse --show-toplevel )"
 mkdir -p var/live/day-db
-exec ./with-live env EXIF_DB_DIR=var/live/exif LS_CACHE_DIR=var/live/ls DAY_DB_DIR=var/live/day-db yarn server
+exec ./with-live \
+    env \
+    EXIF_DB_DIR=var/live/exif \
+    LS_CACHE_DIR=var/live/ls \
+    DAY_DB_DIR=var/live/day-db \
+    PUBLIC_DIR=$PWD/dropbox-hacking-photo-manager-client/public \
+    ./bin/photo-manager-server

@@ -15,7 +15,7 @@ export default class DayDb {
         if (err.code === "ENOENT") return [];
 
         throw err;
-      }
+      },
     );
   }
 

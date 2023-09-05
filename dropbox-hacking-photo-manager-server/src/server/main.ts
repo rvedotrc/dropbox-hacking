@@ -1,5 +1,4 @@
-import * as express from "express";
-import * as path from "path";
+import express from "express";
 
 import contextBuilder from "./contextBuilder";
 import getRoot from "./getRoot";
@@ -15,9 +14,7 @@ const context = contextBuilder({
   baseUrlWithoutSlash: "http://localhost:4000",
 });
 
-app.use(
-  express.static(path.join(__dirname, "../../../photo-manager-client/public"))
-);
+app.use(express.static(process.env.PUBLIC_DIR));
 
 app.use(express.json());
 

@@ -5,7 +5,7 @@ import Calendar from "./calendar";
 import Day from "./day";
 import Photo from "./photo";
 import ListOfDays from "./listOfDays";
-import { Payload } from "../../src/photo-manager/shared/types";
+import { Payload } from "dropbox-hacking-photo-manager-server/dist/shared/types";
 
 const toRender = (payload: Payload) => {
   if (payload.route === "calendar") return <Calendar />;

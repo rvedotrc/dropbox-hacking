@@ -1,7 +1,7 @@
 import { Context } from "./context";
-import * as LsCache from "../../components/lsCache";
-import { ExifDB } from "../../components/exif/exifDB";
-import { getDropboxClient } from "../../auth";
+import * as LsCache from "dropbox-hacking-ls-cache";
+import { ExifDB } from "dropbox-hacking-exif-db";
+import { getDropboxClient } from "dropbox-hacking-util";
 import * as fs from "fs";
 import DayDb from "./dayDb";
 

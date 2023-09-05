@@ -13,7 +13,7 @@ export default (app: Application, _context: Context): void => {
 
   const pageAsString = (
     title: string,
-    payload: Payload
+    payload: Payload,
   ): string => `<!DOCTYPE html>
     <html>
         <head>
@@ -27,7 +27,7 @@ export default (app: Application, _context: Context): void => {
             <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
             <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
             <script id="payload-script" src="/dist/main.js" data-payload="${htmlEncode(
-              JSON.stringify(payload)
+              JSON.stringify(payload),
             )}"></script>
         </body>
     </html>
@@ -49,7 +49,7 @@ export default (app: Application, _context: Context): void => {
       pageAsString(`DPM - ${req.params.date}`, {
         route: "day",
         date: req.params.date,
-      })
+      }),
     );
   });
 
@@ -59,7 +59,7 @@ export default (app: Application, _context: Context): void => {
       pageAsString(`DPM - ${req.params.rev}`, {
         route: "photo",
         rev: req.params.rev,
-      })
+      }),
     );
   });
 };

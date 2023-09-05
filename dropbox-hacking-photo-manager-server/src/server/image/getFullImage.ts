@@ -50,7 +50,7 @@ export default (app: Application, context: Context): void => {
               if (imageRes.headers["content-encoding"])
                 res.setHeader(
                   "Content-Encoding",
-                  imageRes.headers["content-encoding"]
+                  imageRes.headers["content-encoding"],
                 );
               res.setHeader("Content-Disposition", "inline");
 
@@ -65,7 +65,7 @@ export default (app: Application, context: Context): void => {
               imageRes.pipe(res);
             });
           });
-      }
-    )
+      },
+    ),
   );
 };

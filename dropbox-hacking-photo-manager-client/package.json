@@ -47,7 +47,7 @@
   },
   "license": "MIT",
   "main": "index.js",
-  "name": "photo-manager-client",
+  "name": "dropbox-hacking-photo-manager-client",
   "scripts": {
     "build": "yarn prettier && yarn run lint && webpack --mode development",
     "lint": "npx eslint --ext .jsx,.js,.tsx,.ts --max-warnings 0 src",

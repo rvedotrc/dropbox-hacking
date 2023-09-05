@@ -35,6 +35,6 @@ export default (app: Application, context: Context): void => {
 
         res.json(answer);
       });
-    })
+    }),
   );
 };

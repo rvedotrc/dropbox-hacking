@@ -1,7 +1,10 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
-import { Photo, PhotoResponse } from "../../src/photo-manager/shared/types";
-import GPSLatLong from "../../src/photo-manager/shared/gpsLatLong";
+import {
+  Photo,
+  PhotoResponse,
+} from "dropbox-hacking-photo-manager-server/dist/shared/types";
+import GPSLatLong from "dropbox-hacking-photo-manager-server/dist/shared/gpsLatLong";
 
 const Photo = (props: { rev: string }) => {
   const [photo, setPhoto] = useState<Photo | false | undefined>();

@@ -8,7 +8,7 @@ export default (app: Application, context: Context): void => {
     if (typeof rev === "string") {
       return res.redirect(
         301,
-        `${context.baseUrlWithoutSlash}/photo/rev/${rev}`
+        `${context.baseUrlWithoutSlash}/photo/rev/${rev}`,
       );
     }
 

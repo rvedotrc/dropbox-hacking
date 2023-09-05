@@ -5,8 +5,8 @@ import {
   Photo,
   PhotosResponse,
   ThumbnailsByRevResponse,
-} from "../../src/photo-manager/shared/types";
-import { DayMetadata } from "../../src/photo-manager/server/dayDb";
+} from "dropbox-hacking-photo-manager-server/dist/shared/types";
+import { DayMetadata } from "dropbox-hacking-photo-manager-server/dist/server/dayDb";
 import EditableTextField from "./editableTextField";
 
 const Day = (props: { date: string }) => {

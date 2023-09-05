@@ -7,7 +7,7 @@ export default (app: Application, context: Context): void => {
     context.dayDb
       .then((dayDb) => dayDb.days)
       .then((days) => ({ days_metadata: days }))
-      .then((data: DaysMetadataResponse) => res.json(data))
+      .then((data: DaysMetadataResponse) => res.json(data)),
   );
 
   app.get("/api/day/:date(\\d\\d\\d\\d-\\d\\d-\\d\\d)", (req, res) =>
@@ -19,7 +19,7 @@ export default (app: Application, context: Context): void => {
           thisDay = { date: req.params.date, description: "" };
 
         res.json({ day_metadata: thisDay });
-      })
+      }),
   );
 
   app.patch("/api/day/:date(\\d\\d\\d\\d-\\d\\d-\\d\\d)", (req, res) => {

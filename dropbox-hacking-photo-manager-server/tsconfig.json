@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src"
+  },
+  "extends": "../tsconfig.base.json",
+  "references": [
+    {
+      "path": "../dropbox-hacking-exif-db"
+    },
+    {
+      "path": "../dropbox-hacking-ls-cache"
+    },
+    {
+      "path": "../dropbox-hacking-util"
+    }
+  ]
+}

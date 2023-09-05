@@ -18,6 +18,8 @@
     "dropbox-hacking-ls-cache",
     "dropbox-hacking-mediainfo-db",
     "dropbox-hacking-mover",
+    "dropbox-hacking-photo-manager-client",
+    "dropbox-hacking-photo-manager-server",
     "dropbox-hacking-sync",
     "dropbox-hacking-uploader",
     "dropbox-hacking-util"

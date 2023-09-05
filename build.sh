@@ -13,5 +13,6 @@ yarn workspace dropbox-hacking-mediainfo-db build
 yarn workspace dropbox-hacking-sync build
 
 yarn workspace dropbox-hacking-cli build
+yarn workspace dropbox-hacking-photo-manager-server build
 
 yarn workspaces run build

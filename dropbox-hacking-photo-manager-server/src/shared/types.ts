@@ -1,5 +1,5 @@
 import { files } from "dropbox";
-import { ExifFromHash } from "../../components/exif/exifDB";
+import { ExifFromHash } from "dropbox-hacking-exif-db";
 import { DayMetadata } from "../server/dayDb";
 
 export type Payload =
