@@ -1,6 +1,0 @@
-#!/bin/bash
-set -x
-shopt -s nullglob
-svc -dx ./services/available/*
-sleep 1
-exec svc -dx ./services/available/*/log

@@ -1,2 +1,2 @@
 #!/bin/bash
-exec node ./dropbox-hacking-photo-manager-server/dist/server/main.js "$@"
+exec with-node - node ./dropbox-hacking-photo-manager-server/dist/server/main.js "$@"

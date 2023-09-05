@@ -1,2 +1,2 @@
 #!/bin/bash
-exec node ./dropbox-hacking-cli/dist/main/uploadMissing.js "$@"
+exec with-node - node ./dropbox-hacking-cli/dist/main/uploadMissing.js "$@"
