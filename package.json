@@ -13,8 +13,10 @@
   "workspaces": [
     "dropbox-hacking-cli",
     "dropbox-hacking-downloader",
+    "dropbox-hacking-exif-db",
     "dropbox-hacking-lister",
     "dropbox-hacking-ls-cache",
+    "dropbox-hacking-mediainfo-db",
     "dropbox-hacking-mover",
     "dropbox-hacking-sync",
     "dropbox-hacking-uploader",

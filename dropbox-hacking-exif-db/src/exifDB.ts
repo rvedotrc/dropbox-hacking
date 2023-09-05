@@ -29,7 +29,10 @@ export class ExifDB {
   private loadPromise: Promise<void> | undefined = undefined;
   private flushPromise: Promise<void> = Promise.resolve();
 
-  constructor(private dir: string, private maxUnwritten = 1000) {}
+  constructor(
+    private dir: string,
+    private maxUnwritten = 1000,
+  ) {}
 
   public seenFileId(stats: fs.Stats): Promise<boolean> {
     return this.load().then(() => {
@@ -61,7 +64,7 @@ export class ExifDB {
             e.thumbnailOffset,
             e.thumbnailLength,
             e.thumbnailType,
-            e.app1Offset
+            e.app1Offset,
           );
 
           map.set(hash, {
@@ -79,7 +82,7 @@ export class ExifDB {
     stats: fs.Stats,
     contentHash: string,
     exifData: ExifData,
-    localFilename: string
+    localFilename: string,
   ): Promise<void> {
     const seen = this.load().then(() => {
       if (!this.seenLocalFiles) throw "no seenIds";
@@ -105,11 +108,11 @@ export class ExifDB {
   public storeFromHash(
     contentHash: string,
     exifData: ExifData,
-    seenAs: string
+    seenAs: string,
   ): Promise<void> {
     return this.load().then(() => {
       console.log(
-        `storeFromHash ${contentHash} ${exifData.tags?.CreateDate} ${seenAs}`
+        `storeFromHash ${contentHash} ${exifData.tags?.CreateDate} ${seenAs}`,
       );
 
       this.unwrittenExifFromHash.set(contentHash, {
@@ -133,11 +136,11 @@ export class ExifDB {
         this.unwrittenExifFromHash = new Map();
 
         console.log(
-          `flush called with ${unwritten.size} unwritten items and ${seenLocalFiles.size} files`
+          `flush called with ${unwritten.size} unwritten items and ${seenLocalFiles.size} files`,
         );
 
         return this.writeUnwritten(unwritten).then(() =>
-          this.saveSeenLocalFiles(seenLocalFiles)
+          this.saveSeenLocalFiles(seenLocalFiles),
         );
       }));
   }
@@ -171,7 +174,7 @@ export class ExifDB {
         fs.promises.writeFile(tmp, JSON.stringify(data) + "\n", {
           encoding: "utf-8",
           mode: 0o600,
-        })
+        }),
       )
       .then(() => fs.promises.rename(tmp, file));
   }

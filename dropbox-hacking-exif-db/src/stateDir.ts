@@ -1,6 +1,6 @@
 import * as fs from "fs";
-import { MediainfoDB } from "./mediainfoDB";
-import { MediainfoData } from "./types";
+import { ExifDB } from "./exifDB";
+import { ExifData } from "ts-exif-parser";
 
 export type State =
   | { tag: "does_not_exist" }
@@ -28,7 +28,10 @@ export class StateDir {
   private dirty: boolean;
   private lastSaved: number;
 
-  constructor(private dir: string, private mediainfoDB: MediainfoDB) {
+  constructor(
+    private dir: string,
+    private exifDB: ExifDB,
+  ) {
     this.stateFile = `${dir}/state.json`;
     this.lastSaved = 0;
   }
@@ -46,14 +49,14 @@ export class StateDir {
         ? { tag: "does_not_exist" }
         : !this.data.ready
         ? { tag: "starting", cursor: this.data.cursor }
-        : { tag: "ready", ...this.data }
+        : { tag: "ready", ...this.data },
     );
   }
 
   public async initialize(path: string, recursive: boolean): Promise<void> {
     console.debug("initialize");
 
-    const seenContentHashes = await this.mediainfoDB
+    const seenContentHashes = await this.exifDB
       .readAll()
       .then((map) => new Set(map.keys()));
 
@@ -79,21 +82,21 @@ export class StateDir {
 
   public addFile(
     contentHash: string,
-    mediainfoData: MediainfoData,
-    seenAs: string
+    exifData: ExifData,
+    seenAs: string,
   ): Promise<void> {
-    console.debug(`addItem ${contentHash} ${seenAs}`);
+    console.debug(
+      `addItem ${contentHash} ${exifData.tags?.CreateDate} ${seenAs}`,
+    );
 
     if (!this.data) throw "No data";
 
     // Mutates this.data directly; does NOT serialise & save state.
     // However, at the end of every page, we call setCursor, and that does.
 
-    return this.mediainfoDB
-      .storeFromHash(contentHash, mediainfoData, seenAs)
-      .then(() => {
-        this.data?.seenContentHashes.add(contentHash);
-      });
+    return this.exifDB.storeFromHash(contentHash, exifData, seenAs).then(() => {
+      this.data?.seenContentHashes.add(contentHash);
+    });
   }
 
   public setCursor(cursor: string): Promise<void> {
@@ -110,7 +113,7 @@ export class StateDir {
   }
 
   public setReady(): Promise<void> {
-    console.debug("setReady mediainfo state");
+    console.debug("setReady exif state");
     if (!this.data) throw "No data";
 
     this.data.correctAsOf = new Date().getTime();
@@ -121,7 +124,7 @@ export class StateDir {
   }
 
   public flush(): Promise<void> {
-    return this.mediainfoDB.flush().then(() => {
+    return this.exifDB.flush().then(() => {
       if (!this.dirty) return;
 
       return this.save().catch((err) => {
@@ -148,10 +151,10 @@ export class StateDir {
         (err) => {
           if (err.code === "ENOENT") return undefined;
           throw err;
-        }
+        },
       );
 
-    const getSeenHashes = this.mediainfoDB
+    const getSeenHashes = this.exifDB
       .readAll()
       .then((map) => new Set(map.keys()));
 
@@ -162,7 +165,7 @@ export class StateDir {
         } else {
           return undefined;
         }
-      }
+      },
     );
   }
 
@@ -170,7 +173,7 @@ export class StateDir {
     if (!this.data) return Promise.resolve(); // Should we unlink instead?
 
     console.debug(
-      `save mediainfo state ${this.data.cursor} ${this.data.correctAsOf}`
+      `save exif state ${this.data.cursor} ${this.data.correctAsOf}`,
     );
     const payload = this.data;
 

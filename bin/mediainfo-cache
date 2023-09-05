@@ -1,2 +1,2 @@
 #!/bin/bash
-exec node ./dist/main/mediainfoCache.js "$@"
+exec node ./dropbox-hacking-cli/dist/main/mediainfoCache.js "$@"

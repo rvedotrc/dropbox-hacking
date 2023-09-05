@@ -16,7 +16,10 @@ export class MediainfoDB {
 
   private flushPromise: Promise<void> = Promise.resolve();
 
-  constructor(private dir: string, private maxUnwritten = 1000) {}
+  constructor(
+    private dir: string,
+    private maxUnwritten = 1000,
+  ) {}
 
   public readAll(): Promise<Map<ContentHash, MediainfoFromHash>> {
     return fs.promises
@@ -51,7 +54,7 @@ export class MediainfoDB {
   public storeFromHash(
     contentHash: string,
     mediainfoData: MediainfoData,
-    seenAs: string
+    seenAs: string,
   ): Promise<void> {
     console.log(`storeFromHash ${contentHash} ${seenAs}`);
 
@@ -106,7 +109,7 @@ export class MediainfoDB {
         fs.promises.writeFile(tmp, JSON.stringify(data) + "\n", {
           encoding: "utf-8",
           mode: 0o600,
-        })
+        }),
       )
       .then(() => fs.promises.rename(tmp, file));
   }

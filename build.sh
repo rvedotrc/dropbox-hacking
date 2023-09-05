@@ -8,6 +8,8 @@ yarn workspace dropbox-hacking-ls-cache build
 yarn workspace dropbox-hacking-mover build
 yarn workspace dropbox-hacking-uploader build
 
+yarn workspace dropbox-hacking-exif-db build
+yarn workspace dropbox-hacking-mediainfo-db build
 yarn workspace dropbox-hacking-sync build
 
 yarn workspace dropbox-hacking-cli build

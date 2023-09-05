@@ -1,10 +1,12 @@
 import { Dropbox, files } from "dropbox";
-import { GlobalOptions } from "../../types";
-import { PromiseLimiter } from "../../util/promises/promiseLimiter";
-import { simplePromiseRetrier } from "../../util/promises/simplePromiseRetrier";
 import * as https from "https";
 import * as http from "http";
 import FileMetadata = files.FileMetadata;
+import {
+  GlobalOptions,
+  PromiseLimiter,
+  simplePromiseRetrier,
+} from "dropbox-hacking-util";
 
 export type Fetcher = {
   fetch: (item: FileMetadata) => Promise<Buffer>;
@@ -13,7 +15,7 @@ export type Fetcher = {
 const first64KBOf = async (
   uri: string,
   fetchSize: number,
-  timeoutMillis: number
+  timeoutMillis: number,
 ): Promise<Buffer> => {
   let timer: NodeJS.Timeout | undefined;
 
@@ -52,7 +54,7 @@ export default (
   limiter: PromiseLimiter<Buffer>,
   globalOptions: GlobalOptions,
   fetchSize = 65536,
-  timeoutMillis = 20000
+  timeoutMillis = 20000,
 ): Fetcher => ({
   fetch: (item: FileMetadata) =>
     limiter.submit(
@@ -63,9 +65,9 @@ export default (
           .then((uri) =>
             simplePromiseRetrier(
               () => first64KBOf(uri, fetchSize, timeoutMillis),
-              `get head of ${item.path_lower}`
-            )
+              `get head of ${item.path_lower}`,
+            ),
           ),
-      `fetch ${item.path_display}`
+      `fetch ${item.path_display}`,
     ),
 });

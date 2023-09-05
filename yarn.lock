@@ -1123,6 +1123,11 @@ safe-buffer@5.2.1:
   resolved "https://registry.yarnpkg.com/safer-buffer/-/safer-buffer-2.1.2.tgz#44fa161b0187b9549dd84bb91802f9bd8385cd6a"
   integrity sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==
 
+sax@1.2.4:
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/sax/-/sax-1.2.4.tgz#2816234e2378bddc4e5354fab5caa895df7100d9"
+  integrity sha512-NqVDv9TpANUjFm0N8uM5GxL36UgKi9/atZw+x7YFnQ8ckwFGKrl4xX4yWtrey3UJm5nP1kUbnYgLopqWNSRhWw==
+
 semver@^7.5.4:
   version "7.5.4"
   resolved "https://registry.yarnpkg.com/semver/-/semver-7.5.4.tgz#483986ec4ed38e1c6c48c34894a9182dbff68a6e"
@@ -1240,6 +1245,13 @@ ts-api-utils@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/ts-api-utils/-/ts-api-utils-1.0.2.tgz#7c094f753b6705ee4faee25c3c684ade52d66d99"
   integrity sha512-Cbu4nIqnEdd+THNEsBdkolnOXhg0I8XteoHaEKgvsxpsbWda4IsUut2c187HxywQCvveojow0Dgw/amxtSKVkQ==
+
+ts-exif-parser@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/ts-exif-parser/-/ts-exif-parser-0.2.2.tgz#436191fae502fbf5c71abe71e2f7d26aaa60e3e7"
+  integrity sha512-Z7qGRfvHaISUOErkKfc8Tp+GBnfMWCSyduiLJR0x/b/wKp60oiOvORk73fFML3l8Kf0gVX48mrRsYUcBEb5avQ==
+  dependencies:
+    sax "1.2.4"
 
 type-check@^0.4.0, type-check@~0.4.0:
   version "0.4.0"

@@ -1,10 +1,12 @@
 import { Dropbox, files } from "dropbox";
-import { GlobalOptions } from "../../types";
-import { PromiseLimiter } from "../../util/promises/promiseLimiter";
-import { simplePromiseRetrier } from "../../util/promises/simplePromiseRetrier";
 import FileMetadata = files.FileMetadata;
 import { MediainfoData } from "./types";
 import { spawn } from "node:child_process";
+import {
+  GlobalOptions,
+  PromiseLimiter,
+  simplePromiseRetrier,
+} from "dropbox-hacking-util";
 
 export type Fetcher = {
   fetch: (item: FileMetadata) => Promise<MediainfoData>;
@@ -12,7 +14,7 @@ export type Fetcher = {
 
 const remoteMediainfo = async (
   uri: string,
-  timeoutMillis: number
+  timeoutMillis: number,
 ): Promise<MediainfoData> => {
   let timer: NodeJS.Timeout | undefined;
 
@@ -75,7 +77,7 @@ export default (
   dbx: Dropbox,
   limiter: PromiseLimiter<MediainfoData>,
   globalOptions: GlobalOptions,
-  timeoutMillis = 300000
+  timeoutMillis = 300000,
 ): Fetcher => ({
   fetch: (item: FileMetadata): Promise<MediainfoData> => {
     return limiter.submit(
@@ -86,10 +88,10 @@ export default (
           .then((uri) =>
             simplePromiseRetrier(
               () => remoteMediainfo(uri, timeoutMillis),
-              `remote mediainfo from ${item.path_lower}`
-            )
+              `remote mediainfo from ${item.path_lower}`,
+            ),
           ),
-      "mediainfo-extractor"
+      "mediainfo-extractor",
     );
   },
 });

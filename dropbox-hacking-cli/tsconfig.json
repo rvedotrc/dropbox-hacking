@@ -6,10 +6,16 @@
   "extends": "../tsconfig.base.json",
   "references": [
     {
+      "path": "../dropbox-hacking-exif-db"
+    },
+    {
       "path": "../dropbox-hacking-lister"
     },
     {
       "path": "../dropbox-hacking-ls-cache"
+    },
+    {
+      "path": "../dropbox-hacking-mediainfo-db"
     },
     {
       "path": "../dropbox-hacking-sync"
