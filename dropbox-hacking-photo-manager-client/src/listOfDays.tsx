@@ -3,10 +3,10 @@ import { useEffect, useRef, useState } from "react";
 import {
   CountsByDate,
   CountsByDateResponse,
+  DayMetadata,
   DaysMetadataResponse,
   ThumbnailsByRevResponse,
-} from "dropbox-hacking-photo-manager-server/dist/shared/types";
-import { DayMetadata } from "dropbox-hacking-photo-manager-server/dist/server/dayDb";
+} from "dropbox-hacking-photo-manager-server";
 
 const ListOfDays = () => {
   const [countsByDate, setCountsByDate] = useState<CountsByDate>();

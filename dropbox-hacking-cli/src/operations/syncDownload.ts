@@ -1,17 +1,12 @@
 import { Handler } from "../types";
 import * as fs from "fs";
-import { makeContentHash } from "dropbox-hacking-uploader/dist";
-import { AlternateProvider } from "dropbox-hacking-sync/dist/download";
-import * as download from "dropbox-hacking-sync/dist/download";
-import {
-  Item,
-  default as localListing,
-} from "dropbox-hacking-sync/dist/local-listing";
+import { makeContentHash } from "dropbox-hacking-uploader";
+import { download, localListing } from "dropbox-hacking-sync";
 import {
   DropboxProvider,
   GlobalOptions,
   processOptions,
-} from "dropbox-hacking-util/dist";
+} from "dropbox-hacking-util";
 
 const verb = "sync-download";
 const DRY_RUN = "--dry-run";
@@ -33,9 +28,12 @@ const makeContentHashFetcher = () => {
   };
 };
 
-const makeAlternateProvider = (localDirs: string[]): AlternateProvider => {
-  let promiseOfLocalBySize: Promise<Map<number, Item[]>> | undefined =
-    undefined;
+const makeAlternateProvider = (
+  localDirs: string[],
+): download.AlternateProvider => {
+  let promiseOfLocalBySize:
+    | Promise<Map<number, localListing.Item[]>>
+    | undefined = undefined;
 
   const contentHashFetcher = makeContentHashFetcher();
 
@@ -44,9 +42,9 @@ const makeAlternateProvider = (localDirs: string[]): AlternateProvider => {
     if (!remoteContentHash) return Promise.resolve(undefined);
 
     promiseOfLocalBySize ||= Promise.all(
-      localDirs.map((localDir) => localListing(localDir, true)),
+      localDirs.map((localDir) => localListing.default(localDir, true)),
     ).then((listings) => {
-      const bySize = new Map<number, Item[]>();
+      const bySize = new Map<number, localListing.Item[]>();
 
       for (const listing of listings) {
         for (const item of listing) {

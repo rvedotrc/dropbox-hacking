@@ -11,10 +11,7 @@ import {
   formatTime,
 } from "dropbox-hacking-util";
 import { StateDir } from "dropbox-hacking-ls-cache";
-import {
-  Item,
-  default as localListing,
-} from "dropbox-hacking-sync/dist/local-listing";
+import { localListing } from "dropbox-hacking-sync";
 import { makeContentHash, selectUploader } from "dropbox-hacking-uploader";
 
 const verb = "upload-missing";
@@ -62,7 +59,7 @@ const handler: Handler = async (
   const contentHashLimiter = makePromiseLimiter<string>(5, "contentHash");
   const uploadLimiter = makePromiseLimiter<void>(5, "upload");
 
-  const maybeDelete = (localItem: Item): Promise<void> => {
+  const maybeDelete = (localItem: localListing.Item): Promise<void> => {
     if (!withDelete) return Promise.resolve();
 
     return fs.promises.unlink(localItem.path).then(() =>
@@ -84,7 +81,7 @@ const handler: Handler = async (
 
   await Promise.all(
     sources.map((source) =>
-      localListing(source, true).then((localItems) =>
+      localListing.default(source, true).then((localItems) =>
         Promise.all(
           localItems.map((localItem) => {
             if (localItem.tag !== "file") return Promise.resolve();

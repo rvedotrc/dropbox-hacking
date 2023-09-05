@@ -1,12 +1,12 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
 import {
+  DayMetadata,
   DayMetadataResponse,
   Photo,
   PhotosResponse,
   ThumbnailsByRevResponse,
-} from "dropbox-hacking-photo-manager-server/dist/shared/types";
-import { DayMetadata } from "dropbox-hacking-photo-manager-server/dist/server/dayDb";
+} from "dropbox-hacking-photo-manager-server";
 import EditableTextField from "./editableTextField";
 
 const Day = (props: { date: string }) => {
