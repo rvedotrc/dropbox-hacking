@@ -6,7 +6,7 @@ import {
   DayMetadata,
   DaysMetadataResponse,
   ThumbnailsByRevResponse,
-} from "dropbox-hacking-photo-manager-server";
+} from "dropbox-hacking-photo-manager-shared";
 
 const ListOfDays = () => {
   const [countsByDate, setCountsByDate] = useState<CountsByDate>();

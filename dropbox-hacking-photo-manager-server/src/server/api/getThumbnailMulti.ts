@@ -1,7 +1,7 @@
 import { files } from "dropbox";
+import { ThumbnailsByRevResponse } from "dropbox-hacking-photo-manager-shared";
 import { Application } from "express";
 
-import { ThumbnailsByRevResponse } from "../../shared/types";
 import { Context } from "../context";
 import GetThumbnailBatchArg = files.GetThumbnailBatchArg;
 

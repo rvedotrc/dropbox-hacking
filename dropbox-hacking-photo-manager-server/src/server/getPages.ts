@@ -1,6 +1,6 @@
+import { Payload } from "dropbox-hacking-photo-manager-shared";
 import { Application } from "express";
 
-import { Payload } from "../shared/types";
 import { Context } from "./context";
 
 export default (app: Application, _context: Context): void => {

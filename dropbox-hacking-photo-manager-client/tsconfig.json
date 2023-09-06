@@ -18,5 +18,10 @@
     "sourceMap": true,
     "strictNullChecks": true,
     "target": "es6"
-  }
+  },
+  "references": [
+    {
+      "path": "../dropbox-hacking-photo-manager-shared"
+    }
+  ]
 }

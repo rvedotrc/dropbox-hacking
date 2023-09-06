@@ -19,7 +19,9 @@ yarn workspace dropbox-hacking-sync build &
 wait
 
 yarn workspace dropbox-hacking-cli build &
-yarn workspace dropbox-hacking-photo-manager-server build &
+yarn workspace dropbox-hacking-photo-manager-shared build &
 wait
 
-yarn workspace dropbox-hacking-photo-manager-client build
+yarn workspace dropbox-hacking-photo-manager-server build &
+yarn workspace dropbox-hacking-photo-manager-client build &
+wait

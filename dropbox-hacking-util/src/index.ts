@@ -4,5 +4,4 @@ export * from "./logging";
 export * from "./promises/promiseLimiter";
 export * from "./promises/simplePromiseRetrier";
 export * from "./retry-and-rate-limit";
-export { retrier } from "./retry-and-rate-limit";
 export * from "./time";

@@ -7,15 +7,6 @@
   "references": [
     {
       "path": "../dropbox-hacking-exif-db"
-    },
-    {
-      "path": "../dropbox-hacking-ls-cache"
-    },
-    {
-      "path": "../dropbox-hacking-photo-manager-shared"
-    },
-    {
-      "path": "../dropbox-hacking-util"
     }
   ]
 }

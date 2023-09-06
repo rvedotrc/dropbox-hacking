@@ -1,9 +1,5 @@
+import { DayMetadata } from "dropbox-hacking-photo-manager-shared";
 import * as fs from "fs";
-
-export type DayMetadata = {
-  date: string;
-  description: string;
-};
 
 export default class DayDb {
   constructor(public dir: string) {}

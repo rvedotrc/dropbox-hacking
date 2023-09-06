@@ -1,6 +1,9 @@
 {
   "author": "Rachel Evans <rachel@rachelevans.org>",
   "description": "Messing around with the Dropbox API",
+  "devDependencies": {
+    "eslint-plugin-simple-import-sort": "^10.0.0"
+  },
   "license": "MIT",
   "main": "index.js",
   "name": "dropbox-hacking",
@@ -20,11 +23,9 @@
     "dropbox-hacking-mover",
     "dropbox-hacking-photo-manager-client",
     "dropbox-hacking-photo-manager-server",
+    "dropbox-hacking-photo-manager-shared",
     "dropbox-hacking-sync",
     "dropbox-hacking-uploader",
     "dropbox-hacking-util"
-  ],
-  "devDependencies": {
-    "eslint-plugin-simple-import-sort": "^10.0.0"
-  }
+  ]
 }

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import {
   CountsByDate,
   CountsByDateResponse,
-} from "dropbox-hacking-photo-manager-server";
+} from "dropbox-hacking-photo-manager-shared";
 import MonthBox from "./monthBox";
 import TwelveMonths from "./twelveMonths";
 

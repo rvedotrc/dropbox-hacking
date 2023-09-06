@@ -6,7 +6,7 @@ import {
   Photo,
   PhotosResponse,
   ThumbnailsByRevResponse,
-} from "dropbox-hacking-photo-manager-server";
+} from "dropbox-hacking-photo-manager-shared";
 import EditableTextField from "./editableTextField";
 
 const Day = (props: { date: string }) => {

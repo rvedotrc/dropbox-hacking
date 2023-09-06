@@ -1,6 +1,6 @@
+import { Photo, PhotosResponse } from "dropbox-hacking-photo-manager-shared";
 import { Application } from "express";
 
-import { Photo, PhotosResponse } from "../../shared/types";
 import { Context } from "../context";
 
 export default (app: Application, context: Context): void => {

@@ -4,7 +4,7 @@ import {
   GPSLatLong,
   Photo,
   PhotoResponse,
-} from "dropbox-hacking-photo-manager-server";
+} from "dropbox-hacking-photo-manager-shared";
 
 const Photo = (props: { rev: string }) => {
   const [photo, setPhoto] = useState<Photo | false | undefined>();

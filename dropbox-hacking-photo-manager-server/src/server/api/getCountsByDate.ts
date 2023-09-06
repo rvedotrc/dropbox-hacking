@@ -1,11 +1,11 @@
-import { Application } from "express";
-
-import { GPSLatLong } from "../../shared/gpsLatLong";
 import {
   CountsByDateEntry,
   CountsByDateResponse,
+  GPSLatLong,
   Photo,
-} from "../../shared/types";
+} from "dropbox-hacking-photo-manager-shared";
+import { Application } from "express";
+
 import { Context } from "../context";
 
 const samplePhotos = (photos: Photo[]): Photo[] => {

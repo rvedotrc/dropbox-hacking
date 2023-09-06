@@ -1,6 +1,9 @@
+import {
+  DayMetadataResponse,
+  DaysMetadataResponse,
+} from "dropbox-hacking-photo-manager-shared";
 import { Application } from "express";
 
-import { DayMetadataResponse, DaysMetadataResponse } from "../../shared/types";
 import { Context } from "../context";
 
 export default (app: Application, context: Context): void => {

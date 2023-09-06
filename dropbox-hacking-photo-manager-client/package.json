@@ -2,6 +2,7 @@
   "author": "Rachel Evans <rachel@rachelevans.org>",
   "dependencies": {
     "array-uniq": "^2.1.0",
+    "dropbox-hacking-photo-manager-shared": "1.0.0",
     "i18next": "^19.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
