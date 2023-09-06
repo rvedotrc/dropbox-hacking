@@ -73,7 +73,7 @@ const remoteMediainfo = async (
   }).finally(() => timer && clearTimeout(timer));
 };
 
-export default (
+export const fetcher = (
   dbx: Dropbox,
   limiter: PromiseLimiter<MediainfoData>,
   globalOptions: GlobalOptions,

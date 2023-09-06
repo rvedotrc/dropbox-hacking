@@ -1,6 +1,6 @@
 import { files } from "dropbox";
 import { Handler } from "../types";
-import lister from "dropbox-hacking-lister";
+import { lister } from "dropbox-hacking-lister";
 import {
   DropboxProvider,
   GlobalOptions,

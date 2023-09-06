@@ -16,7 +16,7 @@ export type ListerArgs = (
     }
 ) & { tail: boolean };
 
-export default (args: {
+export const lister = (args: {
   dbx: Dropbox;
   listing: ListerArgs;
   onItem: (item: files.ListFolderResult["entries"][0]) => Promise<void>;

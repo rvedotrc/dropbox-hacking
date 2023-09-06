@@ -14,7 +14,7 @@ import {
   writeStdout,
 } from "dropbox-hacking-util";
 import { makeContentHash } from "dropbox-hacking-uploader";
-import { default as downloader } from "dropbox-hacking-downloader";
+import { downloader } from "dropbox-hacking-downloader";
 
 export type AlternateProvider = (
   remote: FileMetadata,

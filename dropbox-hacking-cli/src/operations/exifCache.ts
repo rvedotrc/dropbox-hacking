@@ -1,5 +1,5 @@
 import { Handler } from "../types";
-import lister, { ListerArgs } from "dropbox-hacking-lister";
+import { lister, ListerArgs } from "dropbox-hacking-lister";
 import {
   ExifDB,
   StateDir,

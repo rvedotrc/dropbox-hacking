@@ -7,7 +7,7 @@ type Entry = {
   reject: (reason?: any) => void; // eslint-disable-line @typescript-eslint/no-explicit-any
 };
 
-export default class Mover {
+export class Mover {
   private readonly dbx: Dropbox;
   // private readonly globalOptions: GlobalOptions;
   private readonly maxBatchSize = 100;

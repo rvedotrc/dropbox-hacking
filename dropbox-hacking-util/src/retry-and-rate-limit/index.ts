@@ -9,7 +9,10 @@ const timeoutFor: Partial<Record<keyof Dropbox, number>> = {
 
 const defaultTimeout = 300000;
 
-export default (dbx: Dropbox, globalOptions: GlobalOptions): Dropbox => {
+export const retrier = (
+  dbx: Dropbox,
+  globalOptions: GlobalOptions,
+): Dropbox => {
   for (const m in dbx) {
     // Unsafe coercion; there might be an internal method wrapped as part
     // of this, which isn't part of the public interface (i.e. keyof Dropbox).

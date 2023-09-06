@@ -7,7 +7,7 @@ import { makePromiseLimiter, parseTime } from "dropbox-hacking-util";
 
 const defaultLimiter = makePromiseLimiter(2, "download-limiter");
 
-export default (args: {
+export const downloader = (args: {
   dbx: Dropbox;
   local: string;
   remote: files.FileMetadata;

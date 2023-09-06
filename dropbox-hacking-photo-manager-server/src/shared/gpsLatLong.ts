@@ -12,7 +12,7 @@ export type GPSLatLongWithDirection = {
   readonly longRef: "E" | "W";
 };
 
-export default class GPSLatLong {
+export class GPSLatLong {
   public static fromExifTags(tags: ExifTags): GPSLatLong | null {
     const lat = tags.GPSLatitude;
     const long = tags.GPSLongitude;

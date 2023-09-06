@@ -6,8 +6,8 @@ import {
   GlobalOptions,
   processOptions,
 } from "dropbox-hacking-util";
-import lister from "dropbox-hacking-lister";
-import Mover from "dropbox-hacking-mover";
+import { lister } from "dropbox-hacking-lister";
+import { Mover } from "dropbox-hacking-mover";
 
 const verb = "process-camera-uploads";
 const CAMERA_UPLOADS = "/Camera Uploads";

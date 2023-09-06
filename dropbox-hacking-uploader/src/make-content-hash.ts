@@ -4,7 +4,7 @@ import * as crypto from "crypto";
 
 const PART_SIZE = 4194304; // 4 MB
 
-export default (readable: stream.Readable): Promise<string> =>
+export const makeContentHash = (readable: stream.Readable): Promise<string> =>
   new Promise<string>((resolve, reject) => {
     const overallHash = crypto.createHash("sha256");
 

@@ -1,3 +1,7 @@
+#!/bin/bash
+
+set -ex
+
 # Because the build-order doesn't work yet
 
 yarn workspace dropbox-hacking-util build

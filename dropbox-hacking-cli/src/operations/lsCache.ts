@@ -8,7 +8,7 @@ import {
   writeStderr,
   writeStdout,
 } from "dropbox-hacking-util";
-import { ListerArgs, default as lister } from "dropbox-hacking-lister";
+import { lister, ListerArgs } from "dropbox-hacking-lister";
 
 const verb = "ls-cache";
 
