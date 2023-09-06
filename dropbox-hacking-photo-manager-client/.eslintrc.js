@@ -29,5 +29,10 @@ module.exports = {
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-unused-vars": ["error", {"args": "all", "argsIgnorePattern": "^_"}],
+  },
+  settings: {
+    react: {
+      version: "detect"
+    }
   }
 };

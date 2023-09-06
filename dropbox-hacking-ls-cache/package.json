@@ -14,7 +14,7 @@
   "main": "dist",
   "name": "dropbox-hacking-ls-cache",
   "scripts": {
-    "build": "yarn prettier && yarn lint && yarn compile",
+    "build": "yarn prettier && yarn lint --fix && yarn compile",
     "compile": "tsc -p tsconfig.json",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx --max-warnings=0 src",
     "prettier": "prettier --write src"

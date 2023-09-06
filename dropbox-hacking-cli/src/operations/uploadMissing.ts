@@ -1,18 +1,20 @@
-import { Handler } from "../types";
-import * as fs from "fs";
 import { files } from "dropbox";
+import * as fs from "fs";
+
+import { Handler } from "../types";
 import path = require("node:path");
-import { targetForFile } from "./processCameraUploads";
-import {
-  DropboxProvider,
-  GlobalOptions,
-  makePromiseLimiter,
-  processOptions,
-  formatTime,
-} from "dropbox-hacking-util";
 import { StateDir } from "dropbox-hacking-ls-cache";
 import { localListing } from "dropbox-hacking-sync";
 import { makeContentHash, selectUploader } from "dropbox-hacking-uploader";
+import {
+  DropboxProvider,
+  formatTime,
+  GlobalOptions,
+  makePromiseLimiter,
+  processOptions,
+} from "dropbox-hacking-util";
+
+import { targetForFile } from "./processCameraUploads";
 
 const verb = "upload-missing";
 

@@ -2,9 +2,10 @@ import {
   getDropboxClient,
   getGlobalOptions,
   GlobalOptionsSingleton,
-  writeStderr,
   retrier,
+  writeStderr,
 } from "dropbox-hacking-util";
+
 import { Operation } from "./types";
 
 export default (op: Operation): void => {

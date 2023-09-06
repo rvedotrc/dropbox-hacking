@@ -1,7 +1,8 @@
 import { Dropbox, files } from "dropbox";
 import stream = require("node:stream");
-import fixedChunkStream from "./fixed-chunk-stream";
 import { GlobalOptions, makePromiseLimiter } from "dropbox-hacking-util";
+
+import fixedChunkStream from "./fixed-chunk-stream";
 
 const PART_SIZE = 4194304; // 4 MB
 

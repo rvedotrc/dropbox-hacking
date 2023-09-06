@@ -1,7 +1,8 @@
 import { Dropbox } from "dropbox";
+import { auth } from "dropbox/types/dropbox_types";
+
 import Waiter from "./waiter";
 import WrappedMethod from "./wrapped-method";
-import { auth } from "dropbox/types/dropbox_types";
 
 type Cancelable = { cancel: () => void };
 

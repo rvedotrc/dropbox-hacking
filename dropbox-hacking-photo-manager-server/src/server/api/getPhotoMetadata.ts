@@ -1,7 +1,8 @@
-import { Photo, PhotoResponse } from "../../shared/types";
-import { Application } from "express";
-import { Context } from "../context";
 import { files } from "dropbox";
+import { Application } from "express";
+
+import { Photo, PhotoResponse } from "../../shared/types";
+import { Context } from "../context";
 
 export default (app: Application, context: Context): void => {
   app.get("/api/photo/rev/:rev", (req, res) =>

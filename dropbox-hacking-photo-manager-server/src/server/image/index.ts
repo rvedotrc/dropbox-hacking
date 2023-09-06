@@ -1,7 +1,8 @@
 import { Application } from "express";
+
 import { Context } from "../context";
-import getPreview from "./getPreview";
 import getFullImage from "./getFullImage";
+import getPreview from "./getPreview";
 
 export default (app: Application, context: Context): void => {
   getFullImage(app, context);

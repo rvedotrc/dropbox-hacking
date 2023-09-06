@@ -1,12 +1,14 @@
 import { Dropbox, files } from "dropbox";
 import FileMetadata = files.FileMetadata;
-import { MediainfoData } from "./types";
 import { spawn } from "node:child_process";
+
 import {
   GlobalOptions,
   PromiseLimiter,
   simplePromiseRetrier,
 } from "dropbox-hacking-util";
+
+import { MediainfoData } from "./types";
 
 export type Fetcher = {
   fetch: (item: FileMetadata) => Promise<MediainfoData>;

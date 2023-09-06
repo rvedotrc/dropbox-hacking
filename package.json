@@ -23,5 +23,8 @@
     "dropbox-hacking-sync",
     "dropbox-hacking-uploader",
     "dropbox-hacking-util"
-  ]
+  ],
+  "devDependencies": {
+    "eslint-plugin-simple-import-sort": "^10.0.0"
+  }
 }

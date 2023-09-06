@@ -1,6 +1,6 @@
 import { Dropbox, files } from "dropbox";
-import * as https from "https";
 import * as http from "http";
+import * as https from "https";
 import FileMetadata = files.FileMetadata;
 import {
   GlobalOptions,

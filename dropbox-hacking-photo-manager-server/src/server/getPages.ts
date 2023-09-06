@@ -1,6 +1,7 @@
 import { Application } from "express";
-import { Context } from "./context";
+
 import { Payload } from "../shared/types";
+import { Context } from "./context";
 
 export default (app: Application, _context: Context): void => {
   const htmlEncode = (s: string) =>

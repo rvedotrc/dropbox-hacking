@@ -1,7 +1,8 @@
-import { Application } from "express";
-import { Context } from "../context";
-import * as https from "https";
 import { files } from "dropbox";
+import { Application } from "express";
+import * as https from "https";
+
+import { Context } from "../context";
 
 export default (app: Application, context: Context): void => {
   app.get("/image/rev/:rev", (req, res) =>

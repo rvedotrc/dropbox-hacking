@@ -1,14 +1,15 @@
-import { Handler } from "../types";
+import { Dropbox, files } from "dropbox";
 import { lister, ListerArgs } from "dropbox-hacking-lister";
 import {
-  MediainfoDB,
+  Fetcher as F,
+  fetcher as Fetcher,
   MediainfoData,
+  MediainfoDB,
   MediainfoFromHash,
   StateDir,
-  fetcher as Fetcher,
-  Fetcher as F,
 } from "dropbox-hacking-mediainfo-db";
-import { Dropbox, files } from "dropbox";
+
+import { Handler } from "../types";
 import FileMetadata = files.FileMetadata;
 import {
   DropboxProvider,

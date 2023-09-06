@@ -1,6 +1,7 @@
 import { Dropbox } from "dropbox";
-import * as lsCache from "dropbox-hacking-ls-cache";
 import * as exifDb from "dropbox-hacking-exif-db";
+import * as lsCache from "dropbox-hacking-ls-cache";
+
 import DayDb from "./dayDb";
 
 export type Context = {

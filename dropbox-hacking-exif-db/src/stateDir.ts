@@ -1,6 +1,7 @@
 import * as fs from "fs";
-import { ExifDB } from "./exifDB";
 import { ExifData } from "ts-exif-parser";
+
+import { ExifDB } from "./exifDB";
 
 export type State =
   | { tag: "does_not_exist" }

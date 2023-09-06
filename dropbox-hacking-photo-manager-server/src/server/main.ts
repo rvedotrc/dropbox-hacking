@@ -1,11 +1,11 @@
 import express from "express";
 
-import contextBuilder from "./contextBuilder";
-import getRoot from "./getRoot";
-import getPages from "./getPages";
-import legacyRedirects from "./legacyRedirects";
 import api from "./api";
+import contextBuilder from "./contextBuilder";
+import getPages from "./getPages";
+import getRoot from "./getRoot";
 import image from "./image";
+import legacyRedirects from "./legacyRedirects";
 
 const app = express();
 

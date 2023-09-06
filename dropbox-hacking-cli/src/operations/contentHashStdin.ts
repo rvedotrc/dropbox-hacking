@@ -1,10 +1,11 @@
-import { Handler } from "../types";
+import { makeContentHash } from "dropbox-hacking-uploader";
 import {
   DropboxProvider,
   GlobalOptions,
   writeStdout,
 } from "dropbox-hacking-util";
-import { makeContentHash } from "dropbox-hacking-uploader";
+
+import { Handler } from "../types";
 
 const verb = "content-hash-stdin";
 

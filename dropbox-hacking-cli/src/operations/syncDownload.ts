@@ -1,12 +1,13 @@
-import { Handler } from "../types";
-import * as fs from "fs";
-import { makeContentHash } from "dropbox-hacking-uploader";
 import { download, localListing } from "dropbox-hacking-sync";
+import { makeContentHash } from "dropbox-hacking-uploader";
 import {
   DropboxProvider,
   GlobalOptions,
   processOptions,
 } from "dropbox-hacking-util";
+import * as fs from "fs";
+
+import { Handler } from "../types";
 
 const verb = "sync-download";
 const DRY_RUN = "--dry-run";

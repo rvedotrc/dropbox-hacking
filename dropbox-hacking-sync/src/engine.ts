@@ -1,15 +1,16 @@
 import { Dropbox, files } from "dropbox";
+import {
+  DropboxProvider,
+  GlobalOptions,
+  writeStderr,
+} from "dropbox-hacking-util";
+
 import dropboxListing, { Item as RemoteItem } from "./dropbox-listing";
 import localListing, {
   DirectoryItem,
   FileItem,
   Item as LocalItem,
 } from "./local-listing";
-import {
-  GlobalOptions,
-  writeStderr,
-  DropboxProvider,
-} from "dropbox-hacking-util";
 
 // Does a "mkdir -p" on the destination structure
 

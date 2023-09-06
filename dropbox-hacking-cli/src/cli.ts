@@ -1,14 +1,13 @@
-import { Operation } from "./types";
-
-import catOperation from "./operations/cat";
 import {
   getDropboxClient,
   getGlobalOptions,
   GlobalOptionsSingleton,
+  HELP,
   retrier,
   writeStderr,
-  HELP,
 } from "dropbox-hacking-util";
+
+import catOperation from "./operations/cat";
 import contentHashStdinOperation from "./operations/contentHashStdin";
 import cpOperation from "./operations/cp";
 import lsOperation from "./operations/ls";
@@ -18,6 +17,7 @@ import rmOperation from "./operations/rm";
 import syncDownloadOperation from "./operations/syncDownload";
 import syncUploadOperation from "./operations/syncUpload";
 import uploadStdinOperation from "./operations/uploadStdin";
+import { Operation } from "./types";
 
 const prefix = "./bin/cli";
 

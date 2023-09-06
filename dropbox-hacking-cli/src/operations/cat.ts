@@ -1,10 +1,11 @@
-import { Handler } from "../types";
-import * as https from "https";
 import {
   DropboxProvider,
   GlobalOptions,
   processOptions,
 } from "dropbox-hacking-util";
+import * as https from "https";
+
+import { Handler } from "../types";
 
 const verb = "cat";
 

@@ -1,6 +1,7 @@
-import { Application } from "express";
-import { Context } from "../context";
 import { files } from "dropbox";
+import { Application } from "express";
+
+import { Context } from "../context";
 
 const ALLOWED_SIZES = [
   "w32h32",

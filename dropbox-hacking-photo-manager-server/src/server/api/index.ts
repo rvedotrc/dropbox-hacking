@@ -1,10 +1,11 @@
 import { Application } from "express";
+
 import { Context } from "../context";
 import getCountsByDate from "./getCountsByDate";
-import getPhotosOnDate from "./getPhotosOnDate";
 import getPhotoMetadata from "./getPhotoMetadata";
-import getThumbnailMulti from "./getThumbnailMulti";
+import getPhotosOnDate from "./getPhotosOnDate";
 import getSetDayMetadata from "./getSetDayMetadata";
+import getThumbnailMulti from "./getThumbnailMulti";
 
 export default (app: Application, context: Context): void => {
   getCountsByDate(app, context);

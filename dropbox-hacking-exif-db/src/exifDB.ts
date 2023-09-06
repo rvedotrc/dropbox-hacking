@@ -1,5 +1,5 @@
-import { ExifData } from "ts-exif-parser";
 import * as fs from "fs";
+import { ExifData } from "ts-exif-parser";
 
 export type ContentHash = string;
 

@@ -1,5 +1,5 @@
-import { GlobalOptions } from "./types";
 import { processOptions } from "./options";
+import { GlobalOptions } from "./types";
 
 const DEBUG_UPLOAD = "--debug-upload";
 const DEBUG_SYNC = "--debug-sync";

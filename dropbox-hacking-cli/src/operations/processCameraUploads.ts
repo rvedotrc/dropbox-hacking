@@ -1,13 +1,14 @@
-import { Handler } from "../types";
 import { files } from "dropbox";
+
+import { Handler } from "../types";
 import path = require("node:path");
+import { lister } from "dropbox-hacking-lister";
+import { Mover } from "dropbox-hacking-mover";
 import {
   DropboxProvider,
   GlobalOptions,
   processOptions,
 } from "dropbox-hacking-util";
-import { lister } from "dropbox-hacking-lister";
-import { Mover } from "dropbox-hacking-mover";
 
 const verb = "process-camera-uploads";
 const CAMERA_UPLOADS = "/Camera Uploads";

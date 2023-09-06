@@ -1,11 +1,14 @@
+import { files } from "dropbox";
 import * as fs from "fs";
 import * as path from "path";
-import { files } from "dropbox";
+
 import * as engine from "./engine";
-import createMkdir from "./mkdir";
 import { DirectoryItem, FileItem } from "./local-listing";
+import createMkdir from "./mkdir";
 import FileMetadata = files.FileMetadata;
 import { randomUUID } from "crypto";
+import { downloader } from "dropbox-hacking-downloader";
+import { makeContentHash } from "dropbox-hacking-uploader";
 import {
   DropboxProvider,
   formatTime,
@@ -13,8 +16,6 @@ import {
   parseTime,
   writeStdout,
 } from "dropbox-hacking-util";
-import { makeContentHash } from "dropbox-hacking-uploader";
-import { downloader } from "dropbox-hacking-downloader";
 
 export type AlternateProvider = (
   remote: FileMetadata,

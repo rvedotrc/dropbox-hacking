@@ -1,4 +1,5 @@
 import * as fs from "fs";
+
 import { MediainfoDB } from "./mediainfoDB";
 import { MediainfoData } from "./types";
 

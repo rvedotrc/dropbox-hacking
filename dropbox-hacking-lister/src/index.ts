@@ -1,5 +1,5 @@
 import { Dropbox, files } from "dropbox";
-import { GlobalOptions, cancel } from "dropbox-hacking-util";
+import { cancel, GlobalOptions } from "dropbox-hacking-util";
 
 export type ListerArgs = (
   | {

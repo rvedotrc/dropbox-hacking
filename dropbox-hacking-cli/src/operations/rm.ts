@@ -1,9 +1,10 @@
-import { Handler } from "../types";
 import {
   DropboxProvider,
   GlobalOptions,
   writeStdout,
 } from "dropbox-hacking-util";
+
+import { Handler } from "../types";
 
 const verb = "rm";
 

@@ -1,7 +1,8 @@
 import { Dropbox } from "dropbox";
+
 import { GlobalOptions } from "../global-options";
-import Waiter from "./waiter";
 import RetryingPromise from "./retrying-promise";
+import Waiter from "./waiter";
 
 let nextCallId = 0;
 

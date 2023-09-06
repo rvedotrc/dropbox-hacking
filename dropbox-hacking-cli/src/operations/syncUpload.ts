@@ -1,10 +1,11 @@
-import { Handler } from "../types";
 import { upload } from "dropbox-hacking-sync";
 import {
   DropboxProvider,
   GlobalOptions,
   processOptions,
 } from "dropbox-hacking-util";
+
+import { Handler } from "../types";
 
 const verb = "sync-upload";
 const DRY_RUN = "--dry-run";

@@ -1,5 +1,6 @@
-import { MediainfoData } from "./types";
 import * as fs from "fs";
+
+import { MediainfoData } from "./types";
 
 export type ContentHash = string;
 

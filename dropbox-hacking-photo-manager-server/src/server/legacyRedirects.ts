@@ -1,4 +1,5 @@
 import { Application } from "express";
+
 import { Context } from "./context";
 
 export default (app: Application, context: Context): void => {

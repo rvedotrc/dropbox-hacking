@@ -1,7 +1,8 @@
-import { Application } from "express";
-import { Context } from "../context";
-import { ThumbnailsByRevResponse } from "../../shared/types";
 import { files } from "dropbox";
+import { Application } from "express";
+
+import { ThumbnailsByRevResponse } from "../../shared/types";
+import { Context } from "../context";
 import GetThumbnailBatchArg = files.GetThumbnailBatchArg;
 
 export default (app: Application, context: Context): void => {
