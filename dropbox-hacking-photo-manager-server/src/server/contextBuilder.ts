@@ -1,3 +1,4 @@
+import { Dropbox } from "dropbox";
 import { ExifDB } from "dropbox-hacking-exif-db";
 import * as LsCache from "dropbox-hacking-ls-cache";
 import { getDropboxClient } from "dropbox-hacking-util";
@@ -32,24 +33,25 @@ export default (args: {
   return {
     port: args.port,
     baseUrlWithoutSlash: args.baseUrlWithoutSlash,
-    get dropboxClient() {
+    get dropboxClient(): Promise<Dropbox> {
       return getDropboxClient();
     },
-    get lsState() {
-      if (!lsCacheState) {
+    get lsState(): Promise<LsCache.State> {
+      if (lsCacheState !== undefined) {
         const lsCache = new LsCache.StateDir(lsCacheDir);
         lsCacheState = lsCache.load().then(() => lsCache.getState());
       }
+      if (lsCacheState === undefined) throw "";
       return lsCacheState;
     },
-    get exifDbAll() {
+    get exifDbAll(): ReturnType<ExifDB["readAll"]> {
       if (!exifAll) {
         const exifDb = new ExifDB(exifDbDir);
         exifAll = exifDb.readAll();
       }
       return exifAll;
     },
-    get dayDb() {
+    get dayDb(): Promise<DayDb> {
       return Promise.resolve(new DayDb(dayDbDir));
     },
   };

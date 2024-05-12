@@ -3,6 +3,7 @@
   "dependencies": {
     "array-uniq": "^2.1.0",
     "dropbox-hacking-photo-manager-shared": "1.0.0",
+    "dropbox-hacking-exif-db": "1.0.0",
     "i18next": "^19.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -50,7 +51,8 @@
   "main": "index.js",
   "name": "dropbox-hacking-photo-manager-client",
   "scripts": {
-    "build": "yarn prettier && yarn run lint && webpack --mode development",
+    "build": "yarn prettier && yarn run lint && yarn run compile",
+    "compile": "webpack --mode development",
     "lint": "npx eslint --ext .jsx,.js,.tsx,.ts --max-warnings 0 src",
     "prettier": "prettier --write src",
     "rebuild": "rebuild package.json package-lock.json tsconfig.json .babelrc webpack.config.js src .git/refs -- npm run-script build",

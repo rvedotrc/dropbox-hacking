@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "dropbox": "^10.34.0",
+    "dropbox-hacking-exif-db": "1.0.0",
     "dropbox-hacking-photo-manager-shared": "1.0.0",
     "express": "^4.18.2",
     "ts-exif-parser": "^0.2.2"

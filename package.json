@@ -10,7 +10,8 @@
   "private": true,
   "repository": "https://github.com/rvedotrc/dropbox-hacking",
   "scripts": {
-    "build": "./build.sh"
+    "build": "./build.sh",
+    "clean": "rm -rf node_modules */tsconfig.tsbuildinfo"
   },
   "version": "1.0.0",
   "workspaces": [

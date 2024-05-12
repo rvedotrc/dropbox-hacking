@@ -20,12 +20,12 @@ const makeContentHashFetcher = () => {
   const cache = new Map<string, Promise<string>>();
 
   return (localPath: string): Promise<string> => {
-    let promise = cache.get(localPath);
-    if (promise) return promise;
+    const promise1 = cache.get(localPath);
+    if (promise1 !== undefined) return promise1;
 
-    promise = makeContentHash(fs.createReadStream(localPath));
-    cache.set(localPath, promise);
-    return promise;
+    const promise2 = makeContentHash(fs.createReadStream(localPath));
+    cache.set(localPath, promise2);
+    return promise2;
   };
 };
 

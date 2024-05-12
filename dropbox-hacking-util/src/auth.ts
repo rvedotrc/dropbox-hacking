@@ -1,6 +1,6 @@
 import * as child_process from "child_process";
 import { Dropbox, DropboxAuth } from "dropbox";
-import * as express from "express";
+import express from "express";
 import * as fs from "fs";
 
 import { writeStderr } from "./logging";

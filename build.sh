@@ -2,26 +2,37 @@
 
 set -ex
 
-# Because the build-order doesn't work yet
-
-yarn workspace dropbox-hacking-util build
-
-yarn workspace dropbox-hacking-downloader build &
-yarn workspace dropbox-hacking-lister build &
-yarn workspace dropbox-hacking-ls-cache build &
-yarn workspace dropbox-hacking-mover build &
-yarn workspace dropbox-hacking-uploader build &
+for w in $( yarn --silent workspaces info | jq -r 'keys[]' ) ; do
+  yarn workspace $w run prettier &
+done
 wait
 
-yarn workspace dropbox-hacking-exif-db build &
-yarn workspace dropbox-hacking-mediainfo-db build &
-yarn workspace dropbox-hacking-sync build &
+for w in $( yarn --silent workspaces info | jq -r 'keys[]' ) ; do
+  yarn workspace $w run lint &
+done
 wait
 
-yarn workspace dropbox-hacking-cli build &
-yarn workspace dropbox-hacking-photo-manager-shared build &
-wait
+ruby -rjson <<'RUBY' | $SHELL
+data = JSON.parse(`jq '[input_filename, [(.references // [])[].path]]' dropbox-hacking-*/tsconfig.json | jq --slurp -c`)
+refs = data.to_h
+refs.transform_keys! { |k| k.sub("/tsconfig.json", "") }
+refs.transform_values! { |l| l.map { |k| k.sub("../", "") } }
+satisfied = []
+unsatisfied = refs.keys
 
-yarn workspace dropbox-hacking-photo-manager-server build &
-yarn workspace dropbox-hacking-photo-manager-client build &
-wait
+while !unsatisfied.empty?
+  can_satisfy = unsatisfied.select { |m| (refs[m] - satisfied).empty? }
+  raise "Stuck!" if can_satisfy.empty?
+
+  satisfied += can_satisfy
+  unsatisfied -= can_satisfy
+
+  can_satisfy.each do |m|
+    puts "yarn workspace #{m} compile &"
+  end
+  puts "wait"
+  puts
+end
+RUBY
+
+exit
