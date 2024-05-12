@@ -1,18 +1,19 @@
 import * as React from "react";
 import { useEffect, useRef, useState } from "react";
 import {
-  CountsByDate,
-  CountsByDateResponse,
   DayMetadata,
-  DaysMetadataResponse,
   Payload,
   ThumbnailsByRevResponse,
 } from "dropbox-hacking-photo-manager-shared";
+
 import SamePageLink from "./samePageLink";
+import { useDaysMetadata } from "./daysMetadataContext";
+import { useCountsByDate } from "./countsByDateContext";
 
 const ListOfDays = ({ setState }: { setState: (payload: Payload) => void }) => {
-  const [countsByDate, setCountsByDate] = useState<CountsByDate>();
-  const [dayMetadata, setDayMetadata] = useState<DayMetadata[]>();
+  const countsByDate = useCountsByDate();
+  const dayMetadata = useDaysMetadata();
+
   const [revToThumbnail, setRevToThumbnail] = useState(
     new Map<string, string | undefined>(),
   );
@@ -21,22 +22,6 @@ const ListOfDays = ({ setState }: { setState: (payload: Payload) => void }) => {
   useEffect(() => {
     document.title = "DPM - Days";
   });
-
-  useEffect(() => {
-    if (!countsByDate) {
-      fetch("/api/counts_by_date")
-        .then((r) => r.json() as Promise<CountsByDateResponse>)
-        .then((data) => setCountsByDate(data.counts_by_date));
-    }
-  }, [countsByDate]);
-
-  useEffect(() => {
-    if (!dayMetadata) {
-      fetch("/api/day/all")
-        .then((r) => r.json() as Promise<DaysMetadataResponse>)
-        .then((data) => setDayMetadata(data.days_metadata));
-    }
-  }, [dayMetadata]);
 
   // Discard any unwanted thumbnails
   useEffect(() => {

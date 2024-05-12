@@ -7,6 +7,8 @@ import Photo from "./photo";
 import ListOfDays from "./listOfDays";
 import { Payload } from "dropbox-hacking-photo-manager-shared";
 import { useEffect, useState } from "react";
+import countsByDateContext from "./countsByDateContext";
+import daysMetadataContext from "./daysMetadataContext";
 
 const toRender = ({
   payload,
@@ -24,7 +26,7 @@ const toRender = ({
   return <span>Routing error</span>;
 };
 
-const root = (initialState: Payload) => () => {
+const Root = ({ initialState }: { initialState: Payload }) => {
   const [state, setState] = useState(initialState);
 
   // if "popState" happens, render that state
@@ -45,7 +47,13 @@ const root = (initialState: Payload) => () => {
     );
   });
 
-  return toRender({ payload: state, setState });
+  return (
+    <countsByDateContext.defaultProvider>
+      <daysMetadataContext.defaultProvider>
+        {toRender({ payload: state, setState })}
+      </daysMetadataContext.defaultProvider>
+    </countsByDateContext.defaultProvider>
+  );
 };
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -62,9 +70,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const payload = JSON.parse(ele.getAttribute("data-payload") || "null");
     const container = document.getElementById("react_container");
     if (container) {
-      const R = root(payload);
       window.history.replaceState(payload, "unused");
-      createRoot(container!).render(<R />);
+      createRoot(container!).render(<Root initialState={payload} />);
     }
   }
 });

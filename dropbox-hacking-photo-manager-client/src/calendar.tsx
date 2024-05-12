@@ -1,13 +1,10 @@
 import * as React from "react";
-import { useEffect, useState } from "react";
-import {
-  CountsByDate,
-  CountsByDateResponse,
-  Payload,
-} from "dropbox-hacking-photo-manager-shared";
+import { useEffect } from "react";
+import { Payload } from "dropbox-hacking-photo-manager-shared";
 import MonthBox from "./monthBox";
 import TwelveMonths from "./twelveMonths";
 import SamePageLink from "./samePageLink";
+import { useCountsByDate } from "./countsByDateContext";
 
 type Year = {
   yearString: string;
@@ -16,19 +13,11 @@ type Year = {
 };
 
 const Calendar = ({ setState }: { setState: (payload: Payload) => void }) => {
-  const [countsByDate, setCountsByDate] = useState<CountsByDate>();
+  const countsByDate = useCountsByDate();
 
   useEffect(() => {
     document.title = "DPM - Calendar";
   });
-
-  useEffect(() => {
-    if (!countsByDate) {
-      fetch("/api/counts_by_date")
-        .then((r) => r.json() as Promise<CountsByDateResponse>)
-        .then((data) => setCountsByDate(data.counts_by_date));
-    }
-  }, []);
 
   if (!countsByDate) {
     return <div>Loading...</div>;
