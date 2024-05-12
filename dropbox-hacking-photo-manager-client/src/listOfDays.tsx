@@ -8,6 +8,7 @@ import {
   Payload,
   ThumbnailsByRevResponse,
 } from "dropbox-hacking-photo-manager-shared";
+import SamePageLink from "./samePageLink";
 
 const ListOfDays = ({ setState }: { setState: (payload: Payload) => void }) => {
   const [countsByDate, setCountsByDate] = useState<CountsByDate>();
@@ -219,17 +220,13 @@ const ListOfDays = ({ setState }: { setState: (payload: Payload) => void }) => {
       <h1>List of Days</h1>
 
       <p>
-        <a
+        <SamePageLink
           href={"/calendar"}
-          onClick={(e) => {
-            e.preventDefault();
-            const st: Payload = { route: "calendar", url: "/calendar" };
-            window.history.pushState(st, "unused", st.url);
-            setState(st);
-          }}
+          state={{ route: "calendar" }}
+          setState={setState}
         >
           Calendar
-        </a>
+        </SamePageLink>
       </p>
 
       <p>
@@ -251,7 +248,11 @@ const ListOfDays = ({ setState }: { setState: (payload: Payload) => void }) => {
       <ol ref={olRef} className={"listOfDays"}>
         {days.map((day) => (
           <li key={day.date}>
-            <a href={`/day.html?date=${day.date}`}>
+            <SamePageLink
+              state={{ route: "day", date: day.date }}
+              setState={setState}
+              href={`/day/${day.date}`}
+            >
               <span className={"date"}>{day.date}</span>
               <span className={"count"}>{day.count}</span>
               <span className={"countWithGps"}>{day.countWithGps}</span>
@@ -282,7 +283,7 @@ const ListOfDays = ({ setState }: { setState: (payload: Payload) => void }) => {
                   );
                 })}
               </span>
-            </a>
+            </SamePageLink>
           </li>
         ))}
       </ol>

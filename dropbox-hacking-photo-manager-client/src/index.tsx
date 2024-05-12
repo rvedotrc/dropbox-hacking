@@ -17,16 +17,15 @@ const toRender = ({
 }) => {
   if (payload.route === "calendar") return <Calendar setState={setState} />;
   if (payload.route === "days") return <ListOfDays setState={setState} />;
-  if (payload.route === "day") return <Day date={payload.date} />;
-  if (payload.route === "photo") return <Photo rev={payload.rev} />;
+  if (payload.route === "day")
+    return <Day setState={setState} date={payload.date} />;
+  if (payload.route === "photo")
+    return <Photo setState={setState} rev={payload.rev} />;
   return <span>Routing error</span>;
 };
 
 const root = (initialState: Payload) => () => {
   const [state, setState] = useState(initialState);
-
-  // useEffect: after render, "pushState"
-  // useEffect(() => window.history.pushState(state, "unused", state.url));
 
   // if "popState" happens, render that state
   useEffect(() => {
@@ -36,7 +35,7 @@ const root = (initialState: Payload) => () => {
     };
     window.addEventListener("popstate", listener);
     return () => window.removeEventListener("popstate", listener);
-  });
+  }, []);
 
   useEffect(() => {
     console.log(

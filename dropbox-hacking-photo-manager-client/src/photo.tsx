@@ -2,13 +2,21 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 import {
   GPSLatLong,
+  Payload,
   Photo,
   PhotoResponse,
 } from "dropbox-hacking-photo-manager-shared";
 
-const Photo = (props: { rev: string }) => {
+const Photo = (props: {
+  rev: string;
+  setState: (payload: Payload) => void;
+}) => {
   const [photo, setPhoto] = useState<Photo | false | undefined>();
   const [previewSizes, setPreviewSizes] = useState<string[]>();
+
+  useEffect(() => {
+    document.title = `DPM - Photo ${props.rev}`;
+  });
 
   useEffect(() => {
     if (photo === undefined) {

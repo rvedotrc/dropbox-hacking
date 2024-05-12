@@ -7,6 +7,7 @@ import {
 } from "dropbox-hacking-photo-manager-shared";
 import MonthBox from "./monthBox";
 import TwelveMonths from "./twelveMonths";
+import SamePageLink from "./samePageLink";
 
 type Year = {
   yearString: string;
@@ -65,17 +66,13 @@ const Calendar = ({ setState }: { setState: (payload: Payload) => void }) => {
       <h1>Calendar</h1>
 
       <p>
-        <a
+        <SamePageLink
           href={"/days"}
-          onClick={(e) => {
-            e.preventDefault();
-            const st: Payload = { route: "days", url: "/days" };
-            window.history.pushState(st, "unused", st.url);
-            setState(st);
-          }}
+          state={{ route: "days" }}
+          setState={setState}
         >
           List of days
-        </a>
+        </SamePageLink>
       </p>
 
       {[...years.keys()]
@@ -103,7 +100,13 @@ const Calendar = ({ setState }: { setState: (payload: Payload) => void }) => {
                       if (count) {
                         return (
                           <div title={dateString}>
-                            <a href={`/day.html?date=${dateString}`}>{count}</a>
+                            <SamePageLink
+                              href={`/day/date=${dateString}`}
+                              state={{ route: "day", date: dateString }}
+                              setState={setState}
+                            >
+                              {count}
+                            </SamePageLink>
                           </div>
                         );
                       } else {

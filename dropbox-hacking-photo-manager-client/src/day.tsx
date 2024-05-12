@@ -3,13 +3,15 @@ import { useEffect, useState } from "react";
 import {
   DayMetadata,
   DayMetadataResponse,
+  Payload,
   Photo,
   PhotosResponse,
   ThumbnailsByRevResponse,
 } from "dropbox-hacking-photo-manager-shared";
 import EditableTextField from "./editableTextField";
+import SamePageLink from "./samePageLink";
 
-const Day = (props: { date: string }) => {
+const Day = (props: { date: string; setState: (payload: Payload) => void }) => {
   const [photos, setPhotos] = useState<Photo[]>();
   const [revToThumbnail, setRevToThumbnail] = useState(
     new Map<string, string | undefined>(),
@@ -39,6 +41,10 @@ const Day = (props: { date: string }) => {
   //         ...getStats(),
   //     }
   // );
+
+  useEffect(() => {
+    document.title = `DPM - ${props.date}`;
+  });
 
   // Discard any unwanted thumbnails
   useEffect(() => {
@@ -153,10 +159,12 @@ const Day = (props: { date: string }) => {
 
       <div className={"photoList"}>
         {photosWithThumbnails.map((photo) => (
-          <a
+          <SamePageLink
             className={"photoItem"}
             key={photo.id}
-            href={`/photo.html?rev=${photo.rev}`}
+            href={`/photo/rev/${photo.rev}`}
+            state={{ route: "photo", rev: photo.rev }}
+            setState={props.setState}
           >
             <img
               src={
@@ -175,7 +183,7 @@ const Day = (props: { date: string }) => {
             <div className={"makeAndModel"}>
               {photo.exif.exifData.tags?.Make} {photo.exif.exifData.tags?.Model}
             </div>
-          </a>
+          </SamePageLink>
         ))}
       </div>
     </>

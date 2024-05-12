@@ -12,10 +12,7 @@ export default (app: Application, _context: Context): void => {
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;");
 
-  const pageAsString = (
-    title: string,
-    payload: Payload,
-  ): string => `<!DOCTYPE html>
+  const pageAsString = (payload: Payload): string => `<!DOCTYPE html>
     <html>
         <head>
             <meta charset="utf-8">
@@ -36,23 +33,20 @@ export default (app: Application, _context: Context): void => {
 
   app.get("/calendar", (req, res) => {
     res.contentType("text/html");
-    res.send(
-      pageAsString("DPM - Calendar", { route: "calendar", url: "/calendar" }),
-    );
+    res.send(pageAsString({ route: "calendar" }));
   });
 
   app.get("/days", (req, res) => {
     res.contentType("text/html");
-    res.send(pageAsString("DPM - Days", { route: "days", url: "/days" }));
+    res.send(pageAsString({ route: "days" }));
   });
 
   app.get("/day/:date(\\d\\d\\d\\d-\\d\\d-\\d\\d)", (req, res) => {
     res.contentType("text/html");
     res.send(
-      pageAsString(`DPM - ${req.params.date}`, {
+      pageAsString({
         route: "day",
         date: req.params.date,
-        url: `/day/${req.params.date}`,
       }),
     );
   });
@@ -60,10 +54,9 @@ export default (app: Application, _context: Context): void => {
   app.get("/photo/rev/:rev", (req, res) => {
     res.contentType("text/html");
     res.send(
-      pageAsString(`DPM - ${req.params.rev}`, {
+      pageAsString({
         route: "photo",
         rev: req.params.rev,
-        url: `/photo/rev/${req.params.rev}`,
       }),
     );
   });

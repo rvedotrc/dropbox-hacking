@@ -14,7 +14,7 @@ const context = contextBuilder({
   baseUrlWithoutSlash: "http://localhost:4000",
 });
 
-app.use(express.static(process.env.PUBLIC_DIR));
+app.use(express.static(process.env.PUBLIC_DIR || "/dne"));
 
 app.use(express.json());
 
