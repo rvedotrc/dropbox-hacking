@@ -9,17 +9,21 @@ export type DayMetadata = {
 export type Payload =
   | {
       route: "calendar";
+      url: string;
     }
   | {
       route: "days";
+      url: string;
     }
   | {
       route: "day";
       date: string;
+      url: string;
     }
   | {
       route: "photo";
       rev: string;
+      url: string;
     };
 
 export type CountsByDateEntry = {

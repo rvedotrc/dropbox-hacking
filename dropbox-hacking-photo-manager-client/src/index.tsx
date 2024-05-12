@@ -6,21 +6,66 @@ import Day from "./day";
 import Photo from "./photo";
 import ListOfDays from "./listOfDays";
 import { Payload } from "dropbox-hacking-photo-manager-shared";
+import { useEffect, useState } from "react";
 
-const toRender = (payload: Payload) => {
-  if (payload.route === "calendar") return <Calendar />;
-  if (payload.route === "days") return <ListOfDays />;
+const toRender = ({
+  payload,
+  setState,
+}: {
+  payload: Payload;
+  setState: (payload: Payload) => void;
+}) => {
+  if (payload.route === "calendar") return <Calendar setState={setState} />;
+  if (payload.route === "days") return <ListOfDays setState={setState} />;
   if (payload.route === "day") return <Day date={payload.date} />;
   if (payload.route === "photo") return <Photo rev={payload.rev} />;
   return <span>Routing error</span>;
 };
 
+const root = (initialState: Payload) => () => {
+  const [state, setState] = useState(initialState);
+
+  // useEffect: after render, "pushState"
+  // useEffect(() => window.history.pushState(state, "unused", state.url));
+
+  // if "popState" happens, render that state
+  useEffect(() => {
+    const listener = (event: PopStateEvent) => {
+      console.debug("popstate", event);
+      setState(event.state);
+    };
+    window.addEventListener("popstate", listener);
+    return () => window.removeEventListener("popstate", listener);
+  });
+
+  useEffect(() => {
+    console.log(
+      `root render for ${window.location.href} in window ${
+        (window as any).my_id
+      } document ${(document as any).my_id}`,
+    );
+  });
+
+  return toRender({ payload: state, setState });
+};
+
 document.addEventListener("DOMContentLoaded", () => {
+  (window as any).my_id ||= new Date().getTime();
+  (document as any).my_id ||= new Date().getTime();
+  console.log(
+    `DOM loaded for ${window.location.href} in window ${
+      (window as any).my_id
+    } document ${(document as any).my_id}`,
+  );
   const ele = document.getElementById("payload-script");
 
   if (ele) {
     const payload = JSON.parse(ele.getAttribute("data-payload") || "null");
     const container = document.getElementById("react_container");
-    if (container) createRoot(container!).render(toRender(payload));
+    if (container) {
+      const R = root(payload);
+      window.history.replaceState(payload, "unused");
+      createRoot(container!).render(<R />);
+    }
   }
 });

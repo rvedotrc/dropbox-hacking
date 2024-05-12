@@ -5,16 +5,21 @@ import {
   CountsByDateResponse,
   DayMetadata,
   DaysMetadataResponse,
+  Payload,
   ThumbnailsByRevResponse,
 } from "dropbox-hacking-photo-manager-shared";
 
-const ListOfDays = () => {
+const ListOfDays = ({ setState }: { setState: (payload: Payload) => void }) => {
   const [countsByDate, setCountsByDate] = useState<CountsByDate>();
   const [dayMetadata, setDayMetadata] = useState<DayMetadata[]>();
   const [revToThumbnail, setRevToThumbnail] = useState(
     new Map<string, string | undefined>(),
   );
   const [visibleDays, setVisibleDays] = useState<[number, number]>();
+
+  useEffect(() => {
+    document.title = "DPM - Days";
+  });
 
   useEffect(() => {
     if (!countsByDate) {
@@ -214,7 +219,17 @@ const ListOfDays = () => {
       <h1>List of Days</h1>
 
       <p>
-        <a href={"/calendar"}>Calendar</a>
+        <a
+          href={"/calendar"}
+          onClick={(e) => {
+            e.preventDefault();
+            const st: Payload = { route: "calendar", url: "/calendar" };
+            window.history.pushState(st, "unused", st.url);
+            setState(st);
+          }}
+        >
+          Calendar
+        </a>
       </p>
 
       <p>

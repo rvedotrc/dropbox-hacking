@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import {
   CountsByDate,
   CountsByDateResponse,
+  Payload,
 } from "dropbox-hacking-photo-manager-shared";
 import MonthBox from "./monthBox";
 import TwelveMonths from "./twelveMonths";
@@ -13,8 +14,12 @@ type Year = {
   counts: Map<string, number>;
 };
 
-const Calendar = () => {
+const Calendar = ({ setState }: { setState: (payload: Payload) => void }) => {
   const [countsByDate, setCountsByDate] = useState<CountsByDate>();
+
+  useEffect(() => {
+    document.title = "DPM - Calendar";
+  });
 
   useEffect(() => {
     if (!countsByDate) {
@@ -60,7 +65,17 @@ const Calendar = () => {
       <h1>Calendar</h1>
 
       <p>
-        <a href={"/days"}>List of days</a>
+        <a
+          href={"/days"}
+          onClick={(e) => {
+            e.preventDefault();
+            const st: Payload = { route: "days", url: "/days" };
+            window.history.pushState(st, "unused", st.url);
+            setState(st);
+          }}
+        >
+          List of days
+        </a>
       </p>
 
       {[...years.keys()]

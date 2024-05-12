@@ -20,7 +20,7 @@ export default (app: Application, _context: Context): void => {
         <head>
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1">
-            <title>${title}</title>
+            <title>DPM</title>
             <link rel="stylesheet" type="text/css" href="/style.css">
         </head>
         <body>
@@ -36,12 +36,14 @@ export default (app: Application, _context: Context): void => {
 
   app.get("/calendar", (req, res) => {
     res.contentType("text/html");
-    res.send(pageAsString("DPM - Calendar", { route: "calendar" }));
+    res.send(
+      pageAsString("DPM - Calendar", { route: "calendar", url: "/calendar" }),
+    );
   });
 
   app.get("/days", (req, res) => {
     res.contentType("text/html");
-    res.send(pageAsString("DPM - Days", { route: "days" }));
+    res.send(pageAsString("DPM - Days", { route: "days", url: "/days" }));
   });
 
   app.get("/day/:date(\\d\\d\\d\\d-\\d\\d-\\d\\d)", (req, res) => {
@@ -50,6 +52,7 @@ export default (app: Application, _context: Context): void => {
       pageAsString(`DPM - ${req.params.date}`, {
         route: "day",
         date: req.params.date,
+        url: `/day/${req.params.date}`,
       }),
     );
   });
@@ -60,6 +63,7 @@ export default (app: Application, _context: Context): void => {
       pageAsString(`DPM - ${req.params.rev}`, {
         route: "photo",
         rev: req.params.rev,
+        url: `/photo/rev/${req.params.rev}`,
       }),
     );
   });
