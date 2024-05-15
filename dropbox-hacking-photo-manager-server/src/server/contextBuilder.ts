@@ -37,15 +37,14 @@ export default (args: {
       return getDropboxClient();
     },
     get lsState(): Promise<LsCache.State> {
-      if (lsCacheState !== undefined) {
+      if (lsCacheState === undefined) {
         const lsCache = new LsCache.StateDir(lsCacheDir);
         lsCacheState = lsCache.load().then(() => lsCache.getState());
       }
-      if (lsCacheState === undefined) throw "";
       return lsCacheState;
     },
     get exifDbAll(): ReturnType<ExifDB["readAll"]> {
-      if (!exifAll) {
+      if (exifAll === undefined) {
         const exifDb = new ExifDB(exifDbDir);
         exifAll = exifDb.readAll();
       }
