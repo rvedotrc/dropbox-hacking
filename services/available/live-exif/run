@@ -1,7 +1,13 @@
 #!/bin/bash
+
+echo starting
 exec 2>&1
 set -eux
+eval "export HOME=~$( id -un )"
+export PATH="$HOME/bin:$PATH"
+
 cd "$( git rev-parse --show-toplevel )"
+
 if [ ! -e var/live/exif/state.json ] ; then
 	exec ./with-live ./bin/exif-cache init --recursive "" var/live/exif var/live/exif
 fi
