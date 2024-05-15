@@ -212,6 +212,14 @@ const ListOfDays = ({ setState }: { setState: (payload: Payload) => void }) => {
         >
           Calendar
         </SamePageLink>
+        {" | "}
+        <SamePageLink
+          href={"/days/plain"}
+          state={{ route: "days-plain" }}
+          setState={setState}
+        >
+          List of days (plain)
+        </SamePageLink>
       </p>
 
       <p>

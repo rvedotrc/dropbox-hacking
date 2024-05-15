@@ -9,6 +9,7 @@ import { Payload } from "dropbox-hacking-photo-manager-shared";
 import { useEffect, useState } from "react";
 import countsByDateContext from "./countsByDateContext";
 import daysMetadataContext from "./daysMetadataContext";
+import ListOfDaysNoPics from "./listOfDaysNoPics";
 
 const toRender = ({
   payload,
@@ -19,6 +20,8 @@ const toRender = ({
 }) => {
   if (payload.route === "calendar") return <Calendar setState={setState} />;
   if (payload.route === "days") return <ListOfDays setState={setState} />;
+  if (payload.route === "days-plain")
+    return <ListOfDaysNoPics setState={setState} />;
   if (payload.route === "day")
     return <Day setState={setState} date={payload.date} />;
   if (payload.route === "photo")
