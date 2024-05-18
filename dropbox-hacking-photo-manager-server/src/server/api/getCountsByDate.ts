@@ -23,8 +23,8 @@ const samplePhotos = (photos: Photo[]): Photo[] => {
 
 export default (app: Application, context: Context): void => {
   app.get("/api/counts_by_date", (req, res) => {
-    Promise.all([context.lsState, context.exifDbAll]).then(
-      ([state, exifDb]) => {
+    Promise.all([context.lsFeed.read(), context.exifDbFeed.read()])
+      .then(([state, exifDb]) => {
         if (state.tag !== "ready") {
           res.status(503);
           res.json({ error: `ls cache not ready (${state.tag})` });
@@ -73,7 +73,9 @@ export default (app: Application, context: Context): void => {
 
         const r: CountsByDateResponse = { counts_by_date: countsByDate };
         res.json(r);
-      },
-    );
+      })
+      .catch((err) => {
+        console.error("ERROR in /api/counts_by_date: ", err);
+      });
   });
 };

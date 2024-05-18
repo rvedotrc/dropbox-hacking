@@ -2,6 +2,7 @@ import { Application } from "express";
 
 import { Context } from "../context";
 import getCountsByDate from "./getCountsByDate";
+import getEvents from "./getEvents";
 import getPhotoMetadata from "./getPhotoMetadata";
 import getPhotosOnDate from "./getPhotosOnDate";
 import getSetDayMetadata from "./getSetDayMetadata";
@@ -13,4 +14,5 @@ export default (app: Application, context: Context): void => {
   getPhotoMetadata(app, context);
   getThumbnailMulti(app, context);
   getSetDayMetadata(app, context);
+  getEvents(app, context);
 };

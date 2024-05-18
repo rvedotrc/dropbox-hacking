@@ -6,7 +6,7 @@ import { Context } from "../context";
 
 export default (app: Application, context: Context): void => {
   app.get("/image/rev/:rev", (req, res) =>
-    Promise.all([context.lsState, context.dropboxClient]).then(
+    Promise.all([context.lsFeed.read(), context.dropboxClient]).then(
       ([state, dbx]) => {
         if (state.tag !== "ready") {
           res.status(503);

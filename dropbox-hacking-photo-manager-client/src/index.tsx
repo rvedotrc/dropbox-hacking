@@ -9,6 +9,7 @@ import { Payload } from "dropbox-hacking-photo-manager-shared";
 import { useEffect, useState } from "react";
 import countsByDateContext from "./countsByDateContext";
 import daysMetadataContext from "./daysMetadataContext";
+import eventEmitterContext from "./eventEmitterContext";
 import ListOfDaysNoPics from "./listOfDaysNoPics";
 
 const toRender = ({
@@ -51,11 +52,13 @@ const Root = ({ initialState }: { initialState: Payload }) => {
   });
 
   return (
-    <countsByDateContext.defaultProvider>
-      <daysMetadataContext.defaultProvider>
-        {toRender({ payload: state, setState })}
-      </daysMetadataContext.defaultProvider>
-    </countsByDateContext.defaultProvider>
+    <eventEmitterContext.defaultProvider>
+      <countsByDateContext.defaultProvider>
+        <daysMetadataContext.defaultProvider>
+          {toRender({ payload: state, setState })}
+        </daysMetadataContext.defaultProvider>
+      </countsByDateContext.defaultProvider>
+    </eventEmitterContext.defaultProvider>
   );
 };
 

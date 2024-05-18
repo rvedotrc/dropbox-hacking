@@ -41,6 +41,11 @@ export default (app: Application, _context: Context): void => {
     res.send(pageAsString({ route: "days" }));
   });
 
+  app.get("/days/plain", (req, res) => {
+    res.contentType("text/html");
+    res.send(pageAsString({ route: "days-plain" }));
+  });
+
   app.get("/day/:date(\\d\\d\\d\\d-\\d\\d-\\d\\d)", (req, res) => {
     res.contentType("text/html");
     res.send(

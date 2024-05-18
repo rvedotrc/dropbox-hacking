@@ -4,7 +4,7 @@ import * as fs from "fs";
 export default class DayDb {
   constructor(public dir: string) {}
 
-  public get days(): Promise<DayMetadata[]> {
+  public days(): Promise<DayMetadata[]> {
     return fs.promises.readFile(this.dayDbFile(), { encoding: "utf-8" }).then(
       (text) => JSON.parse(text.toString()),
       (err: Error & { code: string }) => {
@@ -16,7 +16,7 @@ export default class DayDb {
   }
 
   public setDay(newMetadata: DayMetadata): Promise<void> {
-    return this.days.then((days) => {
+    return this.days().then((days) => {
       const newDays = days.filter((day) => day.date !== newMetadata.date);
       newDays.push(newMetadata);
       newDays.sort((a, b) => a.date.localeCompare(b.date));
