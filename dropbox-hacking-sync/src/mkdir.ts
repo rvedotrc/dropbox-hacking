@@ -6,6 +6,10 @@ export type Mkdir = {
   mkdir: (localPath: string) => Promise<void>;
 };
 
+// A local-mkdir-p engine. A Mkdir object has two properties:
+// - "seed", which can be used to tell the engine about local directories which already exist
+// - "mkdir", which returns a promise to create the given directory (and its parents)
+
 export default (dryRun: boolean): Mkdir => {
   const mkdirPromiseMap: Map<string, Promise<void>> = new Map();
 
