@@ -29,7 +29,7 @@ from_dirs.each do |from_dir|
   system "chflags", "-v", "-R", "uchg", to_dir
   $?.success? or exit 1
 
-  system "./with-live", "./bin/upload-missing", "var/live/ls", "/Camera Uploads", to_dir
+  system "./with-live", "./bin/upload-missing", "--debug-upload", "var/live/ls", "/Camera Uploads", to_dir
   $?.success? or exit 1
 
   FileUtils.rm_rf from_dir
