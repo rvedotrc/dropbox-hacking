@@ -17,6 +17,7 @@ Primarily this comes in the form of a simple command-line interface to a handful
  
 ```shell
 yarn
+yarn clean
 yarn build
 ./bin/cli
 ```
