@@ -7,54 +7,7 @@ import * as fs from "fs";
 
 import { Context, SubscribableData } from "./context";
 import DayDb from "./dayDb";
-
-const makeSafe = (fn: () => void, name: string) => () => {
-  try {
-    fn();
-  } catch (err) {
-    console.error(`Error from ${name} function`, err);
-  }
-};
-
-const waitThenRun = (fn: () => void, delay: number, name?: string) => {
-  const safeFn = makeSafe(fn, `waitThenRun ${name}`);
-  let timer: NodeJS.Timeout | undefined = undefined;
-
-  return (): void => {
-    if (timer === undefined) {
-      timer = setTimeout(() => {
-        timer = undefined;
-        safeFn();
-      }, delay);
-    } else {
-      // do nothing
-    }
-  };
-};
-
-const runThenWait = (fn: () => void, delay: number, name?: string) => {
-  const safeFn = makeSafe(fn, `runThenWait ${name}`);
-  let dirty = false;
-  let timer: NodeJS.Timeout | undefined = undefined;
-
-  const fire = () => {
-    timer = setTimeout(() => {
-      timer = undefined;
-      if (dirty) fire();
-    }, delay);
-
-    dirty = false;
-    safeFn();
-  };
-
-  return (): void => {
-    if (timer === undefined) {
-      fire();
-    } else {
-      dirty = true;
-    }
-  };
-};
+import debounce from "./debounce";
 
 class FilesystemBasedFeed<T>
   extends EventEmitter
@@ -73,8 +26,8 @@ class FilesystemBasedFeed<T>
     if (this.watcher !== undefined) return;
 
     let fn: () => void = () => this.emit("change");
-    fn = waitThenRun(fn, 500, "fs change");
-    fn = runThenWait(fn, 5000, "wait_then_run fs fs change");
+    fn = debounce.waitThenRun(fn, 500, "fs change");
+    fn = debounce.runThenWait(fn, 5000, "wait_then_run fs fs change");
 
     this.watcher = fs.watch(this.dir, fn);
   }
@@ -88,22 +41,6 @@ class FilesystemBasedFeed<T>
     return this.loader();
   }
 }
-
-// class LsFeed
-//   extends EventEmitter
-//   implements SubscribableData<LsCache.State>
-// {
-//   private watcher: fs.FSWatcher | undefined = undefined;
-//
-//   constructor(private readonly lsCacheDir: string) {
-//     super();
-//   }
-//
-//   public read(): Promise<LsCache.State> {
-//     const lsCache = new LsCache.StateDir(this.lsCacheDir);
-//     return lsCache.load().then(() => lsCache.getState());
-//   }
-// }
 
 export default (args: {
   port: number;
