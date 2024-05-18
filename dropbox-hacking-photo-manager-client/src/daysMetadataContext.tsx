@@ -2,7 +2,8 @@ import * as React from "react";
 import {
   DayMetadata,
   DaysMetadataResponse,
-  DPMAnyEvent,
+  DPMChangeEvent,
+  DPMConnectEvent,
 } from "dropbox-hacking-photo-manager-shared";
 import {
   createContext,
@@ -38,16 +39,18 @@ const defaultProvider = (props: { children?: ReactNode | undefined }) => {
     [],
   );
 
-  const listener = useMemo(
-    () => (event: DPMAnyEvent) => {
-      if (event.event_name === "connect") {
-        setValue(undefined);
-      } else if (
-        event.event_name === "change" &&
-        event.event_resource === "days"
-      ) {
-        makeRequest();
-      }
+  const connectListener = useMemo(
+    () => (event: DPMConnectEvent) => {
+      console.log("DMC got event", event);
+      setValue(undefined);
+    },
+    [],
+  );
+
+  const changeListener = useMemo(
+    () => (event: DPMChangeEvent) => {
+      console.log("DMC got event", event);
+      if (event.event_resource === "days") makeRequest();
     },
     [makeRequest],
   );
@@ -57,20 +60,20 @@ const defaultProvider = (props: { children?: ReactNode | undefined }) => {
 
   useEffect(() => {
     console.log("DMC listening for events");
-    events.on("connect", listener);
-    events.on("change", listener);
+    events.on("connect", connectListener);
+    events.on("change", changeListener);
     return () => {
       console.log("DMC stop listening for events");
-      events.off("connect", listener);
-      events.off("change", listener);
+      events.off("connect", connectListener);
+      events.off("change", changeListener);
     };
-  }, [events, listener]);
+  }, [events, connectListener, changeListener]);
 
   useEffect(() => {
     if (value === undefined && !requesting) {
       makeRequest();
     }
-  });
+  }, [value, requesting, makeRequest]);
 
   return <context.Provider value={value}>{props.children}</context.Provider>;
 };

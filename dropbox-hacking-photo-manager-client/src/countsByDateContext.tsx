@@ -2,7 +2,8 @@ import * as React from "react";
 import {
   CountsByDate,
   CountsByDateResponse,
-  DPMAnyEvent,
+  DPMChangeEvent,
+  DPMConnectEvent,
 } from "dropbox-hacking-photo-manager-shared";
 import {
   createContext,
@@ -38,18 +39,18 @@ const defaultProvider = (props: { children?: ReactNode | undefined }) => {
     [],
   );
 
-  const listener = useMemo(
-    () => (event: DPMAnyEvent) => {
+  const connectListener = useMemo(
+    () => (event: DPMConnectEvent) => {
       console.log("CBDC got event", event);
+      setValue(undefined);
+    },
+    [],
+  );
 
-      if (event.event_name === "connect") {
-        setValue(undefined);
-      } else if (
-        event.event_name === "change" &&
-        event.event_resource === "exif"
-      ) {
-        makeRequest();
-      }
+  const changeListener = useMemo(
+    () => (event: DPMChangeEvent) => {
+      console.log("CBDC got event", event);
+      if (event.event_resource === "exif") makeRequest();
     },
     [makeRequest],
   );
@@ -59,14 +60,14 @@ const defaultProvider = (props: { children?: ReactNode | undefined }) => {
 
   useEffect(() => {
     console.log("CBDC listening for events");
-    events.on("connect", listener);
-    events.on("change", listener);
+    events.on("connect", connectListener);
+    events.on("change", changeListener);
     return () => {
       console.log("CBDC stop listening for events");
-      events.off("connect", listener);
-      events.off("change", listener);
+      events.off("connect", connectListener);
+      events.off("change", changeListener);
     };
-  }, [events, listener]);
+  }, [events, connectListener, changeListener]);
 
   useEffect(() => {
     if (value === undefined && !requesting) {

@@ -9,9 +9,8 @@ export type DPMConnectEvent = DPMEvent<"connect", "events">;
 export type DPMLsChangeEvent = DPMEvent<"change", "ls">;
 export type DPMExifChangeEvent = DPMEvent<"change", "exif">;
 export type DPMDaysChangeEvent = DPMEvent<"change", "days">;
-export type DPMAnyEvent =
-  | DPMPingEvent
-  | DPMConnectEvent
+export type DPMChangeEvent =
   | DPMLsChangeEvent
   | DPMExifChangeEvent
   | DPMDaysChangeEvent;
+export type DPMAnyEvent = DPMPingEvent | DPMConnectEvent | DPMChangeEvent;

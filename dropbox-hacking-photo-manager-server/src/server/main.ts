@@ -37,7 +37,12 @@ server.on("close", () => {
 const requestStop = (reason: string) =>
   process.nextTick(() => {
     console.log(`Shutting down server because of ${reason}`);
+    server.closeIdleConnections();
     server.close();
+    const t = setTimeout(() => {
+      server.closeAllConnections();
+    }, 2000);
+    server.once("close", () => clearTimeout(t));
   });
 
 process.on("SIGINT", requestStop);
