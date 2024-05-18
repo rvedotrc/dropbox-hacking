@@ -74,6 +74,12 @@ export default (args: {
   daysFeed.start();
   // FIXME: close()
 
+  const close = async () => {
+    lsFeed.stop();
+    exifDbFeed.stop();
+    daysFeed.stop();
+  };
+
   return {
     port: args.port,
     baseUrlWithoutSlash: args.baseUrlWithoutSlash,
@@ -84,5 +90,6 @@ export default (args: {
     exifDbFeed,
     daysFeed,
     dayDb,
+    close,
   };
 };

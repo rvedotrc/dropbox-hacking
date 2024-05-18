@@ -25,6 +25,20 @@ legacyRedirects(app, context);
 api(app, context);
 image(app, context);
 
-app.listen(context.port, () => {
+const server = app.listen(context.port, () => {
   console.log(`Listening on port ${context.port}`);
 });
+
+server.on("close", () => {
+  console.log("Server closed, now closing context");
+  context.close();
+});
+
+const requestStop = (reason: string) =>
+  process.nextTick(() => {
+    console.log(`Shutting down server because of ${reason}`);
+    server.close();
+  });
+
+process.on("SIGINT", requestStop);
+process.on("SIGTERM", requestStop);

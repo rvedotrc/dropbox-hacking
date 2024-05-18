@@ -22,5 +22,5 @@ export type Context = {
   >;
   readonly daysFeed: SubscribableData<DayMetadata[]>;
   readonly dayDb: DayDb;
-  // FIXME: close()
+  readonly close: () => Promise<void>;
 };
