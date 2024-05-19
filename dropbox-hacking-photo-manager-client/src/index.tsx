@@ -34,7 +34,6 @@ const toRender = ({
 const Root = ({ initialState }: { initialState: Payload }) => {
   const [state, setState] = useState(initialState);
 
-  // if "popState" happens, render that state
   useEffect(() => {
     const listener = (event: PopStateEvent) => setState(event.state);
     window.addEventListener("popstate", listener);

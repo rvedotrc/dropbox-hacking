@@ -133,20 +133,31 @@ const defaultEventEmitterContextProvider = (props: {
         if (dpmEvent.event_name === "change") value.emit("change", dpmEvent);
       }
     },
-    [],
+    [value],
+  );
+
+  // The whole "beforeunload" logic is to avoid the error in the console
+  // about the connection being interrupted when the page reloads.
+  const beforeUnloadListener = useMemo(
+    () => () => eventSource.close(),
+    [eventSource],
   );
 
   useEffect(() => {
     eventSource.addEventListener("error", genericListener);
     eventSource.addEventListener("message", genericListener);
     eventSource.addEventListener("open", genericListener);
+    window.addEventListener("beforeunload", beforeUnloadListener);
 
     return () => {
       eventSource.removeEventListener("error", genericListener);
       eventSource.removeEventListener("message", genericListener);
       eventSource.removeEventListener("open", genericListener);
+      window.removeEventListener("beforeunload", beforeUnloadListener);
     };
-  }, []);
+  }, [eventSource, genericListener, beforeUnloadListener]);
+
+  useEffect(() => () => eventSource.close(), [eventSource]);
 
   return <context.Provider value={value}>{props.children}</context.Provider>;
 };
