@@ -1,16 +1,16 @@
 import * as React from "react";
 import { createRoot } from "react-dom/client";
 
-import Calendar from "./calendar";
+import Calendar from "./days/calendar";
 import Day from "./day";
 import Photo from "./photo";
-import ListOfDays from "./listOfDays";
+import ListOfDays from "./days/listOfDays";
 import { Payload } from "dropbox-hacking-photo-manager-shared";
 import { useEffect, useState } from "react";
-import countsByDateContext from "./countsByDateContext";
-import daysMetadataContext from "./daysMetadataContext";
-import eventEmitterContext from "./eventEmitterContext";
-import ListOfDaysNoPics from "./listOfDaysNoPics";
+import ListOfDaysNoPics from "./days/listOfDaysNoPics";
+import countsByDateContext from "./context/countsByDateContext";
+import daysMetadataContext from "./context/daysMetadataContext";
+import eventEmitterContext from "./context/eventEmitterContext";
 
 const toRender = ({
   payload,

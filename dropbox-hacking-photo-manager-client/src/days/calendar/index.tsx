@@ -3,8 +3,8 @@ import { useEffect } from "react";
 import { Payload } from "dropbox-hacking-photo-manager-shared";
 import MonthBox from "./monthBox";
 import TwelveMonths from "./twelveMonths";
-import SamePageLink from "./samePageLink";
-import { useCountsByDate } from "./countsByDateContext";
+import SamePageLink from "../../samePageLink";
+import { useCountsByDate } from "../../context/countsByDateContext";
 
 type Year = {
   yearString: string;
@@ -12,7 +12,7 @@ type Year = {
   counts: Map<string, number>;
 };
 
-const Calendar = ({ setState }: { setState: (payload: Payload) => void }) => {
+const Index = ({ setState }: { setState: (payload: Payload) => void }) => {
   const countsByDate = useCountsByDate();
 
   useEffect(() => {
@@ -120,4 +120,4 @@ const Calendar = ({ setState }: { setState: (payload: Payload) => void }) => {
   );
 };
 
-export default Calendar;
+export default Index;

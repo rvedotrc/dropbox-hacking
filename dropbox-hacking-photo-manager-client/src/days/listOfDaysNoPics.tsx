@@ -2,9 +2,9 @@ import * as React from "react";
 import { useEffect } from "react";
 import { DayMetadata, Payload } from "dropbox-hacking-photo-manager-shared";
 
-import SamePageLink from "./samePageLink";
-import { useDaysMetadata } from "./daysMetadataContext";
-import { useCountsByDate } from "./countsByDateContext";
+import SamePageLink from "../samePageLink";
+import { useDaysMetadata } from "../context/daysMetadataContext";
+import { useCountsByDate } from "../context/countsByDateContext";
 
 const ListOfDaysNoPics = ({
   setState,

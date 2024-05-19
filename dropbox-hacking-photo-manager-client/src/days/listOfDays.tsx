@@ -6,9 +6,9 @@ import {
   ThumbnailsByRevResponse,
 } from "dropbox-hacking-photo-manager-shared";
 
-import SamePageLink from "./samePageLink";
-import { useDaysMetadata } from "./daysMetadataContext";
-import { useCountsByDate } from "./countsByDateContext";
+import SamePageLink from "../samePageLink";
+import { useDaysMetadata } from "../context/daysMetadataContext";
+import { useCountsByDate } from "../context/countsByDateContext";
 
 const ListOfDays = ({ setState }: { setState: (payload: Payload) => void }) => {
   const countsByDate = useCountsByDate();

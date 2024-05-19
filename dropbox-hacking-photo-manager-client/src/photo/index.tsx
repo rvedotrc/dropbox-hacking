@@ -7,7 +7,7 @@ import {
   PhotoResponse,
 } from "dropbox-hacking-photo-manager-shared";
 
-const Photo = (props: {
+const Index = (props: {
   rev: string;
   setState: (payload: Payload) => void;
 }) => {
@@ -88,4 +88,4 @@ const Photo = (props: {
   );
 };
 
-export default Photo;
+export default Index;

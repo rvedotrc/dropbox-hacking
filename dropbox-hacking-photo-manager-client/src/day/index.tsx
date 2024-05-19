@@ -9,9 +9,12 @@ import {
   ThumbnailsByRevResponse,
 } from "dropbox-hacking-photo-manager-shared";
 import EditableTextField from "./editableTextField";
-import SamePageLink from "./samePageLink";
+import SamePageLink from "../samePageLink";
 
-const Day = (props: { date: string; setState: (payload: Payload) => void }) => {
+const Index = (props: {
+  date: string;
+  setState: (payload: Payload) => void;
+}) => {
   const [photos, setPhotos] = useState<Photo[]>();
   const [revToThumbnail, setRevToThumbnail] = useState(
     new Map<string, string | undefined>(),
@@ -190,4 +193,4 @@ const Day = (props: { date: string; setState: (payload: Payload) => void }) => {
   );
 };
 
-export default Day;
+export default Index;
