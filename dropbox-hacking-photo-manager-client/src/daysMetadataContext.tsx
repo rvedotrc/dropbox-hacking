@@ -3,7 +3,6 @@ import {
   DayMetadata,
   DaysMetadataResponse,
   DPMChangeEvent,
-  DPMConnectEvent,
 } from "dropbox-hacking-photo-manager-shared";
 import {
   createContext,
@@ -25,7 +24,6 @@ const defaultProvider = (props: { children?: ReactNode | undefined }) => {
 
   const makeRequest = useMemo(
     () => () => {
-      console.log("requesting days metadata");
       if (requesting) console.warn("Overlapping requests in DMC");
 
       fetch("/api/day/all")
@@ -39,17 +37,10 @@ const defaultProvider = (props: { children?: ReactNode | undefined }) => {
     [],
   );
 
-  const connectListener = useMemo(
-    () => (event: DPMConnectEvent) => {
-      console.log("DMC got event", event);
-      setValue(undefined);
-    },
-    [],
-  );
+  const connectListener = useMemo(() => () => setValue(undefined), []);
 
   const changeListener = useMemo(
     () => (event: DPMChangeEvent) => {
-      console.log("DMC got event", event);
       if (event.event_resource === "days") makeRequest();
     },
     [makeRequest],
@@ -59,11 +50,10 @@ const defaultProvider = (props: { children?: ReactNode | undefined }) => {
   if (events === undefined) return null;
 
   useEffect(() => {
-    console.log("DMC listening for events");
     events.on("connect", connectListener);
     events.on("change", changeListener);
+
     return () => {
-      console.log("DMC stop listening for events");
       events.off("connect", connectListener);
       events.off("change", changeListener);
     };

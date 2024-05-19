@@ -3,7 +3,6 @@ import {
   CountsByDate,
   CountsByDateResponse,
   DPMChangeEvent,
-  DPMConnectEvent,
 } from "dropbox-hacking-photo-manager-shared";
 import {
   createContext,
@@ -25,7 +24,6 @@ const defaultProvider = (props: { children?: ReactNode | undefined }) => {
 
   const makeRequest = useMemo(
     () => () => {
-      console.log("requesting counts by date");
       if (requesting) console.warn("Overlapping requests in CBDC");
 
       fetch("/api/counts_by_date")
@@ -39,17 +37,10 @@ const defaultProvider = (props: { children?: ReactNode | undefined }) => {
     [],
   );
 
-  const connectListener = useMemo(
-    () => (event: DPMConnectEvent) => {
-      console.log("CBDC got event", event);
-      setValue(undefined);
-    },
-    [],
-  );
+  const connectListener = useMemo(() => () => setValue(undefined), []);
 
   const changeListener = useMemo(
     () => (event: DPMChangeEvent) => {
-      console.log("CBDC got event", event);
       if (event.event_resource === "exif") makeRequest();
     },
     [makeRequest],
@@ -59,11 +50,10 @@ const defaultProvider = (props: { children?: ReactNode | undefined }) => {
   if (events === undefined) return null;
 
   useEffect(() => {
-    console.log("CBDC listening for events");
     events.on("connect", connectListener);
     events.on("change", changeListener);
+
     return () => {
-      console.log("CBDC stop listening for events");
       events.off("connect", connectListener);
       events.off("change", changeListener);
     };

@@ -134,13 +134,11 @@ const defaultProvider = (props: { children?: ReactNode | undefined }) => {
   );
 
   useEffect(() => {
-    console.log("Adding ES listeners");
     eventSource.addEventListener("error", genericListener);
     eventSource.addEventListener("message", genericListener);
     eventSource.addEventListener("open", genericListener);
 
     return () => {
-      console.log("Removing ES listeners");
       eventSource.removeEventListener("error", genericListener);
       eventSource.removeEventListener("message", genericListener);
       eventSource.removeEventListener("open", genericListener);

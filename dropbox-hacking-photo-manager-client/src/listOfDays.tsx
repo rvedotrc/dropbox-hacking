@@ -46,7 +46,7 @@ const ListOfDays = ({ setState }: { setState: (payload: Payload) => void }) => {
 
   // Load any missing thumbnails (visible days only)
   useEffect(() => {
-    console.log("useEffect img load", countsByDate !== undefined, visibleDays);
+    // console.log("useEffect img load", countsByDate !== undefined, visibleDays);
 
     if (countsByDate === undefined) return;
     if (!visibleDays) return;
@@ -75,15 +75,15 @@ const ListOfDays = ({ setState }: { setState: (payload: Payload) => void }) => {
       const slice = needToRequest.splice(0, 25);
       if (slice.length === 0) break;
 
-      console.log(`Requesting ${slice.join(",")}`);
+      // console.log(`Requesting ${slice.join(",")}`);
 
       fetch(`/api/thumbnail/128/revs/${slice.join(",")}`)
         .then((res) => res.json() as Promise<ThumbnailsByRevResponse>)
         .then((data) => {
-          console.log(`Got response for ${slice.join(",")}`, data);
+          // console.log(`Got response for ${slice.join(",")}`, data);
 
           for (const r of data.thumbnails_by_rev) {
-            console.log(`got thumbnail for ${r.rev}`);
+            // console.log(`got thumbnail for ${r.rev}`);
             revToThumbnail.set(r.rev, r.thumbnail);
           }
 
@@ -94,33 +94,33 @@ const ListOfDays = ({ setState }: { setState: (payload: Payload) => void }) => {
   }, [countsByDate, revToThumbnail, visibleDays]);
 
   const olRef = useRef<HTMLOListElement>(null);
-  console.log(
-    "render",
-    olRef.current,
-    visibleDays,
-    countsByDate ? countsByDate.length : null,
-  );
+  // console.log(
+  //   "render",
+  //   olRef.current,
+  //   visibleDays,
+  //   countsByDate ? countsByDate.length : null,
+  // );
   // console.log("render", olRef.current, visibleDays, (visibleDays && countsByDate) ? [countsByDate[visibleDays[0]].date, countsByDate[visibleDays[1]].date] : null);
 
   useEffect(() => {
-    console.log("use effect scroll", olRef.current);
+    // console.log("use effect scroll", olRef.current);
     const ol = olRef.current;
     if (!ol) return;
 
     const onScrollStopped = () => {
-      console.log("scroll has stopped");
-      console.log(
-        `window sY=${window.scrollY} sT=${window.screenTop} iH=${window.innerHeight} oH=${window.outerHeight}`,
-      );
+      // console.log("scroll has stopped");
+      // console.log(
+      //   `window sY=${window.scrollY} sT=${window.screenTop} iH=${window.innerHeight} oH=${window.outerHeight}`,
+      // );
 
-      const body = document.body;
-      console.log(
-        `body oH/T=${body.offsetHeight}/${body.offsetTop} sH/T=${body.scrollHeight}/${body.scrollTop} cH/T=${body.clientHeight}/${body.clientTop}`,
-      );
+      // const body = document.body;
+      // console.log(
+      //   `body oH/T=${body.offsetHeight}/${body.offsetTop} sH/T=${body.scrollHeight}/${body.scrollTop} cH/T=${body.clientHeight}/${body.clientTop}`,
+      // );
 
-      console.log(
-        `ol oH/T=${ol.offsetHeight}/${ol.offsetTop} sH/T=${ol.scrollHeight}/${ol.scrollTop} cH/T=${ol.clientHeight}/${ol.clientTop}`,
-      );
+      // console.log(
+      //   `ol oH/T=${ol.offsetHeight}/${ol.offsetTop} sH/T=${ol.scrollHeight}/${ol.scrollTop} cH/T=${ol.clientHeight}/${ol.clientTop}`,
+      // );
 
       const items = [...ol.childNodes] as HTMLLIElement[];
 
@@ -142,13 +142,13 @@ const ListOfDays = ({ setState }: { setState: (payload: Payload) => void }) => {
         return answer;
       };
 
-      console.log(
-        `window screenY=${window.screenY} screenTop=${window.screenTop} scrollY=${window.scrollY} innerHeight=${window.innerHeight} outerHeight=${window.outerHeight}`,
-      );
-      const v = (window as any).visualViewport;
-      console.log(`v h=${v.height} oT=${v.offsetTop} pageTop=${v.pageTop}`);
+      // console.log(
+      //   `window screenY=${window.screenY} screenTop=${window.screenTop} scrollY=${window.scrollY} innerHeight=${window.innerHeight} outerHeight=${window.outerHeight}`,
+      // );
+      // const v = (window as any).visualViewport;
+      // console.log(`v h=${v.height} oT=${v.offsetTop} pageTop=${v.pageTop}`);
       const q = items.map((_ele, i) => queryItem(i));
-      console.log(`q = ${q.join(" ")}`);
+      // console.log(`q = ${q.join(" ")}`);
       const min = q.indexOf(0);
       const max = q.lastIndexOf(0);
       setVisibleDays([min, max]);

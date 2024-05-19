@@ -35,21 +35,10 @@ const Root = ({ initialState }: { initialState: Payload }) => {
 
   // if "popState" happens, render that state
   useEffect(() => {
-    const listener = (event: PopStateEvent) => {
-      console.debug("popstate", event);
-      setState(event.state);
-    };
+    const listener = (event: PopStateEvent) => setState(event.state);
     window.addEventListener("popstate", listener);
     return () => window.removeEventListener("popstate", listener);
   }, []);
-
-  useEffect(() => {
-    console.log(
-      `root render for ${window.location.href} in window ${
-        (window as any).my_id
-      } document ${(document as any).my_id}`,
-    );
-  });
 
   return (
     <eventEmitterContext.defaultProvider>
@@ -63,13 +52,6 @@ const Root = ({ initialState }: { initialState: Payload }) => {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-  (window as any).my_id ||= new Date().getTime();
-  (document as any).my_id ||= new Date().getTime();
-  console.log(
-    `DOM loaded for ${window.location.href} in window ${
-      (window as any).my_id
-    } document ${(document as any).my_id}`,
-  );
   const ele = document.getElementById("payload-script");
 
   if (ele) {
