@@ -1,4 +1,5 @@
 import * as React from "react";
+import logRender from "../../logRender";
 
 const TwelveMonths = (props: {
   year: number;
@@ -13,4 +14,4 @@ const TwelveMonths = (props: {
   </div>
 );
 
-export default TwelveMonths;
+export default logRender(TwelveMonths);

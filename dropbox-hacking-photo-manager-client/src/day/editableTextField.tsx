@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useEffect, useRef, useState } from "react";
+import logRender from "../logRender";
 
 const EditableTextField = (props: {
   value: string;
@@ -50,4 +51,4 @@ const EditableTextField = (props: {
   }
 };
 
-export default EditableTextField;
+export default logRender(EditableTextField);

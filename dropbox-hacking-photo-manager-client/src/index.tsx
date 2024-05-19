@@ -11,6 +11,7 @@ import ListOfDaysNoPics from "./days/listOfDaysNoPics";
 import countsByDateContext from "./context/countsByDateContext";
 import daysMetadataContext from "./context/daysMetadataContext";
 import eventEmitterContext from "./context/eventEmitterContext";
+import logRender from "./logRender";
 
 const toRender = ({
   payload,
@@ -51,6 +52,8 @@ const Root = ({ initialState }: { initialState: Payload }) => {
   );
 };
 
+const WrappedRoot = logRender(Root);
+
 document.addEventListener("DOMContentLoaded", () => {
   const ele = document.getElementById("payload-script");
 
@@ -59,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const container = document.getElementById("react_container");
     if (container) {
       window.history.replaceState(payload, "unused");
-      createRoot(container!).render(<Root initialState={payload} />);
+      createRoot(container!).render(<WrappedRoot initialState={payload} />);
     }
   }
 });

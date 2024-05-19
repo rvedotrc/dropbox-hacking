@@ -13,6 +13,7 @@ import {
   DPMConnectEvent,
   DPMPingEvent,
 } from "dropbox-hacking-photo-manager-shared";
+import logRender from "../logRender";
 
 class EventsProvider extends EventEmitter {
   emit(eventName: "connect", event: DPMConnectEvent): boolean;
@@ -113,7 +114,9 @@ const context = createContext<EventsProvider | undefined>(undefined);
 
 export const useEvents = () => useContext(context);
 
-const defaultProvider = (props: { children?: ReactNode | undefined }) => {
+const defaultEventEmitterContextProvider = (props: {
+  children?: ReactNode | undefined;
+}) => {
   const value = useMemo<EventsProvider>(() => new EventEmitter(), []);
 
   const eventSource = useMemo(() => new EventSource("/api/events"), []);
@@ -150,5 +153,5 @@ const defaultProvider = (props: { children?: ReactNode | undefined }) => {
 
 export default {
   context,
-  defaultProvider,
+  defaultProvider: logRender(defaultEventEmitterContextProvider),
 };

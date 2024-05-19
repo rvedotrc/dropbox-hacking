@@ -5,6 +5,7 @@ import { DayMetadata, Payload } from "dropbox-hacking-photo-manager-shared";
 import SamePageLink from "../samePageLink";
 import { useDaysMetadata } from "../context/daysMetadataContext";
 import { useCountsByDate } from "../context/countsByDateContext";
+import logRender from "../logRender";
 
 const ListOfDaysNoPics = ({
   setState,
@@ -105,4 +106,4 @@ const ListOfDaysNoPics = ({
   );
 };
 
-export default ListOfDaysNoPics;
+export default logRender(ListOfDaysNoPics);

@@ -13,12 +13,15 @@ import {
   useState,
 } from "react";
 import { useEvents } from "./eventEmitterContext";
+import logRender from "../logRender";
 
 const context = createContext<CountsByDate | undefined>(undefined);
 
 export const useCountsByDate = () => useContext(context);
 
-const defaultProvider = (props: { children?: ReactNode | undefined }) => {
+const defaultCountsByDateContextProvider = (props: {
+  children?: ReactNode | undefined;
+}) => {
   const [requesting, setRequesting] = useState(false);
   const [value, setValue] = useState<CountsByDate>();
 
@@ -70,5 +73,5 @@ const defaultProvider = (props: { children?: ReactNode | undefined }) => {
 
 export default {
   context,
-  defaultProvider,
+  defaultProvider: logRender(defaultCountsByDateContextProvider),
 };

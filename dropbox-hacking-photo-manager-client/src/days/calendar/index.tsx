@@ -5,6 +5,7 @@ import MonthBox from "./monthBox";
 import TwelveMonths from "./twelveMonths";
 import SamePageLink from "../../samePageLink";
 import { useCountsByDate } from "../../context/countsByDateContext";
+import logRender from "../../logRender";
 
 type Year = {
   yearString: string;
@@ -12,7 +13,7 @@ type Year = {
   counts: Map<string, number>;
 };
 
-const Index = ({ setState }: { setState: (payload: Payload) => void }) => {
+const Calendar = ({ setState }: { setState: (payload: Payload) => void }) => {
   const countsByDate = useCountsByDate();
 
   useEffect(() => {
@@ -120,4 +121,4 @@ const Index = ({ setState }: { setState: (payload: Payload) => void }) => {
   );
 };
 
-export default Index;
+export default logRender(Calendar);

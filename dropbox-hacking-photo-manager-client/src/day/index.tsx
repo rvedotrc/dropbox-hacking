@@ -10,11 +10,9 @@ import {
 } from "dropbox-hacking-photo-manager-shared";
 import EditableTextField from "./editableTextField";
 import SamePageLink from "../samePageLink";
+import logRender from "../logRender";
 
-const Index = (props: {
-  date: string;
-  setState: (payload: Payload) => void;
-}) => {
+const Day = (props: { date: string; setState: (payload: Payload) => void }) => {
   const [photos, setPhotos] = useState<Photo[]>();
   const [revToThumbnail, setRevToThumbnail] = useState(
     new Map<string, string | undefined>(),
@@ -193,4 +191,4 @@ const Index = (props: {
   );
 };
 
-export default Index;
+export default logRender(Day);

@@ -9,6 +9,7 @@ import {
 import SamePageLink from "../samePageLink";
 import { useDaysMetadata } from "../context/daysMetadataContext";
 import { useCountsByDate } from "../context/countsByDateContext";
+import logRender from "../logRender";
 
 const ListOfDays = ({ setState }: { setState: (payload: Payload) => void }) => {
   const countsByDate = useCountsByDate();
@@ -284,4 +285,4 @@ const ListOfDays = ({ setState }: { setState: (payload: Payload) => void }) => {
   );
 };
 
-export default ListOfDays;
+export default logRender(ListOfDays);
