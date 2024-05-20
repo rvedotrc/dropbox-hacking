@@ -1,17 +1,13 @@
 import * as React from "react";
 import { useEffect } from "react";
-import { DayMetadata, Payload } from "dropbox-hacking-photo-manager-shared";
+import { DayMetadata } from "dropbox-hacking-photo-manager-shared";
 
 import SamePageLink from "../samePageLink";
 import { useDaysMetadata } from "../context/daysMetadataContext";
 import { useCountsByDate } from "../context/countsByDateContext";
 import logRender from "../logRender";
 
-const ListOfDaysNoPics = ({
-  setState,
-}: {
-  setState: (payload: Payload) => void;
-}) => {
+const ListOfDaysNoPics = () => {
   const countsByDate = useCountsByDate();
   const dayMetadata = useDaysMetadata();
 
@@ -51,19 +47,11 @@ const ListOfDaysNoPics = ({
       <h1>List of Days</h1>
 
       <p>
-        <SamePageLink
-          href={"/calendar"}
-          state={{ route: "calendar" }}
-          setState={setState}
-        >
+        <SamePageLink href={"/calendar"} state={{ route: "calendar" }}>
           Calendar
         </SamePageLink>
         {" | "}
-        <SamePageLink
-          href={"/days"}
-          state={{ route: "days" }}
-          setState={setState}
-        >
+        <SamePageLink href={"/days"} state={{ route: "days" }}>
           List of days
         </SamePageLink>
       </p>
@@ -89,7 +77,6 @@ const ListOfDaysNoPics = ({
           <li key={day.date}>
             <SamePageLink
               state={{ route: "day", date: day.date }}
-              setState={setState}
               href={`/day/${day.date}`}
             >
               <span className={"date"}>{day.date}</span>

@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import {
   DayMetadata,
   DayMetadataResponse,
-  Payload,
   Photo,
   PhotosResponse,
   ThumbnailsByRevResponse,
@@ -12,7 +11,7 @@ import EditableTextField from "./editableTextField";
 import SamePageLink from "../samePageLink";
 import logRender from "../logRender";
 
-const Day = (props: { date: string; setState: (payload: Payload) => void }) => {
+const Day = (props: { date: string }) => {
   const [photos, setPhotos] = useState<Photo[]>();
   const [revToThumbnail, setRevToThumbnail] = useState(
     new Map<string, string | undefined>(),
@@ -165,7 +164,6 @@ const Day = (props: { date: string; setState: (payload: Payload) => void }) => {
             key={photo.id}
             href={`/photo/rev/${photo.rev}`}
             state={{ route: "photo", rev: photo.rev }}
-            setState={props.setState}
           >
             <img
               src={

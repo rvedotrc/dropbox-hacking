@@ -2,16 +2,12 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 import {
   GPSLatLong,
-  Payload,
   Photo,
   PhotoResponse,
 } from "dropbox-hacking-photo-manager-shared";
 import logRender from "../logRender";
 
-const Photo = (props: {
-  rev: string;
-  setState: (payload: Payload) => void;
-}) => {
+const Photo = (props: { rev: string }) => {
   const [photo, setPhoto] = useState<Photo | false | undefined>();
   const [previewSizes, setPreviewSizes] = useState<string[]>();
 

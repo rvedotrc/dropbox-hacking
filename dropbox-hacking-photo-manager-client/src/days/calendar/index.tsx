@@ -1,6 +1,5 @@
 import * as React from "react";
 import { useEffect } from "react";
-import { Payload } from "dropbox-hacking-photo-manager-shared";
 import MonthBox from "./monthBox";
 import TwelveMonths from "./twelveMonths";
 import SamePageLink from "../../samePageLink";
@@ -13,7 +12,7 @@ type Year = {
   counts: Map<string, number>;
 };
 
-const Calendar = ({ setState }: { setState: (payload: Payload) => void }) => {
+const Calendar = () => {
   const countsByDate = useCountsByDate();
 
   useEffect(() => {
@@ -56,19 +55,11 @@ const Calendar = ({ setState }: { setState: (payload: Payload) => void }) => {
       <h1>Calendar</h1>
 
       <p>
-        <SamePageLink
-          href={"/days"}
-          state={{ route: "days" }}
-          setState={setState}
-        >
+        <SamePageLink href={"/days"} state={{ route: "days" }}>
           List of days
         </SamePageLink>
         {" | "}
-        <SamePageLink
-          href={"/days/plain"}
-          state={{ route: "days-plain" }}
-          setState={setState}
-        >
+        <SamePageLink href={"/days/plain"} state={{ route: "days-plain" }}>
           List of days (plain)
         </SamePageLink>
       </p>
@@ -101,7 +92,6 @@ const Calendar = ({ setState }: { setState: (payload: Payload) => void }) => {
                             <SamePageLink
                               href={`/day/date=${dateString}`}
                               state={{ route: "day", date: dateString }}
-                              setState={setState}
                             >
                               {count}
                             </SamePageLink>
