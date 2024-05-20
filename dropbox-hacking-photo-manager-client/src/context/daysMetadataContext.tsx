@@ -6,7 +6,7 @@ import {
 } from "dropbox-hacking-photo-manager-shared";
 import {
   createContext,
-  ReactNode,
+  PropsWithChildren,
   useContext,
   useEffect,
   useMemo,
@@ -19,9 +19,9 @@ const context = createContext<DayMetadata[] | undefined>(undefined);
 
 export const useDaysMetadata = () => useContext(context);
 
-const defaultDaysMetadataContextProvider = (props: {
-  children?: ReactNode | undefined;
-}) => {
+const defaultDaysMetadataContextProvider = (
+  props: PropsWithChildren<object>,
+) => {
   const [requesting, setRequesting] = useState(false);
   const [value, setValue] = useState<DayMetadata[]>();
 

@@ -6,7 +6,7 @@ import {
 } from "dropbox-hacking-photo-manager-shared";
 import {
   createContext,
-  ReactNode,
+  PropsWithChildren,
   useContext,
   useEffect,
   useMemo,
@@ -19,9 +19,9 @@ const context = createContext<CountsByDate | undefined>(undefined);
 
 export const useCountsByDate = () => useContext(context);
 
-const defaultCountsByDateContextProvider = (props: {
-  children?: ReactNode | undefined;
-}) => {
+const defaultCountsByDateContextProvider = (
+  props: PropsWithChildren<object>,
+) => {
   const [requesting, setRequesting] = useState(false);
   const [value, setValue] = useState<CountsByDate>();
 

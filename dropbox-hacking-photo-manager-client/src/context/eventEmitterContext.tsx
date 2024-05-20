@@ -2,7 +2,7 @@ import * as React from "react";
 import { EventEmitter } from "events";
 import {
   createContext,
-  ReactNode,
+  PropsWithChildren,
   useContext,
   useEffect,
   useMemo,
@@ -114,9 +114,9 @@ const context = createContext<EventsProvider | undefined>(undefined);
 
 export const useEvents = () => useContext(context);
 
-const defaultEventEmitterContextProvider = (props: {
-  children?: ReactNode | undefined;
-}) => {
+const defaultEventEmitterContextProvider = (
+  props: PropsWithChildren<object>,
+) => {
   const value = useMemo<EventsProvider>(() => new EventEmitter(), []);
 
   const eventSource = useMemo(() => new EventSource("/api/events"), []);
