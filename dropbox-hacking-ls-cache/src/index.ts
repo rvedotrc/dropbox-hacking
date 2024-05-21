@@ -56,8 +56,8 @@ export class StateDir {
       this.data === undefined
         ? { tag: "does_not_exist" }
         : !this.data.ready
-        ? { tag: "starting", cursor: this.data.cursor }
-        : { tag: "ready", ...this.data },
+          ? { tag: "starting", cursor: this.data.cursor }
+          : { tag: "ready", ...this.data },
     );
   }
 

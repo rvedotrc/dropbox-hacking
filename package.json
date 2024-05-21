@@ -11,7 +11,7 @@
   "repository": "https://github.com/rvedotrc/dropbox-hacking",
   "scripts": {
     "build": "./build.sh",
-    "clean": "rm -rf node_modules */tsconfig.tsbuildinfo"
+    "clean": "rm -rf node_modules */tsconfig.tsbuildinfo */dist */node_modules"
   },
   "version": "1.0.0",
   "workspaces": [
