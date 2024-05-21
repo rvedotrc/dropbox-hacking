@@ -19,17 +19,6 @@ const context = createContext<ThumbnailLoader | undefined>(undefined);
 
 export const useThumbnailLoader = () => useContext(context);
 
-// discardUnwanted
-// let changed = false;
-// for (const rev of revToThumbnail.keys()) {
-//     if (!wantedRevs.has(rev)) {
-//         revToThumbnail.delete(rev);
-//         changed = true;
-//     }
-// }
-//
-// if (changed) setRevToThumbnail(new Map(revToThumbnail));
-
 type State = {
   cache: Map<string, string | undefined>;
   requesting: Set<string>;
@@ -103,7 +92,10 @@ const defaultThumbnailLoaderProvider = (props: PropsWithChildren<object>) => {
         dispatch({ action: "set_wanted", revs, wanted: true }),
       setUnwanted: (revs: string[]) =>
         dispatch({ action: "set_wanted", revs, wanted: false }),
-      getThumbnail: (rev: string): string | undefined => state.cache.get(rev),
+      getThumbnail: (rev: string): string | undefined =>
+        state.cache.get(rev) ||
+        window.localStorage.getItem(`v1:t:128:${rev}`) ||
+        undefined,
     }),
     [state],
   );
@@ -116,6 +108,7 @@ const defaultThumbnailLoaderProvider = (props: PropsWithChildren<object>) => {
     const shouldRequest = [...state.wanted]
       .filter((rev) => !state.requesting.has(rev))
       .filter((rev) => !state.cache.has(rev))
+      .filter((rev) => !window.localStorage[`v1:t:128:${rev}`])
       .sort();
 
     if (shouldRequest.length > 25) shouldRequest.splice(25);
@@ -139,7 +132,11 @@ const defaultThumbnailLoaderProvider = (props: PropsWithChildren<object>) => {
             action: "store_thumbnails",
             items: data.thumbnails_by_rev,
           });
+          for (const t of data.thumbnails_by_rev) {
+            window.localStorage.setItem(`v1:t:128:${t.rev}`, t.thumbnail);
+          }
         });
+
       dispatch({
         action: "set_requesting",
         revs: shouldRequest,
