@@ -1,16 +1,21 @@
 import { DependencyList, RefObject, useEffect } from "react";
 
-const useVisibilityTracking = (
-  olRef: RefObject<HTMLOListElement>,
-  listItemDataAttribute: string,
-  setVisibleDates: (range: [string, string]) => void,
-  deps?: DependencyList | undefined,
-) =>
+const useVisibilityTracking = ({
+  parentRef,
+  listItemDataAttribute,
+  onVisibleItems,
+  deps,
+}: {
+  parentRef: RefObject<HTMLElement>;
+  listItemDataAttribute: string;
+  onVisibleItems: (visible: Set<string>) => void;
+  deps?: DependencyList | undefined;
+}) =>
   useEffect(() => {
-    const ol = olRef.current;
-    if (!ol) return;
+    const parent = parentRef.current;
+    if (!parent) return;
 
-    console.log("Start scroll tracking for ", ol);
+    console.log("Start scroll tracking for ", parent);
 
     const onScrollStopped = () => {
       // console.log("scroll has stopped");
@@ -27,22 +32,20 @@ const useVisibilityTracking = (
       //   `ol oH/T=${ol.offsetHeight}/${ol.offsetTop} sH/T=${ol.scrollHeight}/${ol.scrollTop} cH/T=${ol.clientHeight}/${ol.clientTop}`,
       // );
 
-      const items = [...ol.childNodes] as HTMLLIElement[];
+      const children = [...parent.childNodes].filter(
+        (child) => child.nodeType === Node.ELEMENT_NODE,
+      ) as HTMLElement[];
 
       // Each item is either above the viewport, or below it, or overlapping.
       // Above, overlapping, below, in that order.
       // We need to find the ones which are overlapping.
 
-      const queryItem = (i: number) => {
-        // if (i > 20) return +1;
-
-        const element = items[i];
-        if (!element) throw "No item";
-
+      const queryElement = (element: HTMLElement) => {
         const box = element.getBoundingClientRect();
 
         const answer =
           box.bottom < 0 ? -1 : box.top > window.innerHeight ? +1 : 0;
+
         // console.log(`i=${i} ${answer} date=${countsByDate?.[i].date} box t/b/y/h=${box.top}/${box.bottom}/${box.y}/${box.height}`);
         return answer;
       };
@@ -52,15 +55,11 @@ const useVisibilityTracking = (
       // );
       // const v = (window as any).visualViewport;
       // console.log(`v h=${v.height} oT=${v.offsetTop} pageTop=${v.pageTop}`);
-      const q = items.map((_ele, i) => queryItem(i));
-      // console.log(`q = ${q.join(" ")}`);
-      const min = q.indexOf(0);
-      const max = q.lastIndexOf(0);
+      const visibleItems = children
+        .filter((child) => queryElement(child) === 0)
+        .map((item) => item.getAttribute(listItemDataAttribute) as string);
 
-      setVisibleDates([
-        items[min].getAttribute(listItemDataAttribute) as string,
-        items[max].getAttribute(listItemDataAttribute) as string,
-      ]);
+      onVisibleItems(new Set(visibleItems));
     };
 
     let timer = window.setTimeout(onScrollStopped, 500);
@@ -72,13 +71,13 @@ const useVisibilityTracking = (
 
     window.addEventListener("scroll", listener);
     window.addEventListener("resize", listener);
-    ol.addEventListener("resize", listener);
+    parent.addEventListener("resize", listener);
 
     return () => {
-      console.log("Stop scroll tracking for ", ol);
+      console.log("Stop scroll tracking for ", parent);
       window.removeEventListener("scroll", listener);
       window.removeEventListener("resize", listener);
-      ol.removeEventListener("resize", listener);
+      parent.removeEventListener("resize", listener);
       if (timer) window.clearTimeout(timer);
     };
   }, deps);

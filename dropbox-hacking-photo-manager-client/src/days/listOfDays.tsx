@@ -10,7 +10,7 @@ import { useCountsByDate } from "../context/countsByDateContext";
 import logRender from "../logRender";
 import DayWithSamples, { dayDateAttribute } from "./dayWithSamples";
 import Stats from "./stats";
-import useVisibilityTracking from "./trackListVisibility";
+import useVisibilityTracking from "./useVisibilityTracking";
 import DefaultThumbnailLoaderProvider from "./thumbnailLoaderContext";
 import Navigate from "./navigate";
 
@@ -23,7 +23,7 @@ const ListOfDaysWithData = ({
   dayMetadata: DayMetadata[];
   withSamples: boolean;
 }) => {
-  const [visibleDates, setVisibleDates] = useState<[string, string]>();
+  const [visibleDates, setVisibleDates] = useState<Set<string>>();
   const olRef = useRef<HTMLOListElement>(null);
 
   // console.log("render ", { visibleDates });
@@ -43,7 +43,12 @@ const ListOfDaysWithData = ({
     [countsByDate, keyedMetadata],
   );
 
-  useVisibilityTracking(olRef, dayDateAttribute, setVisibleDates, [days]);
+  useVisibilityTracking({
+    parentRef: olRef,
+    listItemDataAttribute: dayDateAttribute,
+    onVisibleItems: setVisibleDates,
+    deps: [days],
+  });
 
   return (
     <div>
@@ -59,11 +64,7 @@ const ListOfDaysWithData = ({
             key={day.date}
             day={day}
             withSamples={withSamples}
-            visible={
-              visibleDates
-                ? day.date >= visibleDates[0] && day.date <= visibleDates[1]
-                : false
-            }
+            visible={visibleDates?.has(day.date) || false}
           />
         ))}
       </ol>
