@@ -2,6 +2,7 @@ import { DependencyList, RefObject, useEffect } from "react";
 
 const useVisibilityTracking = (
   olRef: RefObject<HTMLOListElement>,
+  listItemDataAttribute: string,
   setVisibleDates: (range: [string, string]) => void,
   deps?: DependencyList | undefined,
 ) =>
@@ -57,8 +58,8 @@ const useVisibilityTracking = (
       const max = q.lastIndexOf(0);
 
       setVisibleDates([
-        items[min].getAttribute("data-date") as string,
-        items[max].getAttribute("data-date") as string,
+        items[min].getAttribute(listItemDataAttribute) as string,
+        items[max].getAttribute(listItemDataAttribute) as string,
       ]);
     };
 

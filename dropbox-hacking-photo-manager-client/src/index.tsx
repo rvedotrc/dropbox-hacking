@@ -7,7 +7,6 @@ import Photo from "./photo";
 import ListOfDays from "./days/listOfDays";
 import { Payload } from "dropbox-hacking-photo-manager-shared";
 import { useEffect, useMemo, useState } from "react";
-import ListOfDaysNoPics from "./days/listOfDaysNoPics";
 import countsByDateContext from "./context/countsByDateContext";
 import daysMetadataContext from "./context/daysMetadataContext";
 import eventEmitterContext from "./context/eventEmitterContext";
@@ -17,8 +16,8 @@ import logRender from "./logRender";
 
 const toRender = ({ payload }: { payload: Payload }) => {
   if (payload.route === "calendar") return <Calendar />;
-  if (payload.route === "days") return <ListOfDays />;
-  if (payload.route === "days-plain") return <ListOfDaysNoPics />;
+  if (payload.route === "days") return <ListOfDays withSamples={true} />;
+  if (payload.route === "days-plain") return <ListOfDays withSamples={false} />;
   if (payload.route === "day") return <Day date={payload.date} />;
   if (payload.route === "photo") return <Photo rev={payload.rev} />;
   return <span>Routing error</span>;

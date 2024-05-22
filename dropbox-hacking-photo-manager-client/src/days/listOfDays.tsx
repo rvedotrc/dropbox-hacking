@@ -5,21 +5,23 @@ import {
   DayMetadata,
 } from "dropbox-hacking-photo-manager-shared";
 
-import SamePageLink from "../samePageLink";
 import { useDaysMetadata } from "../context/daysMetadataContext";
 import { useCountsByDate } from "../context/countsByDateContext";
 import logRender from "../logRender";
-import DayWithSamples from "./dayWithSamples";
+import DayWithSamples, { dayDateAttribute } from "./dayWithSamples";
 import Stats from "./stats";
 import useVisibilityTracking from "./trackListVisibility";
 import DefaultThumbnailLoaderProvider from "./thumbnailLoaderContext";
+import Navigate from "./navigate";
 
 const ListOfDaysWithData = ({
   countsByDate,
   dayMetadata,
+  withSamples,
 }: {
   countsByDate: CountsByDate;
   dayMetadata: DayMetadata[];
+  withSamples: boolean;
 }) => {
   const [visibleDates, setVisibleDates] = useState<[string, string]>();
   const olRef = useRef<HTMLOListElement>(null);
@@ -41,21 +43,13 @@ const ListOfDaysWithData = ({
     [countsByDate, keyedMetadata],
   );
 
-  useVisibilityTracking(olRef, setVisibleDates, [days]);
+  useVisibilityTracking(olRef, dayDateAttribute, setVisibleDates, [days]);
 
   return (
     <div>
       <h1>List of Days</h1>
 
-      <p>
-        <SamePageLink href={"/calendar"} state={{ route: "calendar" }}>
-          Calendar
-        </SamePageLink>
-        {" | "}
-        <SamePageLink href={"/days/plain"} state={{ route: "days-plain" }}>
-          List of days (plain)
-        </SamePageLink>
-      </p>
+      <Navigate />
 
       <Stats days={days} />
 
@@ -64,6 +58,7 @@ const ListOfDaysWithData = ({
           <DayWithSamples
             key={day.date}
             day={day}
+            withSamples={withSamples}
             visible={
               visibleDates
                 ? day.date >= visibleDates[0] && day.date <= visibleDates[1]
@@ -76,7 +71,7 @@ const ListOfDaysWithData = ({
   );
 };
 
-const ListOfDays = () => {
+const ListOfDays = ({ withSamples }: { withSamples: boolean }) => {
   const countsByDate = useCountsByDate();
   const dayMetadata = useDaysMetadata();
 
@@ -92,6 +87,7 @@ const ListOfDays = () => {
         <ListOfDaysWithData
           countsByDate={countsByDate}
           dayMetadata={dayMetadata}
+          withSamples={withSamples}
         />
       </DefaultThumbnailLoaderProvider>
     );

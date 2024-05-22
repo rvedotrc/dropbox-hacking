@@ -5,6 +5,7 @@ import TwelveMonths from "./twelveMonths";
 import SamePageLink from "../../samePageLink";
 import { useCountsByDate } from "../../context/countsByDateContext";
 import logRender from "../../logRender";
+import Navigate from "../navigate";
 
 type Year = {
   yearString: string;
@@ -54,15 +55,7 @@ const Calendar = () => {
     <div>
       <h1>Calendar</h1>
 
-      <p>
-        <SamePageLink href={"/days"} state={{ route: "days" }}>
-          List of days
-        </SamePageLink>
-        {" | "}
-        <SamePageLink href={"/days/plain"} state={{ route: "days-plain" }}>
-          List of days (plain)
-        </SamePageLink>
-      </p>
+      <Navigate />
 
       {[...years.keys()]
         .sort()
