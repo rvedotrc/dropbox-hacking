@@ -14,6 +14,8 @@ const samePageLink = ({
     <a
       {...props}
       onClick={(e) => {
+        if (e.altKey || e.shiftKey || e.ctrlKey || e.metaKey) return;
+
         e.preventDefault();
         window.history.pushState(state, "unused", props.href);
         router.switchToPage(state);
