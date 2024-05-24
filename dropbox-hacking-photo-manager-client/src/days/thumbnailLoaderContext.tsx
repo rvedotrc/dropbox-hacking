@@ -31,6 +31,8 @@ const initialState = (): State => ({
   wanted: new Set(),
 });
 
+const DISCARD_INVISIBLE_AFTER = 30000;
+
 type Action =
   | never
   | { action: "set_wanted"; revs: string[]; wanted: boolean }
@@ -45,7 +47,10 @@ const defaultThumbnailLoaderProvider = (props: PropsWithChildren<object>) => {
   const [state, dispatch] = useReducer(
     (before: State, action: Action): State => {
       if (action.action === "set_wanted") {
-        if (action.revs.length === 0) return before;
+        if (
+          action.revs.every((rev) => before.wanted.has(rev) === action.wanted)
+        )
+          return before;
 
         const copy: State = { ...before, wanted: new Set(before.wanted) };
         action.revs.forEach((rev) =>
@@ -53,7 +58,8 @@ const defaultThumbnailLoaderProvider = (props: PropsWithChildren<object>) => {
         );
         return copy;
       } else if (action.action === "set_requesting") {
-        if (action.revs.length === 0) return before;
+        if (action.revs.every((rev) => before.requesting.has(rev)))
+          return before;
 
         const copy: State = {
           ...before,
@@ -94,13 +100,13 @@ const defaultThumbnailLoaderProvider = (props: PropsWithChildren<object>) => {
         dispatch({ action: "set_wanted", revs, wanted: false }),
       getThumbnail: (rev: string): string | undefined =>
         state.cache.get(rev) ||
-        window.localStorage.getItem(`v1:t:128:${rev}`) ||
+        // window.localStorage.getItem(`v1:t:128:${rev}`) ||
         undefined,
     }),
     [state],
   );
 
-  console.log("render loader ", loader, state);
+  // console.log("render loader ", loader, state);
 
   useEffect(() => {
     // console.log("loader effect");
@@ -108,7 +114,7 @@ const defaultThumbnailLoaderProvider = (props: PropsWithChildren<object>) => {
     const shouldRequest = [...state.wanted]
       .filter((rev) => !state.requesting.has(rev))
       .filter((rev) => !state.cache.has(rev))
-      .filter((rev) => !window.localStorage[`v1:t:128:${rev}`])
+      // .filter((rev) => !window.localStorage[`v1:t:128:${rev}`])
       .sort();
 
     if (shouldRequest.length > 25) shouldRequest.splice(25);
@@ -132,9 +138,9 @@ const defaultThumbnailLoaderProvider = (props: PropsWithChildren<object>) => {
             action: "store_thumbnails",
             items: data.thumbnails_by_rev,
           });
-          for (const t of data.thumbnails_by_rev) {
-            window.localStorage.setItem(`v1:t:128:${t.rev}`, t.thumbnail);
-          }
+          // for (const t of data.thumbnails_by_rev) {
+          //   window.localStorage.setItem(`v1:t:128:${t.rev}`, t.thumbnail);
+          // }
         });
 
       dispatch({
@@ -150,7 +156,7 @@ const defaultThumbnailLoaderProvider = (props: PropsWithChildren<object>) => {
     const t = setTimeout(() => {
       console.log("Discarding ", shouldDiscard);
       dispatch({ action: "discard_thumbnails", revs: shouldDiscard });
-    }, 5000);
+    }, DISCARD_INVISIBLE_AFTER);
     return () => clearTimeout(t);
   });
 

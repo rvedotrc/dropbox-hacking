@@ -83,7 +83,7 @@ const Calendar = () => {
                         return (
                           <div title={dateString}>
                             <SamePageLink
-                              href={`/day/date=${dateString}`}
+                              href={`/day/${dateString}`}
                               state={{ route: "day", date: dateString }}
                             >
                               {count}

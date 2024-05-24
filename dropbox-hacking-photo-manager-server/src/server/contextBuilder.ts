@@ -25,11 +25,18 @@ class FilesystemBasedFeed<T>
   public start(): void {
     if (this.watcher !== undefined) return;
 
-    let fn: () => void = () => this.emit("change");
+    let fn: () => void = () => {
+      console.debug(`FilesystemBasedFeed ${this.dir} emit change`);
+      this.emit("change");
+    };
     fn = debounce.waitThenRun(fn, 500, "fs change");
     fn = debounce.runThenWait(fn, 5000, "wait_then_run fs fs change");
+    const base = () => {
+      console.debug(`FilesystemBasedFeed ${this.dir} fswatch event`);
+      fn();
+    };
 
-    this.watcher = fs.watch(this.dir, fn);
+    this.watcher = fs.watch(this.dir, base);
   }
 
   public stop(): void {

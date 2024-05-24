@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import { Photo, PhotosResponse } from "dropbox-hacking-photo-manager-shared";
 import { Application } from "express";
 
@@ -9,6 +10,9 @@ export default (app: Application, context: Context): void => {
 
     Promise.all([context.lsFeed.read(), context.exifDbFeed.read()]).then(
       ([state, exif]) => {
+        const id = randomUUID();
+        console.log(`${id} ${req.method} ${req.path}`);
+
         if (state.tag !== "ready") {
           res.status(503);
           res.json({ error: `ls cache not ready (${state.tag})` });

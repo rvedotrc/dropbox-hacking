@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import {
   CountsByDateEntry,
   CountsByDateResponse,
@@ -25,6 +26,9 @@ export default (app: Application, context: Context): void => {
   app.get("/api/counts_by_date", (req, res) => {
     Promise.all([context.lsFeed.read(), context.exifDbFeed.read()])
       .then(([state, exifDb]) => {
+        const id = randomUUID();
+        console.log(`${id} ${req.method} ${req.path}`);
+
         if (state.tag !== "ready") {
           res.status(503);
           res.json({ error: `ls cache not ready (${state.tag})` });

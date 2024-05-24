@@ -117,39 +117,53 @@ export const useEvents = () => useContext(context);
 const defaultEventEmitterContextProvider = (
   props: PropsWithChildren<object>,
 ) => {
-  const value = useMemo<EventsProvider>(() => new EventEmitter(), []);
+  const emitter = useMemo<EventsProvider>(() => new EventEmitter(), []);
 
-  const eventSource = useMemo(() => new EventSource("/api/events"), []);
+  const eventSource = useMemo(() => {
+    console.debug(`new EventSource`);
+    return new EventSource("/api/events");
+  }, []);
 
   const genericListener = useMemo(
     () => (e: Event) => {
+      // console.debug(`EventSource says: `, e);
+
       if (e.type === "message") {
         const dpmEvent: DPMAnyEvent = JSON.parse(
           (e as unknown as { data: string }).data,
         );
 
-        if (dpmEvent.event_name === "connect") value.emit("connect", dpmEvent);
-        if (dpmEvent.event_name === "ping") value.emit("ping", dpmEvent);
-        if (dpmEvent.event_name === "change") value.emit("change", dpmEvent);
+        if (dpmEvent.event_name !== "ping")
+          console.debug("Got event", dpmEvent);
+
+        if (dpmEvent.event_name === "connect")
+          emitter.emit("connect", dpmEvent);
+        if (dpmEvent.event_name === "ping") emitter.emit("ping", dpmEvent);
+        if (dpmEvent.event_name === "change") emitter.emit("change", dpmEvent);
       }
     },
-    [value],
+    [emitter],
   );
 
   // The whole "beforeunload" logic is to avoid the error in the console
   // about the connection being interrupted when the page reloads.
   const beforeUnloadListener = useMemo(
-    () => () => eventSource.close(),
+    () => () => {
+      console.debug(`EventSource close (beforeUnload)`);
+      eventSource.close();
+    },
     [eventSource],
   );
 
   useEffect(() => {
+    console.debug(`EventSource / window add listeners`);
     eventSource.addEventListener("error", genericListener);
     eventSource.addEventListener("message", genericListener);
     eventSource.addEventListener("open", genericListener);
     window.addEventListener("beforeunload", beforeUnloadListener);
 
     return () => {
+      console.debug(`EventSource / window remove listeners`);
       eventSource.removeEventListener("error", genericListener);
       eventSource.removeEventListener("message", genericListener);
       eventSource.removeEventListener("open", genericListener);
@@ -157,9 +171,15 @@ const defaultEventEmitterContextProvider = (
     };
   }, [eventSource, genericListener, beforeUnloadListener]);
 
-  useEffect(() => () => eventSource.close(), [eventSource]);
+  useEffect(
+    () => () => {
+      console.debug(`EventSource close (normal)`);
+      eventSource.close();
+    },
+    [eventSource],
+  );
 
-  return <context.Provider value={value}>{props.children}</context.Provider>;
+  return <context.Provider value={emitter}>{props.children}</context.Provider>;
 };
 
 export default {

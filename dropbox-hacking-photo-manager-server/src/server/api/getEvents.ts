@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import { DPMAnyEvent } from "dropbox-hacking-photo-manager-shared";
 import { Application } from "express";
 
@@ -5,20 +6,24 @@ import { Context } from "../context";
 
 export default (app: Application, context: Context): void => {
   app.get("/api/events", (req, res) => {
-    req.on("close", () => console.log("req close"));
-    req.on("error", (err) => console.log("req error", err));
-    req.on("resume", () => console.log("req resume"));
-    req.on("end", () => console.log("req end"));
-    req.on("data", (chunk) => console.log("req data", chunk));
-    req.on("readable", () => console.log("req readable"));
-    req.on("pause", () => console.log("req pause"));
+    // req.on("close", () => console.log("req close"));
+    // req.on("error", (err) => console.log("req error", err));
+    // req.on("resume", () => console.log("req resume"));
+    // req.on("end", () => console.log("req end"));
+    // req.on("data", (chunk) => console.log("req data", chunk));
+    // req.on("readable", () => console.log("req readable"));
+    // req.on("pause", () => console.log("req pause"));
 
-    res.on("close", () => console.log("res close"));
-    res.on("unpipe", (src) => console.log("res unpipe", src));
-    res.on("finish", () => console.log("res finish"));
-    res.on("pipe", (src) => console.log("res pipe", src));
-    res.on("drain", () => console.log("res drain"));
-    res.on("error", (err) => console.log("res error", err));
+    const id = randomUUID();
+    console.log(`${id} ${req.method} ${req.path}`);
+    res.on("close", () => console.log(`${id} GET /api/events [closed]`));
+
+    // res.on("close", () => console.log("res close"));
+    // res.on("unpipe", (src) => console.log("res unpipe", src));
+    // res.on("finish", () => console.log("res finish"));
+    // res.on("pipe", (src) => console.log("res pipe", src));
+    // res.on("drain", () => console.log("res drain"));
+    // res.on("error", (err) => console.log("res error", err));
 
     res.setHeader("X-Accel-Buffering", "no");
     res.setHeader("Content-Type", "text/event-stream");
@@ -26,7 +31,8 @@ export default (app: Application, context: Context): void => {
     res.writeHead(200);
 
     const emit = (e: DPMAnyEvent) => {
-      // console.log("emit", e);
+      if (e.event_name !== "ping")
+        console.log(`${id} emit ${JSON.stringify(e)}`);
       res.write(`data: ${JSON.stringify(e)}\r\n\r\n`);
     };
 

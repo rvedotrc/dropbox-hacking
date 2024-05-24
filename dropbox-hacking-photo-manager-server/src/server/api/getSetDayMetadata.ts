@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import {
   DayMetadataResponse,
   DaysMetadataResponse,
@@ -11,7 +12,11 @@ export default (app: Application, context: Context): void => {
     context.dayDb
       .days()
       .then((days) => ({ days_metadata: days }))
-      .then((data: DaysMetadataResponse) => res.json(data)),
+      .then((data: DaysMetadataResponse) => {
+        const id = randomUUID();
+        console.log(`${id} ${req.method} ${req.path}`);
+        res.json(data);
+      }),
   );
 
   app.get("/api/day/:date(\\d\\d\\d\\d-\\d\\d-\\d\\d)", (req, res) =>
@@ -19,6 +24,9 @@ export default (app: Application, context: Context): void => {
       .days()
       .then((days) => days.find((d) => d.date === req.params.date))
       .then((thisDay) => {
+        const id = randomUUID();
+        console.log(`${id} ${req.method} ${req.path}`);
+
         if (thisDay === undefined)
           thisDay = { date: req.params.date, description: "" };
 
@@ -27,6 +35,8 @@ export default (app: Application, context: Context): void => {
   );
 
   app.patch("/api/day/:date(\\d\\d\\d\\d-\\d\\d-\\d\\d)", (req, res) => {
+    const id = randomUUID();
+    console.log(`${id} ${req.method} ${req.path}`);
     const body = req.body;
 
     if (typeof body["description"] === "string") {

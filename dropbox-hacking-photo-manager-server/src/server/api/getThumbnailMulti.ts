@@ -4,10 +4,14 @@ import { Application } from "express";
 
 import { Context } from "../context";
 import GetThumbnailBatchArg = files.GetThumbnailBatchArg;
+import { randomUUID } from "crypto";
 
 export default (app: Application, context: Context): void => {
   app.get("/api/thumbnail/128/revs/:revs", (req, res) =>
     context.dropboxClient.then((dbx) => {
+      const id = randomUUID();
+      console.log(`${id} ${req.method} ${req.path}`);
+
       const request: GetThumbnailBatchArg = {
         entries: req.params.revs.split(/,/).map((rev) => ({
           path: `rev:${rev}`,

@@ -57,7 +57,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const container = document.getElementById("react_container");
     if (container) {
       window.history.replaceState(payload, "unused");
-      createRoot(container!).render(<WrappedRoot initialState={payload} />);
+      createRoot(container!).render(
+        // StrictMode removed: kills the EventSource stuff, for now
+        // <StrictMode>
+        <WrappedRoot initialState={payload} />,
+        // </StrictMode>,
+      );
     }
   }
 });
