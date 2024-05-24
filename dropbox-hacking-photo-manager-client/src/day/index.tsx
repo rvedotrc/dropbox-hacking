@@ -2,7 +2,6 @@ import * as React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   DayMetadataResponse,
-  DPMChangeEvent,
   PhotosResponse,
 } from "dropbox-hacking-photo-manager-shared";
 import EditableTextField from "./editableTextField";
@@ -10,9 +9,8 @@ import logRender from "../logRender";
 import DefaultThumbnailLoaderProvider from "../days/thumbnailLoaderContext";
 import useVisibilityTracking from "../days/useVisibilityTracking";
 import PhotoTile from "./photoTile";
-import useApiResource from "./useApiResource";
-import { isLeft } from "./fp";
-import { useEvents } from "../context/eventEmitterContext";
+import { useDay, useDayPhotos } from "../context/feeds";
+import { isLeft } from "../fp";
 
 const DayWithData = ({
   date,
@@ -81,47 +79,26 @@ const DayWithData = ({
 const DayWithDataLogged = logRender(DayWithData);
 
 const Day = ({ date }: { date: string }) => {
-  const dayMetadata = useApiResource<DayMetadataResponse>({
-    url: `/api/day/${date}`,
-  });
-  const dayPhotos = useApiResource<PhotosResponse>({
-    url: `/api/photos/${date}`,
-  });
+  const dayMetadata = useDay(date);
+  const dayPhotos = useDayPhotos(date);
 
   useEffect(() => {
     document.title = `DPM - ${date}`;
   }, [date]);
 
-  const events = useEvents();
-  const handler = useMemo(
-    () => (e: DPMChangeEvent) => {
-      if (e.event_resource === "days") {
-        dayMetadata.refresh();
-      }
-    },
-    [dayMetadata],
-  );
-
-  useEffect(() => {
-    events?.on("change", handler);
-    return () => {
-      events?.off("change", handler);
-    };
-  }, []);
-
-  if (!dayPhotos.result || !dayMetadata.result) {
-    return <div>Loading...</div>;
+  if (!dayPhotos || !dayMetadata) {
+    return <div>Loading DAY ...</div>;
   }
 
-  if (isLeft(dayPhotos.result) || isLeft(dayMetadata.result)) {
-    return <div>FAIL :-(</div>;
+  if (isLeft(dayPhotos) || isLeft(dayMetadata)) {
+    return <div>Error DAY :-(</div>;
   }
 
   return (
     <DayWithDataLogged
       date={date}
-      dayPhotos={dayPhotos.result.value}
-      dayMetadata={dayMetadata.result.value}
+      dayPhotos={dayPhotos.right}
+      dayMetadata={dayMetadata.right}
     />
   );
 };

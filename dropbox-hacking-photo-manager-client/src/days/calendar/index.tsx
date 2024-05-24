@@ -3,9 +3,9 @@ import { useEffect } from "react";
 import MonthBox from "./monthBox";
 import TwelveMonths from "./twelveMonths";
 import SamePageLink from "../../samePageLink";
-import { useCountsByDate } from "../../context/countsByDateContext";
 import logRender from "../../logRender";
 import Navigate from "../navigate";
+import { useCountsByDate } from "../../context/countsByDateContext";
 
 type Year = {
   yearString: string;
@@ -21,7 +21,7 @@ const Calendar = () => {
   });
 
   if (!countsByDate) {
-    return <div>Loading...</div>;
+    return <div>Loading CAL ...</div>;
   }
 
   if (countsByDate.length === 0) return <div>No data</div>;

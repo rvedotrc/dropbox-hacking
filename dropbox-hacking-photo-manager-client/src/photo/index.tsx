@@ -32,7 +32,7 @@ const Photo = (props: { rev: string }) => {
   }, []);
 
   if (photo === undefined) {
-    return <div>Loading...</div>;
+    return <div>Loading PHOTO ...</div>;
   }
 
   if (photo === false) {

@@ -5,14 +5,14 @@ import {
   DayMetadata,
 } from "dropbox-hacking-photo-manager-shared";
 
-import { useDaysMetadata } from "../context/daysMetadataContext";
-import { useCountsByDate } from "../context/countsByDateContext";
 import logRender from "../logRender";
 import DayWithSamples, { dayDateAttribute } from "./dayWithSamples";
 import Stats from "./stats";
 import useVisibilityTracking from "./useVisibilityTracking";
 import DefaultThumbnailLoaderProvider from "./thumbnailLoaderContext";
 import Navigate from "./navigate";
+import { useCountsByDate } from "../context/countsByDateContext";
+import { useDays } from "../context/daysMetadataContext";
 
 const ListOfDaysWithData = ({
   countsByDate,
@@ -74,14 +74,14 @@ const ListOfDaysWithData = ({
 
 const ListOfDays = ({ withSamples }: { withSamples: boolean }) => {
   const countsByDate = useCountsByDate();
-  const dayMetadata = useDaysMetadata();
+  const dayMetadata = useDays();
 
   useEffect(() => {
     document.title = "DPM - Days";
   }, []);
 
   if (!countsByDate || !dayMetadata) {
-    return <div>Loading...</div>;
+    return <div>Loading LOD ...</div>;
   } else {
     return (
       <DefaultThumbnailLoaderProvider>

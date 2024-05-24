@@ -1,77 +1,28 @@
 import * as React from "react";
-import {
-  DayMetadata,
-  DaysMetadataResponse,
-  DPMChangeEvent,
-} from "dropbox-hacking-photo-manager-shared";
-import {
-  createContext,
-  PropsWithChildren,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import { useEvents } from "./eventEmitterContext";
+import { DayMetadata } from "dropbox-hacking-photo-manager-shared";
+import { createContext, PropsWithChildren, useContext } from "react";
 import logRender from "../logRender";
+import * as feeds from "./feeds";
+import { isLeft } from "../fp";
 
 const context = createContext<DayMetadata[] | undefined>(undefined);
 
-export const useDaysMetadata = () => useContext(context);
+export const useDays = () => useContext(context);
 
-const defaultDaysMetadataContextProvider = (
-  props: PropsWithChildren<object>,
-) => {
-  const [requesting, setRequesting] = useState(false);
-  const [value, setValue] = useState<DayMetadata[]>();
+const defaultDaysContextProvider = (props: PropsWithChildren<object>) => {
+  const feed = feeds.useDays();
 
-  const makeRequest = useMemo(
-    () => () => {
-      if (requesting) console.warn("Overlapping requests in DMC");
+  if (!feed) return <div>Loading DMC ...</div>;
+  if (isLeft(feed)) return <div>Error DMC :-(</div>;
 
-      fetch("/api/day/all")
-        .then((r) => r.json() as Promise<DaysMetadataResponse>)
-        .then((data) => {
-          setValue(data.days_metadata);
-          setRequesting(false);
-        });
-      setRequesting(true);
-    },
-    [],
+  return (
+    <context.Provider value={feed.right.days_metadata}>
+      {props.children}
+    </context.Provider>
   );
-
-  const connectListener = useMemo(() => () => setValue(undefined), []);
-
-  const changeListener = useMemo(
-    () => (event: DPMChangeEvent) => {
-      if (event.event_resource === "days") makeRequest();
-    },
-    [makeRequest],
-  );
-
-  const events = useEvents();
-  if (events === undefined) return null;
-
-  useEffect(() => {
-    events.on("connect", connectListener);
-    events.on("change", changeListener);
-
-    return () => {
-      events.off("connect", connectListener);
-      events.off("change", changeListener);
-    };
-  }, [events, connectListener, changeListener]);
-
-  useEffect(() => {
-    if (value === undefined && !requesting) {
-      makeRequest();
-    }
-  }, [value, requesting, makeRequest]);
-
-  return <context.Provider value={value}>{props.children}</context.Provider>;
 };
 
 export default {
   context,
-  defaultProvider: logRender(defaultDaysMetadataContextProvider),
+  defaultProvider: logRender(defaultDaysContextProvider),
 };

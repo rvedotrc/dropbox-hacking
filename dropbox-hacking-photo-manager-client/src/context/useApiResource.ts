@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Either, left, right } from "./fp";
+import { useEffect, useMemo, useState } from "react";
+import { Either, left, right } from "../fp";
 
 type Result<T> = Either<any, T>;
 type FetchPromise = Promise<unknown>;
@@ -45,14 +45,24 @@ export default <T>({ url }: { url: string }) => {
     }
   }, []);
 
-  return {
-    result: state.result,
-    reset: () => {
+  const reset = useMemo(
+    () => () => {
       setState({ result: undefined, fetchPromise: undefined });
       initRequest();
     },
-    refresh: () => {
+    [],
+  );
+
+  const refresh = useMemo(
+    () => () => {
       initRequest();
     },
+    [],
+  );
+
+  return {
+    result: state.result,
+    reset,
+    refresh,
   };
 };
