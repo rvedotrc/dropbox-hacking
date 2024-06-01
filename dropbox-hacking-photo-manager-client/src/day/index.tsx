@@ -53,11 +53,13 @@ const DayWithData = ({
     <>
       <h1>{date}</h1>
 
-      <EditableTextField
-        key={dayMetadata.day_metadata.description}
-        value={dayMetadata.day_metadata.description}
-        onSave={onSaveDescription}
-      />
+      <p>
+        <EditableTextField
+          key={dayMetadata.day_metadata.description}
+          value={dayMetadata.day_metadata.description}
+          onSave={onSaveDescription}
+        />
+      </p>
 
       <p>{dayPhotos.photos.length} photos</p>
 

@@ -33,6 +33,7 @@
     background: #ccc;
 }
 
+/* List of photoItem on a day page */
 .photoList {
     display: flex;
     flex-wrap: wrap;
@@ -88,7 +89,6 @@
     background: #eed;
 }
 
-
 .listOfDays a {
     display: flex;
 }
@@ -107,4 +107,8 @@
     margin-right: 1em;
     text-align: right;
     width: 2em;
+}
+
+.samples {
+    display: block;
 }

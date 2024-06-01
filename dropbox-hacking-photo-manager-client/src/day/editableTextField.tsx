@@ -2,6 +2,7 @@ import * as React from "react";
 import {
   ChangeEvent,
   KeyboardEvent,
+  MouseEvent,
   useEffect,
   useMemo,
   useRef,
@@ -22,14 +23,28 @@ const EditableTextField = (props: {
   }, [isEditing, input.current]);
 
   const doSave = useMemo(
-    () => () => props.onSave(editingValue).then(() => setIsEditing(false)),
+    () => (event: MouseEvent | KeyboardEvent) => {
+      console.log("Saving");
+      event.preventDefault();
+      return props.onSave(editingValue).then(() => setIsEditing(false));
+    },
     [props.onSave, editingValue],
   );
 
-  const doCancel = useMemo(() => () => setIsEditing(false), []);
+  const doCancel = useMemo(
+    () => (event: MouseEvent | KeyboardEvent) => {
+      console.log("Stop editing");
+      event.preventDefault();
+      setIsEditing(false);
+    },
+    [],
+  );
 
   const startEditing = useMemo(
-    () => () => {
+    () => (event: MouseEvent | KeyboardEvent) => {
+      console.log("Start editing");
+      event.stopPropagation();
+      event.preventDefault();
       setEditingValue(props.value);
       setIsEditing(true);
     },
@@ -43,17 +58,19 @@ const EditableTextField = (props: {
 
   const onKeyDown = useMemo(
     () => (e: KeyboardEvent) => {
-      if (e.key === "Enter") doSave();
-      else if (e.key === "Escape") doCancel();
+      if (e.key === "Enter") doSave(e);
+      else if (e.key === "Escape") doCancel(e);
     },
     [doSave, doCancel],
   );
 
   if (!isEditing) {
-    return <p onClick={startEditing}>{props.value || "(click to edit)"}</p>;
+    return (
+      <span onClick={startEditing}>{props.value || "(click to edit)"}</span>
+    );
   } else {
     return (
-      <p>
+      <span>
         <input
           ref={input}
           type={"text"}
@@ -64,7 +81,7 @@ const EditableTextField = (props: {
         />
         <input type={"submit"} value={"Save"} onClick={doSave} />
         <input type={"reset"} value={"Cancel"} onClick={doCancel} />
-      </p>
+      </span>
     );
   }
 };
