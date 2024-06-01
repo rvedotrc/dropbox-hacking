@@ -1,5 +1,7 @@
 import { files } from "dropbox";
 import { ExifFromHash } from "dropbox-hacking-exif-db";
+import FileMetadataReference = files.FileMetadataReference;
+import FolderMetadataReference = files.FolderMetadataReference;
 
 export type DayMetadata = {
   date: string;
@@ -49,4 +51,8 @@ export type DayMetadataResponse = {
 
 export type DaysMetadataResponse = {
   days_metadata: DayMetadata[];
+};
+
+export type LsResponse = {
+  items: Array<FileMetadataReference | FolderMetadataReference>;
 };
