@@ -8,12 +8,12 @@ export default (app: Application, context: Context): void => {
   app.get("/api/events", (req, res) => {
     const id = getLogPrefix(req) || "?";
 
-    req.on("close", () => console.log(`${id} req close`));
-    req.on("error", (err) => console.log(`${id} req error`, err));
-    req.on("end", () => console.log(`${id} req end`));
+    // req.on("close", () => console.log(`${id} req close`));
+    // req.on("error", (err) => console.log(`${id} req error`, err)); // e.g. err.code === 'ECONNRESET'
+    // req.on("end", () => console.log(`${id} req end`));
 
-    res.on("close", () => console.log(`${id} [res closed]`));
-    res.on("error", (err) => console.log(`${id} res error`, err));
+    // res.on("close", () => console.log(`${id} [res closed]`));
+    // res.on("error", (err) => console.log(`${id} res error`, err));
 
     res.setHeader("X-Accel-Buffering", "no");
     res.setHeader("Content-Type", "text/event-stream");

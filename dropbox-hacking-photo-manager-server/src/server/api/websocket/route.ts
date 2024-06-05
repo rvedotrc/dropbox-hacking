@@ -10,7 +10,7 @@ export default (app: Application, _context: Context): void => {
     const id = getLogPrefix(req) || "?";
 
     try {
-      console.log(`${id} New websocket`);
+      // console.log(`${id} New websocket`);
 
       const closer = () => {
         process.nextTick(() => {
@@ -46,16 +46,16 @@ export default (app: Application, _context: Context): void => {
         clearTimeout(idleTimer);
       });
 
-      ws.on("open", (..._args) => console.log(`${id} ws open`));
-      ws.on("ping", (..._args) => console.log(`${id} ws ping`));
-      ws.on("pong", (..._args) => console.log(`${id} ws pong`));
-      ws.on("upgrade", (..._args) => console.log(`${id} ws upgrade`));
-      ws.on("unexpected-response", (..._args) =>
-        console.log(`${id} ws unexpected response`),
-      );
-      ws.on("error", (...args) => console.log(`${id} ws error`, args));
+      // ws.on("open", (..._args) => console.log(`${id} ws open`));
+      // ws.on("ping", (..._args) => console.log(`${id} ws ping`));
+      // ws.on("pong", (..._args) => console.log(`${id} ws pong`));
+      // ws.on("upgrade", (..._args) => console.log(`${id} ws upgrade`));
+      // ws.on("unexpected-response", (..._args) =>
+      //   console.log(`${id} ws unexpected response`),
+      // );
+      // ws.on("error", (...args) => console.log(`${id} ws error`, args));
 
-      console.log(`${id} socket opened`);
+      // console.log(`${id} socket opened`);
     } catch (e) {
       console.error(`${id} threw`, e);
     }

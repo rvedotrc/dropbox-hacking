@@ -25,18 +25,49 @@ export const getLogPrefix = (req: unknown): string | undefined => {
 
 let nextId = 0;
 appWithWs.use((req, res, next) => {
-  const requestId = `REQ ${randomUUID()} #${++nextId} ${req.method} ${req.url} ${req.httpVersion}`;
+  const requestId = `REQ ${randomUUID()} #${++nextId} ${req.method} ${req.url} HTTP/${req.httpVersion} :`;
   (req as any)[logPrefixKey] = requestId; // eslint-disable-line @typescript-eslint/no-explicit-any
 
-  console.log(`${requestId} starting`);
+  const startTime = new Date().getTime();
 
-  req.on("close", () => console.log(`${requestId} req close`));
-  req.on("error", (err) => console.log(`${requestId} req error`, err));
-  req.on("end", () => console.log(`${requestId} req end`));
+  const startingTimeout = setTimeout(() => {
+    console.log(`${requestId} starting (log message deferred)`);
+  }, 200);
 
-  res.on("close", () => console.log(`${requestId} res close`));
-  res.on("error", (err) => console.log(`${requestId} res error`, err));
-  res.on("finish", () => console.log(`${requestId} res finish`));
+  let requestClosed = false;
+  let responseClosed = false;
+
+  const checkClosed = () => {
+    if (!requestClosed || !responseClosed) return;
+
+    const endTime = new Date().getTime();
+    clearTimeout(startingTimeout);
+
+    // console.log(requestId, "req", req);
+    // console.log(requestId, "res", res);
+
+    console.log(
+      `${requestId} ${endTime - startTime}ms ${res.statusCode} ${res.statusMessage}`,
+    );
+  };
+
+  req.on("close", () => {
+    requestClosed = true;
+    checkClosed();
+  });
+
+  res.on("close", () => {
+    responseClosed = true;
+    checkClosed();
+  });
+
+  // req.on("close", () => console.log(`${requestId} req close`));
+  // req.on("error", (err) => console.log(`${requestId} req error`, err));
+  // req.on("end", () => console.log(`${requestId} req end`));
+  //
+  // res.on("close", () => console.log(`${requestId} res close`));
+  // res.on("error", (err) => console.log(`${requestId} res error`, err));
+  // res.on("finish", () => console.log(`${requestId} res finish`));
 
   next();
 });
