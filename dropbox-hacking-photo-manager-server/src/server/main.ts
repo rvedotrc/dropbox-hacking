@@ -1,4 +1,5 @@
 import express from "express";
+import expressWs from "express-ws";
 
 import api from "./api";
 import contextBuilder from "./contextBuilder";
@@ -7,25 +8,26 @@ import getRoot from "./getRoot";
 import image from "./image";
 import legacyRedirects from "./legacyRedirects";
 
-const app = express();
+const appWithoutWs = express();
+const appWithWs = expressWs(appWithoutWs).app;
 
 const context = contextBuilder({
   port: 4000,
   baseUrlWithoutSlash: "http://localhost:4000",
 });
 
-app.use(express.static(process.env.PUBLIC_DIR || "/dne"));
+appWithWs.use(express.static(process.env.PUBLIC_DIR || "/dne"));
 
-app.use(express.json());
+appWithWs.use(express.json());
 
-getRoot(app, context);
-getPages(app, context);
-legacyRedirects(app, context);
+getRoot(appWithWs, context);
+getPages(appWithWs, context);
+legacyRedirects(appWithWs, context);
 
-api(app, context);
-image(app, context);
+api(appWithWs, context);
+image(appWithWs, context);
 
-const server = app.listen(context.port, () => {
+const server = appWithWs.listen(context.port, () => {
   console.log(`Listening on port ${context.port}`);
 });
 

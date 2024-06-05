@@ -14,7 +14,9 @@ const logRender = <P extends PropsWithChildren<object>>(f: F<P>): F<P> => {
   const renderSequence = makeSequence();
 
   const r: F<P> = (props: P) => {
-    console.log(`render ${functionName} #${renderSequence()}`);
+    functionName;
+    renderSequence;
+    // console.log(`render ${functionName} #${renderSequence()}`);
     return f(props);
   };
 
