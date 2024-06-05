@@ -1,41 +1,63 @@
 import { Application } from "express-ws";
 
 import { Context } from "../../context";
+import { getLogPrefix } from "../../main";
+
+const IDLE_MILLIS = 60 * 1000;
 
 export default (app: Application, _context: Context): void => {
-  app.ws("/api/ws", function (ws, _req) {
-    ws.on("message", function (...args) {
-      console.log("ws message", args);
-    });
+  app.ws("/api/ws", function (ws, req) {
+    const id = getLogPrefix(req) || "?";
 
-    ws.on("close", (...args) => console.log("ws close", args));
-    ws.on("open", (..._args) => console.log("ws open"));
-    ws.on("ping", (..._args) => console.log("ws ping"));
-    ws.on("pong", (..._args) => console.log("ws pong"));
-    ws.on("upgrade", (..._args) => console.log("ws upgrade"));
-    ws.on("unexpected-response", (..._args) =>
-      console.log("ws unexpected response"),
-    );
-    ws.on("error", (...args) => console.log("ws error", args));
+    try {
+      console.log(`${id} New websocket`);
 
-    const timer = setInterval(() => {
-      console.log("Sending time");
-      ws.send(`The server time is ${new Date().toISOString()}\n`);
-    }, 5000);
-    ws.once("close", () => clearInterval(timer));
+      const closer = () => {
+        process.nextTick(() => {
+          console.log(`${id} Closing websocket`);
+          ws.close();
+          process.off("SIGINT", closer);
+          process.off("SIGTERM", closer);
+        });
+      };
 
-    const closer = () => {
-      process.nextTick(() => {
-        console.log("Closing socket");
-        ws.close();
-        process.off("SIGINT", closer);
-        process.off("SIGTERM", closer);
+      process.on("SIGINT", closer);
+      process.on("SIGTERM", closer);
+
+      const idle = () => {
+        console.log(`${id} Websocket marked as idle, closing`);
+        closer();
+      };
+
+      let idleTimer = setTimeout(idle, IDLE_MILLIS);
+
+      const resetIdle = () => {
+        clearTimeout(idleTimer);
+        return (idleTimer = setTimeout(idle, IDLE_MILLIS));
+      };
+
+      ws.on("message", function (...args) {
+        console.log(`${id} ws message`, args);
+        resetIdle();
       });
-    };
 
-    process.on("SIGINT", closer);
-    process.on("SIGTERM", closer);
+      ws.on("close", (...args) => {
+        console.log(`${id} ws close`, args);
+        clearTimeout(idleTimer);
+      });
 
-    console.log("socket opening");
+      ws.on("open", (..._args) => console.log(`${id} ws open`));
+      ws.on("ping", (..._args) => console.log(`${id} ws ping`));
+      ws.on("pong", (..._args) => console.log(`${id} ws pong`));
+      ws.on("upgrade", (..._args) => console.log(`${id} ws upgrade`));
+      ws.on("unexpected-response", (..._args) =>
+        console.log(`${id} ws unexpected response`),
+      );
+      ws.on("error", (...args) => console.log(`${id} ws error`, args));
+
+      console.log(`${id} socket opened`);
+    } catch (e) {
+      console.error(`${id} threw`, e);
+    }
   });
 };

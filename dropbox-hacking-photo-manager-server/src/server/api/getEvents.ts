@@ -1,29 +1,19 @@
-import { randomUUID } from "crypto";
 import { DPMAnyEvent } from "dropbox-hacking-photo-manager-shared";
 import { Application } from "express";
 
 import { Context } from "../context";
+import { getLogPrefix } from "../main";
 
 export default (app: Application, context: Context): void => {
   app.get("/api/events", (req, res) => {
-    // req.on("close", () => console.log("req close"));
-    // req.on("error", (err) => console.log("req error", err));
-    // req.on("resume", () => console.log("req resume"));
-    // req.on("end", () => console.log("req end"));
-    // req.on("data", (chunk) => console.log("req data", chunk));
-    // req.on("readable", () => console.log("req readable"));
-    // req.on("pause", () => console.log("req pause"));
+    const id = getLogPrefix(req) || "?";
 
-    const id = randomUUID();
-    console.log(`${id} ${req.method} ${req.path}`);
-    res.on("close", () => console.log(`${id} GET /api/events [closed]`));
+    req.on("close", () => console.log(`${id} req close`));
+    req.on("error", (err) => console.log(`${id} req error`, err));
+    req.on("end", () => console.log(`${id} req end`));
 
-    // res.on("close", () => console.log("res close"));
-    // res.on("unpipe", (src) => console.log("res unpipe", src));
-    // res.on("finish", () => console.log("res finish"));
-    // res.on("pipe", (src) => console.log("res pipe", src));
-    // res.on("drain", () => console.log("res drain"));
-    // res.on("error", (err) => console.log("res error", err));
+    res.on("close", () => console.log(`${id} [res closed]`));
+    res.on("error", (err) => console.log(`${id} res error`, err));
 
     res.setHeader("X-Accel-Buffering", "no");
     res.setHeader("Content-Type", "text/event-stream");
@@ -73,11 +63,26 @@ export default (app: Application, context: Context): void => {
     );
 
     res.on("close", () => {
+      console.log(`${id} res close, closing feeds`);
       context.lsFeed.off("change", lsListener);
       context.exifDbFeed.off("change", exifListener);
       context.daysFeed.off("change", daysListener);
       clearTimeout(pingTimer);
     });
+
+    const serverStop = () => {
+      process.nextTick(() => {
+        console.log(`${id} serverStop`);
+        res.end(() => {
+          console.log(`${id} res.end done`);
+        });
+        process.off("SIGINT", serverStop);
+        process.off("SIGTERM", serverStop);
+      });
+    };
+
+    process.once("SIGINT", serverStop);
+    process.once("SIGTERM", serverStop);
 
     emit({
       event_name: "connect",
