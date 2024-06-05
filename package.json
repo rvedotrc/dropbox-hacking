@@ -2,6 +2,9 @@
   "author": "Rachel Evans <rachel@rachelevans.org>",
   "description": "Messing around with the Dropbox API",
   "devDependencies": {
+    "eslint": "^9.4.0",
+    "@typescript-eslint/eslint-plugin": "^7.12.0",
+    "@typescript-eslint/parser": "^7.12.0",
     "eslint-plugin-simple-import-sort": "^10.0.0"
   },
   "license": "MIT",
