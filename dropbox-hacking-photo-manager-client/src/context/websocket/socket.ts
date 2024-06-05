@@ -1,8 +1,11 @@
 import { EventEmitter } from "events";
 
+const PING_INTERVAL_MILLIS = 25 * 1000;
+
 export class Socket extends EventEmitter {
   private websocket: WebSocket | undefined;
   private _wantOpen = false;
+  private pingTimer: NodeJS.Timeout | undefined = undefined;
 
   constructor(private readonly url: string) {
     super();
@@ -52,6 +55,8 @@ export class Socket extends EventEmitter {
 
   private socketOpen(ev: Event) {
     console.log("socketOpen", ev);
+    this.emit("online");
+    this.pingTimer = setInterval(() => this.sendPing(), PING_INTERVAL_MILLIS);
   }
 
   private socketMessage(ev: MessageEvent) {
@@ -64,7 +69,14 @@ export class Socket extends EventEmitter {
 
   private socketClose(ev: CloseEvent) {
     console.log("socketClose", ev);
+    this.emit("offline");
+    this.pingTimer && clearInterval(this.pingTimer);
+    this.pingTimer = undefined;
     this.websocket = undefined;
     if (this._wantOpen) this.ensureOpen();
+  }
+
+  private sendPing(): void {
+    this.websocket?.send("hello i am still here kthxbye\n");
   }
 }
