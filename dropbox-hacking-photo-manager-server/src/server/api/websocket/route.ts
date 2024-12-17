@@ -1,3 +1,11 @@
+import type {
+  PingRequest,
+  PingResponse,
+  SimpleRequest,
+  SimpleResponse,
+  ThumbnailRequest,
+  ThumbnailResponse,
+} from "dropbox-hacking-photo-manager-shared";
 import { Application } from "express-ws";
 
 import { Context } from "../../context";
@@ -36,9 +44,56 @@ export default (app: Application, _context: Context): void => {
         return (idleTimer = setTimeout(idle, IDLE_MILLIS));
       };
 
-      ws.on("message", function (...args) {
-        console.log(`${id} ws message`, args);
+      ws.on("message", (data, isBinary) => {
+        console.log(`${id} ws message`, data, isBinary);
         resetIdle();
+
+        if (typeof data === "string" && !isBinary) {
+          try {
+            const wsReq = JSON.parse(data);
+
+            if (
+              wsReq !== null &&
+              typeof wsReq === "object" &&
+              "type" in wsReq &&
+              typeof wsReq.type === "string"
+            ) {
+              console.log({ wsReq });
+
+              if (wsReq.type === "simpleRequest") {
+                const tReq: SimpleRequest<unknown> = wsReq;
+                const p: PingRequest | ThumbnailRequest | { verb?: unknown } =
+                  tReq.payload as object;
+
+                if (p.verb === "ping") {
+                  const payload: SimpleResponse<PingResponse> = {
+                    type: "simpleResponse",
+                    id: tReq.id,
+                    payload: { answer: "pong" },
+                  };
+                  ws.send(JSON.stringify(payload));
+                } else if (p.verb === "getThumbnail") {
+                  const payload: SimpleResponse<ThumbnailResponse> = {
+                    type: "simpleResponse",
+                    id: tReq.id,
+                    payload: { thumbnail: null },
+                  };
+                  ws.send(JSON.stringify(payload));
+                } else {
+                  console.warn("Ignoring unparseable request");
+                }
+              } else {
+                console.warn("Ignoring unparseable request");
+              }
+            } else {
+              console.warn("Ignoring unparseable request");
+            }
+          } catch (err) {
+            console.warn("Ignoring unparseable request");
+          }
+        } else {
+          console.warn("Ignoring unparseable request");
+        }
       });
 
       ws.on("close", (...args) => {

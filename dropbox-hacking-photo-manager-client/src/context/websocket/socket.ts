@@ -1,4 +1,12 @@
 import { EventEmitter } from "events";
+import { cancelablePromise, type CancelablePromise } from "./cancelablePromise";
+import { generateId } from "./id";
+import type {
+  PingRequest,
+  PingResponse,
+  SimpleRequest,
+  SimpleResponse,
+} from "dropbox-hacking-photo-manager-shared/src/ws";
 
 const PING_INTERVAL_MILLIS = 25 * 1000;
 
@@ -6,6 +14,14 @@ export class Socket extends EventEmitter {
   private websocket: WebSocket | undefined;
   private _wantOpen = false;
   private pingTimer: NodeJS.Timeout | undefined = undefined;
+  private simpleRequests: Record<
+    string,
+    {
+      resolve: (value: unknown) => void;
+      reject: (error: unknown) => void;
+      timeout: NodeJS.Timeout;
+    }
+  > = {};
 
   constructor(private readonly url: string) {
     super();
@@ -59,8 +75,69 @@ export class Socket extends EventEmitter {
     this.pingTimer = setInterval(() => this.sendPing(), PING_INTERVAL_MILLIS);
   }
 
+  public simpleRequest<REQ, RES>(payload: REQ): CancelablePromise<RES> {
+    const websocket = this.websocket;
+
+    return cancelablePromise<RES>((resolve, reject, onCancel, _isCanceled) => {
+      if (!websocket) {
+        reject(new Error("No socket"));
+        return;
+      }
+
+      const id = generateId();
+
+      this.simpleRequests[id] = {
+        resolve,
+        reject,
+        timeout: setTimeout(() => {
+          reject(new Error("Timeout"));
+          delete this.simpleRequests[id];
+        }, 30 * 1000),
+      };
+
+      onCancel(() => {
+        reject(new Error("Canceled"));
+        delete this.simpleRequests[id];
+      });
+
+      const wrapper: SimpleRequest<unknown> = {
+        type: "simpleRequest",
+        id,
+        payload,
+      };
+
+      websocket.send(JSON.stringify(wrapper));
+    });
+  }
+
   private socketMessage(ev: MessageEvent) {
     console.log("socketMessage", ev);
+
+    if (typeof ev.data === "string") {
+      const reply = JSON.parse(ev.data);
+
+      if (
+        typeof reply === "object" &&
+        reply !== null &&
+        "type" in reply &&
+        reply.type === "simpleResponse"
+      ) {
+        const { id, payload } = reply as SimpleResponse<unknown>;
+        console.debug({ simpleResponse: reply });
+
+        if (id in this.simpleRequests) {
+          const pending = this.simpleRequests[id];
+          delete this.simpleRequests[id];
+
+          console.debug({ id, payload });
+
+          clearTimeout(pending.timeout);
+          pending.resolve(payload);
+        } else {
+          console.warn(`No pending simpleRequest with id=${id}`);
+        }
+      }
+    }
   }
 
   private socketError(ev: Event) {
@@ -73,10 +150,23 @@ export class Socket extends EventEmitter {
     this.pingTimer && clearInterval(this.pingTimer);
     this.pingTimer = undefined;
     this.websocket = undefined;
+
+    for (const resolveReject of Object.values(this.simpleRequests)) {
+      clearTimeout(resolveReject.timeout);
+      process.nextTick(() =>
+        resolveReject.reject(new Error("Connection lost")),
+      );
+    }
+
+    this.simpleRequests = {};
+
     if (this._wantOpen) this.ensureOpen();
   }
 
   private sendPing(): void {
-    this.websocket?.send("hello i am still here kthxbye\n");
+    this.simpleRequest<PingRequest, PingResponse>({ verb: "ping" }).then(
+      (ans) => console.debug("pong", ans),
+      (err) => console.error(err),
+    );
   }
 }

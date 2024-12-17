@@ -7,7 +7,12 @@ import {
   useMemo,
   useReducer,
 } from "react";
-import { ThumbnailsByRevResponse } from "dropbox-hacking-photo-manager-shared";
+import {
+  ThumbnailsByRevResponse,
+  type ThumbnailRequest,
+  type ThumbnailResponse,
+} from "dropbox-hacking-photo-manager-shared";
+import { useWebsocket } from "../context/websocket";
 
 export type ThumbnailLoader = {
   setWanted: (revs: string[]) => void;
@@ -44,6 +49,8 @@ type Action =
   | { action: "discard_thumbnails"; revs: string[] };
 
 const defaultThumbnailLoaderProvider = (props: PropsWithChildren<object>) => {
+  const ws = useWebsocket();
+
   const [state, dispatch] = useReducer(
     (before: State, action: Action): State => {
       if (action.action === "set_wanted") {
@@ -121,6 +128,22 @@ const defaultThumbnailLoaderProvider = (props: PropsWithChildren<object>) => {
 
     if (shouldRequest.length > 0) {
       console.log("Requesting ", shouldRequest);
+
+      for (const rev of shouldRequest) {
+        ws
+          ?.simpleRequest<
+            ThumbnailRequest,
+            ThumbnailResponse
+          >({ verb: "getThumbnail", rev, size: 128 })
+          .then(
+            (value) => {
+              console.error(`Thumbnail ${rev} resolved:`, value);
+            },
+            (error) => {
+              console.error(`Thumbnail ${rev} rejected:`, error);
+            },
+          );
+      }
 
       fetch(`/api/thumbnail/128/revs/${shouldRequest.join(",")}`)
         .then((res) => res.json() as Promise<ThumbnailsByRevResponse>)
