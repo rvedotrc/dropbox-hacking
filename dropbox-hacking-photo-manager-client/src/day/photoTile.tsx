@@ -3,6 +3,7 @@ import { Photo } from "dropbox-hacking-photo-manager-shared";
 import SamePageLink from "../samePageLink";
 import logRender from "../logRender";
 import { useThumbnail } from "../context/thumbnails/useThumbnail";
+import { useThumbnailLoader } from "../context/thumbnails";
 
 const cleanedName = (photo: Photo) => {
   if (photo.content_hash) {
@@ -19,7 +20,9 @@ const PhotoTile = ({
   photo: Photo;
   isVisible: boolean;
 }) => {
-  const thumbnail = useThumbnail(photo, isVisible);
+  const loader = useThumbnailLoader();
+
+  const thumbnail = useThumbnail(photo.rev, loader)(isVisible);
 
   return (
     <SamePageLink
