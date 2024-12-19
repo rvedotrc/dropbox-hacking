@@ -10,6 +10,7 @@ import { useEffect, useMemo, useState } from "react";
 import countsByDateContext from "./context/countsByDateContext";
 import daysMetadataContext from "./context/daysMetadataContext";
 import eventEmitterContext from "./context/eventEmitterContext";
+import * as thumbnailLoaderContext from "./context/thumbnails";
 import * as websocket from "./context/websocket";
 import routingContext from "./context/routingContext";
 import { Router } from "./context/routingContext";
@@ -41,7 +42,9 @@ const Root = ({ initialState }: { initialState: Payload }) => {
         <eventEmitterContext.defaultProvider>
           <countsByDateContext.defaultProvider>
             <daysMetadataContext.defaultProvider>
-              {toRender({ payload: state })}
+              <thumbnailLoaderContext.defaultProvider>
+                {toRender({ payload: state })}
+              </thumbnailLoaderContext.defaultProvider>
             </daysMetadataContext.defaultProvider>
           </countsByDateContext.defaultProvider>
         </eventEmitterContext.defaultProvider>

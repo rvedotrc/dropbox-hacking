@@ -17,6 +17,7 @@ export class Socket extends EventEmitter {
   private simpleRequests: Record<
     string,
     {
+      t0: number;
       resolve: (value: unknown) => void;
       reject: (error: unknown) => void;
       timeout: NodeJS.Timeout;
@@ -87,6 +88,7 @@ export class Socket extends EventEmitter {
       const id = generateId();
 
       this.simpleRequests[id] = {
+        t0: new Date().getTime(),
         resolve,
         reject,
         timeout: setTimeout(() => {
@@ -106,12 +108,17 @@ export class Socket extends EventEmitter {
         payload,
       };
 
+      console.debug("ws send ", JSON.stringify(wrapper));
+      console.debug({
+        pendingCount: [...Object.keys(this.simpleRequests)].length,
+      });
+
       websocket.send(JSON.stringify(wrapper));
     });
   }
 
   private socketMessage(ev: MessageEvent) {
-    console.log("socketMessage", ev);
+    // console.debug("socketMessage " + ev.data);
 
     if (typeof ev.data === "string") {
       const reply = JSON.parse(ev.data);
@@ -122,17 +129,21 @@ export class Socket extends EventEmitter {
         "type" in reply &&
         reply.type === "simpleResponse"
       ) {
-        const { id, payload } = reply as SimpleResponse<unknown>;
+        const { id, payload: innerPayload } = reply as SimpleResponse<unknown>;
         console.debug({ simpleResponse: reply });
 
         if (id in this.simpleRequests) {
           const pending = this.simpleRequests[id];
           delete this.simpleRequests[id];
 
-          console.debug({ id, payload });
+          const t1 = new Date().getTime();
+          console.debug({ id, ms: t1 - pending.t0, innerPayload });
+          console.debug({
+            pendingCount: [...Object.keys(this.simpleRequests)].length,
+          });
 
           clearTimeout(pending.timeout);
-          pending.resolve(payload);
+          pending.resolve(innerPayload);
         } else {
           console.warn(`No pending simpleRequest with id=${id}`);
         }

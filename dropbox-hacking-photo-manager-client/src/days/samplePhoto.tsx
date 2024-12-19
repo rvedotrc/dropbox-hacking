@@ -1,10 +1,15 @@
 import * as React from "react";
 import { Photo } from "dropbox-hacking-photo-manager-shared";
-import { useThumbnailLoader } from "./thumbnailLoaderContext";
+import { useThumbnail } from "../context/thumbnails/useThumbnail";
 
-const samplePhoto = ({ photo }: { photo: Photo }) => {
-  const loader = useThumbnailLoader();
-  const thumbnail = loader?.getThumbnail(photo.rev);
+const samplePhoto = ({
+  photo,
+  visible,
+}: {
+  photo: Photo;
+  visible: boolean;
+}) => {
+  const thumbnail = useThumbnail(photo, visible);
 
   return (
     <span

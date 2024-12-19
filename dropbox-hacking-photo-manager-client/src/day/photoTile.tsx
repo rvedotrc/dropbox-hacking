@@ -1,8 +1,8 @@
 import * as React from "react";
-import { useThumbnailLoader } from "../days/thumbnailLoaderContext";
 import { Photo } from "dropbox-hacking-photo-manager-shared";
 import SamePageLink from "../samePageLink";
-import { useEffect } from "react";
+import logRender from "../logRender";
+import { useThumbnail } from "../context/thumbnails/useThumbnail";
 
 const cleanedName = (photo: Photo) => {
   if (photo.content_hash) {
@@ -19,15 +19,7 @@ const PhotoTile = ({
   photo: Photo;
   isVisible: boolean;
 }) => {
-  const loader = useThumbnailLoader();
-  if (!loader) return null;
-
-  const thumbnail = loader.getThumbnail(photo.rev);
-
-  useEffect(() => {
-    if (isVisible) loader.setWanted([photo.rev]);
-    if (!isVisible) loader.setUnwanted([photo.rev]);
-  }, [photo.rev, isVisible, loader]);
+  const thumbnail = useThumbnail(photo, isVisible);
 
   return (
     <SamePageLink
@@ -56,4 +48,4 @@ const PhotoTile = ({
   );
 };
 
-export default PhotoTile;
+export default logRender(PhotoTile);

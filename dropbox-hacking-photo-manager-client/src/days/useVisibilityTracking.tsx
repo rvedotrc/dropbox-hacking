@@ -1,5 +1,7 @@
 import { DependencyList, RefObject, useEffect } from "react";
 
+const scrollStationaryTimeout = 200;
+
 const useVisibilityTracking = ({
   parentRef,
   listItemDataAttribute,
@@ -59,14 +61,15 @@ const useVisibilityTracking = ({
         .filter((child) => queryElement(child) === 0)
         .map((item) => item.getAttribute(listItemDataAttribute) as string);
 
+      console.log(`visibleItems: ${[...visibleItems].join(", ")}`);
       onVisibleItems(new Set(visibleItems));
     };
 
-    let timer = window.setTimeout(onScrollStopped, 500);
+    let timer = window.setTimeout(onScrollStopped, scrollStationaryTimeout);
 
     const listener = (_event: Event) => {
       if (timer) window.clearTimeout(timer);
-      timer = window.setTimeout(onScrollStopped, 500);
+      timer = window.setTimeout(onScrollStopped, scrollStationaryTimeout);
     };
 
     window.addEventListener("scroll", listener);

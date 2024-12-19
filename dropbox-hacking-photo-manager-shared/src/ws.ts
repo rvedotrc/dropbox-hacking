@@ -1,3 +1,5 @@
+import type { files } from "dropbox";
+
 export type SimpleRequest<T> = {
   type: "simpleRequest";
   id: string;
@@ -21,12 +23,9 @@ export type PingResponse = {
 export type ThumbnailRequest = {
   verb: "getThumbnail";
   rev: string;
-  size: 128;
+  size: files.ThumbnailSize;
 };
 
 export type ThumbnailResponse = {
-  thumbnail: {
-    contentType: string;
-    dataBase64: string;
-  } | null;
+  thumbnail: string | null;
 };

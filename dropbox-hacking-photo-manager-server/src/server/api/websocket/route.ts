@@ -1,19 +1,15 @@
-import type {
-  PingRequest,
-  PingResponse,
-  SimpleRequest,
-  SimpleResponse,
-  ThumbnailRequest,
-  ThumbnailResponse,
-} from "dropbox-hacking-photo-manager-shared";
 import { Application } from "express-ws";
 
 import { Context } from "../../context";
 import { getLogPrefix } from "../../main";
+import { requestHandler } from "./requestHandler";
+import { tryJsonParse } from "./tryJsonParse";
 
 const IDLE_MILLIS = 60 * 1000;
 
-export default (app: Application, _context: Context): void => {
+export default (app: Application, context: Context): void => {
+  const handler = requestHandler(context);
+
   app.ws("/api/ws", function (ws, req) {
     const id = getLogPrefix(req) || "?";
 
@@ -49,50 +45,30 @@ export default (app: Application, _context: Context): void => {
         resetIdle();
 
         if (typeof data === "string" && !isBinary) {
-          try {
-            const wsReq = JSON.parse(data);
+          const p = tryJsonParse(data);
 
-            if (
-              wsReq !== null &&
-              typeof wsReq === "object" &&
-              "type" in wsReq &&
-              typeof wsReq.type === "string"
-            ) {
-              console.log({ wsReq });
-
-              if (wsReq.type === "simpleRequest") {
-                const tReq: SimpleRequest<unknown> = wsReq;
-                const p: PingRequest | ThumbnailRequest | { verb?: unknown } =
-                  tReq.payload as object;
-
-                if (p.verb === "ping") {
-                  const payload: SimpleResponse<PingResponse> = {
-                    type: "simpleResponse",
-                    id: tReq.id,
-                    payload: { answer: "pong" },
-                  };
-                  ws.send(JSON.stringify(payload));
-                } else if (p.verb === "getThumbnail") {
-                  const payload: SimpleResponse<ThumbnailResponse> = {
-                    type: "simpleResponse",
-                    id: tReq.id,
-                    payload: { thumbnail: null },
-                  };
-                  ws.send(JSON.stringify(payload));
+          if (p.ok) {
+            handler(p.value).then(
+              (response) => {
+                if (response === undefined) {
+                  console.error(`Handler resolved undefined, no response sent`);
                 } else {
-                  console.warn("Ignoring unparseable request");
+                  // console.debug(`ws send:`, response);
+                  ws.send(JSON.stringify(response));
                 }
-              } else {
-                console.warn("Ignoring unparseable request");
-              }
-            } else {
-              console.warn("Ignoring unparseable request");
-            }
-          } catch (err) {
-            console.warn("Ignoring unparseable request");
+              },
+              (error) => {
+                console.error(
+                  `Request handler failed, no response sent:`,
+                  error,
+                );
+              },
+            );
+          } else {
+            console.error(`Failed to parse request, no response sent`);
           }
         } else {
-          console.warn("Ignoring unparseable request");
+          console.error(`Bad request type, no response sent`);
         }
       });
 

@@ -2,7 +2,6 @@ import * as React from "react";
 import { useEffect } from "react";
 
 import logRender from "../logRender";
-import DefaultThumbnailLoaderProvider from "./thumbnailLoaderContext";
 import { useCountsByDate } from "../context/countsByDateContext";
 import { useDays } from "../context/daysMetadataContext";
 import ListOfDaysWithData from "./listOfDaysWithData";
@@ -19,13 +18,11 @@ const ListOfDays = ({ withSamples }: { withSamples: boolean }) => {
     return <div>Loading LOD ...</div>;
   } else {
     return (
-      <DefaultThumbnailLoaderProvider>
-        <ListOfDaysWithData
-          countsByDate={countsByDate}
-          dayMetadata={dayMetadata}
-          withSamples={withSamples}
-        />
-      </DefaultThumbnailLoaderProvider>
+      <ListOfDaysWithData
+        countsByDate={countsByDate}
+        dayMetadata={dayMetadata}
+        withSamples={withSamples}
+      />
     );
   }
 };

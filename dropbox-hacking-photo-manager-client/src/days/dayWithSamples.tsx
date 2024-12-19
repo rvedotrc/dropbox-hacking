@@ -2,8 +2,7 @@ import SamePageLink from "../samePageLink";
 import SamplePhoto from "./samplePhoto";
 import * as React from "react";
 import { CountsByDateEntry } from "dropbox-hacking-photo-manager-shared";
-import { useEffect, useMemo } from "react";
-import { useThumbnailLoader } from "./thumbnailLoaderContext";
+import { useMemo } from "react";
 import EditableTextField from "../day/editableTextField";
 
 export const dayDateAttribute = "data-date";
@@ -17,17 +16,6 @@ export const dayWithSamples = ({
   visible: boolean;
   withSamples: boolean;
 }) => {
-  const loader = useThumbnailLoader();
-
-  useEffect(() => {
-    // console.log(`Date ${day.date} visible=${visible}`);
-
-    if (withSamples) {
-      if (visible) loader?.setWanted(day.samplePhotos.map((p) => p.rev));
-      if (!visible) loader?.setUnwanted(day.samplePhotos.map((p) => p.rev));
-    }
-  }, [withSamples, day.date, visible]);
-
   const onSaveDescription = useMemo(
     () => (newText: string) =>
       fetch(`/api/day/${day.date}`, {
@@ -64,7 +52,7 @@ export const dayWithSamples = ({
           {withSamples && (
             <div className={"samples"}>
               {day.samplePhotos.map((photo) => (
-                <SamplePhoto key={photo.rev} photo={photo} />
+                <SamplePhoto key={photo.rev} photo={photo} visible={visible} />
               ))}
             </div>
           )}

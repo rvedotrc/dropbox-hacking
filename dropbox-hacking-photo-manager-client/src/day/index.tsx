@@ -6,7 +6,6 @@ import {
 } from "dropbox-hacking-photo-manager-shared";
 import EditableTextField from "./editableTextField";
 import logRender from "../logRender";
-import DefaultThumbnailLoaderProvider from "../days/thumbnailLoaderContext";
 import useVisibilityTracking from "../days/useVisibilityTracking";
 import PhotoTile from "./photoTile";
 import { useDay, useDayPhotos } from "../context/feeds";
@@ -63,17 +62,15 @@ const DayWithData = ({
 
       <p>{dayPhotos.photos.length} photos</p>
 
-      <DefaultThumbnailLoaderProvider>
-        <div ref={parentRef} className={"photoList"}>
-          {dayPhotos.photos.map((photo) => (
-            <PhotoTile
-              photo={photo}
-              isVisible={visibleRevs?.has(photo.rev) || false}
-              key={photo.rev}
-            />
-          ))}
-        </div>
-      </DefaultThumbnailLoaderProvider>
+      <div ref={parentRef} className={"photoList"}>
+        {dayPhotos.photos.map((photo) => (
+          <PhotoTile
+            photo={photo}
+            isVisible={visibleRevs?.has(photo.rev) || false}
+            key={photo.rev}
+          />
+        ))}
+      </div>
     </>
   );
 };
