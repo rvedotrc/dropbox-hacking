@@ -17,7 +17,7 @@ const useVisibilityTracking = ({
     const parent = parentRef.current;
     if (!parent) return;
 
-    console.log("Start scroll tracking for ", parent);
+    // console.log("Start scroll tracking for ", parent);
 
     const onScrollStopped = () => {
       // console.log("scroll has stopped");
@@ -61,7 +61,7 @@ const useVisibilityTracking = ({
         .filter((child) => queryElement(child) === 0)
         .map((item) => item.getAttribute(listItemDataAttribute) as string);
 
-      console.log(`visibleItems: ${[...visibleItems].join(", ")}`);
+      // console.log(`visibleItems: ${[...visibleItems].join(", ")}`);
       onVisibleItems(new Set(visibleItems));
     };
 
@@ -77,7 +77,7 @@ const useVisibilityTracking = ({
     parent.addEventListener("resize", listener);
 
     return () => {
-      console.log("Stop scroll tracking for ", parent);
+      // console.log("Stop scroll tracking for ", parent);
       window.removeEventListener("scroll", listener);
       window.removeEventListener("resize", listener);
       parent.removeEventListener("resize", listener);

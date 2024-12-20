@@ -70,8 +70,8 @@ export class Socket extends EventEmitter {
     return super.emit(eventName, ...args);
   }
 
-  private socketOpen(ev: Event) {
-    console.log("socketOpen", ev);
+  private socketOpen(_ev: Event) {
+    // console.log("socketOpen", ev);
     this.emit("online");
     this.pingTimer = setInterval(() => this.sendPing(), PING_INTERVAL_MILLIS);
   }
@@ -108,10 +108,10 @@ export class Socket extends EventEmitter {
         payload,
       };
 
-      console.debug("ws send ", JSON.stringify(wrapper));
-      console.debug({
-        pendingCount: [...Object.keys(this.simpleRequests)].length,
-      });
+      // console.debug("ws send ", JSON.stringify(wrapper));
+      // console.debug({
+      //   pendingCount: [...Object.keys(this.simpleRequests)].length,
+      // });
 
       websocket.send(JSON.stringify(wrapper));
     });
@@ -130,17 +130,18 @@ export class Socket extends EventEmitter {
         reply.type === "simpleResponse"
       ) {
         const { id, payload: innerPayload } = reply as SimpleResponse<unknown>;
-        console.debug({ simpleResponse: reply });
+
+        // console.debug({ simpleResponse: reply });
 
         if (id in this.simpleRequests) {
           const pending = this.simpleRequests[id];
           delete this.simpleRequests[id];
 
-          const t1 = new Date().getTime();
-          console.debug({ id, ms: t1 - pending.t0, innerPayload });
-          console.debug({
-            pendingCount: [...Object.keys(this.simpleRequests)].length,
-          });
+          // const t1 = new Date().getTime();
+          // console.debug({ id, ms: t1 - pending.t0, innerPayload });
+          // console.debug({
+          //   pendingCount: [...Object.keys(this.simpleRequests)].length,
+          // });
 
           clearTimeout(pending.timeout);
           pending.resolve(innerPayload);
@@ -152,11 +153,11 @@ export class Socket extends EventEmitter {
   }
 
   private socketError(ev: Event) {
-    console.log("socketError", ev);
+    console.error("socketError", ev);
   }
 
-  private socketClose(ev: CloseEvent) {
-    console.log("socketClose", ev);
+  private socketClose(_ev: CloseEvent) {
+    // console.log("socketClose", ev);
     this.emit("offline");
     this.pingTimer && clearInterval(this.pingTimer);
     this.pingTimer = undefined;
@@ -164,9 +165,7 @@ export class Socket extends EventEmitter {
 
     for (const resolveReject of Object.values(this.simpleRequests)) {
       clearTimeout(resolveReject.timeout);
-      process.nextTick(() =>
-        resolveReject.reject(new Error("Connection lost")),
-      );
+      resolveReject.reject(new Error("Connection lost"));
     }
 
     this.simpleRequests = {};
@@ -175,8 +174,7 @@ export class Socket extends EventEmitter {
   }
 
   private sendPing(): void {
-    this.simpleRequest<PingRequest, PingResponse>({ verb: "ping" }).then(
-      (ans) => console.debug("pong", ans),
+    this.simpleRequest<PingRequest, PingResponse>({ verb: "ping" }).catch(
       (err) => console.error(err),
     );
   }

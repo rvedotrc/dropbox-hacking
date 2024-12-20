@@ -15,13 +15,10 @@ const samePageLink = ({
       {...props}
       onClick={(e) => {
         e.persist();
-        console.log("SPL onclick", e);
         if (e.altKey || e.shiftKey || e.ctrlKey || e.metaKey) {
-          console.log("modifier used, ignoring");
           return;
         }
 
-        console.log("no modifier used, using pushState");
         e.preventDefault();
         window.history.pushState(state, "unused", props.href);
         router.switchToPage(state);

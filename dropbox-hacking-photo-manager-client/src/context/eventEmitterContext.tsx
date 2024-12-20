@@ -120,24 +120,21 @@ const defaultEventEmitterContextProvider = (
   const emitter = useMemo<EventsProvider>(() => new EventEmitter(), []);
 
   const eventSource = useMemo(() => {
-    console.debug(`new EventSource`);
     return new EventSource("/api/events");
   }, []);
 
   const genericListener = useMemo(
     () => (e: Event) => {
-      // console.debug(`EventSource says: `, e);
-
       if (e.type === "message") {
         const dpmEvent: DPMAnyEvent = JSON.parse(
           (e as unknown as { data: string }).data,
         );
 
         if (dpmEvent.event_name !== "ping")
-          console.debug("Got event", dpmEvent);
+          if (dpmEvent.event_name === "connect")
+            // console.debug("Got event", dpmEvent);
 
-        if (dpmEvent.event_name === "connect")
-          emitter.emit("connect", dpmEvent);
+            emitter.emit("connect", dpmEvent);
         if (dpmEvent.event_name === "ping") emitter.emit("ping", dpmEvent);
         if (dpmEvent.event_name === "change") emitter.emit("change", dpmEvent);
       }
@@ -156,14 +153,12 @@ const defaultEventEmitterContextProvider = (
   );
 
   useEffect(() => {
-    console.debug(`EventSource / window add listeners`);
     eventSource.addEventListener("error", genericListener);
     eventSource.addEventListener("message", genericListener);
     eventSource.addEventListener("open", genericListener);
     window.addEventListener("beforeunload", beforeUnloadListener);
 
     return () => {
-      console.debug(`EventSource / window remove listeners`);
       eventSource.removeEventListener("error", genericListener);
       eventSource.removeEventListener("message", genericListener);
       eventSource.removeEventListener("open", genericListener);
@@ -173,7 +168,6 @@ const defaultEventEmitterContextProvider = (
 
   useEffect(
     () => () => {
-      console.debug(`EventSource close (normal)`);
       eventSource.close();
     },
     [eventSource],
