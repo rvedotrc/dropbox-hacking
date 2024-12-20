@@ -2,20 +2,32 @@ import SamePageLink from "../samePageLink";
 import SamplePhoto from "./samplePhoto";
 import * as React from "react";
 import { CountsByDateEntry } from "dropbox-hacking-photo-manager-shared";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import EditableTextField from "../day/editableTextField";
+import type { Subscribable } from "./emittableSubscribable";
+import logRender from "../logRender";
 
 export const dayDateAttribute = "data-date";
 
 export const dayWithSamples = ({
   day,
-  visible,
   withSamples,
+  s,
 }: {
   day: CountsByDateEntry & { description?: string };
-  visible: boolean;
   withSamples: boolean;
+  s: Subscribable<{ date: string; visible: boolean }>;
 }) => {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(
+    () =>
+      s.subscribe((e) => {
+        if (e.date === day.date) setVisible(e.visible);
+      }),
+    [s, day.date],
+  );
+
   const onSaveDescription = useMemo(
     () => (newText: string) =>
       fetch(`/api/day/${day.date}`, {
@@ -62,4 +74,4 @@ export const dayWithSamples = ({
   );
 };
 
-export default dayWithSamples;
+export default logRender(dayWithSamples);

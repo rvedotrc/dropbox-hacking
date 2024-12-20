@@ -3,12 +3,13 @@ import {
   CountsByDate,
   DayMetadata,
 } from "dropbox-hacking-photo-manager-shared";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef } from "react";
 import useVisibilityTracking from "./useVisibilityTracking";
 import DayWithSamples, { dayDateAttribute } from "./dayWithSamples";
 import Navigate from "./navigate";
 import Stats from "./stats";
 import logRender from "../logRender";
+import { makeEmittableSubscribable } from "./emittableSubscribable";
 
 const ListOfDaysWithData = ({
   countsByDate,
@@ -19,7 +20,32 @@ const ListOfDaysWithData = ({
   dayMetadata: DayMetadata[];
   withSamples: boolean;
 }) => {
-  const [visibleDates, setVisibleDates] = useState<Set<string>>();
+  const [e, s] = useMemo(
+    () => makeEmittableSubscribable<{ date: string; visible: boolean }>(),
+    [],
+  );
+
+  const diffEmitter = useMemo(() => {
+    const previouslyVisibleDates = new Set<string>();
+
+    return (visibleDates: Set<string>): void => {
+      for (const date of visibleDates) {
+        if (!previouslyVisibleDates.has(date)) {
+          previouslyVisibleDates.add(date);
+          e.emit({ date, visible: true });
+        }
+      }
+
+      for (const date of previouslyVisibleDates) {
+        if (!visibleDates.has(date)) {
+          previouslyVisibleDates.delete(date);
+          e.emit({ date, visible: false });
+        }
+      }
+    };
+  }, []);
+
+  // const [visibleDates, setVisibleDates] = useState<Set<string>>();
   const olRef = useRef<HTMLOListElement>(null);
 
   // console.log("render ", { visibleDates });
@@ -42,7 +68,7 @@ const ListOfDaysWithData = ({
   useVisibilityTracking({
     parentRef: olRef,
     listItemDataAttribute: dayDateAttribute,
-    onVisibleItems: setVisibleDates,
+    onVisibleItems: diffEmitter,
     deps: [days],
   });
 
@@ -62,7 +88,8 @@ const ListOfDaysWithData = ({
             key={day.date}
             day={day}
             withSamples={withSamples}
-            visible={visibleDates?.has(day.date) || false}
+            s={s}
+            // visible={visibleDates?.has(day.date) || false}
           />
         ))}
       </ol>
