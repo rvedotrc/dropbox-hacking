@@ -11,7 +11,7 @@ from_dirs.each do |from_dir|
   hash = Digest::SHA1.hexdigest(entries.inspect)
 
   now = Time.now.utc.strftime("%Y-%m-%d-#{hash}")
-  to_dir = "#{ENV["HOME"]}/Desktop/media-#{now}"
+  to_dir = "#{ENV["HOME"]}/Desktop/dropbox/media-#{now}"
   puts "Copying from #{from_dir} to #{to_dir}"
 
   require 'fileutils'
