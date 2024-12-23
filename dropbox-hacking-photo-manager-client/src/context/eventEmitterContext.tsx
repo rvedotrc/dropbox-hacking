@@ -78,36 +78,6 @@ class EventsProvider extends EventEmitter {
   ): this {
     return super.removeListener(eventName, listener);
   }
-
-  // removeAllListeners(event?: "dpm"): this;
-  // removeAllListeners(event?: string | symbol): this {
-  //   return super.removeAllListeners(event);
-  // }
-  //
-  // // eslint-disable-next-line @typescript-eslint/ban-types
-  // listeners(eventName: "dpm"): Function[];
-  // // eslint-disable-next-line @typescript-eslint/ban-types
-  // listeners(eventName: string | symbol): Function[] {
-  //   return super.listeners(eventName);
-  // }
-  //
-  // // eslint-disable-next-line @typescript-eslint/ban-types
-  // rawListeners(eventName: string | symbol): Function[] {
-  //   return super.rawListeners(eventName);
-  // }
-
-  // // eslint-disable-next-line @typescript-eslint/ban-types
-  // listenerCount(eventName: string | symbol, listener?: Function): number {
-  //   return super.listenerCount(eventName, listener);
-  // }
-  //
-  // prependListener(eventName: string | symbol, listener: (...args: any[]) => void): this {
-  //   return super.prependListener(eventName, listener);
-  // }
-  //
-  // prependOnceListener(eventName: string | symbol, listener: (...args: any[]) => void): this {
-  //   return super.prependOnceListener(eventName, listener);
-  // }
 }
 
 const context = createContext<EventsProvider | undefined>(undefined);
@@ -132,8 +102,6 @@ const defaultEventEmitterContextProvider = (
 
         if (dpmEvent.event_name !== "ping")
           if (dpmEvent.event_name === "connect")
-            // console.debug("Got event", dpmEvent);
-
             emitter.emit("connect", dpmEvent);
         if (dpmEvent.event_name === "ping") emitter.emit("ping", dpmEvent);
         if (dpmEvent.event_name === "change") emitter.emit("change", dpmEvent);
