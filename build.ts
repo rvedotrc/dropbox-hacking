@@ -30,7 +30,7 @@ const readWorkspacesInfo = (): Promise<YarnWorkspacesInfo> =>
         }
       } else {
         reject(
-          new Error(`Failed to read yarn workspaces (${code} / ${signal})`)
+          new Error(`Failed to read yarn workspaces (${code} / ${signal})`),
         );
       }
     });
@@ -41,12 +41,12 @@ type DecoratedWorkspace = {
   info: YarnWorkspaceInfo;
   tsconfig: TSConfig;
   dependsOn: Set<string>;
-  triple: Awaited<ReturnType<typeof makeTriple<void>>>;
+  triple: Awaited<ReturnType<typeof makeDeferred<void>>>;
 };
 
 const decorateWorkspace = async (
   name: string,
-  info: YarnWorkspaceInfo
+  info: YarnWorkspaceInfo,
 ): Promise<DecoratedWorkspace> =>
   fs.promises
     .readFile(`${name}/tsconfig.json`, { encoding: "utf-8" })
@@ -57,21 +57,21 @@ const decorateWorkspace = async (
       dependsOn: new Set([
         ...info.workspaceDependencies,
         ...(partial.tsconfig.references || []).map((dep) =>
-          dep.path.replace("../", "")
+          dep.path.replace("../", ""),
         ),
       ]),
-      triple: await makeTriple(),
+      triple: await makeDeferred(),
     }));
 
 type DecoratedWorkspaceMap = Map<string, DecoratedWorkspace>;
 
 const decorateWorkspaces = async (
-  workspaces: YarnWorkspacesInfo
+  workspaces: YarnWorkspacesInfo,
 ): Promise<DecoratedWorkspaceMap> =>
   Promise.all(
     Object.entries(workspaces).map(([name, info]) =>
-      decorateWorkspace(name, info)
-    )
+      decorateWorkspace(name, info),
+    ),
   ).then((decorations) => {
     const map: DecoratedWorkspaceMap = new Map();
     for (const d of decorations) {
@@ -80,38 +80,14 @@ const decorateWorkspaces = async (
     return map;
   });
 
-const inDependencyOrder = (workspaces: DecoratedWorkspaceMap): string[] => {
-  const satisfied: string[] = [];
-
-  while (satisfied.length < workspaces.size) {
-    const canSatisfy = [...workspaces.values()]
-      .filter((w) => !satisfied.includes(w.name))
-      .filter(
-        (w) =>
-          (w.info.workspaceDependencies || []).every((dep) =>
-            satisfied.includes(dep)
-          ) && [...w.dependsOn].every((dep) => satisfied.includes(dep))
-      );
-
-    if (canSatisfy.length === 0)
-      throw new Error("Cannot resolve dependency order");
-
-    for (const w of canSatisfy) {
-      satisfied.push(w.name);
-    }
-  }
-
-  return satisfied;
-};
-
 const buildWorkspace = async (
   w: DecoratedWorkspace,
-  dependenciesPromise: Promise<unknown>
+  dependenciesPromise: Promise<unknown>,
 ): Promise<void> => {
   console.log(`Build ${w.name}`);
 
   const packageJson: { scripts: Record<string, string> } = JSON.parse(
-    (await fs.promises.readFile(`./${w.name}/package.json`)).toString()
+    (await fs.promises.readFile(`./${w.name}/package.json`)).toString(),
   );
 
   const yarnRun = (key: string): Promise<void> =>
@@ -139,8 +115,8 @@ const buildWorkspace = async (
             .trim()
             .split("\n")
             .forEach((line) =>
-              console.log(`${w.name} ${key} ${stream}: ${line}`)
-            )
+              console.log(`${w.name} ${key} ${stream}: ${line}`),
+            ),
         );
         // s.on('close', () => console.log(`${w.name} ${key} ${stream} closed`));
       }
@@ -155,22 +131,21 @@ const buildWorkspace = async (
       });
     });
 
-  await yarnRun("lint");
   console.log(`${w.name} awaiting dependencies`);
   await dependenciesPromise;
   await yarnRun("compile");
   console.log(`${w.name} complete`);
 };
 
-const makeTriple = async <T>(): Promise<{
+const makeDeferred = async <T>(): Promise<{
   promise: Promise<T>;
   resolver: {
     resolve: (value: T | PromiseLike<T>) => void;
-    reject: (reason: any) => void;
+    reject: (reason: unknown) => void;
   };
 }> => {
   let resolve: ((value: T | PromiseLike<T>) => void) | undefined = undefined;
-  let reject: ((reason: any) => void) | undefined = undefined;
+  let reject: ((reason: unknown) => void) | undefined = undefined;
 
   const promise = new Promise<T>((a, b) => {
     resolve = a;
@@ -178,7 +153,7 @@ const makeTriple = async <T>(): Promise<{
   });
 
   while (!resolve || !reject) {
-    await new Promise((resolve) => setTimeout(resolve, 1));
+    await new Promise((t) => setImmediate(t));
   }
 
   return { promise, resolver: { resolve, reject } };
@@ -190,12 +165,12 @@ const main = async (): Promise<void> => {
 
   for (const w of decorated.values()) {
     const allDependencies = Promise.all(
-      [...w.dependsOn].map((depName) => decorated.get(depName)!.triple.promise)
+      [...w.dependsOn].map((depName) => decorated.get(depName)!.triple.promise),
     ).then(() => undefined);
 
     buildWorkspace(w, allDependencies).then(
       w.triple.resolver.resolve,
-      w.triple.resolver.reject
+      w.triple.resolver.reject,
     );
   }
 

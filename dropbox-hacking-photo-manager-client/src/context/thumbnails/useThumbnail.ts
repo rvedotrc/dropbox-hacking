@@ -1,4 +1,5 @@
 import { useEffect, useReducer } from "react";
+
 import type { ThumbnailLoader } from "./types";
 
 type R = string | null;

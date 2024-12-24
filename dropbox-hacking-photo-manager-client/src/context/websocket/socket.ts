@@ -1,12 +1,13 @@
-import { EventEmitter } from "events";
-import { cancelablePromise, type CancelablePromise } from "./cancelablePromise";
-import { generateId } from "./id";
 import type {
   PingRequest,
   PingResponse,
   SimpleRequest,
   SimpleResponse,
 } from "dropbox-hacking-photo-manager-shared/src/ws";
+import { EventEmitter } from "events";
+
+import { type CancelablePromise, cancelablePromise } from "./cancelablePromise";
+import { generateId } from "./id";
 
 const PING_INTERVAL_MILLIS = 25 * 1000;
 
@@ -54,19 +55,19 @@ export class Socket extends EventEmitter {
 
   public on(eventName: "online", listener: () => void): this;
   public on(eventName: "offline", listener: () => void): this;
-  public on(eventName: string, listener: (...args: any[]) => void): this {
+  public on(eventName: string, listener: (...args: never[]) => void): this {
     return super.on(eventName, listener);
   }
 
   public off(eventName: "online", listener: () => void): this;
   public off(eventName: "offline", listener: () => void): this;
-  public off(eventName: string, listener: (...args: any[]) => void): this {
+  public off(eventName: string, listener: (...args: never[]) => void): this {
     return super.off(eventName, listener);
   }
 
   public emit(eventName: "online"): boolean;
   public emit(eventName: "offline"): boolean;
-  public emit(eventName: string, ...args: any[]): boolean {
+  public emit(eventName: string, ...args: never[]): boolean {
     return super.emit(eventName, ...args);
   }
 

@@ -12,7 +12,7 @@ const useVisibilityTracking = ({
   listItemDataAttribute: string;
   onVisibleItems: (visible: Set<string>) => void;
   deps: DependencyList | undefined;
-}) =>
+}): React.ReactNode =>
   useEffect(() => {
     const parent = parentRef.current;
     if (!parent) return;

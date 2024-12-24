@@ -1,15 +1,16 @@
-import * as React from "react";
-import { useEffect, useMemo, useRef, useState } from "react";
 import {
   DayMetadataResponse,
   PhotosResponse,
 } from "dropbox-hacking-photo-manager-shared";
-import EditableTextField from "./editableTextField";
-import logRender from "../logRender";
-import useVisibilityTracking from "../days/useVisibilityTracking";
-import PhotoTile from "./photoTile";
+import * as React from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+
 import { useDay, useDayPhotos } from "../context/feeds";
+import useVisibilityTracking from "../days/useVisibilityTracking";
 import { isLeft } from "../fp";
+import logRender from "../logRender";
+import EditableTextField from "./editableTextField";
+import PhotoTile from "./photoTile";
 
 const DayWithData = ({
   date,
@@ -77,7 +78,7 @@ const DayWithData = ({
 
 const DayWithDataLogged = logRender(DayWithData);
 
-const Day = ({ date }: { date: string }) => {
+const Day = ({ date }: { date: string }): React.ReactElement | null => {
   const dayMetadata = useDay(date);
   const dayPhotos = useDayPhotos(date);
 

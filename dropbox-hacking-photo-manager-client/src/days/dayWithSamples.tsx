@@ -1,11 +1,12 @@
-import SamePageLink from "../samePageLink";
-import SamplePhoto from "./samplePhoto";
-import * as React from "react";
 import { CountsByDateEntry } from "dropbox-hacking-photo-manager-shared";
+import * as React from "react";
 import { useEffect, useMemo, useState } from "react";
+
 import EditableTextField from "../day/editableTextField";
-import type { Subscribable } from "./emittableSubscribable";
 import logRender from "../logRender";
+import SamePageLink from "../samePageLink";
+import type { Subscribable } from "./emittableSubscribable";
+import SamplePhoto from "./samplePhoto";
 
 export const dayDateAttribute = "data-date";
 
@@ -17,7 +18,7 @@ export const dayWithSamples = ({
   day: CountsByDateEntry & { description?: string };
   withSamples: boolean;
   s: Subscribable<{ date: string; visible: boolean }>;
-}) => {
+}): React.ReactElement | null => {
   const [visible, setVisible] = useState(false);
 
   useEffect(

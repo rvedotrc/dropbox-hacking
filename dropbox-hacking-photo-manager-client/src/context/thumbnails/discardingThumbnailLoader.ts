@@ -1,4 +1,5 @@
 import {} from "dropbox-hacking-photo-manager-shared";
+
 import type { ThumbnailLoader } from "./types";
 
 export class DiscardingThumbnailLoader implements ThumbnailLoader {
@@ -36,4 +37,4 @@ export class DiscardingThumbnailLoader implements ThumbnailLoader {
 export const discardingThumbnailLoader = (
   backend: ThumbnailLoader,
   discardAfter: number,
-) => new DiscardingThumbnailLoader(backend, discardAfter);
+): ThumbnailLoader => new DiscardingThumbnailLoader(backend, discardAfter);

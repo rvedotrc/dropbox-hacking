@@ -8,12 +8,13 @@ import {
   useRef,
   useState,
 } from "react";
+
 import logRender from "../logRender";
 
 const EditableTextField = (props: {
   value: string;
   onSave: (newValue: string) => Promise<void>;
-}) => {
+}): React.ReactElement | null => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [editingValue, setEditingValue] = useState<string>(props.value.trim());
   const input = useRef<HTMLInputElement>(null);

@@ -1,13 +1,14 @@
-import * as React from "react";
-import { useEffect, useState } from "react";
 import {
   GPSLatLong,
   Photo,
   PhotoResponse,
 } from "dropbox-hacking-photo-manager-shared";
+import * as React from "react";
+import { useEffect, useState } from "react";
+
 import logRender from "../logRender";
 
-const Photo = (props: { rev: string }) => {
+const Photo = (props: { rev: string }): React.ReactElement | null => {
   const [photo, setPhoto] = useState<Photo | false | undefined>();
   const [previewSizes, setPreviewSizes] = useState<string[]>();
 

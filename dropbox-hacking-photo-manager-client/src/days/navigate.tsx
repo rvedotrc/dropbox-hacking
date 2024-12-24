@@ -1,7 +1,8 @@
-import SamePageLink from "../samePageLink";
 import * as React from "react";
 
-const navigation = () => (
+import SamePageLink from "../samePageLink";
+
+const navigation = (): React.ReactElement | null => (
   <p>
     <SamePageLink href={"/calendar"} state={{ route: "calendar" }}>
       Calendar

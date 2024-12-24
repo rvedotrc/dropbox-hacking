@@ -1,9 +1,10 @@
-import * as React from "react";
 import { Photo } from "dropbox-hacking-photo-manager-shared";
-import SamePageLink from "../samePageLink";
-import logRender from "../logRender";
-import { useThumbnail } from "../context/thumbnails/useThumbnail";
+import * as React from "react";
+
 import { useThumbnailLoader } from "../context/thumbnails";
+import { useThumbnail } from "../context/thumbnails/useThumbnail";
+import logRender from "../logRender";
+import SamePageLink from "../samePageLink";
 
 const cleanedName = (photo: Photo) => {
   if (photo.content_hash) {
@@ -19,7 +20,7 @@ const PhotoTile = ({
 }: {
   photo: Photo;
   isVisible: boolean;
-}) => {
+}): React.ReactElement | null => {
   const loader = useThumbnailLoader();
 
   const thumbnail = useThumbnail(photo.rev, loader)(isVisible);

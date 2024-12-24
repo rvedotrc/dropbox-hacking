@@ -1,16 +1,18 @@
 import * as React from "react";
-
 import { createContext, PropsWithChildren, useContext, useMemo } from "react";
-import type { ThumbnailLoader } from "./types";
-import { nullLoader } from "./nullThumbnailLoader";
-import { discardingThumbnailLoader } from "./discardingThumbnailLoader";
-import { websocketThumbnailLoader } from "./websocketThumbnailLoader";
+
 import { useWebsocket } from "../websocket";
+import { discardingThumbnailLoader } from "./discardingThumbnailLoader";
+import { nullLoader } from "./nullThumbnailLoader";
+import type { ThumbnailLoader } from "./types";
+import { websocketThumbnailLoader } from "./websocketThumbnailLoader";
 
 export const context = createContext<ThumbnailLoader>(nullLoader);
-export const useThumbnailLoader = () => useContext(context);
+export const useThumbnailLoader = (): ThumbnailLoader => useContext(context);
 
-export const defaultProvider = (props: PropsWithChildren<unknown>) => {
+export const defaultProvider = (
+  props: PropsWithChildren<unknown>,
+): React.ReactElement | null => {
   const socket = useWebsocket();
   const loader = useMemo(
     () =>

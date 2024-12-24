@@ -1,20 +1,20 @@
+import { Payload } from "dropbox-hacking-photo-manager-shared";
 import * as React from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 
-import Calendar from "./days/calendar";
-import Day from "./day";
-import Photo from "./photo";
-import ListOfDays from "./days/listOfDays";
-import { Payload } from "dropbox-hacking-photo-manager-shared";
-import { useEffect, useMemo, useState } from "react";
 import countsByDateContext from "./context/countsByDateContext";
 import daysMetadataContext from "./context/daysMetadataContext";
 import eventEmitterContext from "./context/eventEmitterContext";
-import * as thumbnailLoaderContext from "./context/thumbnails";
-import * as websocket from "./context/websocket";
 import routingContext from "./context/routingContext";
 import { Router } from "./context/routingContext";
+import * as thumbnailLoaderContext from "./context/thumbnails";
+import * as websocket from "./context/websocket";
+import Day from "./day";
+import Calendar from "./days/calendar";
+import ListOfDays from "./days/listOfDays";
 import logRender from "./logRender";
+import Photo from "./photo";
 
 const toRender = ({ payload }: { payload: Payload }) => {
   if (payload.route === "calendar") return <Calendar />;
@@ -25,7 +25,11 @@ const toRender = ({ payload }: { payload: Payload }) => {
   return <span>Routing error</span>;
 };
 
-const Root = ({ initialState }: { initialState: Payload }) => {
+const Root = ({
+  initialState,
+}: {
+  initialState: Payload;
+}): React.ReactElement | null => {
   const [state, switchToPage] = useState(initialState);
 
   const router: Router = useMemo(() => ({ switchToPage }), []);

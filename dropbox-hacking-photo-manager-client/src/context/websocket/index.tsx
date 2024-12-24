@@ -1,5 +1,4 @@
 import * as React from "react";
-
 import {
   createContext,
   PropsWithChildren,
@@ -7,14 +6,17 @@ import {
   useEffect,
   useMemo,
 } from "react";
+
 import { Socket } from "./socket";
 
 export const context = createContext<Socket | undefined>(undefined);
 const Provider = context.Provider;
 
-export const useWebsocket = () => useContext(context);
+export const useWebsocket = (): Socket | undefined => useContext(context);
 
-export const defaultProvider = (props: PropsWithChildren<unknown>) => {
+export const defaultProvider = (
+  props: PropsWithChildren<unknown>,
+): React.ReactElement | null => {
   const w = useMemo(() => new Socket("/api/ws"), []);
 
   useEffect(() => {

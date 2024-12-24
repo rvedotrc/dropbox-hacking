@@ -2,9 +2,9 @@
   "author": "Rachel Evans <rachel@rachelevans.org>",
   "description": "Messing around with the Dropbox API",
   "devDependencies": {
-    "eslint": "^9.4.0",
     "@typescript-eslint/eslint-plugin": "^7.12.0",
     "@typescript-eslint/parser": "^7.12.0",
+    "eslint": "^9.4.0",
     "eslint-plugin-simple-import-sort": "^10.0.0"
   },
   "license": "MIT",
@@ -14,7 +14,8 @@
   "repository": "https://github.com/rvedotrc/dropbox-hacking",
   "scripts": {
     "build": "./build.sh",
-    "clean": "rm -rf node_modules */tsconfig.tsbuildinfo */dist */node_modules"
+    "clean": "rm -rf node_modules */tsconfig.tsbuildinfo */dist */node_modules",
+    "lint": "eslint --fix *.ts */src"
   },
   "version": "1.0.0",
   "workspaces": [
@@ -31,5 +32,9 @@
     "dropbox-hacking-sync",
     "dropbox-hacking-uploader",
     "dropbox-hacking-util"
-  ]
+  ],
+  "dependencies": {
+    "@eslint/eslintrc": "^3.2.0",
+    "@eslint/js": "^9.17.0"
+  }
 }
