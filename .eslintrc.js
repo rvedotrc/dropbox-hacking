@@ -1,17 +1,14 @@
 module.exports = {
   root: true,
-  parser: '@typescript-eslint/parser',
+  parser: "@typescript-eslint/parser",
   parserOptions: {
-    "ecmaVersion": "2017"
+    ecmaVersion: "2017",
   },
-  plugins: [
-    '@typescript-eslint',
-    'simple-import-sort'
-  ],
+  plugins: ["@typescript-eslint", "simple-import-sort"],
   extends: [
-    'eslint:recommended',
-    'plugin:@typescript-eslint/eslint-recommended',
-    'plugin:@typescript-eslint/recommended',
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
   ],
   rules: {
     "no-constant-condition": "off",
@@ -23,15 +20,15 @@ module.exports = {
     "@typescript-eslint/no-empty-function": "off",
     "object-shorthand": "error",
     "no-unused-vars": "off",
-    '@typescript-eslint/no-unused-vars': [
-      'error',
+    "@typescript-eslint/no-unused-vars": [
+      "error",
       {
-        argsIgnorePattern: '^_',
-        varsIgnorePattern: '^_',
-        caughtErrorsIgnorePattern: '^_',
+        argsIgnorePattern: "^_",
+        varsIgnorePattern: "^_",
+        caughtErrorsIgnorePattern: "^_",
       },
     ],
     "simple-import-sort/imports": "error",
     "simple-import-sort/exports": "error",
-  }
+  },
 };

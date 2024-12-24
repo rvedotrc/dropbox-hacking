@@ -155,7 +155,6 @@ const buildWorkspace = async (
       });
     });
 
-  await yarnRun("prettier");
   await yarnRun("lint");
   console.log(`${w.name} awaiting dependencies`);
   await dependenciesPromise;

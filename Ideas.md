@@ -20,4 +20,3 @@ Video thumbnails
 Preserve metadata in Dropbox
 
 Event feed with something more subtle than "something changed, reload the universe"
-
