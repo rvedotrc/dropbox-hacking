@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "dropbox": "^10.34.0",
+    "dropbox-hacking-util": "1.0.0",
     "ts-exif-parser": "^0.2.2"
   },
   "devDependencies": {

@@ -3,7 +3,13 @@
     "cli": "dist/main/cli.js"
   },
   "dependencies": {
+    "dropbox-hacking-exif-db": "1.0.0",
+    "dropbox-hacking-lister": "1.0.0",
+    "dropbox-hacking-ls-cache": "1.0.0",
+    "dropbox-hacking-mediainfo-db": "1.0.0",
+    "dropbox-hacking-mover": "1.0.0",
     "dropbox-hacking-sync": "1.0.0",
+    "dropbox-hacking-uploader": "1.0.0",
     "dropbox-hacking-util": "1.0.0"
   },
   "devDependencies": {

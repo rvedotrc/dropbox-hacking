@@ -4,9 +4,5 @@
     "rootDir": "src"
   },
   "extends": "../tsconfig.base.json",
-  "references": [
-    {
-      "path": "../dropbox-hacking-util"
-    }
-  ]
+  "references": []
 }
