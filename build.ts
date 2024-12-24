@@ -164,8 +164,10 @@ const buildWorkspace = async (
 
 const makeTriple = async <T>(): Promise<{
   promise: Promise<T>;
-  resolve: (value: T | PromiseLike<T>) => void;
-  reject: (reason: any) => void;
+  resolver: {
+    resolve: (value: T | PromiseLike<T>) => void;
+    reject: (reason: any) => void;
+  };
 }> => {
   let resolve: ((value: T | PromiseLike<T>) => void) | undefined = undefined;
   let reject: ((reason: any) => void) | undefined = undefined;
@@ -179,7 +181,7 @@ const makeTriple = async <T>(): Promise<{
     await new Promise((resolve) => setTimeout(resolve, 1));
   }
 
-  return { promise, resolve, reject };
+  return { promise, resolver: { resolve, reject } };
 };
 
 const main = async (): Promise<void> => {
@@ -191,7 +193,10 @@ const main = async (): Promise<void> => {
       [...w.dependsOn].map((depName) => decorated.get(depName)!.triple.promise)
     ).then(() => undefined);
 
-    buildWorkspace(w, allDependencies).then(w.triple.resolve, w.triple.reject);
+    buildWorkspace(w, allDependencies).then(
+      w.triple.resolver.resolve,
+      w.triple.resolver.reject
+    );
   }
 
   await Promise.all([...decorated.values()].map((e) => e.triple.promise));
