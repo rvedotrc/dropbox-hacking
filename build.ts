@@ -84,8 +84,6 @@ const buildWorkspace = async (
   w: DecoratedWorkspace,
   dependenciesPromise: Promise<unknown>,
 ): Promise<void> => {
-  console.log(`Build ${w.name}`);
-
   const packageJson: { scripts: Record<string, string> } = JSON.parse(
     (await fs.promises.readFile(`./${w.name}/package.json`)).toString(),
   );
@@ -95,8 +93,6 @@ const buildWorkspace = async (
       const shell = packageJson.scripts[key];
       if (typeof shell !== "string")
         throw `No yarn script for ${w.name} ${key}`;
-
-      console.log(`Build ${w.name} ${key}`);
 
       const cp = child_process.spawn("sh", ["-c", shell], {
         cwd: w.name,
@@ -118,12 +114,10 @@ const buildWorkspace = async (
               console.log(`${w.name} ${key} ${stream}: ${line}`),
             ),
         );
-        // s.on('close', () => console.log(`${w.name} ${key} ${stream} closed`));
       }
 
       cp.on("close", (code, signal) => {
         if (code === 0 && signal === null) {
-          // console.log(`${w.name} ${key} completed OK`);
           return resolve(undefined);
         }
 
@@ -131,10 +125,8 @@ const buildWorkspace = async (
       });
     });
 
-  console.log(`${w.name} awaiting dependencies`);
   await dependenciesPromise;
   await yarnRun("compile");
-  console.log(`${w.name} complete`);
 };
 
 const makeDeferred = async <T>(): Promise<{

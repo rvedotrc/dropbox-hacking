@@ -7,13 +7,16 @@ uninstall:
 	rm -rf node_modules */node_modules
 
 format:
-	yarn --silent exec -- prettier --write .
+	@echo Prettier
+	@set -o pipefail ; yarn --silent exec -- prettier --write . | ( grep -vw unchanged || : )
 
 build.js: install build.ts tsconfig.json
-	yarn --silent exec tsc
+	@echo Compile build.js
+	@yarn --silent exec tsc
 
 build: install format build.js
-	node ./build.js
+	@echo Build
+	@node ./build.js
 
 clean:
 	rm -rf */dist */tsconfig.tsbuildinfo
