@@ -41,7 +41,7 @@ type DecoratedWorkspace = {
   info: YarnWorkspaceInfo;
   tsconfig: TSConfig;
   dependsOn: Set<string>;
-  triple: Awaited<ReturnType<typeof makeDeferred<void>>>;
+  waiter: Awaited<ReturnType<typeof withResolvers<void>>>;
 };
 
 const decorateWorkspace = async (
@@ -60,7 +60,7 @@ const decorateWorkspace = async (
           dep.path.replace("../", ""),
         ),
       ]),
-      triple: await makeDeferred(),
+      waiter: withResolvers(),
     }));
 
 type DecoratedWorkspaceMap = Map<string, DecoratedWorkspace>;
@@ -129,26 +129,26 @@ const buildWorkspace = async (
   await yarnRun("compile");
 };
 
-const makeDeferred = async <T>(): Promise<{
+// Like Promise.withResolvers:
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/withResolvers
+const withResolvers = <T>(): {
   promise: Promise<T>;
-  resolver: {
-    resolve: (value: T | PromiseLike<T>) => void;
-    reject: (reason: unknown) => void;
-  };
-}> => {
-  let resolve: ((value: T | PromiseLike<T>) => void) | undefined = undefined;
-  let reject: ((reason: unknown) => void) | undefined = undefined;
+  resolve: (value: T | PromiseLike<T>) => void;
+  reject: (reason: unknown) => void;
+} => {
+  let resolve: unknown = undefined;
+  let reject: unknown = undefined;
 
   const promise = new Promise<T>((a, b) => {
     resolve = a;
     reject = b;
   });
 
-  while (!resolve || !reject) {
-    await new Promise((t) => setImmediate(t));
-  }
-
-  return { promise, resolver: { resolve, reject } };
+  return {
+    promise,
+    resolve: resolve as (value: T | PromiseLike<T>) => void,
+    reject: reject as (reason: unknown) => void,
+  };
 };
 
 const main = async (): Promise<void> => {
@@ -157,16 +157,13 @@ const main = async (): Promise<void> => {
 
   for (const w of decorated.values()) {
     const allDependencies = Promise.all(
-      [...w.dependsOn].map((depName) => decorated.get(depName)!.triple.promise),
+      [...w.dependsOn].map((depName) => decorated.get(depName)!.waiter.promise),
     ).then(() => undefined);
 
-    buildWorkspace(w, allDependencies).then(
-      w.triple.resolver.resolve,
-      w.triple.resolver.reject,
-    );
+    buildWorkspace(w, allDependencies).then(w.waiter.resolve, w.waiter.reject);
   }
 
-  await Promise.all([...decorated.values()].map((e) => e.triple.promise));
+  await Promise.all([...decorated.values()].map((e) => e.waiter.promise));
 };
 
 main();
