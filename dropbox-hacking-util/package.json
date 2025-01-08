@@ -4,10 +4,10 @@
     "express": "^4.18.2"
   },
   "devDependencies": {
-    "@types/node": "^20.5.9",
-    "@typescript-eslint/eslint-plugin": "^7.12.0",
-    "@typescript-eslint/parser": "^6.5.0",
-    "eslint": "^8.48.0",
+    "@types/node": "^22.10.5",
+    "@typescript-eslint/eslint-plugin": "^8.19.1",
+    "@typescript-eslint/parser": "^8.19.1",
+    "eslint": "^9.17.0",
     "prettier": "^3.0.3",
     "typescript": "^5.2.2"
   },
