@@ -1,13 +1,13 @@
 import { Photo, PhotosResponse } from "dropbox-hacking-photo-manager-shared";
 import { Application } from "express";
 
-import { Context } from "../context";
+import { Context } from "../context.js";
 
 export default (app: Application, context: Context): void => {
   app.get("/api/photos/:date(\\d\\d\\d\\d-\\d\\d-\\d\\d)", (req, res) => {
     const date = req.params.date;
 
-    Promise.all([context.lsFeed.read(), context.exifDbFeed.read()]).then(
+    void Promise.all([context.lsFeed.read(), context.exifDbFeed.read()]).then(
       ([state, exif]) => {
         if (state.tag !== "ready") {
           res.status(503);

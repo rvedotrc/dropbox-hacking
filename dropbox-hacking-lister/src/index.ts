@@ -19,7 +19,14 @@ export type ListerArgs = (
 export const lister = (args: {
   dbx: Dropbox;
   listing: ListerArgs;
-  onItem: (item: files.ListFolderResult["entries"][0]) => Promise<void>;
+  onItem: (
+    item:
+      | files.FileMetadataReference
+      | files.FolderMetadataReference
+      | files.DeletedMetadataReference,
+
+    //  files.ListFolderResult["entries"][number]
+  ) => Promise<void>;
   onCursor?: (cursor: string) => Promise<void>;
   onPause?: (cursor: string) => Promise<void>;
   onResume?: () => Promise<void>;

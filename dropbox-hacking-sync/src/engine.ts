@@ -5,12 +5,12 @@ import {
   writeStderr,
 } from "dropbox-hacking-util";
 
-import dropboxListing, { Item as RemoteItem } from "./dropbox-listing";
+import dropboxListing, { Item as RemoteItem } from "./dropbox-listing.js";
 import localListing, {
   DirectoryItem,
   FileItem,
   Item as LocalItem,
-} from "./local-listing";
+} from "./local-listing.js";
 
 // Does a "mkdir -p" on the destination structure
 
@@ -135,7 +135,7 @@ export const calculate = async (
   };
 
   const syncActionFor = (
-    key: string,
+    _key: string,
     items: LocalAndRemoteItems,
   ): SyncAction => {
     const { local, remote } = items;
@@ -158,7 +158,9 @@ export const calculate = async (
 
     if (!localItem) {
       if (!remote)
-        throw "Somehow ended up being called with no local and no remote";
+        throw new Error(
+          "Somehow ended up being called with no local and no remote",
+        );
 
       if (remoteIsFile(remote)) {
         return {

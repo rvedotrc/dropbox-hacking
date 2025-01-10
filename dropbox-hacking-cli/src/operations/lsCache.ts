@@ -9,7 +9,7 @@ import {
   writeStdout,
 } from "dropbox-hacking-util";
 
-import { Handler } from "../types";
+import { Handler } from "../types.js";
 
 const verb = "ls-cache";
 
@@ -125,9 +125,9 @@ const updateHandler: Handler = async (
 };
 
 const showHandler: Handler = async (
-  dbxp: DropboxProvider,
+  _dbxp: DropboxProvider,
   argv: string[],
-  globalOptions: GlobalOptions,
+  _globalOptions: GlobalOptions,
   usageFail: () => Promise<void>,
 ): Promise<void> => {
   // `${subShow} STATE_DIR`

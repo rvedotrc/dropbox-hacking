@@ -1,14 +1,14 @@
 import { Application } from "express-ws";
 
-import { Context } from "../context";
-import getCountsByDate from "./getCountsByDate";
-import getEvents from "./getEvents";
-import getLs from "./getLs";
-import getPhotoMetadata from "./getPhotoMetadata";
-import getPhotosOnDate from "./getPhotosOnDate";
-import getSetDayMetadata from "./getSetDayMetadata";
-import getThumbnailMulti from "./getThumbnailMulti";
-import { route as getWs } from "./websocket";
+import { Context } from "../context.js";
+import getCountsByDate from "./getCountsByDate.js";
+import getEvents from "./getEvents.js";
+import getLs from "./getLs.js";
+import getPhotoMetadata from "./getPhotoMetadata.js";
+import getPhotosOnDate from "./getPhotosOnDate.js";
+import getSetDayMetadata from "./getSetDayMetadata.js";
+import getThumbnailMulti from "./getThumbnailMulti.js";
+import { route as getWs } from "./websocket/index.js";
 
 export default (app: Application, context: Context): void => {
   getCountsByDate(app, context);

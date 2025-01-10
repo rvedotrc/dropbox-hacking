@@ -6,7 +6,7 @@ import {
   writeStderr,
 } from "dropbox-hacking-util";
 
-import { Operation } from "./types";
+import { Operation } from "./types.js";
 
 export default (op: Operation): void => {
   const argv = process.argv.slice(2);
@@ -24,7 +24,7 @@ export default (op: Operation): void => {
       ...lines.map((line) => `  ${op.verb} ${line}\n`),
     ].join("");
     return writeStderr(help).then(() => process.exit(2));
-  }).catch((err) => {
+  }).catch((err: Error) => {
     console.error({ err, stack: err.stack });
     process.exit(1);
   });

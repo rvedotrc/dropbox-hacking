@@ -3,10 +3,10 @@ const webpack = require("webpack");
 
 const childProcess = require("child_process");
 const gitRevision = childProcess
-  .execSync("git rev-parse HEAD")
+  .execSync("echo XXX")
   .toString()
   .replace(/\n/, "");
-const gitStatus = childProcess.execSync("git status --porcelain").toString();
+const gitStatus = childProcess.execSync(": git status --porcelain").toString();
 const buildVersion = gitStatus === "" ? gitRevision : "dirty";
 const buildTime = new Date().getTime();
 console.log({ buildVersion, buildTime });

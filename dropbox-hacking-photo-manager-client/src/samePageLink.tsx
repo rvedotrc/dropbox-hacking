@@ -8,7 +8,7 @@ const samePageLink = ({
   ...props
 }: {
   state: Payload;
-} & JSX.IntrinsicElements["a"]): React.ReactElement | null => {
+} & React.JSX.IntrinsicElements["a"]): React.ReactElement | null => {
   const router = useRouter();
 
   return (

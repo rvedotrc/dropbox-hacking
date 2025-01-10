@@ -2,12 +2,12 @@ import { randomUUID } from "crypto";
 import express from "express";
 import expressWs from "express-ws";
 
-import api from "./api";
-import contextBuilder from "./contextBuilder";
-import getPages from "./getPages";
-import getRoot from "./getRoot";
-import image from "./image";
-import legacyRedirects from "./legacyRedirects";
+import api from "./api/index.js";
+import contextBuilder from "./contextBuilder.js";
+import getPages from "./getPages.js";
+import getRoot from "./getRoot.js";
+import image from "./image/index.js";
+import legacyRedirects from "./legacyRedirects.js";
 
 const appWithoutWs = express();
 const appWithWs = expressWs(appWithoutWs).app;
@@ -17,16 +17,19 @@ const context = contextBuilder({
   baseUrlWithoutSlash: "http://localhost:4000",
 });
 
-const logPrefixKey = Symbol();
+const logPrefixKey: unique symbol = Symbol("logPrefix");
+type LogPrefixKey = typeof logPrefixKey;
+type WithLogPrefix<T extends object = object> = T &
+  Record<LogPrefixKey, string | undefined>;
+
 export const getLogPrefix = (req: unknown): string | undefined => {
-  const value = (req as any)[logPrefixKey]; // eslint-disable-line @typescript-eslint/no-explicit-any
-  return typeof value === "string" ? value : undefined;
+  return (req as WithLogPrefix)[logPrefixKey];
 };
 
 let nextId = 0;
 appWithWs.use((req, res, next) => {
   const requestId = `REQ ${randomUUID()} #${++nextId} ${req.method} ${req.url} HTTP/${req.httpVersion} :`;
-  (req as any)[logPrefixKey] = requestId; // eslint-disable-line @typescript-eslint/no-explicit-any
+  (req as unknown as WithLogPrefix)[logPrefixKey] = requestId;
 
   const startTime = new Date().getTime();
 
@@ -89,7 +92,7 @@ const server = appWithWs.listen(context.port, () => {
 
 server.on("close", () => {
   console.log("Server closed, now closing context");
-  context.close();
+  void context.close();
 });
 
 const requestStop = (reason: string) =>

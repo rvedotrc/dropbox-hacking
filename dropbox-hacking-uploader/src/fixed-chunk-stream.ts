@@ -1,4 +1,4 @@
-import stream = require("node:stream");
+import stream from "node:stream";
 
 export default (
   chunkSize: number,
@@ -7,10 +7,10 @@ export default (
   onEnd: () => void,
   onError: (err: Error) => void,
 ): void => {
-  if (isNaN(chunkSize)) throw "Invalid chunkSize";
+  if (isNaN(chunkSize)) throw new Error("Invalid chunkSize");
 
   chunkSize = Math.floor(chunkSize);
-  if (chunkSize < 1) throw "Invalid chunkSize";
+  if (chunkSize < 1) throw new Error("Invalid chunkSize");
 
   let bufferedSize = 0;
   const buffers: Buffer[] = [];
@@ -28,7 +28,7 @@ export default (
     if (chunk.length === 0) return;
 
     const neededToFill = chunkSize - bufferedSize;
-    if (neededToFill <= 0) throw "Overrun!";
+    if (neededToFill <= 0) throw new Error("Overrun!");
 
     if (chunk.length > neededToFill) {
       // Split into two writes

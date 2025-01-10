@@ -8,7 +8,7 @@ import {
 } from "dropbox-hacking-util";
 import * as fs from "fs";
 
-import { Handler } from "../types";
+import { Handler } from "../types.js";
 
 const verb = "upload-stdin";
 

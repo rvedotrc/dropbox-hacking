@@ -2,8 +2,8 @@ import type { files } from "dropbox";
 import { mkdir, readFile, rename, unlink, writeFile } from "fs/promises";
 import { dirname } from "path";
 
-import type { Context } from "../../context";
-import type { ThumbnailFetcher } from "./thumbnailFetcher";
+import type { Context } from "../../context.js";
+import type { ThumbnailFetcher } from "./thumbnailFetcher.js";
 
 const pathFor = async (
   rev: string,
@@ -37,7 +37,8 @@ const backgroundSave = async (base64JPEG: string, filename: string) => {
   try {
     await trySave(base64JPEG, filename);
   } catch (error) {
-    if (!("code" in error && error.code === "ENOENT")) throw error;
+    if (!(error instanceof Error && "code" in error && error.code === "ENOENT"))
+      throw error;
     await mkdir(dirname(filename), { recursive: true });
     await trySave(base64JPEG, filename);
   }
@@ -58,7 +59,10 @@ export const fsCachingThumbnailFetcher =
       console.debug(`Served ${args.rev} from FS cache ${filename}`);
       return { base64JPEG };
     } catch (error) {
-      if (!("code" in error && error.code === "ENOENT")) throw error;
+      if (
+        !(error instanceof Error && "code" in error && error.code === "ENOENT")
+      )
+        throw error;
     }
 
     const answer = await _backend(args);

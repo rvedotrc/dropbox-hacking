@@ -1,7 +1,7 @@
-import stream = require("node:stream");
+import stream from "node:stream";
 import * as crypto from "crypto";
 
-import fixedChunkStream from "./fixed-chunk-stream";
+import fixedChunkStream from "./fixed-chunk-stream.js";
 
 const PART_SIZE = 4194304; // 4 MB
 

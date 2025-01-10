@@ -74,7 +74,7 @@ const Calendar = () => {
                   <MonthBox
                     year={year.yearNumber}
                     month={monthNumber}
-                    renderDay={(_y, _m, dayNumber): React.ReactFragment => {
+                    renderDay={(_y, _m, dayNumber): React.ReactNode => {
                       const dateString = `${year.yearString}-${zeroPad(
                         monthNumber + 1,
                         2,

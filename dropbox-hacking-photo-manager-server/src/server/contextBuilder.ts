@@ -5,9 +5,9 @@ import { getDropboxClient } from "dropbox-hacking-util";
 import { EventEmitter } from "events";
 import * as fs from "fs";
 
-import { Context, SubscribableData } from "./context";
-import DayDb from "./dayDb";
-import debounce from "./debounce";
+import { Context, SubscribableData } from "./context.js";
+import DayDb from "./dayDb.js";
+import debounce from "./debounce.js";
 
 class FilesystemBasedFeed<T>
   extends EventEmitter
@@ -54,13 +54,13 @@ export default (args: {
   baseUrlWithoutSlash: string;
 }): Context => {
   const exifDbDir = process.env.EXIF_DB_DIR;
-  if (exifDbDir === undefined) throw "Need EXIF_DB_DIR";
+  if (exifDbDir === undefined) throw new Error("Need EXIF_DB_DIR");
 
   const lsCacheDir = process.env.LS_CACHE_DIR;
-  if (lsCacheDir === undefined) throw "Need LS_CACHE_DIR";
+  if (lsCacheDir === undefined) throw new Error("Need LS_CACHE_DIR");
 
   const dayDbDir = process.env.DAY_DB_DIR;
-  if (dayDbDir === undefined) throw "Need DAY_DB_DIR";
+  if (dayDbDir === undefined) throw new Error("Need DAY_DB_DIR");
 
   const lsFeed = new FilesystemBasedFeed(lsCacheDir, () => {
     const lsCache = new LsCache.StateDir(lsCacheDir);
@@ -77,14 +77,16 @@ export default (args: {
   // FIXME: close()
 
   const dayDb = new DayDb(dayDbDir);
-  const daysFeed = new FilesystemBasedFeed(dayDbDir, dayDb.days);
+  const daysFeed = new FilesystemBasedFeed(dayDbDir, () => dayDb.days());
   daysFeed.start();
   // FIXME: close()
 
   const close = async () => {
-    lsFeed.stop();
-    exifDbFeed.stop();
-    daysFeed.stop();
+    await Promise.allSettled([
+      lsFeed.stop(),
+      exifDbFeed.stop(),
+      daysFeed.stop(),
+    ]);
   };
 
   return {

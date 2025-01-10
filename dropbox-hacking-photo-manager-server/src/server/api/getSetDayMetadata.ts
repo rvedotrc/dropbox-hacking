@@ -4,14 +4,16 @@ import {
 } from "dropbox-hacking-photo-manager-shared";
 import { Application } from "express";
 
-import { Context } from "../context";
+import { Context } from "../context.js";
 
 export default (app: Application, context: Context): void => {
-  app.get("/api/day/all", (req, res) =>
-    context.dayDb
-      .days()
-      .then((days) => ({ days_metadata: days }))
-      .then((data: DaysMetadataResponse) => res.json(data)),
+  app.get(
+    "/api/day/all",
+    (_req, res) =>
+      void context.dayDb
+        .days()
+        .then((days) => ({ days_metadata: days }))
+        .then((data: DaysMetadataResponse) => res.json(data)),
   );
 
   app.get("/api/day/:date(\\d\\d\\d\\d-\\d\\d-\\d\\d)", (req, res) =>
@@ -27,7 +29,7 @@ export default (app: Application, context: Context): void => {
   );
 
   app.patch("/api/day/:date(\\d\\d\\d\\d-\\d\\d-\\d\\d)", (req, res) => {
-    const body = req.body;
+    const body = req.body as unknown as { description: unknown };
 
     if (typeof body["description"] === "string") {
       const description = body["description"];
@@ -36,7 +38,7 @@ export default (app: Application, context: Context): void => {
         day_metadata: { date: req.params.date, description },
       };
 
-      context.dayDb.setDay(r.day_metadata).then(() => {
+      void context.dayDb.setDay(r.day_metadata).then(() => {
         res.json(r);
       });
     } else {

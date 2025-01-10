@@ -1,7 +1,7 @@
 import { Payload } from "dropbox-hacking-photo-manager-shared";
 import { Application } from "express";
 
-import { Context } from "./context";
+import { Context } from "./context.js";
 
 export default (app: Application, _context: Context): void => {
   const htmlEncode = (s: string) =>
@@ -22,8 +22,8 @@ export default (app: Application, _context: Context): void => {
         </head>
         <body>
             <div id="react_container"></div>
-            <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-            <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+            <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin></script>
+            <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin></script>
             <script id="payload-script" src="/dist/main.js" data-payload="${htmlEncode(
               JSON.stringify(payload),
             )}"></script>
@@ -31,17 +31,17 @@ export default (app: Application, _context: Context): void => {
     </html>
   `;
 
-  app.get("/calendar", (req, res) => {
+  app.get("/calendar", (_req, res) => {
     res.contentType("text/html");
     res.send(pageAsString({ route: "calendar" }));
   });
 
-  app.get("/days", (req, res) => {
+  app.get("/days", (_req, res) => {
     res.contentType("text/html");
     res.send(pageAsString({ route: "days" }));
   });
 
-  app.get("/days/plain", (req, res) => {
+  app.get("/days/plain", (_req, res) => {
     res.contentType("text/html");
     res.send(pageAsString({ route: "days-plain" }));
   });

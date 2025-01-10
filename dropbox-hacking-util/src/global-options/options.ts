@@ -1,6 +1,5 @@
 export const processOptions = (
   argv: string[],
-  // eslint-disable-next-line no-shadow
   spec: Record<string, (argv: string[]) => void>,
 ): string[] => {
   const output = [...argv];

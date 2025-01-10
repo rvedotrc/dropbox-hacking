@@ -1,3 +1,3 @@
-export * from "./exifDB";
-export * from "./fetcher";
-export * from "./stateDir";
+export * from "./exifDB.js";
+export * from "./fetcher.js";
+export * from "./stateDir.js";

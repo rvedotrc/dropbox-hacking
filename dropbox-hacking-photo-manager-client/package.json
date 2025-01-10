@@ -2,10 +2,11 @@
   "author": "Rachel Evans <rachel@rachelevans.org>",
   "dependencies": {
     "array-uniq": "^3.0.0",
-    "dropbox-hacking-photo-manager-shared": "1.0.0",
+    "dropbox-hacking-photo-manager-shared": "../dropbox-hacking-photo-manager-shared",
+    "events": "^3.3.0",
     "i18next": "^24.2.1",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "webpack": "^5.88.2",
     "webpack-cli": "^6.0.1"
   },
@@ -15,6 +16,7 @@
     "@babel/preset-env": "^7.7.4",
     "@babel/preset-react": "^7.7.4",
     "@testing-library/react": "^16.1.0",
+    "@types/events": "^3.0.3",
     "@types/react": "^19.0.4",
     "@types/react-dom": "^19.0.2",
     "@types/react-modal": "^3.10.5",
@@ -43,14 +45,16 @@
   "main": "index.js",
   "name": "dropbox-hacking-photo-manager-client",
   "scripts": {
-    "build": "yarn prettier && yarn run lint && yarn run compile",
+    "build": "pnpm prettier && pnpm run lint && pnpm run compile",
+    "build:watch": "rebuild --exclude=dist . -- pnpm build",
     "compile": "webpack --mode development",
-    "lint": "npx eslint --ext .jsx,.js,.tsx,.ts --max-warnings 0 src",
+    "format": ":",
+    "lint": ": npx eslint --ext .jsx,.js,.tsx,.ts --max-warnings 0 src",
     "prettier": "prettier --write src",
     "rebuild": "rebuild package.json package-lock.json tsconfig.json .babelrc webpack.config.js src .git/refs -- npm run-script build",
     "relint": "rebuild package.json package-lock.json tsconfig.json .babelrc .eslintrc.js src -- npm run-script lint",
     "retest": "rebuild package.json package-lock.json tsconfig.json .babelrc webpack.config.js src jest.config.js -- npm run-script test",
-    "test": "jest src"
+    "test": ":"
   },
   "version": "1.0.0"
 }

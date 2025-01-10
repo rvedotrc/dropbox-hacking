@@ -1,8 +1,8 @@
 import { files } from "dropbox";
 import * as fs from "fs";
 
-import { Handler } from "../types";
-import path = require("node:path");
+import { Handler } from "../types.js";
+import path from "node:path";
 import { StateDir } from "dropbox-hacking-ls-cache";
 import { localListing } from "dropbox-hacking-sync";
 import { makeContentHash, selectUploader } from "dropbox-hacking-uploader";
@@ -14,7 +14,7 @@ import {
   processOptions,
 } from "dropbox-hacking-util";
 
-import { targetForFile } from "./processCameraUploads";
+import { targetForFile } from "./processCameraUploads.js";
 
 const verb = "upload-missing";
 
@@ -46,7 +46,8 @@ const handler: Handler = async (
     .load()
     .then(() => lsCache.getState())
     .then((state) => {
-      if (state.tag !== "ready") throw `Bad ls cache state ${state.tag}`;
+      if (state.tag !== "ready")
+        throw new Error(`Bad ls cache state ${state.tag}`);
 
       const seen = new Map<string, string>();
       for (const e of state.entries.values()) {

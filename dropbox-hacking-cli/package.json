@@ -1,31 +1,35 @@
 {
-  "bin": {
-    "cli": "dist/main/cli.js"
+  "name": "dropbox-hacking-cli",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "concurrently --group pnpm:test:*",
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "format": "prettier --write .",
+    "test:prettier": "prettier --check .",
+    "test:lint": "eslint",
+    "test:unit": "c8 node --enable-source-maps --experimental-test-coverage --test './dist/spec/**/*.js'"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "@types/eslint__js": "8",
+    "@types/node": "^22.10.5",
+    "c8": "^10.1.3",
+    "concurrently": "^9.1.2",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "8"
+  },
+  "exports": {
+    ".": "./dist/src/index.js"
   },
   "dependencies": {
-    "dropbox-hacking-exif-db": "1.0.0",
-    "dropbox-hacking-lister": "1.0.0",
-    "dropbox-hacking-ls-cache": "1.0.0",
-    "dropbox-hacking-mediainfo-db": "1.0.0",
-    "dropbox-hacking-mover": "1.0.0",
-    "dropbox-hacking-sync": "1.0.0",
-    "dropbox-hacking-uploader": "1.0.0",
-    "dropbox-hacking-util": "1.0.0"
-  },
-  "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^8.19.1",
-    "@typescript-eslint/parser": "^8.19.1",
-    "eslint": "^9.17.0",
-    "prettier": "^3.0.3",
-    "typescript": "^5.2.2"
-  },
-  "license": "MIT",
-  "name": "dropbox-hacking-cli",
-  "scripts": {
-    "build": "yarn prettier && yarn lint --fix && yarn compile",
-    "compile": "tsc -p tsconfig.json",
-    "lint": "eslint --ext .js,.jsx,.ts,.tsx --max-warnings=0 src",
-    "prettier": "prettier --write src"
-  },
-  "version": "1.0.0"
+    "dropbox": "^10.34.0",
+    "ts-exif-parser": "^0.2.2"
+  }
 }

@@ -1,5 +1,5 @@
 import { Dropbox, files } from "dropbox";
-import stream = require("node:stream");
+import stream from "node:stream";
 import { GlobalOptions, makePromiseLimiter } from "dropbox-hacking-util";
 
 export const MAX_SINGLE_UPLOAD_SIZE = 150_000_000;
@@ -26,7 +26,7 @@ export default (
 
     const buffers: Buffer[] = [];
 
-    readable.on("data", (buffer) => {
+    readable.on("data", (buffer: Buffer) => {
       // console.debug(buffer);
       buffers.push(buffer);
     });
@@ -39,7 +39,6 @@ export default (
     readable.on("end", () => {
       const contents = Buffer.concat(buffers);
       // console.debug(`end, length=${contents.length}`);
-
       resolve(
         defaultLimiter.submit(
           () =>

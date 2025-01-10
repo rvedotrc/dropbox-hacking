@@ -4,7 +4,7 @@ import * as lsCache from "dropbox-hacking-ls-cache";
 import { DayMetadata } from "dropbox-hacking-photo-manager-shared";
 import { EventEmitter } from "events";
 
-import DayDb from "./dayDb";
+import DayDb from "./dayDb.js";
 
 export type SubscribableData<T> = EventEmitter & {
   on: (eventName: "change", fn: () => void) => void;

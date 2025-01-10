@@ -1,3 +1,3 @@
-export * from "./globalOptions";
-export * from "./options";
-export * from "./types";
+export * from "./globalOptions.js";
+export * from "./options.js";
+export * from "./types.js";

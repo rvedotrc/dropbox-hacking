@@ -55,8 +55,8 @@ export default (localPath: string, recursive: boolean): Promise<Item[]> => {
           return;
         }
       },
-      (err) => {
-        if (catchNotFound && err.code === "ENOENT") return;
+      (err: Error) => {
+        if (catchNotFound && "code" in err && err.code === "ENOENT") return;
         throw err;
       },
     );

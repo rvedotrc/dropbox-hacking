@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import { ExifData } from "ts-exif-parser";
 
-import { ExifDB } from "./exifDB";
+import { ExifDB } from "./exifDB.js";
 
 export type State =
   | { tag: "does_not_exist" }
@@ -26,7 +26,7 @@ type Data = {
 export class StateDir {
   private data: Data | undefined;
   private readonly stateFile: string;
-  private dirty: boolean;
+  private dirty: boolean = false;
   private lastSaved: number;
 
   constructor(
@@ -76,7 +76,7 @@ export class StateDir {
   }
 
   public hasContentHash(contentHash: string): boolean {
-    if (!this.data) throw "No data";
+    if (!this.data) throw new Error("No data");
 
     return this.data.seenContentHashes.has(contentHash);
   }
@@ -90,7 +90,7 @@ export class StateDir {
       `addItem ${contentHash} ${exifData.tags?.CreateDate} ${seenAs}`,
     );
 
-    if (!this.data) throw "No data";
+    if (!this.data) throw new Error("No data");
 
     // Mutates this.data directly; does NOT serialise & save state.
     // However, at the end of every page, we call setCursor, and that does.
@@ -102,7 +102,7 @@ export class StateDir {
 
   public setCursor(cursor: string): Promise<void> {
     console.debug(`setCursor ${cursor}`);
-    if (!this.data) throw "No data";
+    if (!this.data) throw new Error("No data");
     this.dirty ||= cursor !== this.data.cursor;
     this.data.cursor = cursor;
     if (this.data.cursor !== cursor) {
@@ -115,7 +115,7 @@ export class StateDir {
 
   public setReady(): Promise<void> {
     console.debug("setReady exif state");
-    if (!this.data) throw "No data";
+    if (!this.data) throw new Error("No data");
 
     this.data.correctAsOf = new Date().getTime();
     this.data.ready = true;
@@ -128,8 +128,8 @@ export class StateDir {
     return this.exifDB.flush().then(() => {
       if (!this.dirty) return;
 
-      return this.save().catch((err) => {
-        if (err.code !== "ENOENT") throw err;
+      return this.save().catch((err: Error) => {
+        if (!("code" in err && err.code === "ENOENT")) throw err;
 
         return fs.promises.mkdir(this.dir).then(() => this.save());
       });
@@ -149,8 +149,10 @@ export class StateDir {
       .readFile(this.stateFile, { encoding: "utf-8" })
       .then(
         (contents) => JSON.parse(contents) as Omit<Data, "seenContentHashes">,
-        (err) => {
-          if (err.code === "ENOENT") return undefined;
+        (err: Error) => {
+          if ("code" in err && err.code === "ENOENT") {
+            throw new Error("TODO, rewrite this bootstrapping code");
+          }
           throw err;
         },
       );

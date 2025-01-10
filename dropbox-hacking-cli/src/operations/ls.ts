@@ -8,7 +8,7 @@ import {
   writeStdout,
 } from "dropbox-hacking-util";
 
-import { Handler } from "../types";
+import { Handler } from "../types.js";
 
 type FolderStats = {
   childFileCount: number;
@@ -138,7 +138,7 @@ const handler: Handler = async (
       tail,
     },
     onItem: async (object) => {
-      if (object[".tag"] === "file") statsAddFile(object);
+      if (object[".tag"]) if (object[".tag"] === "file") statsAddFile(object);
       if (object[".tag"] === "folder") statsAddFolder(object);
       await writeStdout(JSON.stringify(object) + "\n");
     },

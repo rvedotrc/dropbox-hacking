@@ -1,8 +1,8 @@
 import { Dropbox } from "dropbox";
 
-import { GlobalOptions } from "../global-options";
-import RetryingPromise from "./retrying-promise";
-import Waiter from "./waiter";
+import { GlobalOptions } from "../global-options/index.js";
+import RetryingPromise from "./retrying-promise.js";
+import Waiter from "./waiter.js";
 
 let nextCallId = 0;
 
@@ -64,7 +64,8 @@ export default class WrappedMethod<M extends keyof Dropbox> {
         if (copyOfArgs.length > 0)
           copyOfArgs[0] = WrappedMethod.cloneIfStruct(copyOfArgs[0]);
 
-        return this.real.call(this.dbx, ...copyOfArgs);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+        return (this.real as any).apply(this.dbx, copyOfArgs as any);
       };
       this.debugTagged(callId, 0, "wrapped function called with", args);
 
@@ -72,7 +73,7 @@ export default class WrappedMethod<M extends keyof Dropbox> {
         // We don't yet know if this function returns promises. So in case it doesn't,
         // we have to call it right now, instead of after the waiter is ready.
         this.debugTagged(callId, 0, "call (not sure if returns promises)");
-        const value = callReal();
+        const value = callReal() as unknown;
 
         if (isPromise(value)) {
           this.debugTagged(callId, 0, "returned a promise");

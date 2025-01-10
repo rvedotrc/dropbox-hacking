@@ -80,8 +80,8 @@ export const downloader = (args: {
       fs.promises
         .open(tmpLocal, "wx", 0o000)
         .then((fh) =>
-          downloadToFilehandle({ ...args, inactivityTimeout, fh }).finally(() =>
-            fh.close(),
+          downloadToFilehandle({ ...args, inactivityTimeout, fh }).finally(
+            () => void fh.close(),
           ),
         )
         .then(() => fs.promises.utimes(tmpLocal, mtime, mtime))

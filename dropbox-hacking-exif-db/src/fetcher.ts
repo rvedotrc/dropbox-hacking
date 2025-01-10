@@ -52,7 +52,7 @@ const first64KBOf = async (
 export const fetcher = (
   dbx: Dropbox,
   limiter: PromiseLimiter<Buffer>,
-  globalOptions: GlobalOptions,
+  _globalOptions: GlobalOptions,
   fetchSize = 65536,
   timeoutMillis = 20000,
 ): Fetcher => ({

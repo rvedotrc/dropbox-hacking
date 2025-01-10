@@ -4,7 +4,7 @@ import logRender from "../../logRender";
 
 const TwelveMonths = (props: {
   year: number;
-  renderMonth: (y: number, m: number) => React.ReactFragment;
+  renderMonth: (y: number, m: number) => React.ReactNode;
 }) => (
   <div className="twelveMonths">
     {[...Array(12).keys()].map((month) => (

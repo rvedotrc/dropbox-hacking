@@ -3,7 +3,7 @@ import type {
   PingResponse,
   SimpleRequest,
   SimpleResponse,
-} from "dropbox-hacking-photo-manager-shared/src/ws";
+} from "dropbox-hacking-photo-manager-shared";
 import { EventEmitter } from "events";
 
 import { type CancelablePromise, cancelablePromise } from "./cancelablePromise";

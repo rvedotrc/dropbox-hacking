@@ -1,3 +1,3 @@
-export * as download from "./download";
-export * as localListing from "./local-listing";
-export * as upload from "./upload";
+export * as download from "./download.js";
+export * as localListing from "./local-listing.js";
+export * as upload from "./upload.js";

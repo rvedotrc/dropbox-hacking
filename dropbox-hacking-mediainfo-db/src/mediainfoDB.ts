@@ -1,12 +1,18 @@
 import * as fs from "fs";
 
-import { MediainfoData } from "./types";
+import { MediainfoData } from "./types.js";
 
 export type ContentHash = string;
 
 export type MediainfoFromHash = {
   mediainfoData: MediainfoData;
   addedAt: Date;
+  firstSeenFilename: string;
+};
+
+type MediainfoFromHashSerializable = {
+  mediainfoData: MediainfoData;
+  addedAt: string;
   firstSeenFilename: string;
 };
 
@@ -27,11 +33,17 @@ export class MediainfoDB {
       .readFile(`${this.dir}/mediainfo_by_content_hash.json`, {
         encoding: "utf-8",
       })
-      .catch((err) => {
-        if (err.code === "ENOENT") return "{}";
+      .catch((err: Error) => {
+        if ("code" in err && err.code === "ENOENT") return "{}";
         throw err;
       })
-      .then((json) => JSON.parse(json))
+      .then(
+        (json) =>
+          JSON.parse(json) as Record<
+            ContentHash,
+            MediainfoFromHashSerializable
+          >,
+      )
       .then((data) => {
         const map = new Map<ContentHash, MediainfoFromHash>();
 
@@ -89,11 +101,17 @@ export class MediainfoDB {
 
     return fs.promises
       .readFile(file, { encoding: "utf-8" })
-      .catch((err) => {
-        if (err.code === "ENOENT") return "{}";
+      .catch((err: Error) => {
+        if ("code" in err && err.code === "ENOENT") return "{}";
         throw err;
       })
-      .then((json) => JSON.parse(json))
+      .then(
+        (json) =>
+          JSON.parse(json) as Record<
+            ContentHash,
+            MediainfoFromHashSerializable
+          >,
+      )
       .then((data) => {
         for (const [contentHash, item] of unwritten) {
           data[contentHash] = {

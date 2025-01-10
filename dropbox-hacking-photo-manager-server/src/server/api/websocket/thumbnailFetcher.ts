@@ -1,6 +1,6 @@
 import type { files } from "dropbox";
 
-import type { Context } from "../../context";
+import type { Context } from "../../context.js";
 
 export type ThumbnailFetcher = (args: {
   rev: string;
@@ -72,7 +72,8 @@ export const batchingThumbnailFetcher = (
             c.reject(new Error("Unsuccessful thumbnail result"));
           }
         });
-      });
+      })
+      .catch((err) => console.warn(`Thumbnail fetch failed:`, err));
   };
 
   return (req) =>

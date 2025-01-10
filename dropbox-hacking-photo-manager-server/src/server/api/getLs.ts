@@ -1,7 +1,7 @@
 import { files } from "dropbox";
 import { Application } from "express";
 
-import { Context } from "../context";
+import { Context } from "../context.js";
 import File = files.FileMetadataReference;
 import Folder = files.FolderMetadataReference;
 
@@ -23,7 +23,7 @@ type FolderStats = {
 };
 
 export default (app: Application, context: Context): void => {
-  app.get("/api/ls/du", (req, res) => {
+  app.get("/api/ls/du", (_req, res) => {
     context.lsFeed
       .read()
       .then((state) => {
@@ -41,8 +41,8 @@ export default (app: Application, context: Context): void => {
             : [
                 {
                   ...item,
-                  path_display: item.path_display as string,
-                  path_lower: item.path_lower as string,
+                  path_display: item.path_display,
+                  path_lower: item.path_lower,
                 },
               ],
         );
@@ -87,7 +87,7 @@ export default (app: Application, context: Context): void => {
           if (item.path_lower === "") continue;
 
           const folder = folders.get(item.parent_path_lower);
-          if (folder === undefined) throw "eek";
+          if (folder === undefined) throw new Error("eek");
 
           folder.childItems.push(item);
         }
@@ -97,7 +97,7 @@ export default (app: Application, context: Context): void => {
           seenKeys.delete(path_lower);
 
           const folder = folders.get(path_lower);
-          if (folder === undefined) throw "a";
+          if (folder === undefined) throw new Error("a");
 
           let sizeDirectFiles = 0;
           let countDirectFiles = 0;

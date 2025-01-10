@@ -1,5 +1,5 @@
-import uploadSession from "./upload-session";
-import uploadSingle, { MAX_SINGLE_UPLOAD_SIZE } from "./upload-single";
+import uploadSession from "./upload-session.js";
+import uploadSingle, { MAX_SINGLE_UPLOAD_SIZE } from "./upload-single.js";
 
 const selectUploader = (size: number | undefined): typeof uploadSingle =>
   typeof size === "number" && size <= MAX_SINGLE_UPLOAD_SIZE
@@ -8,4 +8,4 @@ const selectUploader = (size: number | undefined): typeof uploadSingle =>
 
 export { MAX_SINGLE_UPLOAD_SIZE, selectUploader, uploadSession, uploadSingle };
 
-export * from "./make-content-hash";
+export * from "./make-content-hash.js";
