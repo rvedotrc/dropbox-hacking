@@ -97,16 +97,29 @@
   margin-right: 0.5em;
 }
 
+.dateAndStats .dayName {
+  display: inline-block;
+  width: 2em;
+}
+
 .listOfDays .count {
   margin-right: 1em;
   text-align: right;
   width: 2em;
+}
+.dateAndStats .count {
+  display: inline-block;
+  width: 2.5em;
 }
 
 .listOfDays .countWithGps {
   margin-right: 1em;
   text-align: right;
   width: 2em;
+}
+.dateAndStats .countWithGps {
+  display: inline-block;
+  width: 2.5em;
 }
 
 .samples {
