@@ -2,6 +2,7 @@ import { files } from "dropbox";
 import { ExifFromHash } from "dropbox-hacking-exif-db";
 import FileMetadataReference = files.FileMetadataReference;
 import FolderMetadataReference = files.FolderMetadataReference;
+import type { GPSLatNLongE } from "./gpsLatLong.js";
 
 export type DayMetadata = {
   date: string;
@@ -9,6 +10,11 @@ export type DayMetadata = {
 };
 
 export type Payload =
+  | {
+      route: "closest-to";
+      gps: GPSLatNLongE;
+      nClosest: number;
+    }
   | {
       route: "calendar";
     }

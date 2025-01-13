@@ -15,8 +15,11 @@ import Calendar from "./days/calendar";
 import ListOfDays from "./days/listOfDays";
 import logRender from "./logRender";
 import Photo from "./photo";
+import ClosestTo from "./closest-to/index";
 
 const toRender = ({ payload }: { payload: Payload }) => {
+  if (payload.route === "closest-to")
+    return <ClosestTo gps={payload.gps} nClosest={payload.nClosest} />;
   if (payload.route === "calendar") return <Calendar />;
   if (payload.route === "days") return <ListOfDays withSamples={true} />;
   if (payload.route === "days-plain") return <ListOfDays withSamples={false} />;

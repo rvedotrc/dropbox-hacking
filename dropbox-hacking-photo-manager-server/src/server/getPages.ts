@@ -65,4 +65,24 @@ export default (app: Application, _context: Context): void => {
       }),
     );
   });
+
+  app.get("/closest-to", (req, res) => {
+    const { degreesNorth, degreesEast, n } = req.query;
+
+    if (typeof degreesEast === "string" && typeof degreesNorth === "string") {
+      res.contentType("text/html");
+      res.send(
+        pageAsString({
+          route: "closest-to",
+          gps: {
+            lat: parseFloat(degreesNorth),
+            long: parseFloat(degreesEast),
+          },
+          nClosest: typeof n === "string" ? parseInt(n) : undefined,
+        }),
+      );
+    } else {
+      res.send(400);
+    }
+  });
 };

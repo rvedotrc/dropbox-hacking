@@ -6,6 +6,7 @@ import type {
 import type { Context } from "../../context.js";
 import { pingHandlerBuilder } from "./pingHandler.js";
 import { thumbnailHandlerBuilder } from "./thumbnailHandler.js";
+import { closestToHandlerBuilder } from "./closestToHandler.js";
 
 // export type SimpleRequestHandler<I, O> = (request: I) => Promise<O>;
 type H<I, O> = (
@@ -53,6 +54,7 @@ export const simpleRequestHandlerBuilder = (
   const handlerMap = {
     getThumbnail: thumbnailHandlerBuilder(context),
     ping: pingHandlerBuilder(context),
+    closestTo: closestToHandlerBuilder(context),
   } as const;
 
   const simpleRequestHandler = async (
