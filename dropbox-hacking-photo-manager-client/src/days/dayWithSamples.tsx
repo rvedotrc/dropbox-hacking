@@ -10,6 +10,8 @@ import SamplePhoto from "./samplePhoto";
 
 export const dayDateAttribute = "data-date";
 
+const dayNames: readonly string[] = "søn man tir ons tor fre lør".split(" ");
+
 export const dayWithSamples = ({
   day,
   withSamples,
@@ -50,6 +52,9 @@ export const dayWithSamples = ({
       >
         <div className={"dateAndStats"}>
           <span className={"date"}>{day.date}</span>
+          <span className={"dayName"}>
+            {dayNames[new Date(day.date).getDay()]}
+          </span>
           <span className={"count"}>{day.count}</span>
           <span className={"countWithGps"}>{day.countWithGps}</span>
         </div>
