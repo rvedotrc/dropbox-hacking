@@ -133,3 +133,7 @@
   width: 128px;
   margin: 10px;
 }
+
+.description .noData {
+  opacity: 0.3;
+}

@@ -67,7 +67,12 @@ const EditableTextField = (props: {
 
   if (!isEditing) {
     return (
-      <span onClick={startEditing}>{props.value || "(click to edit)"}</span>
+      <span
+        onClick={startEditing}
+        className={props.value ? "hasData" : "noData"}
+      >
+        {props.value || "(click to edit)"}
+      </span>
     );
   } else {
     return (
