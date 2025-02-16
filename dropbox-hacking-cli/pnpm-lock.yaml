@@ -11,6 +11,30 @@ importers:
       dropbox:
         specifier: ^10.34.0
         version: 10.34.0(@types/node-fetch@2.6.12)
+      dropbox-hacking-exif-db:
+        specifier: link:../dropbox-hacking-exif-db
+        version: link:../dropbox-hacking-exif-db
+      dropbox-hacking-lister:
+        specifier: link:../dropbox-hacking-lister
+        version: link:../dropbox-hacking-lister
+      dropbox-hacking-ls-cache:
+        specifier: link:../dropbox-hacking-ls-cache
+        version: link:../dropbox-hacking-ls-cache
+      dropbox-hacking-mediainfo-db:
+        specifier: link:../dropbox-hacking-mediainfo-db
+        version: link:../dropbox-hacking-mediainfo-db
+      dropbox-hacking-mover:
+        specifier: link:../dropbox-hacking-mover
+        version: link:../dropbox-hacking-mover
+      dropbox-hacking-sync:
+        specifier: link:../dropbox-hacking-sync
+        version: link:../dropbox-hacking-sync
+      dropbox-hacking-uploader:
+        specifier: link:../dropbox-hacking-uploader
+        version: link:../dropbox-hacking-uploader
+      dropbox-hacking-util:
+        specifier: link:../dropbox-hacking-util
+        version: link:../dropbox-hacking-util
       ts-exif-parser:
         specifier: ^0.2.2
         version: 0.2.2

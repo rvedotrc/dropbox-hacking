@@ -11,6 +11,18 @@ importers:
       dropbox:
         specifier: ^10.34.0
         version: 10.34.0(@types/node-fetch@2.6.12)
+      dropbox-hacking-exif-db:
+        specifier: link:../dropbox-hacking-exif-db
+        version: link:../dropbox-hacking-exif-db
+      dropbox-hacking-ls-cache:
+        specifier: link:../dropbox-hacking-ls-cache
+        version: link:../dropbox-hacking-ls-cache
+      dropbox-hacking-photo-manager-shared:
+        specifier: link:../dropbox-hacking-photo-manager-shared
+        version: link:../dropbox-hacking-photo-manager-shared
+      dropbox-hacking-util:
+        specifier: link:../dropbox-hacking-util
+        version: link:../dropbox-hacking-util
       express:
         specifier: ^4.21.2
         version: 4.21.2

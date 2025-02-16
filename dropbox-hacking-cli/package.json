@@ -30,6 +30,14 @@
   },
   "dependencies": {
     "dropbox": "^10.34.0",
+    "dropbox-hacking-exif-db": "link:../dropbox-hacking-exif-db",
+    "dropbox-hacking-lister": "link:../dropbox-hacking-lister",
+    "dropbox-hacking-ls-cache": "link:../dropbox-hacking-ls-cache",
+    "dropbox-hacking-mediainfo-db": "link:../dropbox-hacking-mediainfo-db",
+    "dropbox-hacking-mover": "link:../dropbox-hacking-mover",
+    "dropbox-hacking-sync": "link:../dropbox-hacking-sync",
+    "dropbox-hacking-uploader": "link:../dropbox-hacking-uploader",
+    "dropbox-hacking-util": "link:../dropbox-hacking-util",
     "ts-exif-parser": "^0.2.2"
   }
 }

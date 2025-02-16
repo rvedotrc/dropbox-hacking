@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "dropbox": "^10.34.0",
+    "dropbox-hacking-exif-db": "link:../dropbox-hacking-exif-db",
     "ts-exif-parser": "^0.2.2"
   }
 }

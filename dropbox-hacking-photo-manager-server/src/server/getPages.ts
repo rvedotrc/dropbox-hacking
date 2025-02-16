@@ -25,7 +25,7 @@ export default (app: Application, _context: Context): void => {
             <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin></script>
             <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin></script>
             <script id="payload-script" src="/dist/main.js" data-payload="${htmlEncode(
-              JSON.stringify(payload),
+              JSON.stringify(payload)
             )}"></script>
         </body>
     </html>
@@ -52,7 +52,7 @@ export default (app: Application, _context: Context): void => {
       pageAsString({
         route: "day",
         date: req.params.date,
-      }),
+      })
     );
   });
 
@@ -62,7 +62,7 @@ export default (app: Application, _context: Context): void => {
       pageAsString({
         route: "photo",
         rev: req.params.rev,
-      }),
+      })
     );
   });
 
@@ -78,8 +78,8 @@ export default (app: Application, _context: Context): void => {
             lat: parseFloat(degreesNorth),
             long: parseFloat(degreesEast),
           },
-          nClosest: typeof n === "string" ? parseInt(n) : undefined,
-        }),
+          nClosest: typeof n === "string" ? parseInt(n) : 10,
+        })
       );
     } else {
       res.send(400);

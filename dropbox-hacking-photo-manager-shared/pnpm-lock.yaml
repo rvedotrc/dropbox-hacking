@@ -11,6 +11,9 @@ importers:
       dropbox:
         specifier: ^10.34.0
         version: 10.34.0(@types/node-fetch@2.6.12)
+      dropbox-hacking-exif-db:
+        specifier: link:../dropbox-hacking-exif-db
+        version: link:../dropbox-hacking-exif-db
       ts-exif-parser:
         specifier: ^0.2.2
         version: 0.2.2
