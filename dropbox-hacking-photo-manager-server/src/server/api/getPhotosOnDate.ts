@@ -26,19 +26,19 @@ export default (app: Application, context: Context): void => {
           const thisExif = exif.get(entry.content_hash);
           if (!thisExif) {
             console.log(
-              `No exif data yet for ${entry.content_hash} (${entry.path_lower})`,
+              `No exif data yet for ${entry.content_hash} (${entry.path_lower})`
             );
             continue;
           }
 
           const thisDate = entry.client_modified.substring(0, 10);
-          if (thisDate === date) photos.push({ ...entry, exif: thisExif });
+          if (thisDate === date) photos.push({ file: entry, exif: thisExif });
         }
 
         photos.sort(
-          (a, b) =>
-            a.client_modified.localeCompare(b.client_modified) ||
-            a.id.localeCompare(b.id),
+          (a, b): number =>
+            a.file.client_modified.localeCompare(b.file.client_modified) ||
+            a.file.id.localeCompare(b.file.id)
         );
 
         const maxAge = 3600;
@@ -48,7 +48,7 @@ export default (app: Application, context: Context): void => {
 
         const r: PhotosResponse = { photos };
         res.json(r);
-      },
+      }
     );
   });
 };

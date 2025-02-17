@@ -54,12 +54,12 @@ export default (app: Application, context: Context): void => {
             date,
             count: existing.count + 1,
             countWithGps: existing.countWithGps + (gps !== null ? 1 : 0),
-            samplePhotos: [...existing.samplePhotos, { ...entry, exif }],
+            samplePhotos: [...existing.samplePhotos, { file: entry, exif }],
           });
         }
 
         const countsByDate = [...dates.values()].sort((a, b) =>
-          a.date.localeCompare(b.date),
+          a.date.localeCompare(b.date)
         );
 
         for (const d of countsByDate) {

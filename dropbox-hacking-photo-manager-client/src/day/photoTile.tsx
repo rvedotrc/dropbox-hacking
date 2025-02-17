@@ -7,11 +7,11 @@ import logRender from "../logRender";
 import SamePageLink from "../samePageLink";
 
 const cleanedName = (photo: Photo) => {
-  if (photo.content_hash) {
-    return photo.name.replace(photo.content_hash, "#");
+  if (photo.file.content_hash) {
+    return photo.file.name.replace(photo.file.content_hash, "#");
   }
 
-  return photo.name;
+  return photo.file.name;
 };
 
 const PhotoTile = ({
@@ -23,15 +23,15 @@ const PhotoTile = ({
 }): React.ReactElement | null => {
   const loader = useThumbnailLoader();
 
-  const thumbnail = useThumbnail(photo.rev, loader)(isVisible);
+  const thumbnail = useThumbnail(photo.file.rev, loader)(isVisible);
 
   return (
     <SamePageLink
       className={"photoItem"}
-      key={photo.id}
-      href={`/photo/rev/${photo.rev}`}
-      state={{ route: "photo", rev: photo.rev }}
-      data-rev={photo.rev}
+      key={photo.file.id}
+      href={`/photo/rev/${photo.file.rev}`}
+      state={{ route: "photo", rev: photo.file.rev }}
+      data-rev={photo.file.rev}
     >
       <img
         src={
@@ -43,7 +43,7 @@ const PhotoTile = ({
           height: thumbnail ? undefined : "128px",
         }}
       />
-      <div className={"clientModified"}>{photo.client_modified}</div>
+      <div className={"clientModified"}>{photo.file.client_modified}</div>
       <div className={"name"}>{cleanedName(photo)}</div>
       <div className={"makeAndModel"}>
         {photo.exif.exifData.tags?.Make} {photo.exif.exifData.tags?.Model}

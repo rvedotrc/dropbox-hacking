@@ -8,7 +8,7 @@ import {
 import type { Context } from "../../context.js";
 
 const hasGPS = <T extends { gps: GPSLatLong | null }>(
-  item: T,
+  item: T
 ): item is T & { gps: GPSLatLong } => item.gps !== null;
 
 const latLongToXYZ = (point: GPSLatNLongE): [number, number, number] => {
@@ -21,7 +21,7 @@ const latLongToXYZ = (point: GPSLatNLongE): [number, number, number] => {
 
 const distanceBetween = (
   a: [number, number, number],
-  b: [number, number, number],
+  b: [number, number, number]
 ): number =>
   Math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2 + (a[2] - b[2]) ** 2);
 
@@ -40,8 +40,9 @@ export const closestToHandlerBuilder = (context: Context) => {
       .map(([hash, data]) => ({
         hash,
         data,
-        gps: data.exifData.tags
-          ? GPSLatLong.fromExifTags(data.exifData.tags)
+        gps:
+          data.exifData.tags ?
+            GPSLatLong.fromExifTags(data.exifData.tags)
           : null,
       }))
       .filter(hasGPS);
@@ -72,11 +73,11 @@ export const closestToHandlerBuilder = (context: Context) => {
         .map((file) => ({
           distanceInMeters: exifItem.distance,
           photo: {
-            ...file,
+            file,
             exif: exifItem.data,
           },
           exif,
-        })),
+        }))
     );
 
     console.debug({ n: items.length });

@@ -70,7 +70,11 @@ export const dayWithSamples = ({
           {withSamples && (
             <div className={"samples"}>
               {day.samplePhotos.map((photo) => (
-                <SamplePhoto key={photo.rev} photo={photo} visible={visible} />
+                <SamplePhoto
+                  key={photo.file.rev}
+                  photo={photo}
+                  visible={visible}
+                />
               ))}
             </div>
           )}

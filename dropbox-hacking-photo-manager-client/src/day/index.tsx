@@ -66,9 +66,9 @@ const DayWithData = ({
       <div ref={parentRef} className={"photoList"}>
         {dayPhotos.photos.map((photo) => (
           <PhotoTile
-            key={photo.rev}
+            key={photo.file.rev}
             photo={photo}
-            isVisible={visibleRevs?.has(photo.rev) || false}
+            isVisible={visibleRevs?.has(photo.file.rev) || false}
           />
         ))}
       </div>

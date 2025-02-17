@@ -33,7 +33,7 @@ export default (app: Application, context: Context): void => {
           return;
         }
 
-        const photo: Photo = { ...file, exif: exifData };
+        const photo: Photo = { file, exif: exifData };
 
         const maxAge = 86400;
         const expires = new Date(new Date().getTime() + maxAge * 1000);
@@ -42,7 +42,7 @@ export default (app: Application, context: Context): void => {
 
         const r: PhotoResponse = { photo };
         res.json(r);
-      },
-    ),
+      }
+    )
   );
 };

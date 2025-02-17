@@ -48,14 +48,14 @@ const Photo = (props: { rev: string }): React.ReactElement | null => {
       <h1>{props.rev}</h1>
 
       <div>
-        <a href={`/image/rev/${photo.rev}`}>
-          <img src={`/image/rev/${photo.rev}/w640h480`} alt={"preview"} />
+        <a href={`/image/rev/${photo.file.rev}`}>
+          <img src={`/image/rev/${photo.file.rev}/w640h480`} alt={"preview"} />
         </a>
       </div>
 
       <p>
         <a
-          href={`https://www.dropbox.com/preview${photo.path_lower}?context=browse&role=personal`}
+          href={`https://www.dropbox.com/preview${photo.file.path_lower}?context=browse&role=personal`}
         >
           View in Dropbox
         </a>
@@ -65,7 +65,7 @@ const Photo = (props: { rev: string }): React.ReactElement | null => {
         <ol>
           {previewSizes.map((previewSize) => (
             <li key={previewSize}>
-              <a href={`/image/rev/${photo.rev}/${previewSize}`}>
+              <a href={`/image/rev/${photo.file.rev}/${previewSize}`}>
                 {previewSize}
               </a>
             </li>
@@ -77,7 +77,7 @@ const Photo = (props: { rev: string }): React.ReactElement | null => {
         <p>
           <a href={gps.googleMapsUrl({ zoom: 15 })}>Google Maps</a>
           {" | "}
-          <a href={gps.geoHackUrl({ title: photo.rev })}>GeoHack</a>
+          <a href={gps.geoHackUrl({ title: photo.file.rev })}>GeoHack</a>
         </p>
       )}
 

@@ -42,7 +42,10 @@ export type CountsByDateEntry = {
 export type CountsByDate = CountsByDateEntry[];
 export type CountsByDateResponse = { counts_by_date: CountsByDate };
 
-export type Photo = files.FileMetadataReference & { exif: ExifFromHash };
+export type Photo = {
+  file: files.FileMetadataReference;
+  exif: ExifFromHash;
+};
 export type PhotoResponse = { photo: Photo };
 export type PhotosResponse = { photos: Photo[] };
 
