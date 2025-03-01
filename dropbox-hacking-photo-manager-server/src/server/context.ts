@@ -1,10 +1,15 @@
 import { Dropbox } from "dropbox";
 import * as exifDb from "dropbox-hacking-exif-db";
 import * as lsCache from "dropbox-hacking-ls-cache";
-import { DayMetadata } from "dropbox-hacking-photo-manager-shared";
+import {
+  DayMetadata,
+  type NamedFile,
+  type PhotoDbEntry,
+} from "dropbox-hacking-photo-manager-shared";
 import { EventEmitter } from "events";
 
 import DayDb from "./dayDb.js";
+import type { Observable } from "rxjs";
 
 export type SubscribableData<T> = EventEmitter & {
   on: (eventName: "change", fn: () => void) => void;
@@ -23,4 +28,9 @@ export type Context = {
   readonly daysFeed: SubscribableData<DayMetadata[]>;
   readonly dayDb: DayDb;
   readonly close: () => Promise<void>;
+
+  exifRx: () => Observable<Record<exifDb.ContentHash, exifDb.ExifFromHash>>;
+  dayRx: () => Observable<Record<string, DayMetadata>>;
+  imageFilesRx: () => Observable<Record<string, NamedFile>>;
+  photoRx: () => Observable<Record<string, PhotoDbEntry>>;
 };

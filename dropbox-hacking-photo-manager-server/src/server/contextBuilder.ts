@@ -8,6 +8,10 @@ import * as fs from "fs";
 import { Context, SubscribableData } from "./context.js";
 import DayDb from "./dayDb.js";
 import debounce from "./debounce.js";
+import { buildForDayDb } from "./rx/dayDb.js";
+import { buildForExifDb } from "./rx/exifDb.js";
+import { buildForLsCache } from "./rx/lsCache.js";
+import { buildForPhotoDb } from "./rx/photoDb.js";
 
 class FilesystemBasedFeed<T>
   extends EventEmitter
@@ -17,7 +21,7 @@ class FilesystemBasedFeed<T>
 
   constructor(
     private readonly dir: string,
-    private readonly loader: () => Promise<T>,
+    private readonly loader: () => Promise<T>
   ) {
     super();
   }
@@ -62,6 +66,18 @@ export default (args: {
   const dayDbDir = process.env.DAY_DB_DIR;
   if (dayDbDir === undefined) throw new Error("Need DAY_DB_DIR");
 
+  const photoDbDir = process.env.PHOTO_DB_DIR;
+  if (photoDbDir === undefined) throw new Error("Need PHOTO_DB_DIR");
+
+  // RX
+
+  const exifRx = buildForExifDb(exifDbDir);
+  const dayRx = buildForDayDb(dayDbDir);
+  const photoRx = buildForPhotoDb(photoDbDir);
+  const imageFilesRx = buildForLsCache(lsCacheDir);
+
+  // Older
+
   const lsFeed = new FilesystemBasedFeed(lsCacheDir, () => {
     const lsCache = new LsCache.StateDir(lsCacheDir);
     return lsCache.load().then(() => lsCache.getState());
@@ -82,6 +98,11 @@ export default (args: {
   // FIXME: close()
 
   const close = async () => {
+    exifRx.close();
+    dayRx.close();
+    photoRx.close();
+    imageFilesRx.close();
+
     await Promise.allSettled([
       lsFeed.stop(),
       exifDbFeed.stop(),
@@ -95,6 +116,12 @@ export default (args: {
     get dropboxClient(): Promise<Dropbox> {
       return getDropboxClient();
     },
+
+    exifRx: exifRx["observable"],
+    imageFilesRx: imageFilesRx["observable"],
+    dayRx: dayRx["observable"],
+    photoRx: photoRx["observable"],
+
     lsFeed,
     exifDbFeed,
     daysFeed,

@@ -46,3 +46,13 @@ export type ClosestToResponse = {
   }[];
   truncated: boolean;
 };
+
+export type PhotoDbEntry = {
+  tags: string[];
+};
+
+export type NamedFile = files.FileMetadata & {
+  path_lower: string;
+  path_display: string;
+  content_hash: string;
+};
