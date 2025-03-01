@@ -14,6 +14,6 @@ exec ./with-live \
     EXIF_DB_DIR=var/live/exif \
     LS_CACHE_DIR=var/live/ls \
     DAY_DB_DIR=var/live/day-db \
-    PHOTO_DB_DIR=var/lib/photo-db \
+    PHOTO_DB_DIR=var/live/photo-db \
     PUBLIC_DIR=$PWD/dropbox-hacking-photo-manager-client/public \
     ./bin/photo-manager-server

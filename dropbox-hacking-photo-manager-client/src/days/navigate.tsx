@@ -15,6 +15,10 @@ const navigation = (): React.ReactElement | null => (
     <SamePageLink href={"/days/plain"} state={{ route: "days-plain" }}>
       List of days (plain)
     </SamePageLink>
+    {" | "}
+    <SamePageLink href={"/stats"} state={{ route: "stats" }}>
+      Stats
+    </SamePageLink>
   </p>
 );
 

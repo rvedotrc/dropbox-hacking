@@ -64,8 +64,8 @@ export default (app: Application, context: Context): void => {
                 const squish = <V>() =>
                   map(
                     compress(
-                      recordDeltaMaker(isDeepStrictEqual as IsUnchanged<V>)
-                    )
+                      recordDeltaMaker(isDeepStrictEqual as IsUnchanged<V>),
+                    ),
                   );
 
                 console.log("Trying rx feeds");
@@ -73,28 +73,28 @@ export default (app: Application, context: Context): void => {
                 if (request.type === "rx-days") {
                   return serveRxFeed(
                     context.dayRx().pipe(squish()),
-                    () => writer
+                    () => writer,
                   );
                 }
 
                 if (request.type === "rx-photos") {
                   return serveRxFeed(
                     context.photoRx().pipe(squish()),
-                    () => writer
+                    () => writer,
                   );
                 }
 
                 if (request.type === "rx-files") {
                   return serveRxFeed(
                     context.imageFilesRx().pipe(squish()),
-                    () => writer
+                    () => writer,
                   );
                 }
 
                 if (request.type === "rx-exif") {
                   return serveRxFeed(
                     context.exifRx().pipe(squish()),
-                    () => writer
+                    () => writer,
                   );
                 }
               }
@@ -104,7 +104,7 @@ export default (app: Application, context: Context): void => {
             },
             close: () => {},
           });
-        }
+        },
       );
 
       const _spiedConnect = spy(connect, "connect");
@@ -114,7 +114,7 @@ export default (app: Application, context: Context): void => {
       ws.on("pong", (..._args) => console.log(`${id} ws pong`));
       // // ws.on("upgrade", (..._args) => console.log(`${id} ws upgrade`));
       ws.on("unexpected-response", (..._args) =>
-        console.log(`${id} ws unexpected response`)
+        console.log(`${id} ws unexpected response`),
       );
       ws.on("error", (...args) => console.log(`${id} ws error`, args));
 

@@ -6,19 +6,19 @@ export interface BasicWebSocket<S, I, O> {
   addEventListener(eventName: "close", listener: () => void): void;
   addEventListener(
     eventName: "message",
-    listener: (message: { data: I }) => void
+    listener: (message: { data: I }) => void,
   ): void;
   removeEventListener(eventName: "close", listener: () => void): void;
   removeEventListener(
     eventName: "message",
-    listener: (message: { data: I }) => void
+    listener: (message: { data: I }) => void,
   ): void;
   send(message: O): void; // TODO error handling
   close(): void;
 }
 
 export const fromBasicWebSocket = <S, I, O>(
-  webSocket: BasicWebSocket<S, I, O>
+  webSocket: BasicWebSocket<S, I, O>,
 ): IOHandler<I, O> => {
   return (reader) => {
     if (webSocket.readyState !== webSocket.OPEN)

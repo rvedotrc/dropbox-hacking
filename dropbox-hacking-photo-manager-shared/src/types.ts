@@ -25,6 +25,9 @@ export type Payload =
       route: "days-plain";
     }
   | {
+      route: "stats";
+    }
+  | {
       route: "day";
       date: string;
     }

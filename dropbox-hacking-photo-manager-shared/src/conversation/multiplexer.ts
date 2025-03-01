@@ -15,7 +15,7 @@ export const multiplexer = <I, O>(
     IDHolder & WrappedPayload<I>,
     IDHolder & WrappedPayload<O>
   >,
-  listener: (handler: IOHandler<I, O>) => void
+  listener: (handler: IOHandler<I, O>) => void,
 ): IOHandler<I, O> => {
   const readersById: Map<string, Incoming<I>> = new Map();
 
@@ -58,7 +58,7 @@ export const multiplexer = <I, O>(
         } else {
           console.error(
             "message for non-open conversation",
-            underlyingMessage.id
+            underlyingMessage.id,
           );
         }
       } else if (underlyingMessage.tag === "close") {

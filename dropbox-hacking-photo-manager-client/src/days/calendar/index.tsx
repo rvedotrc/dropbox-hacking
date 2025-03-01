@@ -54,9 +54,9 @@ const Calendar = () => {
 
   return (
     <div>
-      <h1>Calendar</h1>
-
       <Navigate />
+
+      <h1>Calendar</h1>
 
       {[...years.keys()]
         .sort()

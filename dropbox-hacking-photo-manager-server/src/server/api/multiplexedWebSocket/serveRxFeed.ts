@@ -5,7 +5,7 @@ import { IOHandler } from "dropbox-hacking-photo-manager-shared";
 
 export const serveRxFeed = <T>(
   observable: Observable<T>,
-  io: IOHandler<never, RxFeedResponse<T>>
+  io: IOHandler<never, RxFeedResponse<T>>,
 ): void => {
   const writer = io({
     receive: () => writer.close(),

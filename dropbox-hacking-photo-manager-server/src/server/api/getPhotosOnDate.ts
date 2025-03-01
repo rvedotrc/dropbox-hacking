@@ -26,7 +26,7 @@ export default (app: Application, context: Context): void => {
           const thisExif = exif.get(entry.content_hash);
           if (!thisExif) {
             console.log(
-              `No exif data yet for ${entry.content_hash} (${entry.path_lower})`
+              `No exif data yet for ${entry.content_hash} (${entry.path_lower})`,
             );
             continue;
           }
@@ -38,7 +38,7 @@ export default (app: Application, context: Context): void => {
         photos.sort(
           (a, b): number =>
             a.file.client_modified.localeCompare(b.file.client_modified) ||
-            a.file.id.localeCompare(b.file.id)
+            a.file.id.localeCompare(b.file.id),
         );
 
         const maxAge = 3600;
@@ -48,7 +48,7 @@ export default (app: Application, context: Context): void => {
 
         const r: PhotosResponse = { photos };
         res.json(r);
-      }
+      },
     );
   });
 };

@@ -1,12 +1,16 @@
-import { Payload } from "dropbox-hacking-photo-manager-shared";
 import * as React from "react";
+
+import { Payload, type IOHandler } from "dropbox-hacking-photo-manager-shared";
 import { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
+
+import * as multiplexerContext from "./context/rx/multiplexerContext";
 
 import countsByDateContext from "./context/countsByDateContext";
 import daysMetadataContext from "./context/daysMetadataContext";
 import eventEmitterContext from "./context/eventEmitterContext";
 import routingContext from "./context/routingContext";
+import * as rxRecordFeedContext from "./context/rx/rxRecordFeedContext";
 import { Router } from "./context/routingContext";
 import * as thumbnailLoaderContext from "./context/thumbnails";
 import * as websocket from "./context/websocket";
@@ -16,6 +20,7 @@ import ListOfDays from "./days/listOfDays";
 import logRender from "./logRender";
 import Photo from "./photo";
 import ClosestTo from "./closest-to/index";
+import Stats from "./stats";
 
 const toRender = ({ payload }: { payload: Payload }) => {
   if (payload.route === "closest-to")
@@ -25,6 +30,7 @@ const toRender = ({ payload }: { payload: Payload }) => {
   if (payload.route === "days-plain") return <ListOfDays withSamples={false} />;
   if (payload.route === "day") return <Day date={payload.date} />;
   if (payload.route === "photo") return <Photo rev={payload.rev} />;
+  if (payload.route === "stats") return <Stats />;
   return <span>Routing error</span>;
 };
 
@@ -43,19 +49,36 @@ const Root = ({
     return () => window.removeEventListener("popstate", listener);
   }, []);
 
+  const accepter = useMemo(
+    () => (accept: IOHandler<unknown, unknown>) => {
+      const w = accept({
+        receive: (m) => {
+          console.log(`The server connected to me and said:`, m);
+          w.send(`Thank you for saying ${m as string}`);
+        },
+        close: () => {},
+      });
+    },
+    [],
+  );
+
   return (
     <routingContext.context.Provider value={router}>
-      <websocket.defaultProvider>
-        <eventEmitterContext.defaultProvider>
-          <countsByDateContext.defaultProvider>
-            <daysMetadataContext.defaultProvider>
-              <thumbnailLoaderContext.defaultProvider>
-                {toRender({ payload: state })}
-              </thumbnailLoaderContext.defaultProvider>
-            </daysMetadataContext.defaultProvider>
-          </countsByDateContext.defaultProvider>
-        </eventEmitterContext.defaultProvider>
-      </websocket.defaultProvider>
+      <multiplexerContext.defaultProvider accepter={accepter}>
+        <rxRecordFeedContext.defaultProvider>
+          <websocket.defaultProvider>
+            <eventEmitterContext.defaultProvider>
+              <countsByDateContext.defaultProvider>
+                <daysMetadataContext.defaultProvider>
+                  <thumbnailLoaderContext.defaultProvider>
+                    {toRender({ payload: state })}
+                  </thumbnailLoaderContext.defaultProvider>
+                </daysMetadataContext.defaultProvider>
+              </countsByDateContext.defaultProvider>
+            </eventEmitterContext.defaultProvider>
+          </websocket.defaultProvider>
+        </rxRecordFeedContext.defaultProvider>
+      </multiplexerContext.defaultProvider>
     </routingContext.context.Provider>
   );
 };

@@ -42,7 +42,7 @@ export default (app: Application, context: Context): void => {
 
         const r: PhotoResponse = { photo };
         res.json(r);
-      }
-    )
+      },
+    ),
   );
 };

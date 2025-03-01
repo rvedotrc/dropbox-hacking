@@ -75,9 +75,9 @@ const ListOfDaysWithData = ({
 
   return (
     <div>
-      <h1>List of Days</h1>
-
       <Navigate />
+
+      <h1>List of Days</h1>
 
       <Stats days={days} />
 

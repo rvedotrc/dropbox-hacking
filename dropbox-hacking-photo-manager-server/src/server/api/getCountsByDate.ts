@@ -59,7 +59,7 @@ export default (app: Application, context: Context): void => {
         }
 
         const countsByDate = [...dates.values()].sort((a, b) =>
-          a.date.localeCompare(b.date)
+          a.date.localeCompare(b.date),
         );
 
         for (const d of countsByDate) {
