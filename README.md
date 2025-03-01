@@ -60,3 +60,10 @@ Then do something, e.g. list the root directory of your dropbox:
 - `./bin/process-camera-uploads` - move files around automatically
 - `./bin/exif-cache` - maintain a cache of EXIF data from all `*.jpg` files
 - `./bin/ls-cache` - maintain a cache of all or part of a dropbox
+
+## Building
+
+- Install the dependencies listed in `.tool-versions` (e.g. using `asdf`)
+- `pnpm clean`
+- `pnpm install-all`
+- `pnpm build-all`
