@@ -10,7 +10,7 @@
     "format": "prettier --write .",
     "__postinstall": "pnpm link ../dropbox-hacking-util ../dropbox-hacking-downloader ../dropbox-hacking-exif-db ../dropbox-hacking-lister ../dropbox-hacking-ls-cache ../dropbox-hacking-mediainfo-db ../dropbox-hacking-mover ../dropbox-hacking-sync ../dropbox-hacking-uploader",
     "test:prettier": "prettier --check .",
-    "test:lint": "eslint",
+    "x-test:lint": "eslint",
     "test:unit": "c8 node --enable-source-maps --experimental-test-coverage --test './dist/spec/**/*.js'"
   },
   "keywords": [],

@@ -66,4 +66,4 @@ Then do something, e.g. list the root directory of your dropbox:
 - Install the dependencies listed in `.tool-versions` (e.g. using `asdf`)
 - `pnpm clean`
 - `pnpm install-all`
-- `pnpm build-all`
+- `pnpm build`

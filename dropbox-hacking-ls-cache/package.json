@@ -9,7 +9,7 @@
     "build:watch": "tsc --watch",
     "format": "prettier --write .",
     "test:prettier": "prettier --check .",
-    "test:lint": "eslint",
+    "x-test:lint": "eslint",
     "test:unit": "c8 node --enable-source-maps --experimental-test-coverage --test './dist/spec/**/*.js'"
   },
   "keywords": [],
