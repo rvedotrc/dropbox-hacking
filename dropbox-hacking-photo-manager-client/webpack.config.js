@@ -71,7 +71,7 @@ module.exports = {
     path: path.resolve(__dirname, "public/dist"),
   },
   plugins: [
-    new webpack.SourceMapDevToolPlugin({}),
+    new webpack.SourceMapDevToolPlugin({ filename: "[file].map" }),
     new webpack.DefinePlugin({
       BUILD_VERSION: JSON.stringify(buildVersion),
       BUILD_TIME: JSON.stringify(buildTime),
