@@ -1,7 +1,5 @@
 import {
   CountsByDateResponse,
-  DayMetadataResponse,
-  DaysMetadataResponse,
   DPMAnyEvent,
   DPMChangeEvent,
   PhotosResponse,
@@ -51,18 +49,6 @@ export const useCountsByDate = (): Result<CountsByDateResponse> | undefined =>
   useFeed<CountsByDateResponse>({
     url: "/api/counts_by_date",
     resource: ["ls", "exif"],
-  });
-
-export const useDays = (): Result<DaysMetadataResponse> | undefined =>
-  useFeed<DaysMetadataResponse>({
-    url: "/api/day/all",
-    resource: ["days"],
-  });
-
-export const useDay = (date: string): Result<DayMetadataResponse> | undefined =>
-  useFeed<DayMetadataResponse>({
-    url: `/api/day/${date}`,
-    resource: ["days"],
   });
 
 export const useDayPhotos = (

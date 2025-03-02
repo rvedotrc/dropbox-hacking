@@ -5,12 +5,15 @@ import {
 import * as React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { useDay, useDayPhotos } from "../context/feeds";
+import { useDayPhotos } from "../context/feeds";
 import useVisibilityTracking from "../days/useVisibilityTracking";
 import { isLeft } from "../fp";
 import logRender from "../logRender";
 import EditableTextField from "./editableTextField";
 import PhotoTile from "./photoTile";
+import { useRxFeedsViaMultiplexer } from "../context/rx/rxRecordFeedContext";
+import { map } from "rxjs";
+import { useLatestValue } from "../context/rx/useLatestValue";
 
 const DayWithData = ({
   date,
@@ -79,7 +82,17 @@ const DayWithData = ({
 const DayWithDataLogged = logRender(DayWithData);
 
 const Day = ({ date }: { date: string }): React.ReactElement | null => {
-  const dayMetadata = useDay(date);
+  const mx = useRxFeedsViaMultiplexer();
+
+  const dayMetadataObserver = useMemo(
+    () =>
+      mx?.days
+        .pipe(map((t) => t.image[date]))
+        .pipe(map((m) => ({ day_metadata: m }))),
+    [mx, date],
+  );
+
+  const dayMetadata = useLatestValue(dayMetadataObserver);
   const dayPhotos = useDayPhotos(date);
 
   useEffect(() => {
@@ -90,7 +103,7 @@ const Day = ({ date }: { date: string }): React.ReactElement | null => {
     return <div>Loading DAY ...</div>;
   }
 
-  if (isLeft(dayPhotos) || isLeft(dayMetadata)) {
+  if (isLeft(dayPhotos)) {
     return <div>Error DAY :-(</div>;
   }
 
@@ -98,7 +111,7 @@ const Day = ({ date }: { date: string }): React.ReactElement | null => {
     <DayWithDataLogged
       date={date}
       dayPhotos={dayPhotos.right}
-      dayMetadata={dayMetadata.right}
+      dayMetadata={dayMetadata}
     />
   );
 };
