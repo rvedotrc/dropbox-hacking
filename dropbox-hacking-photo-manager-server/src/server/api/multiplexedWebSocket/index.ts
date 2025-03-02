@@ -41,17 +41,18 @@ export default (app: Application, context: Context): void => {
       process.on("SIGTERM", closer);
 
       const socketIO = fromExpressWebSocket(ws);
-      const spiedSocket = spy(socketIO, "socket");
+      // const spiedSocket = spy(socketIO, "socket");
       const usingJSON = transportAsJson<
         IDHolder & WrappedPayload<unknown>,
         IDHolder & WrappedPayload<unknown>
-      >(spiedSocket);
+      >(socketIO);
 
       const connect = multiplexer(
-        spy(usingJSON, "using-json"),
+        // spy(usingJSON, "using-json"),
+        usingJSON,
         (accept: IOHandler<unknown, unknown>) => {
-          const spiedAccept = spy(accept, "accept");
-          const writer = spiedAccept({
+          // const spiedAccept = spy(accept, "accept");
+          const writer = accept({
             receive: (request) => {
               console.log(`Server got request:`, request);
 
@@ -67,8 +68,6 @@ export default (app: Application, context: Context): void => {
                       recordDeltaMaker(isDeepStrictEqual as IsUnchanged<V>),
                     ),
                   );
-
-                console.log("Trying rx feeds");
 
                 if (request.type === "rx-days") {
                   return serveRxFeed(
