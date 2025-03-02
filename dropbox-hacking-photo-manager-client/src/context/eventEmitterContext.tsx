@@ -97,9 +97,9 @@ const defaultEventEmitterContextProvider = (
   const genericListener = useMemo(
     () => (e: Event) => {
       if (e.type === "message") {
-        const dpmEvent: DPMAnyEvent = JSON.parse(
+        const dpmEvent = JSON.parse(
           (e as unknown as { data: string }).data,
-        );
+        ) as DPMAnyEvent;
 
         if (dpmEvent.event_name !== "ping")
           if (dpmEvent.event_name === "connect")

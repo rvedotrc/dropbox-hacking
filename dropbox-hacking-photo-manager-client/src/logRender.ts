@@ -7,6 +7,8 @@ const makeSequence = () => {
   return () => n++;
 };
 
+const doLog = true;
+
 const nameSequence = makeSequence();
 
 const logRender = <P extends PropsWithChildren<object>>(f: F<P>): F<P> => {
@@ -14,9 +16,7 @@ const logRender = <P extends PropsWithChildren<object>>(f: F<P>): F<P> => {
   const renderSequence = makeSequence();
 
   const r: F<P> = (props: P) => {
-    functionName;
-    renderSequence;
-    console.log(`render ${functionName} #${renderSequence()}`);
+    if (doLog) console.log(`render ${functionName} #${renderSequence()}`);
     return f(props);
   };
 

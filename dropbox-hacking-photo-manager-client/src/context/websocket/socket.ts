@@ -35,17 +35,24 @@ export class Socket extends EventEmitter {
 
   public set wantOpen(value: boolean) {
     this._wantOpen = value;
-    value ? this.ensureOpen() : this.ensureClose();
+    if (value) this.ensureOpen();
+    else this.ensureClose();
   }
 
   private ensureOpen(): void {
     if (this.websocket) return;
 
     this.websocket = new WebSocket(this.url);
-    this.websocket.addEventListener("open", this.socketOpen.bind(this));
-    this.websocket.addEventListener("message", this.socketMessage.bind(this));
-    this.websocket.addEventListener("error", this.socketError.bind(this));
-    this.websocket.addEventListener("close", this.socketClose.bind(this));
+    this.websocket.addEventListener("open", (event) => this.socketOpen(event));
+    this.websocket.addEventListener("message", (event) =>
+      this.socketMessage(event),
+    );
+    this.websocket.addEventListener("error", (event) =>
+      this.socketError(event),
+    );
+    this.websocket.addEventListener("close", (event) =>
+      this.socketClose(event),
+    );
   }
 
   private ensureClose(): void {
@@ -122,13 +129,13 @@ export class Socket extends EventEmitter {
     // console.debug("socketMessage " + ev.data);
 
     if (typeof ev.data === "string") {
-      const reply = JSON.parse(ev.data);
+      const reply = JSON.parse(ev.data) as unknown;
 
       if (
         typeof reply === "object" &&
         reply !== null &&
         "type" in reply &&
-        reply.type === "simpleResponse"
+        (reply as { type: unknown }).type === "simpleResponse"
       ) {
         const { id, payload: innerPayload } = reply as SimpleResponse<unknown>;
 
@@ -160,7 +167,7 @@ export class Socket extends EventEmitter {
   private socketClose(_ev: CloseEvent) {
     // console.log("socketClose", ev);
     this.emit("offline");
-    this.pingTimer && clearInterval(this.pingTimer);
+    if (this.pingTimer) clearInterval(this.pingTimer);
     this.pingTimer = undefined;
     this.websocket = undefined;
 

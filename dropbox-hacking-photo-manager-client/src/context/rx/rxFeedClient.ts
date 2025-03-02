@@ -5,7 +5,7 @@ import type {
   PhotoDbEntry,
   RxFeedResponse,
 } from "dropbox-hacking-photo-manager-shared";
-import { map, Observable, ReplaySubject, tap } from "rxjs";
+import { map, Observable, ReplaySubject } from "rxjs";
 
 import {
   expandWithImage,

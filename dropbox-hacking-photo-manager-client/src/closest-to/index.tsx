@@ -4,9 +4,7 @@ import { useWebsocket } from "../context/websocket";
 import type {
   ClosestToRequest,
   ClosestToResponse,
-  GPSLatLong,
   GPSLatNLongE,
-  Payload,
 } from "dropbox-hacking-photo-manager-shared";
 import { useEffect, useState } from "react";
 import SamplePhoto from "../days/samplePhoto";

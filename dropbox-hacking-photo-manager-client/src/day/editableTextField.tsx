@@ -27,7 +27,10 @@ const EditableTextField = (props: {
     () => (event: MouseEvent | KeyboardEvent) => {
       console.log("Saving");
       event.preventDefault();
-      return props.onSave(editingValue).then(() => setIsEditing(false));
+      props
+        .onSave(editingValue)
+        .then(() => setIsEditing(false))
+        .catch((err) => console.error(err));
     },
     [props.onSave, editingValue],
   );

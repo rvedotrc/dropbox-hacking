@@ -44,7 +44,8 @@ const Root = ({
   const router: Router = useMemo(() => ({ switchToPage }), []);
 
   useEffect(() => {
-    const listener = (event: PopStateEvent) => switchToPage(event.state);
+    const listener = (event: PopStateEvent) =>
+      switchToPage(event.state as Payload);
     window.addEventListener("popstate", listener);
     return () => window.removeEventListener("popstate", listener);
   }, []);
@@ -89,11 +90,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const ele = document.getElementById("payload-script");
 
   if (ele) {
-    const payload = JSON.parse(ele.getAttribute("data-payload") || "null");
+    const payload = JSON.parse(
+      ele.getAttribute("data-payload") || "null",
+    ) as Payload;
     const container = document.getElementById("react_container");
     if (container) {
       window.history.replaceState(payload, "unused");
-      createRoot(container!).render(
+      createRoot(container).render(
         // StrictMode removed: kills the EventSource stuff, for now
         // <StrictMode>
         <WrappedRoot initialState={payload} />,

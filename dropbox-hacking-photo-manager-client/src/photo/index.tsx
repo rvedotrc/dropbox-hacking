@@ -20,7 +20,8 @@ const Photo = (props: { rev: string }): React.ReactElement | null => {
     if (photo === undefined) {
       fetch(`/api/photo/rev/${props.rev}`)
         .then((r) => r.json() as Promise<PhotoResponse>)
-        .then((data) => setPhoto(data.photo));
+        .then((data) => setPhoto(data.photo))
+        .catch((err) => console.error(err));
     }
   }, [photo, props.rev]);
 
@@ -28,7 +29,8 @@ const Photo = (props: { rev: string }): React.ReactElement | null => {
     if (previewSizes === undefined) {
       fetch("/api/config/preview-sizes")
         .then((r) => r.json() as Promise<string[]>)
-        .then(setPreviewSizes);
+        .then(setPreviewSizes)
+        .catch((err) => console.error(err));
     }
   }, []);
 

@@ -22,7 +22,8 @@ export const useThumbnail = (rev: string, loader: ThumbnailLoader) => {
         if (a.action === "set_visibility" && a.visible) {
           loader
             .getThumbnail(rev)
-            .then((t) => dispatch({ action: "loaded", thumbnail: t }));
+            .then((t) => dispatch({ action: "loaded", thumbnail: t }))
+            .catch((err) => console.error(err));
           return { state: "loading", visible: true, thumbnail: null };
         }
       }

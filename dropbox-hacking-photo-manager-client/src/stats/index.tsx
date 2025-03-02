@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
-import { map, Observable, tap } from "rxjs";
+import { map, Observable } from "rxjs";
 
 import logRender from "../logRender";
 import { useRxFeedsViaMultiplexer } from "../context/rx/rxRecordFeedContext";
@@ -30,7 +30,7 @@ const Stats = () => {
           .subscribe({
             next: (count) => setter(count),
             complete: () => console.log({ complete: true }),
-            error: (error) => console.error({ error }),
+            error: (error: unknown) => console.error({ error }),
           });
 
         return () => subscription.unsubscribe();
