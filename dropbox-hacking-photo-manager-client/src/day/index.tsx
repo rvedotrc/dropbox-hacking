@@ -87,7 +87,7 @@ const Day = ({ date }: { date: string }): React.ReactElement | null => {
   const dayMetadataObserver = useMemo(
     () =>
       mx?.days
-        .pipe(map((t) => t.image[date]))
+        .pipe(map((t) => t.image[date] ?? { date, description: "" }))
         .pipe(map((m) => ({ day_metadata: m }))),
     [mx, date],
   );
