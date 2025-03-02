@@ -13,23 +13,7 @@ import {
   recordDeltaApplier,
 } from "dropbox-hacking-photo-manager-shared";
 import type { ExifFromHash } from "../../../../dropbox-hacking-exif-db/dist/src/exifDB";
-
-export const getRxFeed = <T, R>(
-  request: R,
-  io: IOHandler<RxFeedResponse<T>, R>,
-): Observable<T> =>
-  new Observable<T>((subscriber) => {
-    const writer = io({
-      receive: (m) => {
-        if (m.tag === "next") subscriber.next(m.value);
-        if (m.tag === "complete") subscriber.complete();
-        if (m.tag === "error") subscriber.error(m.error);
-      },
-      close: () => subscriber.unsubscribe(),
-    });
-
-    writer.send(request);
-  });
+import { getRxFeed } from "./getRxFeed";
 
 type REQUEST = { type: string };
 export type ImageAndMaybeDelta<I, D> = { image: I; delta?: D };
@@ -93,8 +77,3 @@ export const buildFromIO = (
     },
   };
 };
-
-// export const getRxDays = getRxFeed<DayMetadata>()("rx-days");
-// export const getRxPhotos = getRxRecordFeed<PhotoDbEntry>()("rx-photos");
-// export const getRxExif = getRxRecordFeed<ExifFromHash>()("rx-exif");
-// export const getRxFiles = getRxRecordFeed<NamedFile>()("rx-files");
