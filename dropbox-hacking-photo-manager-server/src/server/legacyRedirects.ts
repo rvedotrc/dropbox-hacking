@@ -1,6 +1,6 @@
 import { Application } from "express";
 
-import { Context } from "./context";
+import { Context } from "./context.js";
 
 export default (app: Application, context: Context): void => {
   app.get("/photo.html", (req, res) => {

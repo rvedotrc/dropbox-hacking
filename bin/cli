@@ -1,2 +1,2 @@
 #!/bin/bash
-exec with-node - node --trace-deprecation --trace-warnings ./dropbox-hacking-cli/dist/main/cli.js "$@"
+exec with-node - node --trace-deprecation --trace-warnings ./dropbox-hacking-cli/dist/src/main/cli.js "$@"

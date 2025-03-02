@@ -9,7 +9,7 @@ import {
   StateDir,
 } from "dropbox-hacking-mediainfo-db";
 
-import { Handler } from "../types";
+import { Handler } from "../types.js";
 import FileMetadata = files.FileMetadata;
 import {
   DropboxProvider,
@@ -41,7 +41,7 @@ export const isMediainfoableFile = (path: string): boolean => {
 };
 
 const doItem = async (
-  dbx: Dropbox,
+  _dbx: Dropbox,
   item: FileMetadata,
   stateDir: StateDir,
   fetcher: F,
@@ -201,9 +201,9 @@ const updateHandler: Handler = async (
 };
 
 const showHandler: Handler = async (
-  dbxp: DropboxProvider,
+  _dbxp: DropboxProvider,
   argv: string[],
-  globalOptions: GlobalOptions,
+  _globalOptions: GlobalOptions,
   usageFail: () => Promise<void>,
 ): Promise<void> => {
   // `${subShow} STATE_DIR`

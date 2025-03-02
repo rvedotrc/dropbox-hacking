@@ -1,7 +1,7 @@
 import { files } from "dropbox";
 import { Application } from "express";
 
-import { Context } from "../context";
+import { Context } from "../context.js";
 
 const ALLOWED_SIZES = [
   "w32h32",

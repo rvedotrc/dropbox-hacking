@@ -5,14 +5,14 @@ import {
   writeStdout,
 } from "dropbox-hacking-util";
 
-import { Handler } from "../types";
+import { Handler } from "../types.js";
 
 const verb = "content-hash-stdin";
 
 const handler: Handler = async (
   _dbxp: DropboxProvider,
   argv: string[],
-  globalOptions: GlobalOptions,
+  _globalOptions: GlobalOptions,
   usageFail: () => void,
 ): Promise<void> => {
   if (argv.length !== 0) usageFail();
@@ -20,10 +20,11 @@ const handler: Handler = async (
   return makeContentHash(process.stdin)
     .then((hash) => writeStdout(hash + "\n"))
     .then(() => process.exit(0))
-    .catch((reason) => {
+    .catch((reason: Error) => {
       console.error(reason);
       process.exit(1);
-    });
+    })
+    .then(() => undefined);
 };
 
 const argsHelp = "";

@@ -4,7 +4,7 @@ import {
   writeStdout,
 } from "dropbox-hacking-util";
 
-import { Handler } from "../types";
+import { Handler } from "../types.js";
 
 const verb = "mv";
 
@@ -15,7 +15,7 @@ const verb = "mv";
 const handler: Handler = async (
   dbxp: DropboxProvider,
   argv: string[],
-  globalOptions: GlobalOptions,
+  _globalOptions: GlobalOptions,
   usageFail: () => void,
 ): Promise<void> => {
   if (argv.length !== 2) usageFail();

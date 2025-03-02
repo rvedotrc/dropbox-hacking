@@ -1,5 +1,5 @@
-import * as React from "react";
 import { CountsByDateEntry } from "dropbox-hacking-photo-manager-shared";
+import * as React from "react";
 import { useEffect } from "react";
 
 const formatPercent = (n: number, d: number): number =>
@@ -9,7 +9,7 @@ const Stats = ({
   days,
 }: {
   days: (CountsByDateEntry & { description: string })[];
-}) => {
+}): React.ReactElement | null => {
   let daysWith = 0;
   let daysWithout = 0;
   let photosWith = 0;

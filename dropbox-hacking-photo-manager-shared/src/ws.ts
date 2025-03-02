@@ -1,4 +1,6 @@
 import type { files } from "dropbox";
+import type { GPSLatNLongE } from "./gpsLatLong.js";
+import type { Photo } from "./types.js";
 
 export type SimpleRequest<T> = {
   type: "simpleRequest";
@@ -28,4 +30,29 @@ export type ThumbnailRequest = {
 
 export type ThumbnailResponse = {
   thumbnail: string | null;
+};
+
+export type ClosestToRequest = {
+  verb: "closestTo";
+  from: GPSLatNLongE;
+  nClosest: number;
+  maxDistanceInMeters: number;
+};
+
+export type ClosestToResponse = {
+  items: {
+    distanceInMeters: number;
+    photo: Photo;
+  }[];
+  truncated: boolean;
+};
+
+export type PhotoDbEntry = {
+  tags: string[];
+};
+
+export type NamedFile = files.FileMetadata & {
+  path_lower: string;
+  path_display: string;
+  content_hash: string;
 };

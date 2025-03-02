@@ -1,13 +1,13 @@
-export interface CancelablePromise<T> extends Promise<T> {
+export type CancelablePromise<T> = {
   cancel: () => void;
   canceled(): boolean;
-}
+} & Promise<T>;
 
 export const cancelablePromise = <T>(
-  fn: (
+  builder: (
     resolve: (value: T) => void,
     reject: (reason: unknown) => void,
-    onCancel: (fn: () => void) => void,
+    onCancel: (cancelCallback: () => void) => void,
     canceled: () => boolean,
   ) => void,
 ): CancelablePromise<T> => {
@@ -20,7 +20,7 @@ export const cancelablePromise = <T>(
   const readCanceled = () => canceled;
 
   const promise = new Promise((resolve, reject) =>
-    fn(resolve, reject, setOnCancel, readCanceled),
+    builder(resolve, reject, setOnCancel, readCanceled),
   ) as CancelablePromise<T>;
 
   promise.cancel = () => {

@@ -1,8 +1,8 @@
 import { Dropbox } from "dropbox";
 
-import { GlobalOptions } from "../global-options";
-import { cancel } from "./retrying-promise";
-import WrappedMethod from "./wrapped-method";
+import { GlobalOptions } from "../global-options/index.js";
+import { cancel } from "./retrying-promise.js";
+import WrappedMethod from "./wrapped-method.js";
 
 const timeoutFor: Partial<Record<keyof Dropbox, number>> = {
   filesGetTemporaryLink: 30000,

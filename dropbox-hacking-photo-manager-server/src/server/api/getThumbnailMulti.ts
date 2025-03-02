@@ -2,7 +2,7 @@ import { files } from "dropbox";
 import { ThumbnailsByRevResponse } from "dropbox-hacking-photo-manager-shared";
 import { Application } from "express";
 
-import { Context } from "../context";
+import { Context } from "../context.js";
 import GetThumbnailBatchArg = files.GetThumbnailBatchArg;
 
 export default (app: Application, context: Context): void => {

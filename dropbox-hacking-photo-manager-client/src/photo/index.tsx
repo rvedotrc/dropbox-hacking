@@ -1,13 +1,14 @@
-import * as React from "react";
-import { useEffect, useState } from "react";
 import {
   GPSLatLong,
   Photo,
   PhotoResponse,
 } from "dropbox-hacking-photo-manager-shared";
+import * as React from "react";
+import { useEffect, useState } from "react";
+
 import logRender from "../logRender";
 
-const Photo = (props: { rev: string }) => {
+const Photo = (props: { rev: string }): React.ReactElement | null => {
   const [photo, setPhoto] = useState<Photo | false | undefined>();
   const [previewSizes, setPreviewSizes] = useState<string[]>();
 
@@ -19,7 +20,8 @@ const Photo = (props: { rev: string }) => {
     if (photo === undefined) {
       fetch(`/api/photo/rev/${props.rev}`)
         .then((r) => r.json() as Promise<PhotoResponse>)
-        .then((data) => setPhoto(data.photo));
+        .then((data) => setPhoto(data.photo))
+        .catch((err) => console.error(err));
     }
   }, [photo, props.rev]);
 
@@ -27,7 +29,8 @@ const Photo = (props: { rev: string }) => {
     if (previewSizes === undefined) {
       fetch("/api/config/preview-sizes")
         .then((r) => r.json() as Promise<string[]>)
-        .then(setPreviewSizes);
+        .then(setPreviewSizes)
+        .catch((err) => console.error(err));
     }
   }, []);
 
@@ -47,14 +50,14 @@ const Photo = (props: { rev: string }) => {
       <h1>{props.rev}</h1>
 
       <div>
-        <a href={`/image/rev/${photo.rev}`}>
-          <img src={`/image/rev/${photo.rev}/w640h480`} alt={"preview"} />
+        <a href={`/image/rev/${photo.file.rev}`}>
+          <img src={`/image/rev/${photo.file.rev}/w640h480`} alt={"preview"} />
         </a>
       </div>
 
       <p>
         <a
-          href={`https://www.dropbox.com/preview${photo.path_lower}?context=browse&role=personal`}
+          href={`https://www.dropbox.com/preview${photo.file.path_lower}?context=browse&role=personal`}
         >
           View in Dropbox
         </a>
@@ -64,7 +67,7 @@ const Photo = (props: { rev: string }) => {
         <ol>
           {previewSizes.map((previewSize) => (
             <li key={previewSize}>
-              <a href={`/image/rev/${photo.rev}/${previewSize}`}>
+              <a href={`/image/rev/${photo.file.rev}/${previewSize}`}>
                 {previewSize}
               </a>
             </li>
@@ -76,7 +79,7 @@ const Photo = (props: { rev: string }) => {
         <p>
           <a href={gps.googleMapsUrl({ zoom: 15 })}>Google Maps</a>
           {" | "}
-          <a href={gps.geoHackUrl({ title: photo.rev })}>GeoHack</a>
+          <a href={gps.geoHackUrl({ title: photo.file.rev })}>GeoHack</a>
         </p>
       )}
 

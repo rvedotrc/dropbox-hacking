@@ -1,2 +1,2 @@
 #!/bin/bash
-exec with-node - node ./dropbox-hacking-cli/dist/main/exifCache.js "$@"
+exec with-node - node ./dropbox-hacking-cli/dist/src/main/exifCache.js "$@"

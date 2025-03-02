@@ -3,11 +3,12 @@ import type {
   SimpleResponse,
 } from "dropbox-hacking-photo-manager-shared";
 
-import type { Context } from "../../context";
-import { pingHandler } from "./pingHandler";
-import { thumbnailHandler } from "./thumbnailHandler";
+import type { Context } from "../../context.js";
+import { pingHandlerBuilder } from "./pingHandler.js";
+import { thumbnailHandlerBuilder } from "./thumbnailHandler.js";
+import { closestToHandlerBuilder } from "./closestToHandler.js";
 
-export type SimpleRequestHandler<I, O> = (request: I) => Promise<O>;
+// export type SimpleRequestHandler<I, O> = (request: I) => Promise<O>;
 type H<I, O> = (
   req: SimpleRequest<I>,
 ) => Promise<SimpleResponse<O> | undefined>;
@@ -20,7 +21,7 @@ type H<I, O> = (
 //   }
 // };
 
-const getVerb = (payload: unknown): string | undefined =>
+const getSimpleRequestPayloadVerb = (payload: unknown): string | undefined =>
   payload !== null &&
   typeof payload === "object" &&
   "verb" in payload &&
@@ -47,30 +48,34 @@ const countPending = (inner: H<unknown, unknown>): H<unknown, unknown> => {
   };
 };
 
-export const simpleRequestHandler = (context: Context): H<unknown, unknown> => {
+export const simpleRequestHandlerBuilder = (
+  context: Context,
+): H<unknown, unknown> => {
   const handlerMap = {
-    getThumbnail: thumbnailHandler(context),
-    ping: pingHandler(context),
+    getThumbnail: thumbnailHandlerBuilder(context),
+    ping: pingHandlerBuilder(context),
+    closestTo: closestToHandlerBuilder(context),
   } as const;
 
-  const h = (
-    req: SimpleRequest<unknown>,
+  const simpleRequestHandler = async (
+    simpleRequest: SimpleRequest<unknown>,
   ): Promise<SimpleResponse<unknown> | undefined> => {
-    const verb = getVerb(req.payload);
+    const verb = getSimpleRequestPayloadVerb(simpleRequest.payload);
 
     if (verb === undefined) return Promise.resolve(undefined);
 
-    const handler: SimpleRequestHandler<unknown, unknown> | undefined =
-      handlerMap[verb];
-
+    const handler = handlerMap[verb as keyof typeof handlerMap];
     if (!handler) return Promise.resolve(undefined);
 
-    return handler(req.payload).then((payload) => ({
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any
+    const payload_1 = await handler(simpleRequest.payload as any);
+
+    return {
       type: "simpleResponse",
-      id: req.id,
-      payload,
-    }));
+      id: simpleRequest.id,
+      payload: payload_1,
+    };
   };
 
-  return countPending(h);
+  return countPending(simpleRequestHandler);
 };

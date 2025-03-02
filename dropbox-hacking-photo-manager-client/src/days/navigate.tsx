@@ -1,7 +1,8 @@
-import SamePageLink from "../samePageLink";
 import * as React from "react";
 
-const navigation = () => (
+import SamePageLink from "../samePageLink";
+
+const navigation = (): React.ReactElement | null => (
   <p>
     <SamePageLink href={"/calendar"} state={{ route: "calendar" }}>
       Calendar
@@ -13,6 +14,10 @@ const navigation = () => (
     {" | "}
     <SamePageLink href={"/days/plain"} state={{ route: "days-plain" }}>
       List of days (plain)
+    </SamePageLink>
+    {" | "}
+    <SamePageLink href={"/stats"} state={{ route: "stats" }}>
+      Stats
     </SamePageLink>
   </p>
 );

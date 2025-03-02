@@ -10,8 +10,8 @@ import {
 } from "dropbox-hacking-util";
 import * as fs from "fs";
 
-import * as engine from "./engine";
-import { FileItem } from "./local-listing";
+import * as engine from "./engine.js";
+import { FileItem } from "./local-listing.js";
 
 export type UploadArgs = {
   dbxp: DropboxProvider;

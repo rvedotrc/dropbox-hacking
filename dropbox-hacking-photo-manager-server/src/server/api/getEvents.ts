@@ -1,8 +1,8 @@
 import { DPMAnyEvent } from "dropbox-hacking-photo-manager-shared";
 import { Application } from "express";
 
-import { Context } from "../context";
-import { getLogPrefix } from "../main";
+import { Context } from "../context.js";
+import { getLogPrefix } from "../main.js";
 
 export default (app: Application, context: Context): void => {
   app.get("/api/events", (req, res) => {

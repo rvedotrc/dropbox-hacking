@@ -1,4 +1,4 @@
-import { Dropbox, files } from "dropbox";
+import { Dropbox, files, type DropboxResponseError } from "dropbox";
 import FileMetadataReference = files.FileMetadataReference;
 import FolderMetadataReference = files.FolderMetadataReference;
 import DeletedMetadataReference = files.DeletedMetadataReference;
@@ -12,7 +12,7 @@ export type Item = {
 };
 
 const addRelativePath = (metadata: Item["metadata"], path: string): Item => {
-  if (metadata.path_display === undefined) throw "Need path_display";
+  if (metadata.path_display === undefined) throw new Error("Need path_display");
   return {
     relativePath: metadata.path_display.substring(path.length),
     metadata,
@@ -42,10 +42,10 @@ export default (
 
       return followCursor(r.result.has_more, r.result.cursor).then(() => items);
     },
-    (err) => {
+    (err: DropboxResponseError<files.ListFolderError>) => {
       if (err.status === 409) {
-        if (err.error && err.error.error && err.error.error.path) {
-          const tag = err.error.error.path[".tag"];
+        if (err.error[".tag"] === "path") {
+          const tag = err.error.path[".tag"];
           if (tag == "not_folder")
             return dbx
               .filesGetMetadata({ path })
@@ -54,6 +54,7 @@ export default (
         }
       }
 
+      // eslint-disable-next-line @typescript-eslint/only-throw-error
       throw err;
     },
   );

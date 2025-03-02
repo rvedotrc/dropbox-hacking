@@ -1,7 +1,6 @@
 import { files } from "dropbox";
 import { ExifFromHash } from "dropbox-hacking-exif-db";
-import FileMetadataReference = files.FileMetadataReference;
-import FolderMetadataReference = files.FolderMetadataReference;
+import type { GPSLatNLongE } from "./gpsLatLong.js";
 
 export type DayMetadata = {
   date: string;
@@ -10,6 +9,11 @@ export type DayMetadata = {
 
 export type Payload =
   | {
+      route: "closest-to";
+      gps: GPSLatNLongE;
+      nClosest: number;
+    }
+  | {
       route: "calendar";
     }
   | {
@@ -17,6 +21,9 @@ export type Payload =
     }
   | {
       route: "days-plain";
+    }
+  | {
+      route: "stats";
     }
   | {
       route: "day";
@@ -36,7 +43,10 @@ export type CountsByDateEntry = {
 export type CountsByDate = CountsByDateEntry[];
 export type CountsByDateResponse = { counts_by_date: CountsByDate };
 
-export type Photo = files.FileMetadataReference & { exif: ExifFromHash };
+export type Photo = {
+  file: files.FileMetadata;
+  exif: ExifFromHash;
+};
 export type PhotoResponse = { photo: Photo };
 export type PhotosResponse = { photos: Photo[] };
 
@@ -51,8 +61,4 @@ export type DayMetadataResponse = {
 
 export type DaysMetadataResponse = {
   days_metadata: DayMetadata[];
-};
-
-export type LsResponse = {
-  items: Array<FileMetadataReference | FolderMetadataReference>;
 };

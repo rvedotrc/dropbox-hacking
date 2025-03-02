@@ -1,4 +1,4 @@
-import { GlobalOptionsSingleton } from "../global-options";
+import { GlobalOptionsSingleton } from "../global-options/index.js";
 
 type Tag = string | (() => string);
 

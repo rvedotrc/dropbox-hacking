@@ -1,6 +1,6 @@
-export interface Emittable<T> {
+export type Emittable<T> = {
   emit: (event: T) => void;
-}
+};
 
 export type Listener<T> = (event: T) => void;
 
@@ -10,10 +10,10 @@ export type Listener<T> = (event: T) => void;
 // - async parallel
 // - fire and forget
 
-export interface Subscribable<T> {
+export type Subscribable<T> = {
   subscribe: (listener: Listener<T>) => () => void;
   unsubscribe: (listener: Listener<T>) => void;
-}
+};
 
 export const makeEmittableSubscribable = <T>(): [
   Emittable<T>,

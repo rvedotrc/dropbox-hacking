@@ -2,7 +2,7 @@ import { files } from "dropbox";
 import { Photo, PhotoResponse } from "dropbox-hacking-photo-manager-shared";
 import { Application } from "express";
 
-import { Context } from "../context";
+import { Context } from "../context.js";
 
 export default (app: Application, context: Context): void => {
   app.get("/api/photo/rev/:rev", (req, res) =>
@@ -33,7 +33,7 @@ export default (app: Application, context: Context): void => {
           return;
         }
 
-        const photo: Photo = { ...file, exif: exifData };
+        const photo: Photo = { file, exif: exifData };
 
         const maxAge = 86400;
         const expires = new Date(new Date().getTime() + maxAge * 1000);

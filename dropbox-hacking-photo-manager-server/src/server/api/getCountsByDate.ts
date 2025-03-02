@@ -6,7 +6,7 @@ import {
 } from "dropbox-hacking-photo-manager-shared";
 import { Application } from "express";
 
-import { Context } from "../context";
+import { Context } from "../context.js";
 
 const samplePhotos = (photos: Photo[]): Photo[] => {
   if (photos.length === 0) return photos;
@@ -22,7 +22,7 @@ const samplePhotos = (photos: Photo[]): Photo[] => {
 };
 
 export default (app: Application, context: Context): void => {
-  app.get("/api/counts_by_date", (req, res) => {
+  app.get("/api/counts_by_date", (_req, res) => {
     Promise.all([context.lsFeed.read(), context.exifDbFeed.read()])
       .then(([state, exifDb]) => {
         if (state.tag !== "ready") {
@@ -54,7 +54,7 @@ export default (app: Application, context: Context): void => {
             date,
             count: existing.count + 1,
             countWithGps: existing.countWithGps + (gps !== null ? 1 : 0),
-            samplePhotos: [...existing.samplePhotos, { ...entry, exif }],
+            samplePhotos: [...existing.samplePhotos, { file: entry, exif }],
           });
         }
 

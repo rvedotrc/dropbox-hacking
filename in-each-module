@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -euo pipefail
+
+TARGET="$1"
+
+NAMES=$( find * -maxdepth 0 -name 'dropbox-hacking-*' -type d )
+
+echo "$NAMES" \
+    | while read m ; do
+        printf "cd %s && pnpm %s\0" "$m" "$TARGET"
+    done | xargs -0 pnpm exec concurrently --names $( echo $NAMES | tr " " , )

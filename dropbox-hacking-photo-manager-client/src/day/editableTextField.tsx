@@ -8,12 +8,13 @@ import {
   useRef,
   useState,
 } from "react";
+
 import logRender from "../logRender";
 
 const EditableTextField = (props: {
   value: string;
   onSave: (newValue: string) => Promise<void>;
-}) => {
+}): React.ReactElement | null => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [editingValue, setEditingValue] = useState<string>(props.value.trim());
   const input = useRef<HTMLInputElement>(null);
@@ -26,7 +27,10 @@ const EditableTextField = (props: {
     () => (event: MouseEvent | KeyboardEvent) => {
       console.log("Saving");
       event.preventDefault();
-      return props.onSave(editingValue).then(() => setIsEditing(false));
+      props
+        .onSave(editingValue)
+        .then(() => setIsEditing(false))
+        .catch((err) => console.error(err));
     },
     [props.onSave, editingValue],
   );
@@ -66,7 +70,12 @@ const EditableTextField = (props: {
 
   if (!isEditing) {
     return (
-      <span onClick={startEditing}>{props.value || "(click to edit)"}</span>
+      <span
+        onClick={startEditing}
+        className={props.value ? "hasData" : "noData"}
+      >
+        {props.value || "(click to edit)"}
+      </span>
     );
   } else {
     return (

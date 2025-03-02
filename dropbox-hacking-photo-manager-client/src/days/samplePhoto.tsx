@@ -1,7 +1,9 @@
-import * as React from "react";
 import { Photo } from "dropbox-hacking-photo-manager-shared";
-import { useThumbnail } from "../context/thumbnails/useThumbnail";
+import * as React from "react";
+
 import { useThumbnailLoader } from "../context/thumbnails";
+import { useThumbnail } from "../context/thumbnails/useThumbnail";
+import logRender from "../logRender";
 
 const samplePhoto = ({
   photo,
@@ -9,19 +11,12 @@ const samplePhoto = ({
 }: {
   photo: Photo;
   visible: boolean;
-}) => {
+}): React.ReactElement | null => {
   const loader = useThumbnailLoader();
-  const thumbnail = useThumbnail(photo.rev, loader)(visible);
+  const thumbnail = useThumbnail(photo.file.rev, loader)(visible);
 
   return (
-    <span
-      key={photo.id}
-      style={{
-        display: "inline-block",
-        height: "128px",
-        width: "128px",
-      }}
-    >
+    <span key={photo.file.id} className="sample">
       <img
         src={
           thumbnail ? `data:image/jpeg;base64,${thumbnail}` : `/placeholder.png`
@@ -32,4 +27,4 @@ const samplePhoto = ({
   );
 };
 
-export default samplePhoto;
+export default logRender(samplePhoto);

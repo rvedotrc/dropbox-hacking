@@ -5,9 +5,13 @@ import { getDropboxClient } from "dropbox-hacking-util";
 import { EventEmitter } from "events";
 import * as fs from "fs";
 
-import { Context, SubscribableData } from "./context";
-import DayDb from "./dayDb";
-import debounce from "./debounce";
+import { Context, SubscribableData } from "./context.js";
+import DayDb from "./dayDb.js";
+import debounce from "./debounce.js";
+import { buildForDayDb } from "./rx/dayDb.js";
+import { buildForExifDb } from "./rx/exifDb.js";
+import { buildForLsCache } from "./rx/lsCache.js";
+import { buildForPhotoDb } from "./rx/photoDb.js";
 
 class FilesystemBasedFeed<T>
   extends EventEmitter
@@ -54,13 +58,25 @@ export default (args: {
   baseUrlWithoutSlash: string;
 }): Context => {
   const exifDbDir = process.env.EXIF_DB_DIR;
-  if (exifDbDir === undefined) throw "Need EXIF_DB_DIR";
+  if (exifDbDir === undefined) throw new Error("Need EXIF_DB_DIR");
 
   const lsCacheDir = process.env.LS_CACHE_DIR;
-  if (lsCacheDir === undefined) throw "Need LS_CACHE_DIR";
+  if (lsCacheDir === undefined) throw new Error("Need LS_CACHE_DIR");
 
   const dayDbDir = process.env.DAY_DB_DIR;
-  if (dayDbDir === undefined) throw "Need DAY_DB_DIR";
+  if (dayDbDir === undefined) throw new Error("Need DAY_DB_DIR");
+
+  const photoDbDir = process.env.PHOTO_DB_DIR;
+  if (photoDbDir === undefined) throw new Error("Need PHOTO_DB_DIR");
+
+  // RX
+
+  const exifRx = buildForExifDb(exifDbDir);
+  const dayRx = buildForDayDb(dayDbDir);
+  const photoRx = buildForPhotoDb(photoDbDir);
+  const imageFilesRx = buildForLsCache(lsCacheDir);
+
+  // Older
 
   const lsFeed = new FilesystemBasedFeed(lsCacheDir, () => {
     const lsCache = new LsCache.StateDir(lsCacheDir);
@@ -77,14 +93,21 @@ export default (args: {
   // FIXME: close()
 
   const dayDb = new DayDb(dayDbDir);
-  const daysFeed = new FilesystemBasedFeed(dayDbDir, dayDb.days);
+  const daysFeed = new FilesystemBasedFeed(dayDbDir, () => dayDb.days());
   daysFeed.start();
   // FIXME: close()
 
   const close = async () => {
-    lsFeed.stop();
-    exifDbFeed.stop();
-    daysFeed.stop();
+    exifRx.close();
+    dayRx.close();
+    photoRx.close();
+    imageFilesRx.close();
+
+    await Promise.allSettled([
+      lsFeed.stop(),
+      exifDbFeed.stop(),
+      daysFeed.stop(),
+    ]);
   };
 
   return {
@@ -93,6 +116,12 @@ export default (args: {
     get dropboxClient(): Promise<Dropbox> {
       return getDropboxClient();
     },
+
+    exifRx: exifRx["observable"],
+    imageFilesRx: imageFilesRx["observable"],
+    dayRx: dayRx["observable"],
+    photoRx: photoRx["observable"],
+
     lsFeed,
     exifDbFeed,
     daysFeed,

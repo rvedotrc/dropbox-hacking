@@ -1,15 +1,21 @@
 import { useEffect, useMemo, useState } from "react";
+
 import { Either, left, right } from "../fp";
 
-type Result<T> = Either<any, T>;
+export type Result<T> = Either<unknown, T>;
 type FetchPromise = Promise<unknown>;
 type State<T> = {
   result: Result<T> | undefined;
   fetchPromise: FetchPromise | undefined;
 };
+export type ApiResource<T> = {
+  result: Result<T> | undefined;
+  reset: () => void;
+  refresh: () => void;
+};
 
 // Doesn't respect changing of the URL
-export default <T>({ url }: { url: string }) => {
+export default <T>({ url }: { url: string }): ApiResource<T> => {
   const [state, setState] = useState<State<T>>({
     result: undefined,
     fetchPromise: undefined,

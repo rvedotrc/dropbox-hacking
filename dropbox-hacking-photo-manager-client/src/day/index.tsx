@@ -1,15 +1,19 @@
-import * as React from "react";
-import { useEffect, useMemo, useRef, useState } from "react";
 import {
   DayMetadataResponse,
   PhotosResponse,
 } from "dropbox-hacking-photo-manager-shared";
-import EditableTextField from "./editableTextField";
-import logRender from "../logRender";
+import * as React from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+
+import { useDayPhotos } from "../context/feeds";
 import useVisibilityTracking from "../days/useVisibilityTracking";
-import PhotoTile from "./photoTile";
-import { useDay, useDayPhotos } from "../context/feeds";
 import { isLeft } from "../fp";
+import logRender from "../logRender";
+import EditableTextField from "./editableTextField";
+import PhotoTile from "./photoTile";
+import { useRxFeedsViaMultiplexer } from "../context/rx/rxRecordFeedContext";
+import { map } from "rxjs";
+import { useLatestValue } from "../context/rx/useLatestValue";
 
 const DayWithData = ({
   date,
@@ -65,9 +69,9 @@ const DayWithData = ({
       <div ref={parentRef} className={"photoList"}>
         {dayPhotos.photos.map((photo) => (
           <PhotoTile
-            key={photo.rev}
+            key={photo.file.rev}
             photo={photo}
-            isVisible={visibleRevs?.has(photo.rev) || false}
+            isVisible={visibleRevs?.has(photo.file.rev) || false}
           />
         ))}
       </div>
@@ -77,8 +81,18 @@ const DayWithData = ({
 
 const DayWithDataLogged = logRender(DayWithData);
 
-const Day = ({ date }: { date: string }) => {
-  const dayMetadata = useDay(date);
+const Day = ({ date }: { date: string }): React.ReactElement | null => {
+  const mx = useRxFeedsViaMultiplexer();
+
+  const dayMetadataObserver = useMemo(
+    () =>
+      mx?.days
+        .pipe(map((t) => t.image[date]))
+        .pipe(map((m) => ({ day_metadata: m }))),
+    [mx, date],
+  );
+
+  const dayMetadata = useLatestValue(dayMetadataObserver);
   const dayPhotos = useDayPhotos(date);
 
   useEffect(() => {
@@ -89,7 +103,7 @@ const Day = ({ date }: { date: string }) => {
     return <div>Loading DAY ...</div>;
   }
 
-  if (isLeft(dayPhotos) || isLeft(dayMetadata)) {
+  if (isLeft(dayPhotos)) {
     return <div>Error DAY :-(</div>;
   }
 
@@ -97,7 +111,7 @@ const Day = ({ date }: { date: string }) => {
     <DayWithDataLogged
       date={date}
       dayPhotos={dayPhotos.right}
-      dayMetadata={dayMetadata.right}
+      dayMetadata={dayMetadata}
     />
   );
 };

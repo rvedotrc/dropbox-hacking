@@ -1,7 +1,7 @@
-import { files } from "dropbox";
+import { files, type DropboxResponseError } from "dropbox";
 
-import { Handler } from "../types";
-import path = require("node:path");
+import { Handler } from "../types.js";
+import path from "node:path";
 import { lister } from "dropbox-hacking-lister";
 import { Mover } from "dropbox-hacking-mover";
 import {
@@ -97,14 +97,16 @@ const handler: Handler = async (
 
     const existing = await dbx.filesGetMetadata({ path: wantedPath }).then(
       (r) => r.result,
-      (err) => {
+      (err: DropboxResponseError<files.GetMetadataError>) => {
         if (
           err.status === 409 &&
-          err.error?.error_summary.includes("path/not_found")
+          err.error[".tag"] === "path" &&
+          err.error.path[".tag"] === "not_found"
         )
           return undefined;
 
         console.log(JSON.stringify({ get_existing: err }));
+        // eslint-disable-next-line @typescript-eslint/only-throw-error
         throw err;
       },
     );

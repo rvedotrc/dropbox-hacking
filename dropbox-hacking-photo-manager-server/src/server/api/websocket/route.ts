@@ -1,14 +1,14 @@
 import { Application } from "express-ws";
 
-import { Context } from "../../context";
-import { getLogPrefix } from "../../main";
-import { requestHandler } from "./requestHandler";
-import { tryJsonParse } from "./tryJsonParse";
+import { Context } from "../../context.js";
+import { getLogPrefix } from "../../main.js";
+import { messageHandlerBuilder } from "./messageHandler.js";
+import { tryJsonParse } from "./tryJsonParse.js";
 
 const IDLE_MILLIS = 60 * 1000;
 
 export default (app: Application, context: Context): void => {
-  const handler = requestHandler(context);
+  const messageHandler = messageHandlerBuilder(context);
 
   app.ws("/api/ws", function (ws, req) {
     const id = getLogPrefix(req) || "?";
@@ -48,7 +48,7 @@ export default (app: Application, context: Context): void => {
           const p = tryJsonParse(data);
 
           if (p.ok) {
-            handler(p.value).then(
+            messageHandler(p.value).then(
               (response) => {
                 if (response === undefined) {
                   console.error(`Handler resolved undefined, no response sent`);

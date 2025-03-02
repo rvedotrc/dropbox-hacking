@@ -1,10 +1,11 @@
+import { files, type DropboxResponseError } from "dropbox";
 import {
   DropboxProvider,
   GlobalOptions,
   writeStdout,
 } from "dropbox-hacking-util";
 
-import { Handler } from "../types";
+import { Handler } from "../types.js";
 
 const verb = "rm";
 
@@ -13,7 +14,7 @@ const verb = "rm";
 const handler: Handler = async (
   dbxp: DropboxProvider,
   argv: string[],
-  globalOptions: GlobalOptions,
+  _globalOptions: GlobalOptions,
   usageFail: () => void,
 ): Promise<void> => {
   if (argv.length !== 1) usageFail();
@@ -24,13 +25,15 @@ const handler: Handler = async (
   dbx
     .filesDeleteV2({ path })
     .then((response) => writeStdout(JSON.stringify(response.result) + "\n"))
-    .catch((err) => {
+    .catch((err: DropboxResponseError<files.DeleteError>) => {
       if (
         err.status === 409 &&
-        err.error?.error_summary.includes("path_lookup/not_found")
+        err.error[".tag"] === "path_lookup" &&
+        err.error.path_lookup[".tag"] === "not_found"
       )
         return undefined;
 
+      // eslint-disable-next-line @typescript-eslint/only-throw-error
       throw err;
     })
     .then(() => process.exit(0))

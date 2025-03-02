@@ -1,6 +1,6 @@
 import { DropboxProvider, GlobalOptions } from "dropbox-hacking-util";
 
-import { Handler } from "../types";
+import { Handler } from "../types.js";
 
 const verb = "mkdir";
 
@@ -9,7 +9,7 @@ const verb = "mkdir";
 const handler: Handler = async (
   dbxp: DropboxProvider,
   argv: string[],
-  globalOptions: GlobalOptions,
+  _globalOptions: GlobalOptions,
   usageFail: () => void,
 ): Promise<void> => {
   if (argv.length !== 1) usageFail();

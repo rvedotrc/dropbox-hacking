@@ -1,11 +1,12 @@
 import * as React from "react";
 import { useEffect } from "react";
+
+import { useCountsByDate } from "../../context/countsByDateContext";
+import logRender from "../../logRender";
+import SamePageLink from "../../samePageLink";
+import Navigate from "../navigate";
 import MonthBox from "./monthBox";
 import TwelveMonths from "./twelveMonths";
-import SamePageLink from "../../samePageLink";
-import logRender from "../../logRender";
-import Navigate from "../navigate";
-import { useCountsByDate } from "../../context/countsByDateContext";
 
 type Year = {
   yearString: string;
@@ -53,9 +54,9 @@ const Calendar = () => {
 
   return (
     <div>
-      <h1>Calendar</h1>
-
       <Navigate />
+
+      <h1>Calendar</h1>
 
       {[...years.keys()]
         .sort()
@@ -73,7 +74,7 @@ const Calendar = () => {
                   <MonthBox
                     year={year.yearNumber}
                     month={monthNumber}
-                    renderDay={(_y, _m, dayNumber): React.ReactFragment => {
+                    renderDay={(_y, _m, dayNumber): React.ReactNode => {
                       const dateString = `${year.yearString}-${zeroPad(
                         monthNumber + 1,
                         2,

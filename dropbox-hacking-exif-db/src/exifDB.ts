@@ -9,6 +9,11 @@ export type ExifFromHash = {
   firstSeenFilename: string;
 };
 
+type ExifByContentHashFile = Record<
+  ContentHash,
+  Omit<ExifFromHash, "addedAt"> & { addedAt: string }
+>;
+
 type UnwrittenExifFromHash = Map<ContentHash, ExifFromHash>;
 
 type SeenLocalFileId = string;
@@ -36,7 +41,7 @@ export class ExifDB {
 
   public seenFileId(stats: fs.Stats): Promise<boolean> {
     return this.load().then(() => {
-      if (!this.seenLocalFiles) throw "no seenIds";
+      if (!this.seenLocalFiles) throw new Error("no seenIds");
 
       return this.seenLocalFiles.has(ExifDB.fileIdFromStats(stats));
     });
@@ -45,11 +50,11 @@ export class ExifDB {
   public readAll(): Promise<Map<ContentHash, ExifFromHash>> {
     return fs.promises
       .readFile(`${this.dir}/exif_by_content_hash.json`, { encoding: "utf-8" })
-      .catch((err) => {
-        if (err.code === "ENOENT") return "{}";
+      .catch((err: Error) => {
+        if ("code" in err && err.code === "ENOENT") return "{}";
         throw err;
       })
-      .then((json) => JSON.parse(json))
+      .then((json) => JSON.parse(json) as Record<ContentHash, ExifFromHash>)
       .then((data) => {
         const map = new Map<ContentHash, ExifFromHash>();
 
@@ -85,7 +90,7 @@ export class ExifDB {
     localFilename: string,
   ): Promise<void> {
     const seen = this.load().then(() => {
-      if (!this.seenLocalFiles) throw "no seenIds";
+      if (!this.seenLocalFiles) throw new Error("no seenIds");
 
       const fileId = ExifDB.fileIdFromStats(stats);
 
@@ -121,7 +126,8 @@ export class ExifDB {
         firstSeenFilename: seenAs,
       });
 
-      if (this.unwrittenExifFromHash.size >= this.maxUnwritten) this.flush();
+      if (this.unwrittenExifFromHash.size >= this.maxUnwritten)
+        void this.flush();
     });
   }
 
@@ -129,7 +135,7 @@ export class ExifDB {
     return (this.flushPromise = this.flushPromise
       .then(() => this.load())
       .then(() => {
-        if (!this.seenLocalFiles) throw "no seenIds";
+        if (!this.seenLocalFiles) throw new Error("no seenIds");
 
         const unwritten = this.unwrittenExifFromHash;
         const seenLocalFiles = new Map(this.seenLocalFiles);
@@ -153,11 +159,11 @@ export class ExifDB {
 
     return fs.promises
       .readFile(file, { encoding: "utf-8" })
-      .catch((err) => {
-        if (err.code === "ENOENT") return "{}";
+      .catch((err: Error) => {
+        if ("code" in err && err.code === "ENOENT") return "{}";
         throw err;
       })
-      .then((json) => JSON.parse(json))
+      .then((json) => JSON.parse(json) as ExifByContentHashFile)
       .then((data) => {
         for (const [contentHash, item] of unwritten) {
           data[contentHash] = {
@@ -215,11 +221,11 @@ export class ExifDB {
 
     return (this.loadPromise = fs.promises
       .readFile(`${this.dir}/seen_local_files.json`, { encoding: "utf-8" })
-      .catch((err) => {
-        if (err.code === "ENOENT") return "{}";
+      .catch((err: Error) => {
+        if ("code" in err && err.code === "ENOENT") return "{}";
         throw err;
       })
-      .then((text) => JSON.parse(text))
+      .then((text) => JSON.parse(text) as Record<string, SeenLocalFile>)
       .then((data) => {
         const map: SeenLocalFiles = new Map();
         for (const k in data) {

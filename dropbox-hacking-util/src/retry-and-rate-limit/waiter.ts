@@ -1,4 +1,4 @@
-import { GlobalOptions } from "../global-options";
+import { GlobalOptions } from "../global-options/index.js";
 
 export default class Waiter {
   private readonly globalOptions: GlobalOptions;

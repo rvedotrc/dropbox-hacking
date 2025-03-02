@@ -6,7 +6,7 @@ export default class DayDb {
 
   public days(): Promise<DayMetadata[]> {
     return fs.promises.readFile(this.dayDbFile(), { encoding: "utf-8" }).then(
-      (text) => JSON.parse(text.toString()),
+      (text) => JSON.parse(text) as DayMetadata[],
       (err: Error & { code: string }) => {
         if (err.code === "ENOENT") return [];
 
@@ -35,6 +35,6 @@ export default class DayDb {
     return fs.promises
       .writeFile(tmpFile, args.content, { encoding: "utf-8", mode: 0o644 })
       .then(() => fs.promises.rename(tmpFile, args.path))
-      .finally(() => fs.promises.unlink(tmpFile).catch(() => null));
+      .finally(() => void fs.promises.unlink(tmpFile).catch(() => null));
   }
 }

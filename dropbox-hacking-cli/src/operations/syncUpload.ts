@@ -5,7 +5,7 @@ import {
   processOptions,
 } from "dropbox-hacking-util";
 
-import { Handler } from "../types";
+import { Handler } from "../types.js";
 
 const verb = "sync-upload";
 const DRY_RUN = "--dry-run";

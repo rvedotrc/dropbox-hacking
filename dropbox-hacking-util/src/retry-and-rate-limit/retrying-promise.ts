@@ -1,8 +1,8 @@
-import { Dropbox } from "dropbox";
-import { auth } from "dropbox/types/dropbox_types";
+import { Dropbox, type auth } from "dropbox";
+// import { auth } from "dropbox/types/dropbox_types";
 
-import Waiter from "./waiter";
-import WrappedMethod from "./wrapped-method";
+import Waiter from "./waiter.js";
+import WrappedMethod from "./wrapped-method.js";
 
 type Cancelable = { cancel: () => void };
 
@@ -38,7 +38,7 @@ export const withTimeout = <T>(
   new Promise((resolve, reject) => {
     const timer = setTimeout(() => {
       cancel(promise);
-      reject("promise timeout hit");
+      reject(new Error("promise timeout hit"));
     }, timeoutMillis);
     promise.then(resolve, reject).finally(() => clearTimeout(timer));
   });
@@ -108,7 +108,7 @@ export default class RetryingPromise<M extends keyof Dropbox> {
       .then(() => {
         if (this.canceller.cancelled) {
           this.debug("cancelled, throwing");
-          throw "cancelled";
+          throw new Error("cancelled");
         }
         this.debug("calling now");
         const promise = this.callReal();
@@ -129,15 +129,24 @@ export default class RetryingPromise<M extends keyof Dropbox> {
     return false;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private tryHandleRateLimitError(error: any): boolean {
+  private tryHandleRateLimitError(error: unknown): boolean {
     // {"name":"DropboxResponseError","status":429,"headers":{},"error":{"error_summary":"too_many_write_operations/","error":{"reason":{".tag":"too_many_write_operations"}}}}
     // {"name":"DropboxResponseError","status":409,"headers":{},"error":{"error_summary":"from_write/too_many_write_operations/","error":{".tag":"from_write","from_write":{".tag":"too_many_write_operations"}}}}
 
     // https://www.dropbox.com/developers/documentation/http/documentation "Errors by status code"
+    if (
+      !(
+        error !== null &&
+        typeof error === "object" &&
+        "status" in error &&
+        "error" in error
+      )
+    )
+      return false;
     if (error?.status !== 409 && error?.status !== 429) return false;
 
-    const rateLimitError: auth.RateLimitError = error?.error;
+    const rateLimitError: auth.RateLimitError =
+      error?.error as auth.RateLimitError;
 
     this.debug(JSON.stringify({ rateLimitError }));
     this.debug(
@@ -230,9 +239,12 @@ export default class RetryingPromise<M extends keyof Dropbox> {
     // 2022-01-23 11:17:49.377210500     '    at processTicksAndRejections (node:internal/process/task_queues:83:21)'
     // 2022-01-23 11:17:49.377210500 }
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     this.debug(JSON.stringify({ error }));
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
     this.debug(JSON.stringify({ error_message: error.message }));
     this.debug(JSON.stringify({ interpolate: `${error}` }));
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     this.debug(JSON.stringify({ toString: error.toString() }));
 
     const errorString = `${error}`;

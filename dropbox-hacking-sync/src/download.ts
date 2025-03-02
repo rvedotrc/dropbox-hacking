@@ -2,9 +2,9 @@ import { files } from "dropbox";
 import * as fs from "fs";
 import * as path from "path";
 
-import * as engine from "./engine";
-import { DirectoryItem, FileItem } from "./local-listing";
-import createMkdir from "./mkdir";
+import * as engine from "./engine.js";
+import { DirectoryItem, FileItem } from "./local-listing.js";
+import createMkdir from "./mkdir.js";
 import FileMetadata = files.FileMetadata;
 import { randomUUID } from "crypto";
 import { downloader } from "dropbox-hacking-downloader";
@@ -79,7 +79,7 @@ export const main = (downloadArgs: DownloadArgs): Promise<boolean> => {
         thisLocalPath: string,
         mtime: Date,
       ): Promise<void> => {
-        console.info(`set mtime of ${thisLocalPath} to ${mtime}`);
+        console.info(`set mtime of ${thisLocalPath} to ${mtime.toISOString()}`);
         ++syncStats.filesToSetMtime;
         if (dryRun) return Promise.resolve();
 
@@ -98,8 +98,8 @@ export const main = (downloadArgs: DownloadArgs): Promise<boolean> => {
 
         return fs.promises
           .link(alternatePath, thisLocalPath)
-          .catch((linkErr) => {
-            if (linkErr.code === "EXDEV") {
+          .catch((linkErr: Error) => {
+            if ("code" in linkErr && linkErr.code === "EXDEV") {
               const id = randomUUID().toString();
               const tmpLocal = `${thisLocalPath}.tmp.dbxsync.${id}`;
               const mtime = parseTime(remote.client_modified);

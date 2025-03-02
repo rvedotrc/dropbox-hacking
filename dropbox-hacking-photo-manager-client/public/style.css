@@ -1,114 +1,139 @@
 .twelveMonths {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    padding: 0.5em;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  padding: 0.5em;
 }
 
 .oneOfTwelveMonths {
-    border: 1px solid lightblue;
-    padding: 0.5em;
+  border: 1px solid lightblue;
+  padding: 0.5em;
 }
 
 .monthBox {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    padding: 0.5em;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  padding: 0.5em;
 }
 
 .dayInMonthBox {
-    border: 1px solid steelblue;
-    text-align: center;
+  border: 1px solid steelblue;
+  text-align: center;
 }
 
-.dayInMonthBox.col1, .dayInMonthBox.col7 {
-    background: #eee;
+.dayInMonthBox.col1,
+.dayInMonthBox.col7 {
+  background: #eee;
 }
 
 .dayInMonthBox a {
-    display: block;
-    text-decoration: none;
+  display: block;
+  text-decoration: none;
 }
 
 .dayInMonthBox a:hover {
-    background: #ccc;
+  background: #ccc;
 }
 
 /* List of photoItem on a day page */
 .photoList {
-    display: flex;
-    flex-wrap: wrap;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .photoItem {
-    border: 1px solid lightblue;
-    padding: 0.5em;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
-    text-decoration: none;
+  border: 1px solid lightblue;
+  padding: 0.5em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  text-decoration: none;
 }
 
 .photoItem:hover {
-    background: #ccc;
+  background: #ccc;
 }
 
 .photoItem:hover .clientModified,
 .photoItem:hover .name,
-.photoItem:hover .makeAndModel
-{
-    color: #444;
+.photoItem:hover .makeAndModel {
+  color: #444;
 }
 
 .photoItem .clientModified {
-    display: block;
-    font: small sans-serif;
-    color: #cccccc;
-    margin: 1.0em 0.25em 0.25em;
+  display: block;
+  font: small sans-serif;
+  color: #cccccc;
+  margin: 1em 0.25em 0.25em;
 }
 
 .photoItem .name {
-    display: block;
-    font: small sans-serif;
-    color: #cccccc;
-    margin: 0.25em;
+  display: block;
+  font: small sans-serif;
+  color: #cccccc;
+  margin: 0.25em;
 }
 
 .photoItem .makeAndModel {
-    display: block;
-    font: small sans-serif;
-    color: #cccccc;
-    margin: 0.25em 0.25em 0.5em;
+  display: block;
+  font: small sans-serif;
+  color: #cccccc;
+  margin: 0.25em 0.25em 0.5em;
 }
 
 .listOfDays {
-    list-style: none;
+  list-style: none;
 }
 
 .listOfDays li:hover {
-    background: #eed;
+  background: #eed;
 }
 
 .listOfDays a {
-    display: flex;
+  display: flex;
 }
 
 .listOfDays .date {
-    margin-right: 0.5em;
+  margin-right: 0.5em;
+}
+
+.dateAndStats .dayName {
+  display: inline-block;
+  width: 2em;
 }
 
 .listOfDays .count {
-    margin-right: 1em;
-    text-align: right;
-    width: 2em;
+  margin-right: 1em;
+  text-align: right;
+  width: 2em;
+}
+.dateAndStats .count {
+  display: inline-block;
+  width: 2.5em;
 }
 
 .listOfDays .countWithGps {
-    margin-right: 1em;
-    text-align: right;
-    width: 2em;
+  margin-right: 1em;
+  text-align: right;
+  width: 2em;
+}
+.dateAndStats .countWithGps {
+  display: inline-block;
+  width: 2.5em;
 }
 
 .samples {
-    display: block;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.samples > .sample {
+  height: 128px;
+  width: 128px;
+  margin: 10px;
+}
+
+.description .noData {
+  opacity: 0.3;
 }

@@ -1,13 +1,13 @@
 import { Photo, PhotosResponse } from "dropbox-hacking-photo-manager-shared";
 import { Application } from "express";
 
-import { Context } from "../context";
+import { Context } from "../context.js";
 
 export default (app: Application, context: Context): void => {
   app.get("/api/photos/:date(\\d\\d\\d\\d-\\d\\d-\\d\\d)", (req, res) => {
     const date = req.params.date;
 
-    Promise.all([context.lsFeed.read(), context.exifDbFeed.read()]).then(
+    void Promise.all([context.lsFeed.read(), context.exifDbFeed.read()]).then(
       ([state, exif]) => {
         if (state.tag !== "ready") {
           res.status(503);
@@ -32,13 +32,13 @@ export default (app: Application, context: Context): void => {
           }
 
           const thisDate = entry.client_modified.substring(0, 10);
-          if (thisDate === date) photos.push({ ...entry, exif: thisExif });
+          if (thisDate === date) photos.push({ file: entry, exif: thisExif });
         }
 
         photos.sort(
-          (a, b) =>
-            a.client_modified.localeCompare(b.client_modified) ||
-            a.id.localeCompare(b.id),
+          (a, b): number =>
+            a.file.client_modified.localeCompare(b.file.client_modified) ||
+            a.file.id.localeCompare(b.file.id),
         );
 
         const maxAge = 3600;

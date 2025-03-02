@@ -1,5 +1,6 @@
-import * as React from "react";
 import { Payload } from "dropbox-hacking-photo-manager-shared";
+import * as React from "react";
+
 import { useRouter } from "./context/routingContext";
 
 const samePageLink = ({
@@ -7,7 +8,7 @@ const samePageLink = ({
   ...props
 }: {
   state: Payload;
-} & JSX.IntrinsicElements["a"]) => {
+} & React.JSX.IntrinsicElements["a"]): React.ReactElement | null => {
   const router = useRouter();
 
   return (

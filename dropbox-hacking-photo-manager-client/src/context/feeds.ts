@@ -1,14 +1,13 @@
-import { useEvents } from "./eventEmitterContext";
-import useApiResource from "./useApiResource";
 import {
   CountsByDateResponse,
-  DayMetadataResponse,
-  DaysMetadataResponse,
   DPMAnyEvent,
   DPMChangeEvent,
   PhotosResponse,
 } from "dropbox-hacking-photo-manager-shared";
 import { useEffect, useMemo } from "react";
+
+import { useEvents } from "./eventEmitterContext";
+import useApiResource, { type Result } from "./useApiResource";
 
 export const useFeed = <T>({
   url,
@@ -16,7 +15,7 @@ export const useFeed = <T>({
 }: {
   url: string;
   resource: DPMChangeEvent["event_resource"][];
-}) => {
+}): Result<T> | undefined => {
   const api = useApiResource<T>({ url });
 
   const events = useEvents();
@@ -46,25 +45,15 @@ export const useFeed = <T>({
   return api.result;
 };
 
-export const useCountsByDate = () =>
+export const useCountsByDate = (): Result<CountsByDateResponse> | undefined =>
   useFeed<CountsByDateResponse>({
     url: "/api/counts_by_date",
     resource: ["ls", "exif"],
   });
 
-export const useDays = () =>
-  useFeed<DaysMetadataResponse>({
-    url: "/api/day/all",
-    resource: ["days"],
-  });
-
-export const useDay = (date: string) =>
-  useFeed<DayMetadataResponse>({
-    url: `/api/day/${date}`,
-    resource: ["days"],
-  });
-
-export const useDayPhotos = (date: string) =>
+export const useDayPhotos = (
+  date: string,
+): Result<PhotosResponse> | undefined =>
   useFeed<PhotosResponse>({
     url: `/api/photos/${date}`,
     resource: ["ls", "exif"],

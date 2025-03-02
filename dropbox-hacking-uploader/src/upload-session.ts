@@ -1,8 +1,8 @@
 import { Dropbox, files } from "dropbox";
-import stream = require("node:stream");
+import stream from "node:stream";
 import { GlobalOptions, makePromiseLimiter } from "dropbox-hacking-util";
 
-import fixedChunkStream from "./fixed-chunk-stream";
+import fixedChunkStream from "./fixed-chunk-stream.js";
 
 const PART_SIZE = 4194304; // 4 MB
 
@@ -42,7 +42,7 @@ export default (
               previous = undefined;
 
               if (!finalPart && buffer.length !== PART_SIZE)
-                throw "Bad non-final buffer size";
+                throw new Error("Bad non-final buffer size");
 
               const logPrefix = `${commitInfo.path} part offset=${offset} size=${buffer.length} finalPart=${finalPart}`;
               debug(`${logPrefix} starting`);
@@ -63,7 +63,7 @@ export default (
                           `${logPrefix} completed (${partsCompleted}/${totalParts} parts)`,
                         );
                       })
-                      .catch((err) => {
+                      .catch((err: Error) => {
                         debug(`${logPrefix} failed`, err);
                         reject(err);
                       }),
@@ -82,26 +82,33 @@ export default (
           const onEnd = (): void => {
             flushPrevious(true);
 
-            Promise.all(partPromises).then(() => {
-              debug(`all parts completed, finish, offset=${totalOffset}`);
+            Promise.all(partPromises)
+              .then(() => {
+                debug(`all parts completed, finish, offset=${totalOffset}`);
 
-              return dbx
-                .filesUploadSessionFinish({
-                  cursor: {
-                    session_id: sessionId,
-                    offset: totalOffset,
-                  },
-                  commit: commitInfo,
-                })
-                .then((r) => {
-                  debug("finish completed");
-                  resolve(r.result);
-                })
-                .catch((err) => {
-                  debug(`finish failed`, JSON.stringify(err.error));
-                  reject(err);
-                });
-            });
+                return (
+                  dbx
+                    .filesUploadSessionFinish({
+                      cursor: {
+                        session_id: sessionId,
+                        offset: totalOffset,
+                      },
+                      commit: commitInfo,
+                    })
+                    .then((r) => {
+                      debug("finish completed");
+                      resolve(r.result);
+                    })
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    .catch((err: any) => {
+                      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                      debug(`finish failed`, JSON.stringify(err.error));
+                      // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
+                      reject(err);
+                    })
+                );
+              })
+              .catch(() => undefined);
           };
 
           fixedChunkStream(PART_SIZE, readable, onChunk, onEnd, reject);

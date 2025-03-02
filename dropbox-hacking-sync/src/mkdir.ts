@@ -28,8 +28,9 @@ export default (dryRun: boolean): Mkdir => {
     promise = parentPromise.then(() => {
       console.log(`mkdir [${localPath}]`);
       if (!dryRun)
-        return fs.promises.mkdir(localPath).catch((err) => {
-          if (err.code === "EEXIST" || err.code === "EISDIR") return;
+        return fs.promises.mkdir(localPath).catch((err: Error) => {
+          if ("code" in err && (err.code === "EEXIST" || err.code === "EISDIR"))
+            return;
           throw err;
         });
       return;

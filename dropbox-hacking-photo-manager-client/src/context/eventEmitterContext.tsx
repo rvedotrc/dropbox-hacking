@@ -1,5 +1,11 @@
-import * as React from "react";
+import {
+  DPMAnyEvent,
+  DPMChangeEvent,
+  DPMConnectEvent,
+  DPMPingEvent,
+} from "dropbox-hacking-photo-manager-shared";
 import { EventEmitter } from "events";
+import * as React from "react";
 import {
   createContext,
   PropsWithChildren,
@@ -7,40 +13,35 @@ import {
   useEffect,
   useMemo,
 } from "react";
-import {
-  DPMAnyEvent,
-  DPMChangeEvent,
-  DPMConnectEvent,
-  DPMPingEvent,
-} from "dropbox-hacking-photo-manager-shared";
+
 import logRender from "../logRender";
 
 class EventsProvider extends EventEmitter {
   emit(eventName: "connect", event: DPMConnectEvent): boolean;
   emit(eventName: "ping", event: DPMPingEvent): boolean;
   emit(eventName: "change", event: DPMChangeEvent): boolean;
-  emit(eventName: string | symbol, ...args: any[]): boolean {
+  emit(eventName: string | symbol, ...args: never[]): boolean {
     return super.emit(eventName, ...args);
   }
 
   on(eventName: "connect", listener: (event: DPMConnectEvent) => void): this;
   on(eventName: "ping", listener: (event: DPMPingEvent) => void): this;
   on(eventName: "change", listener: (event: DPMChangeEvent) => void): this;
-  on(eventName: string | symbol, listener: (...args: any[]) => void): this {
+  on(eventName: string | symbol, listener: (...args: never[]) => void): this {
     return super.on(eventName, listener);
   }
 
   off(eventName: "connect", listener: (event: DPMConnectEvent) => void): this;
   off(eventName: "ping", listener: (event: DPMPingEvent) => void): this;
   off(eventName: "change", listener: (event: DPMChangeEvent) => void): this;
-  off(eventName: string | symbol, listener: (...args: any[]) => void): this {
+  off(eventName: string | symbol, listener: (...args: never[]) => void): this {
     return super.off(eventName, listener);
   }
 
   once(eventName: "connect", listener: (event: DPMConnectEvent) => void): this;
   once(eventName: "ping", listener: (event: DPMPingEvent) => void): this;
   once(eventName: "change", listener: (event: DPMChangeEvent) => void): this;
-  once(eventName: string | symbol, listener: (...args: any[]) => void): this {
+  once(eventName: string | symbol, listener: (...args: never[]) => void): this {
     return super.once(eventName, listener);
   }
 
@@ -55,7 +56,7 @@ class EventsProvider extends EventEmitter {
   ): this;
   addListener(
     eventName: string | symbol,
-    listener: (...args: any[]) => void,
+    listener: (...args: never[]) => void,
   ): this {
     return super.addListener(eventName, listener);
   }
@@ -74,45 +75,15 @@ class EventsProvider extends EventEmitter {
   ): this;
   removeListener(
     eventName: string | symbol,
-    listener: (...args: any[]) => void,
+    listener: (...args: never[]) => void,
   ): this {
     return super.removeListener(eventName, listener);
   }
-
-  // removeAllListeners(event?: "dpm"): this;
-  // removeAllListeners(event?: string | symbol): this {
-  //   return super.removeAllListeners(event);
-  // }
-  //
-  // // eslint-disable-next-line @typescript-eslint/ban-types
-  // listeners(eventName: "dpm"): Function[];
-  // // eslint-disable-next-line @typescript-eslint/ban-types
-  // listeners(eventName: string | symbol): Function[] {
-  //   return super.listeners(eventName);
-  // }
-  //
-  // // eslint-disable-next-line @typescript-eslint/ban-types
-  // rawListeners(eventName: string | symbol): Function[] {
-  //   return super.rawListeners(eventName);
-  // }
-
-  // // eslint-disable-next-line @typescript-eslint/ban-types
-  // listenerCount(eventName: string | symbol, listener?: Function): number {
-  //   return super.listenerCount(eventName, listener);
-  // }
-  //
-  // prependListener(eventName: string | symbol, listener: (...args: any[]) => void): this {
-  //   return super.prependListener(eventName, listener);
-  // }
-  //
-  // prependOnceListener(eventName: string | symbol, listener: (...args: any[]) => void): this {
-  //   return super.prependOnceListener(eventName, listener);
-  // }
 }
 
 const context = createContext<EventsProvider | undefined>(undefined);
 
-export const useEvents = () => useContext(context);
+export const useEvents = (): EventsProvider | undefined => useContext(context);
 
 const defaultEventEmitterContextProvider = (
   props: PropsWithChildren<object>,
@@ -126,14 +97,12 @@ const defaultEventEmitterContextProvider = (
   const genericListener = useMemo(
     () => (e: Event) => {
       if (e.type === "message") {
-        const dpmEvent: DPMAnyEvent = JSON.parse(
+        const dpmEvent = JSON.parse(
           (e as unknown as { data: string }).data,
-        );
+        ) as DPMAnyEvent;
 
         if (dpmEvent.event_name !== "ping")
           if (dpmEvent.event_name === "connect")
-            // console.debug("Got event", dpmEvent);
-
             emitter.emit("connect", dpmEvent);
         if (dpmEvent.event_name === "ping") emitter.emit("ping", dpmEvent);
         if (dpmEvent.event_name === "change") emitter.emit("change", dpmEvent);

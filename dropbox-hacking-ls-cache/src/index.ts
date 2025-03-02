@@ -6,7 +6,7 @@ type NonDeletedEntries = (
   | files.FolderMetadataReference
 )[];
 
-type NonDeletedEntriesMap = Map<string, NonDeletedEntries[0]>;
+type NonDeletedEntriesMap = Map<string, NonDeletedEntries[number]>;
 
 export type State =
   | { tag: "does_not_exist" }
@@ -78,11 +78,13 @@ export class StateDir {
     return this.flush();
   }
 
-  public addItem(item: files.ListFolderResult["entries"][0]): Promise<void> {
+  public addItem(
+    item: files.ListFolderResult["entries"][number],
+  ): Promise<void> {
     console.debug(`addItem ${item[".tag"]} ${item.path_lower}`);
     if (!item.path_lower) return Promise.resolve();
 
-    if (!this.data) throw "No data";
+    if (!this.data) throw new Error("No data");
 
     // Mutates this.data directly; does NOT serialise & save state.
     // However, at the end of every page, we call setCursor, and that does.
@@ -98,7 +100,7 @@ export class StateDir {
 
   public setCursor(cursor: string): Promise<void> {
     console.debug(`setCursor ${cursor}`);
-    if (!this.data) throw "No data";
+    if (!this.data) throw new Error("No data");
     this.dirty ||= cursor !== this.data.cursor;
     this.data.cursor = cursor;
     if (this.data.cursor !== cursor) {
@@ -111,7 +113,7 @@ export class StateDir {
 
   public setReady(): Promise<void> {
     console.debug("lsCache setReady");
-    if (!this.data) throw "No data";
+    if (!this.data) throw new Error("No data");
 
     this.data.correctAsOf = new Date().getTime();
     this.data.ready = true;
@@ -123,8 +125,8 @@ export class StateDir {
   public flush(): Promise<void> {
     if (!this.dirty) return Promise.resolve();
 
-    return this.save().catch((err) => {
-      if (err.code !== "ENOENT") throw err;
+    return this.save().catch((err: Error) => {
+      if ("code" in err && err.code !== "ENOENT") throw err;
 
       return fs.promises.mkdir(this.dir).then(() => this.save());
     });
@@ -143,8 +145,8 @@ export class StateDir {
       .readFile(this.entriesFile, { encoding: "utf-8" })
       .then(
         (contents) => JSON.parse(contents) as Data,
-        (err) => {
-          if (err.code === "ENOENT") return undefined;
+        (err: Error) => {
+          if ("code" in err && err.code === "ENOENT") return undefined;
           throw err;
         },
       )
@@ -152,7 +154,7 @@ export class StateDir {
         if (data !== undefined) {
           data = {
             ...data,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
             entries: this.entriesToMap((data as any).entries),
           };
         }

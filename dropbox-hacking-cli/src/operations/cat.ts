@@ -5,7 +5,7 @@ import {
 } from "dropbox-hacking-util";
 import * as https from "https";
 
-import { Handler } from "../types";
+import { Handler } from "../types.js";
 
 const verb = "cat";
 
@@ -14,7 +14,7 @@ const SHOW_LINK = "--show-link";
 const handler: Handler = async (
   dbxp: DropboxProvider,
   argv: string[],
-  globalOptions: GlobalOptions,
+  _globalOptions: GlobalOptions,
   usageFail: () => void,
 ): Promise<void> => {
   let showLink = false;

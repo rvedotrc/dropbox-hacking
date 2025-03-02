@@ -2,7 +2,7 @@ import { files } from "dropbox";
 import { Application } from "express";
 import * as https from "https";
 
-import { Context } from "../context";
+import { Context } from "../context.js";
 
 export default (app: Application, context: Context): void => {
   app.get("/image/rev/:rev", (req, res) =>

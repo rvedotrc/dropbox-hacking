@@ -1,15 +1,16 @@
-import * as React from "react";
 import {
   CountsByDate,
   DayMetadata,
 } from "dropbox-hacking-photo-manager-shared";
+import * as React from "react";
 import { useMemo, useRef } from "react";
-import useVisibilityTracking from "./useVisibilityTracking";
+
+import logRender from "../logRender";
 import DayWithSamples, { dayDateAttribute } from "./dayWithSamples";
+import { makeEmittableSubscribable } from "./emittableSubscribable";
 import Navigate from "./navigate";
 import Stats from "./stats";
-import logRender from "../logRender";
-import { makeEmittableSubscribable } from "./emittableSubscribable";
+import useVisibilityTracking from "./useVisibilityTracking";
 
 const ListOfDaysWithData = ({
   countsByDate,
@@ -19,7 +20,7 @@ const ListOfDaysWithData = ({
   countsByDate: CountsByDate;
   dayMetadata: DayMetadata[];
   withSamples: boolean;
-}) => {
+}): React.ReactElement | null => {
   const [e, s] = useMemo(
     () => makeEmittableSubscribable<{ date: string; visible: boolean }>(),
     [],
@@ -57,9 +58,9 @@ const ListOfDaysWithData = ({
 
   const days = useMemo(
     () =>
-      countsByDate.map((e) => ({
-        ...e,
-        description: (keyedMetadata.get(e.date) || { description: "" })
+      countsByDate.map((e2) => ({
+        ...e2,
+        description: (keyedMetadata.get(e2.date) || { description: "" })
           .description,
       })),
     [countsByDate, keyedMetadata],
@@ -74,9 +75,9 @@ const ListOfDaysWithData = ({
 
   return (
     <div>
-      <h1>List of Days</h1>
-
       <Navigate />
+
+      <h1>List of Days</h1>
 
       <Stats days={days} />
 

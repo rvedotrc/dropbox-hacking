@@ -8,7 +8,7 @@ import {
 import { lister, ListerArgs } from "dropbox-hacking-lister";
 import { ExifParserFactory } from "ts-exif-parser";
 
-import { Handler } from "../types";
+import { Handler } from "../types.js";
 import FileMetadata = files.FileMetadata;
 import {
   DropboxProvider,
@@ -35,7 +35,7 @@ const flush = () =>
   });
 
 const doItem = async (
-  dbx: Dropbox,
+  _dbx: Dropbox,
   item: FileMetadata,
   stateDir: StateDir,
   fetcher: F,
@@ -180,9 +180,9 @@ const updateHandler: Handler = async (
 };
 
 const showHandler: Handler = async (
-  dbxp: DropboxProvider,
+  _dbxp: DropboxProvider,
   argv: string[],
-  globalOptions: GlobalOptions,
+  _globalOptions: GlobalOptions,
   usageFail: () => Promise<void>,
 ): Promise<void> => {
   // `${subShow} STATE_DIR`

@@ -3,9 +3,9 @@ import type {
   PingResponse,
 } from "dropbox-hacking-photo-manager-shared";
 
-import type { Context } from "../../context";
+import type { Context } from "../../context.js";
 
-export const pingHandler =
+export const pingHandlerBuilder =
   (_context: Context) =>
   (_req: PingRequest): Promise<PingResponse> =>
     Promise.resolve({ answer: "pong" });

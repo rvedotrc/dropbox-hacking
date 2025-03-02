@@ -1,35 +1,23 @@
 {
-  "author": "Rachel Evans <rachel@rachelevans.org>",
-  "description": "Messing around with the Dropbox API",
-  "devDependencies": {
-    "eslint": "^9.4.0",
-    "@typescript-eslint/eslint-plugin": "^7.12.0",
-    "@typescript-eslint/parser": "^7.12.0",
-    "eslint-plugin-simple-import-sort": "^10.0.0"
-  },
-  "license": "MIT",
-  "main": "index.js",
-  "name": "dropbox-hacking",
-  "private": true,
-  "repository": "https://github.com/rvedotrc/dropbox-hacking",
-  "scripts": {
-    "build": "./build.sh",
-    "clean": "rm -rf node_modules */tsconfig.tsbuildinfo */dist */node_modules"
-  },
+  "name": "dbx-split",
   "version": "1.0.0",
-  "workspaces": [
-    "dropbox-hacking-cli",
-    "dropbox-hacking-downloader",
-    "dropbox-hacking-exif-db",
-    "dropbox-hacking-lister",
-    "dropbox-hacking-ls-cache",
-    "dropbox-hacking-mediainfo-db",
-    "dropbox-hacking-mover",
-    "dropbox-hacking-photo-manager-client",
-    "dropbox-hacking-photo-manager-server",
-    "dropbox-hacking-photo-manager-shared",
-    "dropbox-hacking-sync",
-    "dropbox-hacking-uploader",
-    "dropbox-hacking-util"
-  ]
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "node buildAll.mjs",
+    "build:watch": "./in-each-module build:watch",
+    "clean": "rm -rf */dist node_modules dropbox-hacking-*/node_modules",
+    "format": "./in-each-module format",
+    "install-all": "pnpm install && ./in-each-module install",
+    "test": "./in-each-module test",
+    "test:lint": "./in-each-module test:lint",
+    "test:prettier": "./in-each-module test:prettier",
+    "test:unit": "./in-each-module test:unit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
 }

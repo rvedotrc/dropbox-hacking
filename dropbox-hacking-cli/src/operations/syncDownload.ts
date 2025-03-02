@@ -7,7 +7,7 @@ import {
 } from "dropbox-hacking-util";
 import * as fs from "fs";
 
-import { Handler } from "../types";
+import { Handler } from "../types.js";
 
 const verb = "sync-download";
 const DRY_RUN = "--dry-run";

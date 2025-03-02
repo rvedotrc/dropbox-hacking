@@ -1,4 +1,4 @@
-import directVerb from "../directVerb";
-import operation from "../operations/processCameraUploads";
+import directVerb from "../directVerb.js";
+import operation from "../operations/processCameraUploads.js";
 
 directVerb(operation);

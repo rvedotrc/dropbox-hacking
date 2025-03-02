@@ -1,19 +1,19 @@
 import * as React from "react";
+
 import logRender from "../../logRender";
 
 const MonthBox = (props: {
   year: number;
   month: number;
-  renderDay: (y: number, m: number, d: number) => React.ReactFragment;
+  renderDay: (y: number, m: number, d: number) => React.ReactNode;
 }) => {
   const { year, month, renderDay } = props;
 
-  const fragments: React.ReactFragment[] = [];
+  const fragments: React.ReactNode[] = [];
 
   let day = 1;
   let row = 0;
 
-  // eslint-disable-next-line no-constant-condition
   while (true) {
     const date = new Date(Date.UTC(year, month, day));
     if (date.getMonth() !== month) break;

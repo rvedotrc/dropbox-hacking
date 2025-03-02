@@ -7,17 +7,17 @@ import {
   writeStderr,
 } from "dropbox-hacking-util";
 
-import catOperation from "./operations/cat";
-import contentHashStdinOperation from "./operations/contentHashStdin";
-import cpOperation from "./operations/cp";
-import lsOperation from "./operations/ls";
-import mkdirOperation from "./operations/mkdir";
-import mvOperation from "./operations/mv";
-import rmOperation from "./operations/rm";
-import syncDownloadOperation from "./operations/syncDownload";
-import syncUploadOperation from "./operations/syncUpload";
-import uploadStdinOperation from "./operations/uploadStdin";
-import { Operation } from "./types";
+import catOperation from "./operations/cat.js";
+import contentHashStdinOperation from "./operations/contentHashStdin.js";
+import cpOperation from "./operations/cp.js";
+import lsOperation from "./operations/ls.js";
+import mkdirOperation from "./operations/mkdir.js";
+import mvOperation from "./operations/mv.js";
+import rmOperation from "./operations/rm.js";
+import syncDownloadOperation from "./operations/syncDownload.js";
+import syncUploadOperation from "./operations/syncUpload.js";
+import uploadStdinOperation from "./operations/uploadStdin.js";
+import { Operation } from "./types.js";
 
 const prefix = "./bin/cli";
 
@@ -52,7 +52,7 @@ export default (argv: string[]): void => {
 
     s += "Global options are:\n" + HELP.map((line) => `  ${line}\n`).join("");
 
-    writeStderr(s).then(() => process.exit(2));
+    void writeStderr(s).then(() => process.exit(2));
   };
 
   const { globalOptions, remainingArgs } = getGlobalOptions(argv);
@@ -68,9 +68,9 @@ export default (argv: string[]): void => {
       remainingArgs.splice(1),
       globalOptions,
       async () => await usageFail(op.verb),
-    ).catch((err) => {
+    ).catch((err: Error) => {
       console.error({ err, stack: err.stack });
       process.exit(1);
     });
-  } else usageFail();
+  } else void usageFail();
 };
