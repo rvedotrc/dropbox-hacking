@@ -8,7 +8,6 @@
     "build": "tsc",
     "build:watch": "tsc --watch",
     "format": "prettier --write .",
-    "__postinstall": "pnpm link ../dropbox-hacking-util",
     "test:prettier": "prettier --check .",
     "test:lint": "eslint",
     "test:unit": "c8 node --enable-source-maps --experimental-test-coverage --test './dist/spec/**/*.js'"

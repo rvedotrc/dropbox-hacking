@@ -4,12 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  dropbox-hacking-exif-db: link:../dropbox-hacking-exif-db
-  dropbox-hacking-photo-manager-shared: link:../dropbox-hacking-photo-manager-shared
-  dropbox-hacking-util: link:../dropbox-hacking-util
-  dropbox-hacking-ls-cache: link:../dropbox-hacking-ls-cache
-
 importers:
 
   .:

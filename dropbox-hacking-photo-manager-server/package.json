@@ -8,7 +8,6 @@
     "build": "tsc",
     "build:watch": "tsc --watch",
     "format": "prettier --write .",
-    "__postinstall": "pnpm link ../dropbox-hacking-photo-manager-shared ../dropbox-hacking-exif-db ../dropbox-hacking-ls-cache ../dropbox-hacking-util",
     "test:prettier": "prettier --check .",
     "test:lint": "eslint",
     "test:unit": "c8 node --enable-source-maps --experimental-test-coverage --test './dist/spec/**/*.js'"
@@ -42,13 +41,5 @@
     "express": "^4.21.2",
     "express-ws": "^5.0.2",
     "rxjs": "^7.8.2"
-  },
-  "pnpm": {
-    "overrides": {
-      "dropbox-hacking-exif-db": "link:../dropbox-hacking-exif-db",
-      "dropbox-hacking-photo-manager-shared": "link:../dropbox-hacking-photo-manager-shared",
-      "dropbox-hacking-util": "link:../dropbox-hacking-util",
-      "dropbox-hacking-ls-cache": "link:../dropbox-hacking-ls-cache"
-    }
   }
 }
