@@ -12,7 +12,7 @@ import {
   IOHandler,
   recordDeltaApplier,
 } from "dropbox-hacking-photo-manager-shared";
-import type { ExifFromHash } from "../../../../dropbox-hacking-exif-db/dist/src/exifDB";
+import type { ExifFromHash } from "dropbox-hacking-exif-db";
 import { getRxFeed } from "./getRxFeed";
 
 type REQUEST = { type: string };
