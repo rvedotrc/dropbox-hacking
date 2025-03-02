@@ -1,0 +1,41 @@
+name: check
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+jobs:
+  node:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install asdf & tools
+        uses: asdf-vm/actions/install@v3.0.2
+        with:
+          asdf_branch: v0.15.0
+      # - name: Configure NPM auth
+      #   run: |
+      #     echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+      - name: Install
+        run: pnpm -r install
+      - name: Build
+        run: pnpm build
+      - name: Test
+        run: pnpm test
+        continue-on-error: true
+        id: test
+      - name: Archive results (data)
+        uses: actions/upload-artifact@v4
+        with:
+          name: results-data
+          path: |
+            */coverage/*.json
+            */junit.xml
+      - name: Respect test result
+        run: |
+          [ "${{ steps.test.outcome }}" == success ]
