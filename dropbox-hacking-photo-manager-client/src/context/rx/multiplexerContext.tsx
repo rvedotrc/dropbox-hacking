@@ -10,6 +10,7 @@ import {
   PropsWithChildren,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 import { fromBrowserWebSocket } from "./fromBrowserWebSocketString";
@@ -25,27 +26,34 @@ export const defaultProvider = (
   props: PropsWithChildren<{ accepter: (accept: T) => void }>,
 ): React.ReactElement | null => {
   const [webSocket, setWebSocket] = useState<WebSocket>();
-  const [connect, setConnect] = useState<T>();
+  const [connect, setConnect] = useState<[T]>();
 
-  useEffect(() => {
-    if (!webSocket) {
+  const newSocket = useMemo(
+    () => () => {
       const newWebSocket = new WebSocket("/api/ws2");
       setWebSocket(newWebSocket);
-      return () => newWebSocket.close();
-    }
-  }, []);
 
-  useEffect(() => {
-    if (webSocket) {
-      webSocket.addEventListener("open", () => {
+      newWebSocket.addEventListener("open", () => {
         const newConnect = multiplexer(
-          transportAsJson(fromBrowserWebSocket(webSocket)),
+          transportAsJson(fromBrowserWebSocket(newWebSocket)),
           props.accepter,
         );
-        setConnect(() => newConnect);
+        setConnect([newConnect]);
       });
-    }
-  }, [webSocket]);
 
-  return <Provider value={connect}>{props.children}</Provider>;
+      newWebSocket.addEventListener("close", () => {
+        setConnect(undefined);
+        newSocket();
+      });
+    },
+    [],
+  );
+
+  useEffect(() => {
+    if (!webSocket) newSocket();
+  }, []);
+
+  useEffect(() => () => webSocket?.close(), [webSocket]);
+
+  return <Provider value={connect?.[0]}>{props.children}</Provider>;
 };
