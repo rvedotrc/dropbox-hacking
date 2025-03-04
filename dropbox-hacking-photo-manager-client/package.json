@@ -52,7 +52,7 @@
   "name": "dropbox-hacking-photo-manager-client",
   "scripts": {
     "build": "pnpm format && pnpm run test:lint && pnpm run compile",
-    "build:watch": "rebuild --exclude=dist . -- pnpm build",
+    "build:watch": "rebuild --exclude=dist . -- sh -c 'if ! pnpm test:prettier ; then pnpm format ; else pnpm run test:lint && pnpm run compile ; fi'",
     "compile": "webpack --mode development",
     "format": "prettier --write .",
     "rebuild": "rebuild package.json package-lock.json tsconfig.json .babelrc webpack.config.js src .git/refs -- npm run-script build",
