@@ -1,25 +1,29 @@
 import * as React from "react";
 import { useEffect, useMemo, useState } from "react";
-import { combineLatest, map, Observable } from "rxjs";
+import { map, Observable } from "rxjs";
 
 import logRender from "../logRender";
 import { useRxFeedsViaMultiplexer } from "../context/rx/rxRecordFeedContext";
 import type { ImageAndMaybeDelta } from "../context/rx/rxFeedClient";
 import Navigate from "../days/navigate";
-import type { ExifFromHash } from "dropbox-hacking-exif-db";
-import type {
-  NamedFile,
-  PhotoDbEntry,
-} from "dropbox-hacking-photo-manager-shared";
 import { useLatestValue } from "../context/rx/useLatestValue";
+import { useAdditionalFeeds } from "../context/rx/additionalFeeds";
 
 const Stats = () => {
   const feeds = useRxFeedsViaMultiplexer();
+  const moreFeeds = useAdditionalFeeds();
 
   const [daysCount, setDaysCount] = useState<number>();
   const [photosCount, setPhotosCount] = useState<number>();
   const [exifCount, setExifCount] = useState<number>();
   const [filesCount, setFilesCount] = useState<number>();
+
+  const cbdLatest = moreFeeds
+    ? useLatestValue(moreFeeds.countsByDate)
+    : undefined;
+  const fepLatest = moreFeeds
+    ? useLatestValue(moreFeeds.filesAndExifAndPhotoDb)
+    : undefined;
 
   const addEffect = (
     key: keyof NonNullable<typeof feeds>,
@@ -48,54 +52,7 @@ const Stats = () => {
   addEffect("files", setFilesCount);
   addEffect("photos", setPhotosCount);
 
-  const filesAndExifAndPhotoDb = useMemo(
-    () =>
-      !feeds
-        ? undefined
-        : // Naive full join
-          combineLatest([feeds.files, feeds.exif, feeds.photos]).pipe(
-            map(([f, e, p]) => {
-              const out: Record<
-                string,
-                {
-                  namedFile: NamedFile;
-                  exif: ExifFromHash | undefined;
-                  photoDbEntry: PhotoDbEntry | undefined;
-                }
-              > = {};
-
-              for (const [id, namedFile] of Object.entries(f.image)) {
-                const exif: ExifFromHash | undefined =
-                  e.image[namedFile.content_hash];
-                const photoDbEntry: PhotoDbEntry | undefined = p.image[id];
-                out[id] = { namedFile, exif, photoDbEntry };
-              }
-              return out;
-            }),
-          ),
-    [feeds],
-  );
-
-  const photosByDate = useMemo(
-    () =>
-      filesAndExifAndPhotoDb?.pipe(map((t) => Object.values(t))).pipe(
-        map((photos) => {
-          const out: Record<string, typeof photos> = {};
-
-          for (const photo of photos) {
-            const date = photo.namedFile.client_modified.substring(0, 10);
-            const list = out[date];
-            if (list) list.push(photo);
-            else out[date] = [photo];
-          }
-
-          return out;
-        }),
-      ),
-    [filesAndExifAndPhotoDb],
-  );
-
-  const fepLatest = useLatestValue(filesAndExifAndPhotoDb);
+  // const fepLatest = useLatestValue(filesAndExifAndPhotoDb);
 
   const fepExtract = useMemo(
     () =>
@@ -107,16 +64,11 @@ const Stats = () => {
     [fepLatest],
   );
 
-  const pbdLatest = useLatestValue(photosByDate);
+  // const cbdLatest = useLatestValue(countsByDate);
 
-  const pbdExtract = useMemo(
-    () =>
-      pbdLatest
-        ? Object.entries(pbdLatest)
-            .toSorted((a, b) => b[0].localeCompare(a[0]))
-            .slice(0, 3)
-        : null,
-    [pbdLatest],
+  const cbdExtract = useMemo(
+    () => (cbdLatest ? cbdLatest.slice(cbdLatest.length - 3) : null),
+    [cbdLatest],
   );
 
   if (!feeds) return "waiting for multiplexer...";
@@ -144,8 +96,8 @@ const Stats = () => {
       <h3>File, Exif, PhotoDB</h3>
       <pre>{JSON.stringify(fepExtract, null, 2)}</pre>
 
-      <h3>Photos by date</h3>
-      <pre>{JSON.stringify(pbdExtract, null, 2)}</pre>
+      <h3>Counts by date (enhanced)</h3>
+      <pre>{JSON.stringify(cbdExtract, null, 2)}</pre>
     </>
   );
 };
