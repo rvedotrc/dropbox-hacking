@@ -83,6 +83,7 @@
 
 .listOfDays {
   list-style: none;
+  margin-block-end: 3em;
 }
 
 .listOfDays li:hover {
