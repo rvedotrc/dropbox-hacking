@@ -2,9 +2,10 @@ import * as React from "react";
 import { useEffect } from "react";
 
 import { useCountsByDate } from "../context/countsByDateContext";
-import { useDays } from "../context/daysMetadataContext";
 import logRender from "../logRender";
 import ListOfDaysWithData from "./listOfDaysWithData";
+import { useLatestValue } from "../context/rx/useLatestValue";
+import { useRxFeedsViaMultiplexer } from "../context/rx/rxRecordFeedContext";
 
 const ListOfDays = ({
   withSamples,
@@ -12,7 +13,11 @@ const ListOfDays = ({
   withSamples: boolean;
 }): React.ReactElement | null => {
   const countsByDate = useCountsByDate();
-  const dayMetadata = useDays();
+
+  const latestReplayImage = useLatestValue(useRxFeedsViaMultiplexer()?.days);
+  const dayMetadata = latestReplayImage
+    ? Object.values(latestReplayImage.image)
+    : undefined;
 
   useEffect(() => {
     document.title = "DPM - Days";
