@@ -5,15 +5,14 @@ import {
 import * as React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { useDayPhotos } from "../context/feeds";
 import useVisibilityTracking from "../days/useVisibilityTracking";
-import { isLeft } from "../fp";
 import logRender from "../logRender";
 import EditableTextField from "./editableTextField";
 import PhotoTile from "./photoTile";
 import { useRxFeedsViaMultiplexer } from "../context/rx/rxRecordFeedContext";
 import { map } from "rxjs";
 import { useLatestValue } from "../context/rx/useLatestValue";
+import { useAdditionalFeeds } from "../context/rx/additionalFeeds";
 
 const DayWithData = ({
   date,
@@ -69,9 +68,9 @@ const DayWithData = ({
       <div ref={parentRef} className={"photoList"}>
         {dayPhotos.photos.map((photo) => (
           <PhotoTile
-            key={photo.file.rev}
+            key={photo.namedFile.rev}
             photo={photo}
-            isVisible={visibleRevs?.has(photo.file.rev) || false}
+            isVisible={visibleRevs?.has(photo.namedFile.rev) || false}
           />
         ))}
       </div>
@@ -93,7 +92,9 @@ const Day = ({ date }: { date: string }): React.ReactElement | null => {
   );
 
   const dayMetadata = useLatestValue(dayMetadataObserver);
-  const dayPhotos = useDayPhotos(date);
+  const dayPhotos = useLatestValue(useAdditionalFeeds()?.countsByDate)?.find(
+    (item) => item.date === date,
+  );
 
   useEffect(() => {
     document.title = `DPM - ${date}`;
@@ -103,14 +104,10 @@ const Day = ({ date }: { date: string }): React.ReactElement | null => {
     return <div>Loading DAY ...</div>;
   }
 
-  if (isLeft(dayPhotos)) {
-    return <div>Error DAY :-(</div>;
-  }
-
   return (
     <DayWithDataLogged
       date={date}
-      dayPhotos={dayPhotos.right}
+      dayPhotos={dayPhotos}
       dayMetadata={dayMetadata}
     />
   );

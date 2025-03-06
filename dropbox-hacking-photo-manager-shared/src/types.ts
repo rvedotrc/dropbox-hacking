@@ -1,6 +1,6 @@
-import { files } from "dropbox";
 import { ExifFromHash } from "dropbox-hacking-exif-db";
 import type { GPSLatNLongE } from "./gpsLatLong.js";
+import type { NamedFile } from "./ws.js";
 
 export type DayMetadata = {
   date: string;
@@ -44,7 +44,7 @@ export type CountsByDate = CountsByDateEntry[];
 export type CountsByDateResponse = { counts_by_date: CountsByDate };
 
 export type Photo = {
-  file: files.FileMetadata;
+  namedFile: NamedFile;
   exif: ExifFromHash;
 };
 export type PhotoResponse = { photo: Photo };

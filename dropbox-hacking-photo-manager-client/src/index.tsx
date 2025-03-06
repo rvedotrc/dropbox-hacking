@@ -6,7 +6,6 @@ import { createRoot } from "react-dom/client";
 
 import * as multiplexerContext from "./context/rx/multiplexerContext";
 
-import eventEmitterContext from "./context/eventEmitterContext";
 import routingContext from "./context/routingContext";
 import * as rxRecordFeedContext from "./context/rx/rxRecordFeedContext";
 import * as additionalFeeds from "./context/rx/additionalFeeds";
@@ -68,11 +67,9 @@ const Root = ({
         <rxRecordFeedContext.defaultProvider>
           <additionalFeeds.defaultProvider>
             <websocket.defaultProvider>
-              <eventEmitterContext.defaultProvider>
-                <thumbnailLoaderContext.defaultProvider>
-                  {toRender({ payload: state })}
-                </thumbnailLoaderContext.defaultProvider>
-              </eventEmitterContext.defaultProvider>
+              <thumbnailLoaderContext.defaultProvider>
+                {toRender({ payload: state })}
+              </thumbnailLoaderContext.defaultProvider>
             </websocket.defaultProvider>
           </additionalFeeds.defaultProvider>
         </rxRecordFeedContext.defaultProvider>

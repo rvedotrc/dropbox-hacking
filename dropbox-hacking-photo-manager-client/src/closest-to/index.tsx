@@ -50,9 +50,9 @@ export default ({
       <table>
         <tbody>
           {data.r.items.map((item) => {
-            const date = item.photo.file.client_modified.substring(0, 10);
+            const date = item.photo.namedFile.client_modified.substring(0, 10);
             return (
-              <tr key={item.photo.file.rev}>
+              <tr key={item.photo.namedFile.rev}>
                 <td>{Math.round(item.distanceInMeters)} m</td>
                 <td>
                   <SamePageLink
@@ -67,10 +67,10 @@ export default ({
                 </td>
                 <td>
                   <SamePageLink
-                    href={`/photo/rev/${item.photo.file.rev}`}
+                    href={`/photo/rev/${item.photo.namedFile.rev}`}
                     state={{
                       route: "photo",
-                      rev: item.photo.file.rev,
+                      rev: item.photo.namedFile.rev,
                     }}
                   >
                     <SamplePhoto photo={item.photo} visible={true} />
