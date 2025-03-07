@@ -1,29 +1,22 @@
-import {
-  GPSLatLong,
-  Photo,
-  PhotoResponse,
-} from "dropbox-hacking-photo-manager-shared";
+import { GPSLatLong, Photo } from "dropbox-hacking-photo-manager-shared";
 import * as React from "react";
 import { useEffect, useState } from "react";
 
 import logRender from "../logRender";
+import { useLatestValue } from "../context/rx/useLatestValue";
+import { useAdditionalFeeds } from "../context/rx/additionalFeeds";
 
 const Photo = (props: { rev: string }): React.ReactElement | null => {
-  const [photo, setPhoto] = useState<Photo | false | undefined>();
   const [previewSizes, setPreviewSizes] = useState<string[]>();
+
+  const p2 = useLatestValue(useAdditionalFeeds()?.filesAndExifAndPhotoDb);
+  const photo = p2
+    ? Object.values(p2).find((p) => p.namedFile.rev === props.rev)
+    : undefined;
 
   useEffect(() => {
     document.title = `DPM - Photo ${props.rev}`;
   });
-
-  useEffect(() => {
-    if (photo === undefined) {
-      fetch(`/api/photo/rev/${props.rev}`)
-        .then((r) => r.json() as Promise<PhotoResponse>)
-        .then((data) => setPhoto(data.photo))
-        .catch((err) => console.error(err));
-    }
-  }, [photo, props.rev]);
 
   useEffect(() => {
     if (previewSizes === undefined) {
@@ -34,11 +27,11 @@ const Photo = (props: { rev: string }): React.ReactElement | null => {
     }
   }, []);
 
-  if (photo === undefined) {
+  if (p2 === undefined) {
     return <div>Loading PHOTO ...</div>;
   }
 
-  if (photo === false) {
+  if (!photo) {
     return <div>No such photo</div>;
   }
 
