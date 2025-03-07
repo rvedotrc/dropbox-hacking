@@ -81,6 +81,9 @@ importers:
       css-loader:
         specifier: ^7.1.2
         version: 7.1.2(webpack@5.97.1)
+      dropbox-hacking-exif-db:
+        specifier: link:../dropbox-hacking-exif-db
+        version: link:../dropbox-hacking-exif-db
       eslint:
         specifier: ^9.17.0
         version: 9.17.0

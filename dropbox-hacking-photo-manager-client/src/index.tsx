@@ -6,11 +6,9 @@ import { createRoot } from "react-dom/client";
 
 import * as multiplexerContext from "./context/rx/multiplexerContext";
 
-import countsByDateContext from "./context/countsByDateContext";
-import daysMetadataContext from "./context/daysMetadataContext";
-import eventEmitterContext from "./context/eventEmitterContext";
 import routingContext from "./context/routingContext";
 import * as rxRecordFeedContext from "./context/rx/rxRecordFeedContext";
+import * as additionalFeeds from "./context/rx/additionalFeeds";
 import { Router } from "./context/routingContext";
 import * as thumbnailLoaderContext from "./context/thumbnails";
 import * as websocket from "./context/websocket";
@@ -67,17 +65,13 @@ const Root = ({
     <routingContext.context.Provider value={router}>
       <multiplexerContext.defaultProvider accepter={accepter}>
         <rxRecordFeedContext.defaultProvider>
-          <websocket.defaultProvider>
-            <eventEmitterContext.defaultProvider>
-              <countsByDateContext.defaultProvider>
-                <daysMetadataContext.defaultProvider>
-                  <thumbnailLoaderContext.defaultProvider>
-                    {toRender({ payload: state })}
-                  </thumbnailLoaderContext.defaultProvider>
-                </daysMetadataContext.defaultProvider>
-              </countsByDateContext.defaultProvider>
-            </eventEmitterContext.defaultProvider>
-          </websocket.defaultProvider>
+          <additionalFeeds.defaultProvider>
+            <websocket.defaultProvider>
+              <thumbnailLoaderContext.defaultProvider>
+                {toRender({ payload: state })}
+              </thumbnailLoaderContext.defaultProvider>
+            </websocket.defaultProvider>
+          </additionalFeeds.defaultProvider>
         </rxRecordFeedContext.defaultProvider>
       </multiplexerContext.defaultProvider>
     </routingContext.context.Provider>

@@ -58,7 +58,7 @@ export const buildForLsCache = (dbDir: string) => {
     .pipe(
       map((arr) => {
         const out: Record<string, (typeof arr)[number]> = {};
-        for (const item of arr) out[item.path_lower] = item;
+        for (const item of arr) out[item.id] = item;
         return out;
       }),
     );

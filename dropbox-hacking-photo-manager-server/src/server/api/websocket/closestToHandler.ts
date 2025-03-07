@@ -3,6 +3,7 @@ import {
   type ClosestToRequest,
   type ClosestToResponse,
   type GPSLatNLongE,
+  type NamedFile,
 } from "dropbox-hacking-photo-manager-shared";
 
 import type { Context } from "../../context.js";
@@ -69,10 +70,10 @@ export const closestToHandlerBuilder = (context: Context) => {
     const items = withDistance.flatMap((exifItem) =>
       wantedImages
         .filter((f) => f.content_hash === exifItem.hash)
-        .map((file) => ({
+        .map((namedFile) => ({
           distanceInMeters: exifItem.distance,
           photo: {
-            file,
+            namedFile: namedFile as NamedFile,
             exif: exifItem.data,
           },
           exif,

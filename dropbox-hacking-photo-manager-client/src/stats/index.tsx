@@ -1,19 +1,29 @@
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { map, Observable } from "rxjs";
 
 import logRender from "../logRender";
 import { useRxFeedsViaMultiplexer } from "../context/rx/rxRecordFeedContext";
 import type { ImageAndMaybeDelta } from "../context/rx/rxFeedClient";
 import Navigate from "../days/navigate";
+import { useLatestValue } from "../context/rx/useLatestValue";
+import { useAdditionalFeeds } from "../context/rx/additionalFeeds";
 
 const Stats = () => {
   const feeds = useRxFeedsViaMultiplexer();
+  const moreFeeds = useAdditionalFeeds();
 
   const [daysCount, setDaysCount] = useState<number>();
   const [photosCount, setPhotosCount] = useState<number>();
   const [exifCount, setExifCount] = useState<number>();
   const [filesCount, setFilesCount] = useState<number>();
+
+  const cbdLatest = moreFeeds
+    ? useLatestValue(moreFeeds.countsByDate)
+    : undefined;
+  const fepLatest = moreFeeds
+    ? useLatestValue(moreFeeds.filesAndExifAndPhotoDb)
+    : undefined;
 
   const addEffect = (
     key: keyof NonNullable<typeof feeds>,
@@ -42,24 +52,26 @@ const Stats = () => {
   addEffect("files", setFilesCount);
   addEffect("photos", setPhotosCount);
 
+  // const fepLatest = useLatestValue(filesAndExifAndPhotoDb);
+
+  const fepExtract = useMemo(
+    () =>
+      !fepLatest
+        ? null
+        : Object.entries(fepLatest)
+            .toSorted((a, b) => a[0].localeCompare(b[0]))
+            .slice(0, 3),
+    [fepLatest],
+  );
+
+  // const cbdLatest = useLatestValue(countsByDate);
+
+  const cbdExtract = useMemo(
+    () => (cbdLatest ? cbdLatest.slice(cbdLatest.length - 3) : null),
+    [cbdLatest],
+  );
+
   if (!feeds) return "waiting for multiplexer...";
-
-  //   const [filesWithExifCount, setFilesWithExifCount] = useState<number>();
-  //   const [fileExifCountsByMonth, setFileExifCountsByMonth] =
-  //     useState<Record<string, number>>();
-
-  //     const subFilesWithExif = combineLatest([
-  //       rxFeeds.file,
-  //       rxFeeds.exif,
-  //     ]).subscribe(([files, exifs]) => {
-  //       const out: Record<string, { file: NamedFile; exif?: ExifFromHash }> = {};
-
-  //       for (const f of Object.values(files)) {
-  //         out[f.path_lower] = { file: f, exif: exifs[f.content_hash] };
-  //       }
-
-  //       setFilesWithExifCount(Object.keys(out).length);
-  //     });
 
   return (
     <>
@@ -79,11 +91,13 @@ const Stats = () => {
       <h2>Photos</h2>
       <p>Count: {photosCount ?? "?"}</p>
 
-      {/* <h2>Files & Exif</h2>
-        <p>Count: {filesWithExifCount ?? "?"}</p>
+      <h2>Here be dragons!</h2>
 
-        <h2>File-Exif counts by month</h2>
-        {JSON.stringify(fileExifCountsByMonth ?? null)} */}
+      <h3>File, Exif, PhotoDB</h3>
+      <pre>{JSON.stringify(fepExtract, null, 2)}</pre>
+
+      <h3>Counts by date (enhanced)</h3>
+      <pre>{JSON.stringify(cbdExtract, null, 2)}</pre>
     </>
   );
 };

@@ -13,10 +13,10 @@ const samplePhoto = ({
   visible: boolean;
 }): React.ReactElement | null => {
   const loader = useThumbnailLoader();
-  const thumbnail = useThumbnail(photo.file.rev, loader)(visible);
+  const thumbnail = useThumbnail(photo.namedFile.rev, loader)(visible);
 
   return (
-    <span key={photo.file.id} className="sample">
+    <span key={photo.namedFile.id} className="sample">
       <img
         src={
           thumbnail ? `data:image/jpeg;base64,${thumbnail}` : `/placeholder.png`
