@@ -97,13 +97,14 @@ const handler: Handler = async (
 
     const existing = await dbx.filesGetMetadata({ path: wantedPath }).then(
       (r) => r.result,
-      (err: DropboxResponseError<files.GetMetadataError>) => {
+      (err: DropboxResponseError<{ error: files.GetMetadataError }>) => {
         if (
           err.status === 409 &&
-          err.error[".tag"] === "path" &&
-          err.error.path[".tag"] === "not_found"
-        )
+          err.error.error[".tag"] === "path" &&
+          err.error.error.path[".tag"] === "not_found"
+        ) {
           return undefined;
+        }
 
         console.log(JSON.stringify({ get_existing: err }));
         // eslint-disable-next-line @typescript-eslint/only-throw-error
@@ -114,13 +115,17 @@ const handler: Handler = async (
     // console.log(` == ${JSON.stringify(existing)}`);
 
     if (existing === undefined) {
-      console.log(`  ${item.path_display} -> ${wantedPath}`);
+      console.log(`  want: ${item.path_display} -> ${wantedPath}`);
 
       if (!dryRun) {
-        return mover.submit({
-          from_path: item.path_display,
-          to_path: wantedPath,
-        });
+        return mover
+          .submit({
+            from_path: item.path_display,
+            to_path: wantedPath,
+          })
+          .then(() => {
+            console.log(`  done: ${item.path_display} -> ${wantedPath}`);
+          });
       }
     } else {
       console.log(`  declining to move because the target exists:`);
@@ -222,12 +227,16 @@ const handler: Handler = async (
         tail,
       },
       onItem: async (item) => {
-        console.log(JSON.stringify(item));
+        // console.log("Got item from lister:", JSON.stringify(item));
 
         if (item[".tag"] === "file" && item.path_lower && item.path_display) {
           const wantedPath = targetForRemoteFile(item);
+          console.log({ item, wantedPath });
           if (wantedPath && wantedPath.toLowerCase() !== item.path_lower)
             return shutdownWaitsFor(tryMove(item, wantedPath));
+          else if (!wantedPath) {
+            console.warn(`No 'wanted' path for ${item.path_display}`);
+          }
         }
 
         return Promise.resolve();
