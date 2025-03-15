@@ -66,13 +66,19 @@ const DayWithData = ({
       <p>{dayPhotos.photos.length} photos</p>
 
       <div ref={parentRef} className={"photoList"}>
-        {dayPhotos.photos.map((photo) => (
-          <PhotoTile
-            key={photo.namedFile.rev}
-            photo={photo}
-            isVisible={visibleRevs?.has(photo.namedFile.rev) || false}
-          />
-        ))}
+        {dayPhotos.photos
+          .toSorted((a, b) =>
+            a.namedFile.client_modified.localeCompare(
+              b.namedFile.client_modified,
+            ),
+          )
+          .map((photo) => (
+            <PhotoTile
+              key={photo.namedFile.rev}
+              photo={photo}
+              isVisible={visibleRevs?.has(photo.namedFile.rev) || false}
+            />
+          ))}
       </div>
     </>
   );
