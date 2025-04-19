@@ -30,6 +30,14 @@ export type Payload =
       date: string;
     }
   | {
+      route: "month";
+      month: string;
+    }
+  | {
+      route: "year";
+      year: string;
+    }
+  | {
       route: "photo";
       rev: string;
     };

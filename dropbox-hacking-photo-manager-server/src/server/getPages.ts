@@ -61,6 +61,26 @@ export default (app: Application, _context: Context): void => {
     );
   });
 
+  app.get("/month/:month(\\d\\d\\d\\d-\\d\\d)", (req, res) => {
+    res.contentType("text/html");
+    res.send(
+      pageAsString({
+        route: "month",
+        month: req.params.month,
+      }),
+    );
+  });
+
+  app.get("/year/:year(\\d\\d\\d\\d)", (req, res) => {
+    res.contentType("text/html");
+    res.send(
+      pageAsString({
+        route: "year",
+        year: req.params.year,
+      }),
+    );
+  });
+
   app.get("/photo/rev/:rev", (req, res) => {
     res.contentType("text/html");
     res.send(

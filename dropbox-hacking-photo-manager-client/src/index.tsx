@@ -19,6 +19,8 @@ import logRender from "./logRender";
 import Photo from "./photo";
 import ClosestTo from "./closest-to/index";
 import Stats from "./stats";
+import Month from "./month";
+import Year from "./year";
 
 const toRender = ({ payload }: { payload: Payload }) => {
   if (payload.route === "closest-to")
@@ -27,6 +29,8 @@ const toRender = ({ payload }: { payload: Payload }) => {
   if (payload.route === "days") return <ListOfDays withSamples={true} />;
   if (payload.route === "days-plain") return <ListOfDays withSamples={false} />;
   if (payload.route === "day") return <Day date={payload.date} />;
+  if (payload.route === "month") return <Month month={payload.month} />;
+  if (payload.route === "year") return <Year year={payload.year} />;
   if (payload.route === "photo") return <Photo rev={payload.rev} />;
   if (payload.route === "stats") return <Stats />;
   return <span>Routing error</span>;
