@@ -1,2 +1,2 @@
 #!/bin/bash
-exec with-node - node --enable-source-maps ./dropbox-hacking-photo-manager-server/dist/src/server/main.js "$@"
+exec node --enable-source-maps ./dropbox-hacking-photo-manager-server/dist/src/server/main.js "$@"

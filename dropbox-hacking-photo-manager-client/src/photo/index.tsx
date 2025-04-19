@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import logRender from "../logRender";
 import { useLatestValue } from "../context/rx/useLatestValue";
 import { useAdditionalFeeds } from "../context/rx/additionalFeeds";
+import SamePageLink from "../samePageLink";
 
 const Photo = (props: { rev: string }): React.ReactElement | null => {
   const [previewSizes, setPreviewSizes] = useState<string[]>();
@@ -13,6 +14,8 @@ const Photo = (props: { rev: string }): React.ReactElement | null => {
   const photo = p2
     ? Object.values(p2).find((p) => p.namedFile.rev === props.rev)
     : undefined;
+
+  const date = photo?.namedFile.client_modified.substring(0, 10);
 
   useEffect(() => {
     document.title = `DPM - Photo ${props.rev}`;
@@ -27,19 +30,91 @@ const Photo = (props: { rev: string }): React.ReactElement | null => {
     }
   }, []);
 
+  const dayPhotos = useLatestValue(useAdditionalFeeds()?.countsByDate)?.find(
+    (item) => item.date === date,
+  );
+  const photoRevs = dayPhotos?.photos ?? [];
+
   if (p2 === undefined) {
     return <div>Loading PHOTO ...</div>;
   }
 
-  if (!photo) {
+  if (!photo || !date) {
     return <div>No such photo</div>;
   }
 
   const tags = photo.exif.exifData.tags;
   const gps = tags ? GPSLatLong.fromExifTags(tags) : null;
 
+  const sortedRevs = photoRevs
+    .toSorted((a, b) =>
+      a.namedFile.client_modified.localeCompare(b.namedFile.client_modified),
+    )
+    .map((t) => t.namedFile.rev);
+
+  const thisIndex = sortedRevs.indexOf(props.rev);
+
+  const prevNext = {
+    previousRev: thisIndex >= 1 ? sortedRevs[thisIndex - 1] : undefined,
+    nextRev:
+      thisIndex >= 0 && thisIndex < sortedRevs.length - 1
+        ? sortedRevs[thisIndex + 1]
+        : undefined,
+  };
+
+  console.log({ date, sortedRevs, thisIndex, prevNext });
+
   return (
     <>
+      <div className="navigation">
+        <ul>
+          <li>
+            🔼{" "}
+            <SamePageLink
+              href={`/day/${date}`}
+              state={{
+                route: "day",
+                date,
+              }}
+            >
+              {date}
+            </SamePageLink>
+          </li>
+
+          {prevNext?.previousRev && (
+            <li>
+              {"◀️ "}
+              <SamePageLink
+                href={`/photo/rev/${prevNext.previousRev}`}
+                state={{
+                  route: "photo",
+                  rev: prevNext.previousRev,
+                }}
+              >
+                {prevNext.previousRev}
+              </SamePageLink>
+            </li>
+          )}
+
+          {prevNext?.nextRev && (
+            <>
+              <li>
+                {"▶️ "}
+                <SamePageLink
+                  href={`/photo/rev/${prevNext.nextRev}`}
+                  state={{
+                    route: "photo",
+                    rev: prevNext.nextRev,
+                  }}
+                >
+                  {prevNext.nextRev}
+                </SamePageLink>
+              </li>
+            </>
+          )}
+        </ul>
+      </div>
+
       <h1>{props.rev}</h1>
 
       <div>

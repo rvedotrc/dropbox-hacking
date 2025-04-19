@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-180 -169 360 270" width="360px" height="270px">
+  <rect style="stroke: rgb(0, 0, 0); stroke-width: 0px;" x="-130" y="-100" width="32" height="20" rx="5" ry="5"/>
+  <path style="stroke: rgb(0, 0, 0); stroke-width: 0px;" d="M -55 -122 L 55 -122 C 59.308 -122 62.839 -118 65 -112 L 74 -88 L -74 -88 L -65 -112 C -62.864 -118 -62.478 -122 -55 -122 Z"/>
+  <rect style="stroke: rgb(0, 0, 0);" x="-150" y="-90" width="300" height="180" rx="20" ry="20"/>
+  <ellipse style="stroke: rgb(255, 255, 255); fill: none; stroke-width: 15px;" cx="0" cy="0" rx="70" ry="70"/>
+  <ellipse style="stroke: rgb(0, 0, 0); stroke-width: 0px; fill: rgb(255, 255, 255);" cx="130" cy="-70" rx="10" ry="10"/>
+</svg>

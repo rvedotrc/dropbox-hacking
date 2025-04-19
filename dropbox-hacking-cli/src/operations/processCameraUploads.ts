@@ -231,7 +231,7 @@ const handler: Handler = async (
 
         if (item[".tag"] === "file" && item.path_lower && item.path_display) {
           const wantedPath = targetForRemoteFile(item);
-          console.log({ item, wantedPath });
+          // console.log({ item, wantedPath });
           if (wantedPath && wantedPath.toLowerCase() !== item.path_lower)
             return shutdownWaitsFor(tryMove(item, wantedPath));
           else if (!wantedPath) {
@@ -241,9 +241,9 @@ const handler: Handler = async (
 
         return Promise.resolve();
       },
-      onCursor: async (cursor) => {
-        console.log({ cursor });
-      },
+      // onCursor: async (cursor) => {
+      //   console.log({ cursor });
+      // },
       onPause: async () => {
         console.log("pause");
       },

@@ -13,6 +13,7 @@ import { useRxFeedsViaMultiplexer } from "../context/rx/rxRecordFeedContext";
 import { map } from "rxjs";
 import { useLatestValue } from "../context/rx/useLatestValue";
 import { useAdditionalFeeds } from "../context/rx/additionalFeeds";
+import SamePageLink from "../samePageLink";
 
 const DayWithData = ({
   date,
@@ -51,8 +52,91 @@ const DayWithData = ({
     [date],
   );
 
+  const feeds = useAdditionalFeeds();
+  if (!feeds) return null;
+
+  const justCountsByDateFeed = useMemo(
+    () =>
+      feeds?.countsByDate.pipe(
+        map((v) => v.map((item) => [item.date, item.count] as const)),
+      ),
+    [feeds],
+  );
+
+  const prevNext = useLatestValue(
+    useMemo(
+      () =>
+        justCountsByDateFeed.pipe(
+          map((counts) => {
+            const dates = counts.map((t) => t[0]);
+            const previousDay = dates
+              .filter((t) => t.localeCompare(date) < 0)
+              .toSorted()
+              .pop();
+            const nextDay = dates
+              .filter((t) => t.localeCompare(date) > 0)
+              .toSorted()
+              .shift();
+            return { previousDay, nextDay };
+          }),
+        ),
+      [justCountsByDateFeed, date],
+    ),
+  );
+
+  const month = date.substring(0, 7);
+
   return (
     <>
+      <div className="navigation">
+        <ul>
+          <li>
+            🔼{" "}
+            <SamePageLink
+              href={`/month/${month}`}
+              state={{
+                route: "month",
+                month,
+              }}
+            >
+              {month}
+            </SamePageLink>
+          </li>
+
+          {prevNext?.previousDay && (
+            <li>
+              {"◀️ "}
+              <SamePageLink
+                href={`/day/${prevNext.previousDay}`}
+                state={{
+                  route: "day",
+                  date: prevNext.previousDay,
+                }}
+              >
+                {prevNext.previousDay}
+              </SamePageLink>
+            </li>
+          )}
+
+          {prevNext?.nextDay && (
+            <>
+              <li>
+                {"▶️ "}
+                <SamePageLink
+                  href={`/day/${prevNext.nextDay}`}
+                  state={{
+                    route: "day",
+                    date: prevNext.nextDay,
+                  }}
+                >
+                  {prevNext.nextDay}
+                </SamePageLink>
+              </li>
+            </>
+          )}
+        </ul>
+      </div>
+
       <h1>{date}</h1>
 
       <p>

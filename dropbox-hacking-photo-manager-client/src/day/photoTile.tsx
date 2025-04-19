@@ -1,4 +1,4 @@
-import { Photo } from "dropbox-hacking-photo-manager-shared";
+import { GPSLatLong, Photo } from "dropbox-hacking-photo-manager-shared";
 import * as React from "react";
 
 import { useThumbnailLoader } from "../context/thumbnails";
@@ -25,6 +25,18 @@ const PhotoTile = ({
 
   const thumbnail = useThumbnail(photo.namedFile.rev, loader)(isVisible);
 
+  const tags = photo.exif.exifData.tags;
+  const gps = tags ? GPSLatLong.fromExifTags(tags) : null;
+
+  const model = photo.exif.exifData.tags?.Model ?? "";
+  const deviceIcon = /EX-Z3|FinePix HS10 HS11|Canon PowerShot SX70 HS/.test(
+    model,
+  )
+    ? "/camera-icon.svg"
+    : /iPhone 4S|Pixel|Pixel 2|iPhone 12 mini/.test(model)
+      ? "/mobile-phone.svg"
+      : null;
+
   return (
     <SamePageLink
       className={"photoItem"}
@@ -48,6 +60,13 @@ const PhotoTile = ({
       <div className={"makeAndModel"}>
         {photo.exif.exifData.tags?.Make} {photo.exif.exifData.tags?.Model}
       </div>
+      {gps && (
+        <img src="/gps-pin.svg" style={{ width: "1em", height: "2em" }} />
+      )}
+
+      {deviceIcon && (
+        <img src={deviceIcon} style={{ width: "2em", height: "2em" }} />
+      )}
     </SamePageLink>
   );
 };
