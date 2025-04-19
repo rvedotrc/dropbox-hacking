@@ -16,6 +16,8 @@ export type DropboxProvider = () => Promise<Dropbox>;
 const runServer = async (appAuth: DropboxAuth): Promise<DropboxAuth> =>
   new Promise((resolve, reject) => {
     const app = express();
+    // FIXME: can reject with EADDRINUSE (if multiple clients / threads are trying
+    // to reauthenticate at the same time).
     const server = app.listen(port, "localhost", () => {
       // console.log("Listening on", server.address());
     });
@@ -146,13 +148,51 @@ type SavedCredentials = {
       };
 };
 
+const checkAndRefreshAccessToken = async (auth: DropboxAuth): Promise<void> => {
+  let haveWarned = false;
+  for (;;) {
+    try {
+      // Incorrect signature in SDK
+      await (auth.checkAndRefreshAccessToken() as unknown as Promise<void>);
+      break;
+    } catch (error) {
+      if (error instanceof Error && "code" in error) {
+        if (
+          error.code === "ENOTFOUND" ||
+          error.code === "ECONNRESET" ||
+          error.code === "ETIMEDOUT"
+        ) {
+          if (!haveWarned) {
+            console.log(
+              `checkAndRefreshAccessToken failed due to ${error.code}. Will retry every 60 seconds.`,
+            );
+            haveWarned = true;
+          }
+          await new Promise<void>((resolve) =>
+            setTimeout(() => resolve(), 60000),
+          );
+        }
+      } else {
+        if (haveWarned)
+          console.log(
+            `checkAndRefreshAccessToken now failed with a different error, aborting`,
+          );
+        throw error;
+      }
+    }
+  }
+
+  if (haveWarned)
+    console.log(`checkAndRefreshAccessToken succeeded, continuing`);
+};
+
 const checkAndRefresh = async (
   credentials: SavedCredentials,
   credentialsPath: string,
 ): Promise<DropboxAuth | undefined> => {
   if (!credentials.user_oauth_config) return undefined;
 
-  console.debug("Using cached auth_config");
+  // console.debug("Using cached auth_config");
 
   const auth = new DropboxAuth({
     clientId: credentials.app.app_key,
@@ -169,7 +209,8 @@ const checkAndRefresh = async (
   // console.debug("checkAndRefreshAccessToken", JSON.stringify(auth));
 
   // Incorrect signature; actually returns Promise<void>
-  return (auth.checkAndRefreshAccessToken() as unknown as Promise<void>)
+  // FIXME: can reject with ENOTFOUND (when no Internet connection)
+  return checkAndRefreshAccessToken(auth)
     .then(() => {
       // console.debug("after refresh", JSON.stringify(auth));
       saveUserCredentials(credentials, auth, credentialsPath).catch((err) =>
