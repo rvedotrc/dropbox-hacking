@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 
 import { useWebsocket } from "../context/websocket";
 import type {
@@ -18,14 +18,32 @@ export default ({
   nClosest?: number;
 }) => {
   const ws = useWebsocket();
-  if (!ws) return null;
 
   const [data, setData] = useState<{
     gps: GPSLatNLongE;
     r: ClosestToResponse | null;
   }>();
 
+  const [online, setOnline] = useState(false);
+
+  const onOnline = useMemo(() => () => setOnline(true), [setOnline]);
+  const onOffline = useMemo(() => () => setOnline(false), [setOnline]);
+
   useEffect(() => {
+    if (!ws) return;
+
+    ws.addListener("online", onOnline);
+    ws.addListener("offline", onOffline);
+
+    return () => {
+      ws.removeListener("online", onOnline);
+      ws.removeListener("offline", onOffline);
+    };
+  }, [ws]);
+
+  useEffect(() => {
+    if (!ws || !online) return;
+
     if (!data || gps.lat !== data.gps.lat || gps.long !== data.gps.long) {
       const toSend: ClosestToRequest = {
         verb: "closestTo",
@@ -41,7 +59,7 @@ export default ({
 
       setData({ gps, r: null });
     }
-  }, [gps, data]);
+  }, [ws, online, gps, data]);
 
   if (!data?.r) return "...";
 
