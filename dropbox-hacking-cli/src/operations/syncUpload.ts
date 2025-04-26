@@ -1,4 +1,4 @@
-import { upload } from "dropbox-hacking-sync";
+import { upload } from "@blaahaj/dropbox-hacking-sync";
 import {
   DropboxProvider,
   GlobalOptions,

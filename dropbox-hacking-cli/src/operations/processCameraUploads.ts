@@ -2,7 +2,7 @@ import { files, type DropboxResponseError } from "dropbox";
 
 import { Handler } from "../types.js";
 import path from "node:path";
-import { lister } from "dropbox-hacking-lister";
+import { lister } from "@blaahaj/dropbox-hacking-lister";
 import { Mover } from "dropbox-hacking-mover";
 import {
   DropboxProvider,

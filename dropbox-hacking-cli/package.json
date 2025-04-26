@@ -31,15 +31,15 @@
     ".": "./dist/src/index.js"
   },
   "dependencies": {
+    "@blaahaj/dropbox-hacking-lister": "^1.0.0",
+    "@blaahaj/dropbox-hacking-sync": "^1.0.0",
     "@blaahaj/dropbox-hacking-uploader": "^1.0.0",
     "@blaahaj/dropbox-hacking-util": "^1.0.1",
     "dropbox": "^10.34.0",
     "dropbox-hacking-exif-db": "link:../dropbox-hacking-exif-db",
-    "dropbox-hacking-lister": "link:../dropbox-hacking-lister",
     "dropbox-hacking-ls-cache": "link:../dropbox-hacking-ls-cache",
     "dropbox-hacking-mediainfo-db": "link:../dropbox-hacking-mediainfo-db",
     "dropbox-hacking-mover": "link:../dropbox-hacking-mover",
-    "dropbox-hacking-sync": "link:../dropbox-hacking-sync",
     "ts-exif-parser": "^0.2.2"
   }
 }

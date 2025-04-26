@@ -4,7 +4,7 @@ import * as fs from "fs";
 import { Handler } from "../types.js";
 import path from "node:path";
 import { StateDir } from "dropbox-hacking-ls-cache";
-import { localListing } from "dropbox-hacking-sync";
+import { localListing } from "@blaahaj/dropbox-hacking-sync";
 import {
   makeContentHash,
   selectUploader,

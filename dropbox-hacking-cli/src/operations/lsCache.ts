@@ -1,5 +1,5 @@
 import { Dropbox } from "dropbox";
-import { lister, ListerArgs } from "dropbox-hacking-lister";
+import { lister, ListerArgs } from "@blaahaj/dropbox-hacking-lister";
 import { StateDir } from "dropbox-hacking-ls-cache";
 import {
   DropboxProvider,

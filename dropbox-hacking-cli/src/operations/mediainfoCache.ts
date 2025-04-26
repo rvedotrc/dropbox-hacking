@@ -1,5 +1,5 @@
 import { Dropbox, files } from "dropbox";
-import { lister, ListerArgs } from "dropbox-hacking-lister";
+import { lister, ListerArgs } from "@blaahaj/dropbox-hacking-lister";
 import {
   Fetcher as F,
   fetcher as Fetcher,

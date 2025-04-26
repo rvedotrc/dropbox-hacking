@@ -1,5 +1,5 @@
 import { files } from "dropbox";
-import { lister } from "dropbox-hacking-lister";
+import { lister } from "@blaahaj/dropbox-hacking-lister";
 import {
   DropboxProvider,
   GlobalOptions,

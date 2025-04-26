@@ -1,4 +1,4 @@
-import { download, localListing } from "dropbox-hacking-sync";
+import { download, localListing } from "@blaahaj/dropbox-hacking-sync";
 import { makeContentHash } from "@blaahaj/dropbox-hacking-uploader";
 import {
   DropboxProvider,

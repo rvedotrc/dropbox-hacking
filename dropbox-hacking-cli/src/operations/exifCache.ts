@@ -5,7 +5,7 @@ import {
   fetcher as Fetcher,
   StateDir,
 } from "dropbox-hacking-exif-db";
-import { lister, ListerArgs } from "dropbox-hacking-lister";
+import { lister, ListerArgs } from "@blaahaj/dropbox-hacking-lister";
 import { ExifParserFactory } from "ts-exif-parser";
 
 import { Handler } from "../types.js";
