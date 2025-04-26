@@ -31,9 +31,9 @@
     ".": "./dist/src/index.js"
   },
   "dependencies": {
+    "@blaahaj/dropbox-hacking-downloader": "^1.0.1",
     "@blaahaj/dropbox-hacking-uploader": "^1.0.0",
     "@blaahaj/dropbox-hacking-util": "^1.0.1",
-    "dropbox": "^10.34.0",
-    "dropbox-hacking-downloader": "link:../dropbox-hacking-downloader"
+    "dropbox": "^10.34.0"
   }
 }

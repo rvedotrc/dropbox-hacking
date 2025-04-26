@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@blaahaj/dropbox-hacking-downloader':
+        specifier: ^1.0.1
+        version: 1.0.1(@types/node-fetch@2.6.12)
       '@blaahaj/dropbox-hacking-uploader':
         specifier: ^1.0.0
         version: 1.0.0(@types/node-fetch@2.6.12)
@@ -17,9 +20,6 @@ importers:
       dropbox:
         specifier: ^10.34.0
         version: 10.34.0(@types/node-fetch@2.6.12)
-      dropbox-hacking-downloader:
-        specifier: link:../dropbox-hacking-downloader
-        version: link:../dropbox-hacking-downloader
     devDependencies:
       '@eslint/js':
         specifier: ^9.21.0
@@ -54,6 +54,9 @@ packages:
   '@bcoe/v8-coverage@1.0.1':
     resolution: {integrity: sha512-W+a0/JpU28AqH4IKtwUPcEUnUyXMDLALcn5/JLczGGT9fHE2sIby/xP/oQnx3nxkForzgzPy201RAKcB4xPAFQ==}
     engines: {node: '>=18'}
+
+  '@blaahaj/dropbox-hacking-downloader@1.0.1':
+    resolution: {integrity: sha512-gdD02fuXpHs12orXVFB0ZAKnAP40mrY8M+QNealMTkcmQGgjrvvaDYH1NVWk1k8JUMsJR/W1buhwX8jxkpRUzg==}
 
   '@blaahaj/dropbox-hacking-uploader@1.0.0':
     resolution: {integrity: sha512-7WOMcI69I+uuJsAa9/ByRJJibSy1jiYQfzl95HQooTJs4dnwmwvqplFDfx1CdiimgH2l3bFSWdHnuBmupKoNHg==}
@@ -1059,6 +1062,15 @@ packages:
 snapshots:
 
   '@bcoe/v8-coverage@1.0.1': {}
+
+  '@blaahaj/dropbox-hacking-downloader@1.0.1(@types/node-fetch@2.6.12)':
+    dependencies:
+      '@blaahaj/dropbox-hacking-util': 1.0.1(@types/node-fetch@2.6.12)
+      dropbox: 10.34.0(@types/node-fetch@2.6.12)
+    transitivePeerDependencies:
+      - '@types/node-fetch'
+      - encoding
+      - supports-color
 
   '@blaahaj/dropbox-hacking-uploader@1.0.0(@types/node-fetch@2.6.12)':
     dependencies:
