@@ -1,11 +1,11 @@
 import { files } from "dropbox";
-import { selectUploader } from "dropbox-hacking-uploader";
+import { selectUploader } from "@blaahaj/dropbox-hacking-uploader";
 import {
   DropboxProvider,
   formatTime,
   GlobalOptions,
   writeStdout,
-} from "dropbox-hacking-util";
+} from "@blaahaj/dropbox-hacking-util";
 import * as fs from "fs";
 
 import { Handler } from "../types.js";

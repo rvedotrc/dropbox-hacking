@@ -3,7 +3,7 @@ import {
   DropboxProvider,
   GlobalOptions,
   writeStderr,
-} from "dropbox-hacking-util";
+} from "@blaahaj/dropbox-hacking-util";
 
 import dropboxListing, { Item as RemoteItem } from "./dropbox-listing.js";
 import localListing, {

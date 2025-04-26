@@ -3,7 +3,7 @@ import {
   DropboxProvider,
   GlobalOptions,
   processOptions,
-} from "dropbox-hacking-util";
+} from "@blaahaj/dropbox-hacking-util";
 
 import { Handler } from "../types.js";
 

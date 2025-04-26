@@ -1,9 +1,9 @@
-import { makeContentHash } from "dropbox-hacking-uploader";
+import { makeContentHash } from "@blaahaj/dropbox-hacking-uploader";
 import {
   DropboxProvider,
   GlobalOptions,
   writeStdout,
-} from "dropbox-hacking-util";
+} from "@blaahaj/dropbox-hacking-util";
 
 import { Handler } from "../types.js";
 

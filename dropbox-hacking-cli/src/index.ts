@@ -1,4 +1,4 @@
-import { getGlobalOptions } from "dropbox-hacking-util";
+import { getGlobalOptions } from "@blaahaj/dropbox-hacking-util";
 
 const o = getGlobalOptions(["--debug-retry"]);
 

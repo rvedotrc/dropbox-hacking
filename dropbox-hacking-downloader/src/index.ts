@@ -1,6 +1,6 @@
 import { randomUUID } from "crypto";
 import { Dropbox, files } from "dropbox";
-import { makePromiseLimiter, parseTime } from "dropbox-hacking-util";
+import { makePromiseLimiter, parseTime } from "@blaahaj/dropbox-hacking-util";
 import * as fs from "fs";
 import * as http from "http";
 import * as https from "https";

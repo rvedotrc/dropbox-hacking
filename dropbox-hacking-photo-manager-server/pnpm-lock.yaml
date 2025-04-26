@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@blaahaj/dropbox-hacking-util':
+        specifier: ^1.0.1
+        version: 1.0.1(@types/node-fetch@2.6.12)
       dropbox:
         specifier: ^10.34.0
         version: 10.34.0(@types/node-fetch@2.6.12)
@@ -20,9 +23,6 @@ importers:
       dropbox-hacking-photo-manager-shared:
         specifier: link:../dropbox-hacking-photo-manager-shared
         version: link:../dropbox-hacking-photo-manager-shared
-      dropbox-hacking-util:
-        specifier: link:../dropbox-hacking-util
-        version: link:../dropbox-hacking-util
       express:
         specifier: ^4.21.2
         version: 4.21.2
@@ -72,6 +72,9 @@ packages:
   '@bcoe/v8-coverage@1.0.1':
     resolution: {integrity: sha512-W+a0/JpU28AqH4IKtwUPcEUnUyXMDLALcn5/JLczGGT9fHE2sIby/xP/oQnx3nxkForzgzPy201RAKcB4xPAFQ==}
     engines: {node: '>=18'}
+
+  '@blaahaj/dropbox-hacking-util@1.0.1':
+    resolution: {integrity: sha512-kwPcC1dj8bEfScrrjCVKo1av5ZyfyrzgtzZJQNeMcXisbqVeQ0ik0fxSuwt9PI4JdLlxxq+8X1LXtfkyaNsxzg==}
 
   '@eslint-community/eslint-utils@4.4.1':
     resolution: {integrity: sha512-s3O3waFUrMV8P/XaF/+ZTp1X9XBZW1a4B97ZnjQF2KYWaFD2A8KyFBsrsfSjEmjn3RGWAIuvlneuZm3CUK3jbA==}
@@ -1125,6 +1128,15 @@ packages:
 snapshots:
 
   '@bcoe/v8-coverage@1.0.1': {}
+
+  '@blaahaj/dropbox-hacking-util@1.0.1(@types/node-fetch@2.6.12)':
+    dependencies:
+      dropbox: 10.34.0(@types/node-fetch@2.6.12)
+      express: 4.21.2
+    transitivePeerDependencies:
+      - '@types/node-fetch'
+      - encoding
+      - supports-color
 
   '@eslint-community/eslint-utils@4.4.1(eslint@9.21.0)':
     dependencies:

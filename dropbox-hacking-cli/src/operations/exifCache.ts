@@ -17,7 +17,7 @@ import {
   processOptions,
   writeStderr,
   writeStdout,
-} from "dropbox-hacking-util";
+} from "@blaahaj/dropbox-hacking-util";
 
 const verb = "exif-cache";
 

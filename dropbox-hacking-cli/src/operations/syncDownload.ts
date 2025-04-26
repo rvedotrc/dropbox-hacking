@@ -1,10 +1,10 @@
 import { download, localListing } from "dropbox-hacking-sync";
-import { makeContentHash } from "dropbox-hacking-uploader";
+import { makeContentHash } from "@blaahaj/dropbox-hacking-uploader";
 import {
   DropboxProvider,
   GlobalOptions,
   processOptions,
-} from "dropbox-hacking-util";
+} from "@blaahaj/dropbox-hacking-util";
 import * as fs from "fs";
 
 import { Handler } from "../types.js";

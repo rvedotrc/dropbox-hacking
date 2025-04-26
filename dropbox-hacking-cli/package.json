@@ -31,6 +31,8 @@
     ".": "./dist/src/index.js"
   },
   "dependencies": {
+    "@blaahaj/dropbox-hacking-uploader": "^1.0.0",
+    "@blaahaj/dropbox-hacking-util": "^1.0.1",
     "dropbox": "^10.34.0",
     "dropbox-hacking-exif-db": "link:../dropbox-hacking-exif-db",
     "dropbox-hacking-lister": "link:../dropbox-hacking-lister",
@@ -38,8 +40,6 @@
     "dropbox-hacking-mediainfo-db": "link:../dropbox-hacking-mediainfo-db",
     "dropbox-hacking-mover": "link:../dropbox-hacking-mover",
     "dropbox-hacking-sync": "link:../dropbox-hacking-sync",
-    "dropbox-hacking-uploader": "link:../dropbox-hacking-uploader",
-    "dropbox-hacking-util": "link:../dropbox-hacking-util",
     "ts-exif-parser": "^0.2.2"
   }
 }

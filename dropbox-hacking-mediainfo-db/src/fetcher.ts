@@ -6,7 +6,7 @@ import {
   GlobalOptions,
   PromiseLimiter,
   simplePromiseRetrier,
-} from "dropbox-hacking-util";
+} from "@blaahaj/dropbox-hacking-util";
 
 import { MediainfoData } from "./types.js";
 

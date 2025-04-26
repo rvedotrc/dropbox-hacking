@@ -2,7 +2,7 @@ import {
   DropboxProvider,
   GlobalOptions,
   processOptions,
-} from "dropbox-hacking-util";
+} from "@blaahaj/dropbox-hacking-util";
 import * as https from "https";
 
 import { Handler } from "../types.js";

@@ -6,7 +6,7 @@ import {
   GlobalOptions,
   PromiseLimiter,
   simplePromiseRetrier,
-} from "dropbox-hacking-util";
+} from "@blaahaj/dropbox-hacking-util";
 
 export type Fetcher = {
   fetch: (item: FileMetadata) => Promise<Buffer>;

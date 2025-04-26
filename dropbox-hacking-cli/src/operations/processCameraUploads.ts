@@ -8,7 +8,7 @@ import {
   DropboxProvider,
   GlobalOptions,
   processOptions,
-} from "dropbox-hacking-util";
+} from "@blaahaj/dropbox-hacking-util";
 
 const verb = "process-camera-uploads";
 const CAMERA_UPLOADS = "/Camera Uploads";

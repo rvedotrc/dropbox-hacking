@@ -4,7 +4,7 @@ import {
   GlobalOptionsSingleton,
   retrier,
   writeStderr,
-} from "dropbox-hacking-util";
+} from "@blaahaj/dropbox-hacking-util";
 
 import { Operation } from "./types.js";
 

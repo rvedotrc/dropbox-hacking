@@ -5,7 +5,7 @@ import {
   HELP,
   retrier,
   writeStderr,
-} from "dropbox-hacking-util";
+} from "@blaahaj/dropbox-hacking-util";
 
 import catOperation from "./operations/cat.js";
 import contentHashStdinOperation from "./operations/contentHashStdin.js";

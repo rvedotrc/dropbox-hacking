@@ -1,7 +1,7 @@
 import { Dropbox } from "dropbox";
 import { ExifDB } from "dropbox-hacking-exif-db";
 import * as LsCache from "dropbox-hacking-ls-cache";
-import { getDropboxClient } from "dropbox-hacking-util";
+import { getDropboxClient } from "@blaahaj/dropbox-hacking-util";
 import { EventEmitter } from "events";
 import * as fs from "fs";
 

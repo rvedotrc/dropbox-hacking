@@ -1,13 +1,13 @@
 import { files } from "dropbox";
-import * as uploader from "dropbox-hacking-uploader";
-import { makeContentHash } from "dropbox-hacking-uploader";
+import * as uploader from "@blaahaj/dropbox-hacking-uploader";
+import { makeContentHash } from "@blaahaj/dropbox-hacking-uploader";
 import {
   DropboxProvider,
   formatTime,
   GlobalOptions,
   makePromiseLimiter,
   writeStdout,
-} from "dropbox-hacking-util";
+} from "@blaahaj/dropbox-hacking-util";
 import * as fs from "fs";
 
 import * as engine from "./engine.js";

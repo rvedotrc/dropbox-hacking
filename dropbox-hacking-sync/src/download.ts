@@ -8,14 +8,14 @@ import createMkdir from "./mkdir.js";
 import FileMetadata = files.FileMetadata;
 import { randomUUID } from "crypto";
 import { downloader } from "dropbox-hacking-downloader";
-import { makeContentHash } from "dropbox-hacking-uploader";
+import { makeContentHash } from "@blaahaj/dropbox-hacking-uploader";
 import {
   DropboxProvider,
   formatTime,
   GlobalOptions,
   parseTime,
   writeStdout,
-} from "dropbox-hacking-util";
+} from "@blaahaj/dropbox-hacking-util";
 
 export type AlternateProvider = (
   remote: FileMetadata,

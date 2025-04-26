@@ -5,14 +5,17 @@ import { Handler } from "../types.js";
 import path from "node:path";
 import { StateDir } from "dropbox-hacking-ls-cache";
 import { localListing } from "dropbox-hacking-sync";
-import { makeContentHash, selectUploader } from "dropbox-hacking-uploader";
+import {
+  makeContentHash,
+  selectUploader,
+} from "@blaahaj/dropbox-hacking-uploader";
 import {
   DropboxProvider,
   formatTime,
   GlobalOptions,
   makePromiseLimiter,
   processOptions,
-} from "dropbox-hacking-util";
+} from "@blaahaj/dropbox-hacking-util";
 
 import { targetForFile } from "./processCameraUploads.js";
 

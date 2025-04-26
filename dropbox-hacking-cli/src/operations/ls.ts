@@ -6,7 +6,7 @@ import {
   processOptions,
   writeStderr,
   writeStdout,
-} from "dropbox-hacking-util";
+} from "@blaahaj/dropbox-hacking-util";
 
 import { Handler } from "../types.js";
 
