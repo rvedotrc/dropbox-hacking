@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@blaahaj/dropbox-hacking-lister": "^1.0.0",
+    "@blaahaj/dropbox-hacking-mover": "^1.0.0",
     "@blaahaj/dropbox-hacking-sync": "^1.0.0",
     "@blaahaj/dropbox-hacking-uploader": "^1.0.0",
     "@blaahaj/dropbox-hacking-util": "^1.0.1",
@@ -39,7 +40,6 @@
     "dropbox-hacking-exif-db": "link:../dropbox-hacking-exif-db",
     "dropbox-hacking-ls-cache": "link:../dropbox-hacking-ls-cache",
     "dropbox-hacking-mediainfo-db": "link:../dropbox-hacking-mediainfo-db",
-    "dropbox-hacking-mover": "link:../dropbox-hacking-mover",
     "ts-exif-parser": "^0.2.2"
   }
 }
