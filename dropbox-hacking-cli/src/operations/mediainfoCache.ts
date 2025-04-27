@@ -7,7 +7,7 @@ import {
   MediainfoDB,
   MediainfoFromHash,
   StateDir,
-} from "dropbox-hacking-mediainfo-db";
+} from "@blaahaj/dropbox-hacking-mediainfo-db";
 
 import { Handler } from "../types.js";
 import FileMetadata = files.FileMetadata;
@@ -44,7 +44,7 @@ const doItem = async (
   _dbx: Dropbox,
   item: FileMetadata,
   stateDir: StateDir,
-  fetcher: F,
+  fetcher: F
 ): Promise<void> => {
   if (item.content_hash === undefined) return;
   if (item.path_lower === undefined) return;
@@ -63,16 +63,16 @@ const doItem = async (
     fetcher
       .fetch(item)
       .then((mediainfoData) =>
-        stateDir.addFile(contentHash, mediainfoData, pathDisplay),
+        stateDir.addFile(contentHash, mediainfoData, pathDisplay)
       )
       .finally(() => {
         const t1 = new Date();
         console.log(
           `Took ${t1.getTime() - t0.getTime()}ms to get mediainfo from ${
             item.size
-          } bytes ${item.path_display}`,
+          } bytes ${item.path_display}`
         );
-      }),
+      })
   );
 };
 
@@ -80,11 +80,11 @@ const makeLister = (
   dbx: Dropbox,
   listerArgs: ListerArgs,
   stateDir: StateDir,
-  globalOptions: GlobalOptions,
+  globalOptions: GlobalOptions
 ) => {
   const limiter = makePromiseLimiter<MediainfoData>(
     5,
-    "mediainfo-cache-limiter",
+    "mediainfo-cache-limiter"
   );
   const fetcher = Fetcher(dbx, limiter, globalOptions);
 
@@ -108,7 +108,7 @@ const initHandler: Handler = async (
   dbxp: DropboxProvider,
   argv: string[],
   globalOptions: GlobalOptions,
-  usageFail: () => Promise<void>,
+  usageFail: () => Promise<void>
 ): Promise<void> => {
   // `${subInit} [${RECURSIVE}] ${TAIL}] DROPBOX_PATH STATE_DIR`
   let recursive = false;
@@ -142,7 +142,7 @@ const initHandler: Handler = async (
       tail,
     },
     stateDir,
-    globalOptions,
+    globalOptions
   );
 
   await r.promise;
@@ -154,7 +154,7 @@ const updateHandler: Handler = async (
   dbxp: DropboxProvider,
   argv: string[],
   globalOptions: GlobalOptions,
-  usageFail: () => Promise<void>,
+  usageFail: () => Promise<void>
 ): Promise<void> => {
   // `${subUpdate} [${TAIL}] STATE_DIR`
   let tail = false;
@@ -192,7 +192,7 @@ const updateHandler: Handler = async (
       tail,
     },
     stateDir,
-    globalOptions,
+    globalOptions
   );
 
   await r.promise;
@@ -204,7 +204,7 @@ const showHandler: Handler = async (
   _dbxp: DropboxProvider,
   argv: string[],
   _globalOptions: GlobalOptions,
-  usageFail: () => Promise<void>,
+  usageFail: () => Promise<void>
 ): Promise<void> => {
   // `${subShow} STATE_DIR`
   if (argv.length !== 2) return usageFail();
@@ -219,7 +219,7 @@ const showHandler: Handler = async (
 
   if (state.tag !== "ready") {
     return writeStderr(
-      "Error: no listing available - use 'update' first\n",
+      "Error: no listing available - use 'update' first\n"
     ).then(() => process.exit(1));
   }
 
@@ -241,7 +241,7 @@ const handler: Handler = (
   dbxp: DropboxProvider,
   argv: string[],
   globalOptions: GlobalOptions,
-  usageFail: () => Promise<void>,
+  usageFail: () => Promise<void>
 ): Promise<void> => {
   if (argv[0] === subInit)
     return initHandler(dbxp, argv.slice(1), globalOptions, usageFail);

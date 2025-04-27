@@ -1,6 +1,6 @@
 import { Dropbox } from "dropbox";
-import { ExifDB } from "dropbox-hacking-exif-db";
-import * as LsCache from "dropbox-hacking-ls-cache";
+import { ExifDB } from "@blaahaj/dropbox-hacking-exif-db";
+import * as LsCache from "@blaahaj/dropbox-hacking-ls-cache";
 import { getDropboxClient } from "@blaahaj/dropbox-hacking-util";
 import { EventEmitter } from "events";
 import * as fs from "fs";
@@ -21,7 +21,7 @@ class FilesystemBasedFeed<T>
 
   constructor(
     private readonly dir: string,
-    private readonly loader: () => Promise<T>,
+    private readonly loader: () => Promise<T>
   ) {
     super();
   }

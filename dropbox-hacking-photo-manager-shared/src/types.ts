@@ -1,4 +1,4 @@
-import { ExifFromHash } from "dropbox-hacking-exif-db";
+import { ExifFromHash } from "@blaahaj/dropbox-hacking-exif-db";
 import type { GPSLatNLongE } from "./gpsLatLong.js";
 import type { NamedFile } from "./ws.js";
 

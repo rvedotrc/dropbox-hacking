@@ -4,7 +4,7 @@ import {
   Fetcher as F,
   fetcher as Fetcher,
   StateDir,
-} from "dropbox-hacking-exif-db";
+} from "@blaahaj/dropbox-hacking-exif-db";
 import { lister, ListerArgs } from "@blaahaj/dropbox-hacking-lister";
 import { ExifParserFactory } from "ts-exif-parser";
 
@@ -38,7 +38,7 @@ const doItem = async (
   _dbx: Dropbox,
   item: FileMetadata,
   stateDir: StateDir,
-  fetcher: F,
+  fetcher: F
 ): Promise<void> => {
   if (item.content_hash === undefined) return;
   if (item.path_lower === undefined) return;
@@ -54,7 +54,7 @@ const doItem = async (
     fetcher
       .fetch(item)
       .then((buffer) => ExifParserFactory.create(buffer).parse())
-      .then((exifData) => stateDir.addFile(contentHash, exifData, pathDisplay)),
+      .then((exifData) => stateDir.addFile(contentHash, exifData, pathDisplay))
   );
 };
 
@@ -62,7 +62,7 @@ const makeLister = (
   dbx: Dropbox,
   listerArgs: ListerArgs,
   stateDir: StateDir,
-  globalOptions: GlobalOptions,
+  globalOptions: GlobalOptions
 ) => {
   const limiter = makePromiseLimiter<Buffer>(5, "exif-cache-limiter");
   const fetcher = Fetcher(dbx, limiter, globalOptions);
@@ -87,7 +87,7 @@ const initHandler: Handler = async (
   dbxp: DropboxProvider,
   argv: string[],
   globalOptions: GlobalOptions,
-  usageFail: () => Promise<void>,
+  usageFail: () => Promise<void>
 ): Promise<void> => {
   // `${subInit} [${RECURSIVE}] ${TAIL}] DROPBOX_PATH STATE_DIR`
   let recursive = false;
@@ -121,7 +121,7 @@ const initHandler: Handler = async (
       tail,
     },
     stateDir,
-    globalOptions,
+    globalOptions
   );
 
   await r.promise;
@@ -133,7 +133,7 @@ const updateHandler: Handler = async (
   dbxp: DropboxProvider,
   argv: string[],
   globalOptions: GlobalOptions,
-  usageFail: () => Promise<void>,
+  usageFail: () => Promise<void>
 ): Promise<void> => {
   // `${subUpdate} [${TAIL}] STATE_DIR`
   let tail = false;
@@ -171,7 +171,7 @@ const updateHandler: Handler = async (
       tail,
     },
     stateDir,
-    globalOptions,
+    globalOptions
   );
 
   await r.promise;
@@ -183,7 +183,7 @@ const showHandler: Handler = async (
   _dbxp: DropboxProvider,
   argv: string[],
   _globalOptions: GlobalOptions,
-  usageFail: () => Promise<void>,
+  usageFail: () => Promise<void>
 ): Promise<void> => {
   // `${subShow} STATE_DIR`
   if (argv.length !== 2) return usageFail();
@@ -198,7 +198,7 @@ const showHandler: Handler = async (
 
   if (state.tag !== "ready") {
     return writeStderr(
-      "Error: no listing available - use 'update' first\n",
+      "Error: no listing available - use 'update' first\n"
     ).then(() => process.exit(1));
   }
 
@@ -213,7 +213,7 @@ const handler: Handler = (
   dbxp: DropboxProvider,
   argv: string[],
   globalOptions: GlobalOptions,
-  usageFail: () => Promise<void>,
+  usageFail: () => Promise<void>
 ): Promise<void> => {
   if (argv[0] === subInit)
     return initHandler(dbxp, argv.slice(1), globalOptions, usageFail);

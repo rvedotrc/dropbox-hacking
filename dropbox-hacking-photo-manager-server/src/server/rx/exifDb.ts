@@ -1,6 +1,10 @@
 import { ReplaySubject } from "rxjs";
 import { jsonFileObservableViaLoader } from "./util.js";
-import { ContentHash, ExifDB, ExifFromHash } from "dropbox-hacking-exif-db";
+import {
+  ContentHash,
+  ExifDB,
+  ExifFromHash,
+} from "@blaahaj/dropbox-hacking-exif-db";
 
 export const buildForExifDb = (dbDir: string) => {
   const observable = jsonFileObservableViaLoader(
@@ -11,7 +15,7 @@ export const buildForExifDb = (dbDir: string) => {
         for (const [k, v] of map.entries()) out[k] = v;
         return out;
       }),
-    100,
+    100
   );
 
   const subject = new ReplaySubject<Record<ContentHash, ExifFromHash>>(1);

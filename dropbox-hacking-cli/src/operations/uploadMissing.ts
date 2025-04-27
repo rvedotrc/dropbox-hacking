@@ -3,7 +3,7 @@ import * as fs from "fs";
 
 import { Handler } from "../types.js";
 import path from "node:path";
-import { StateDir } from "dropbox-hacking-ls-cache";
+import { StateDir } from "@blaahaj/dropbox-hacking-ls-cache";
 import { localListing } from "@blaahaj/dropbox-hacking-sync";
 import {
   makeContentHash,
@@ -30,7 +30,7 @@ const handler: Handler = async (
   dbxp: DropboxProvider,
   argv: string[],
   globalOptions: GlobalOptions,
-  usageFail: () => void,
+  usageFail: () => void
 ): Promise<void> => {
   let dryRun = false;
   let withDelete = false;
@@ -73,8 +73,8 @@ const handler: Handler = async (
         JSON.stringify({
           code: "deleted",
           local: localItem.path,
-        }),
-      ),
+        })
+      )
     );
   };
 
@@ -96,9 +96,9 @@ const handler: Handler = async (
               .submit(
                 () =>
                   makeContentHash(
-                    fs.createReadStream(localItem.path, { autoClose: true }),
+                    fs.createReadStream(localItem.path, { autoClose: true })
                   ),
-                `calculate hash ${localItem.path}`,
+                `calculate hash ${localItem.path}`
               )
               .then((localContentHash) => {
                 const alreadyAtRemotePath =
@@ -114,7 +114,7 @@ const handler: Handler = async (
                       local: localItem.path,
                       contentHash: localContentHash,
                       remote: alreadyAtRemotePath,
-                    }),
+                    })
                   );
 
                   return maybeDelete(localItem);
@@ -124,7 +124,7 @@ const handler: Handler = async (
                       code: "cannot_upload_this_filename",
                       local: localItem.path,
                       contentHash: localContentHash,
-                    }),
+                    })
                   );
 
                   return Promise.resolve();
@@ -150,7 +150,7 @@ const handler: Handler = async (
                     targetForFile(
                       path.basename(localItem.path),
                       localContentHash,
-                      clientModified,
+                      clientModified
                     ) || `${targetDir}/${path.basename(localItem.path)}`;
 
                   const commitInfo: files.CommitInfo = {
@@ -166,7 +166,7 @@ const handler: Handler = async (
                         local: localItem.path,
                         contentHash: localContentHash,
                         remote: uploadTo,
-                      }),
+                      })
                     );
 
                     return Promise.resolve();
@@ -177,7 +177,7 @@ const handler: Handler = async (
                         dbx,
                         commitInfo,
                         readable,
-                        globalOptions,
+                        globalOptions
                       )
                         .finally(() => readable.close())
                         .then((remoteMetadata) => {
@@ -188,7 +188,7 @@ const handler: Handler = async (
                               contentHash: localContentHash,
                               remote: uploadTo,
                               remoteMetadata,
-                            }),
+                            })
                           );
 
                           return maybeDelete(localItem);
@@ -197,10 +197,10 @@ const handler: Handler = async (
                   }
                 }
               });
-          }),
-        ),
-      ),
-    ),
+          })
+        )
+      )
+    )
   );
 
   console.log(JSON.stringify({ stats }));

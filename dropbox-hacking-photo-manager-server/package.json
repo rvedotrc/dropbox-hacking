@@ -33,10 +33,10 @@
   },
   "type": "module",
   "dependencies": {
+    "@blaahaj/dropbox-hacking-exif-db": "^1.0.0",
+    "@blaahaj/dropbox-hacking-ls-cache": "^1.0.0",
     "@blaahaj/dropbox-hacking-util": "^1.0.1",
     "dropbox": "^10.34.0",
-    "dropbox-hacking-exif-db": "link:../dropbox-hacking-exif-db",
-    "dropbox-hacking-ls-cache": "link:../dropbox-hacking-ls-cache",
     "dropbox-hacking-photo-manager-shared": "link:../dropbox-hacking-photo-manager-shared",
     "express": "^4.21.2",
     "express-ws": "^5.0.2",

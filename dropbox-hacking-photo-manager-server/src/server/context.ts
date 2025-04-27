@@ -1,6 +1,6 @@
 import { Dropbox } from "dropbox";
-import * as exifDb from "dropbox-hacking-exif-db";
-import * as lsCache from "dropbox-hacking-ls-cache";
+import * as exifDb from "@blaahaj/dropbox-hacking-exif-db";
+import * as lsCache from "@blaahaj/dropbox-hacking-ls-cache";
 import {
   DayMetadata,
   type NamedFile,

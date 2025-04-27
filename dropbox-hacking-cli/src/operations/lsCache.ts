@@ -1,6 +1,6 @@
 import { Dropbox } from "dropbox";
 import { lister, ListerArgs } from "@blaahaj/dropbox-hacking-lister";
-import { StateDir } from "dropbox-hacking-ls-cache";
+import { StateDir } from "@blaahaj/dropbox-hacking-ls-cache";
 import {
   DropboxProvider,
   GlobalOptions,
@@ -23,7 +23,7 @@ const makeLister = (
   dbx: Dropbox,
   listerArgs: ListerArgs,
   stateDir: StateDir,
-  globalOptions: GlobalOptions,
+  globalOptions: GlobalOptions
 ) =>
   lister({
     dbx,
@@ -38,7 +38,7 @@ const initHandler: Handler = async (
   dbxp: DropboxProvider,
   argv: string[],
   globalOptions: GlobalOptions,
-  usageFail: () => Promise<void>,
+  usageFail: () => Promise<void>
 ): Promise<void> => {
   // `${subInit} [${RECURSIVE}] ${TAIL}] DROPBOX_PATH STATE_DIR`
   let recursive = false;
@@ -70,7 +70,7 @@ const initHandler: Handler = async (
       tail,
     },
     stateDir,
-    globalOptions,
+    globalOptions
   );
 
   await r.promise;
@@ -81,7 +81,7 @@ const updateHandler: Handler = async (
   dbxp: DropboxProvider,
   argv: string[],
   globalOptions: GlobalOptions,
-  usageFail: () => Promise<void>,
+  usageFail: () => Promise<void>
 ): Promise<void> => {
   // `${subUpdate} [${TAIL}] STATE_DIR`
   let tail = false;
@@ -117,7 +117,7 @@ const updateHandler: Handler = async (
       tail,
     },
     stateDir,
-    globalOptions,
+    globalOptions
   );
 
   await r.promise;
@@ -128,7 +128,7 @@ const showHandler: Handler = async (
   _dbxp: DropboxProvider,
   argv: string[],
   _globalOptions: GlobalOptions,
-  usageFail: () => Promise<void>,
+  usageFail: () => Promise<void>
 ): Promise<void> => {
   // `${subShow} STATE_DIR`
   if (argv.length !== 1) return usageFail();
@@ -141,7 +141,7 @@ const showHandler: Handler = async (
 
   if (state.tag !== "ready") {
     return writeStderr(
-      "Error: no listing available - use 'update' first\n",
+      "Error: no listing available - use 'update' first\n"
     ).then(() => process.exit(1));
   }
 
@@ -157,7 +157,7 @@ const handler: Handler = (
   dbxp: DropboxProvider,
   argv: string[],
   globalOptions: GlobalOptions,
-  usageFail: () => Promise<void>,
+  usageFail: () => Promise<void>
 ): Promise<void> => {
   if (argv[0] === subInit)
     return initHandler(dbxp, argv.slice(1), globalOptions, usageFail);
