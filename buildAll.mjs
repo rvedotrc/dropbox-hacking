@@ -1,5 +1,4 @@
 import * as child_process from "node:child_process";
-import { sign } from "node:crypto";
 import * as fs from "node:fs";
 
 const main = async () => {

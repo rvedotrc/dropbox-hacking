@@ -1,2 +1,0 @@
-#!/bin/bash
-exec node ./dropbox-hacking-cli/dist/src/main/lsCache.js "$@"

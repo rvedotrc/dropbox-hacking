@@ -1,4 +1,4 @@
-import type { ExifFromHash } from "dropbox-hacking-exif-db";
+import type { ExifFromHash } from "@blaahaj/dropbox-hacking-exif-db";
 import type {
   NamedFile,
   PhotoDbEntry,

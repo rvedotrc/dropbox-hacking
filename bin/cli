@@ -1,2 +1,0 @@
-#!/bin/bash
-exec node --trace-deprecation --trace-warnings ./dropbox-hacking-cli/dist/src/main/cli.js "$@"

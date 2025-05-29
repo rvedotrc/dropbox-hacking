@@ -32,7 +32,7 @@
     ".": "./dist/src/index.js"
   },
   "dependencies": {
-    "dropbox-hacking-exif-db": "link:../dropbox-hacking-exif-db",
+    "@blaahaj/dropbox-hacking-exif-db": "^1.0.0",
     "ts-exif-parser": "^0.2.2"
   }
 }

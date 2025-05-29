@@ -1,6 +1,10 @@
 import { ReplaySubject } from "rxjs";
 import { jsonFileObservableViaLoader } from "./util.js";
-import { ContentHash, ExifDB, ExifFromHash } from "dropbox-hacking-exif-db";
+import {
+  ContentHash,
+  ExifDB,
+  ExifFromHash,
+} from "@blaahaj/dropbox-hacking-exif-db";
 
 export const buildForExifDb = (dbDir: string) => {
   const observable = jsonFileObservableViaLoader(

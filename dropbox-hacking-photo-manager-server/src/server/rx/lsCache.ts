@@ -1,6 +1,6 @@
 import { filter, map, ReplaySubject } from "rxjs";
 import { jsonFileObservableViaLoader } from "./util.js";
-import { State, StateDir } from "dropbox-hacking-ls-cache";
+import { State, StateDir } from "@blaahaj/dropbox-hacking-ls-cache";
 import { files } from "dropbox";
 import type { NamedFile } from "dropbox-hacking-photo-manager-shared";
 
