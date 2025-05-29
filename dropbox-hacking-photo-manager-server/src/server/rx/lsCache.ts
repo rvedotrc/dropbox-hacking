@@ -17,50 +17,50 @@ export const buildForLsCache = (dbDir: string) => {
       await db.load();
       return db.getState();
     },
-    100
+    100,
   )
     .pipe(filter((s) => s.tag === "ready"))
     .pipe(
       map((s) =>
-        [...s.entries.values()].filter((item) => item[".tag"] === "file")
-      )
+        [...s.entries.values()].filter((item) => item[".tag"] === "file"),
+      ),
     )
     .pipe(map((t): files.FileMetadata[] => t))
     .pipe(
       map((arr) =>
         arr.filter(
           (item): item is typeof item & { path_lower: string } =>
-            item.path_lower !== undefined
-        )
-      )
+            item.path_lower !== undefined,
+        ),
+      ),
     )
     .pipe(
       map((arr) =>
         arr.filter(
           (item): item is typeof item & { path_display: string } =>
-            item.path_display !== undefined
-        )
-      )
+            item.path_display !== undefined,
+        ),
+      ),
     )
     .pipe(
       map((arr) =>
         arr.filter(
           (item): item is typeof item & { content_hash: string } =>
-            item.content_hash !== undefined
-        )
-      )
+            item.content_hash !== undefined,
+        ),
+      ),
     )
     .pipe(
       map((arr) =>
-        arr.filter((item) => imageFilenamePattern.test(item.path_lower))
-      )
+        arr.filter((item) => imageFilenamePattern.test(item.path_lower)),
+      ),
     )
     .pipe(
       map((arr) => {
         const out: Record<string, (typeof arr)[number]> = {};
         for (const item of arr) out[item.id] = item;
         return out;
-      })
+      }),
     );
 
   const onlyImagesSubject = new ReplaySubject<Record<string, NamedFile>>(1);

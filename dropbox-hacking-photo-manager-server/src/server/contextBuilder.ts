@@ -21,7 +21,7 @@ class FilesystemBasedFeed<T>
 
   constructor(
     private readonly dir: string,
-    private readonly loader: () => Promise<T>
+    private readonly loader: () => Promise<T>,
   ) {
     super();
   }

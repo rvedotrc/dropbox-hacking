@@ -15,7 +15,7 @@ export const buildForExifDb = (dbDir: string) => {
         for (const [k, v] of map.entries()) out[k] = v;
         return out;
       }),
-    100
+    100,
   );
 
   const subject = new ReplaySubject<Record<ContentHash, ExifFromHash>>(1);
