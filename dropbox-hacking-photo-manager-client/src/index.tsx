@@ -84,6 +84,10 @@ const Root = ({
 
 const WrappedRoot = logRender(Root);
 
+declare const BUILD_VERSION: string;
+declare const BUILD_TIME: string;
+console.log({ BUILD_VERSION, BUILD_TIME });
+
 document.addEventListener("DOMContentLoaded", () => {
   const ele = document.getElementById("payload-script");
 
