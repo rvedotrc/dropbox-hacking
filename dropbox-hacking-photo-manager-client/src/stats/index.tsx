@@ -18,12 +18,8 @@ const Stats = () => {
   const [exifCount, setExifCount] = useState<number>();
   const [filesCount, setFilesCount] = useState<number>();
 
-  const cbdLatest = moreFeeds
-    ? useLatestValue(moreFeeds.countsByDate)
-    : undefined;
-  const fepLatest = moreFeeds
-    ? useLatestValue(moreFeeds.filesAndExifAndPhotoDb)
-    : undefined;
+  const cbdLatest = useLatestValue(moreFeeds?.countsByDate);
+  const fepLatest = useLatestValue(moreFeeds?.filesAndExifAndPhotoDb);
 
   const addEffect = (
     key: keyof NonNullable<typeof feeds>,
