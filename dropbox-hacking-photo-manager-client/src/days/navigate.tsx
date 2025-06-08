@@ -19,6 +19,20 @@ const navigation = (): React.ReactElement | null => (
     <SamePageLink href={"/stats"} state={{ route: "stats" }}>
       Stats
     </SamePageLink>
+    {" /// "}
+    <SamePageLink
+      href={"/next-gen/basic-counts"}
+      state={{ route: "next-gen/basic-counts" }}
+    >
+      Basic counts
+    </SamePageLink>
+    {" | "}
+    <SamePageLink
+      href={"/next-gen/list-of-days/without-samples"}
+      state={{ route: "next-gen/list-of-days/without-samples" }}
+    >
+      List of days
+    </SamePageLink>
   </p>
 );
 

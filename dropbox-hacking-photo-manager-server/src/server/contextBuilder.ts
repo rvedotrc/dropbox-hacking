@@ -8,10 +8,12 @@ import * as fs from "fs";
 import { Context, SubscribableData } from "./context.js";
 import DayDb from "./dayDb.js";
 import debounce from "./debounce.js";
-import { buildForDayDb } from "./rx/dayDb.js";
-import { buildForExifDb } from "./rx/exifDb.js";
-import { buildForLsCache } from "./rx/lsCache.js";
-import { buildForPhotoDb } from "./rx/photoDb.js";
+import { buildForDayDb, buildForDayDbMap } from "./rx/dayDb.js";
+import { buildForExifDb, buildForExifDbMap } from "./rx/exifDb.js";
+import { buildForLsCache, buildForLsCacheMapAllFiles } from "./rx/lsCache.js";
+import { buildForPhotoDb, buildForPhotoDbMap } from "./rx/photoDb.js";
+import type { FullDatabaseFeeds } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
+import { buildForMediaInfoDbMap } from "./rx/mediaInfoDb.js";
 
 class FilesystemBasedFeed<T>
   extends EventEmitter
@@ -60,6 +62,9 @@ export default (args: {
   const exifDbDir = process.env.EXIF_DB_DIR;
   if (exifDbDir === undefined) throw new Error("Need EXIF_DB_DIR");
 
+  const mediaInfoDbDir = process.env.MEDIAINFO_DB_DIR;
+  if (mediaInfoDbDir === undefined) throw new Error("Need MEDIAINFO_DB_DIR");
+
   const lsCacheDir = process.env.LS_CACHE_DIR;
   if (lsCacheDir === undefined) throw new Error("Need LS_CACHE_DIR");
 
@@ -70,6 +75,20 @@ export default (args: {
   if (photoDbDir === undefined) throw new Error("Need PHOTO_DB_DIR");
 
   // RX
+
+  const exifRxMap = buildForExifDbMap(exifDbDir);
+  const mediaInfoRxMap = buildForMediaInfoDbMap(mediaInfoDbDir);
+  const daysRxMap = buildForDayDbMap(dayDbDir);
+  const allFilesRxMap = buildForLsCacheMapAllFiles(lsCacheDir);
+  const photosRxMap = buildForPhotoDbMap(photoDbDir);
+
+  const fullDatabaseFeeds: FullDatabaseFeeds = {
+    exifsByContentHash: exifRxMap.observable(),
+    mediaInfoByContentHash: mediaInfoRxMap.observable(),
+    daysByDate: daysRxMap.observable(),
+    allFilesByRev: allFilesRxMap.observable(),
+    photosById: photosRxMap.observable(),
+  };
 
   const exifRx = buildForExifDb(exifDbDir);
   const dayRx = buildForDayDb(dayDbDir);
@@ -103,6 +122,12 @@ export default (args: {
     photoRx.close();
     imageFilesRx.close();
 
+    exifRxMap.close();
+    mediaInfoRxMap.close();
+    daysRxMap.close();
+    allFilesRxMap.close();
+    photosRxMap.close();
+
     await Promise.allSettled([
       lsFeed.stop(),
       exifDbFeed.stop(),
@@ -126,6 +151,9 @@ export default (args: {
     exifDbFeed,
     daysFeed,
     dayDb,
+
+    fullDatabaseFeeds,
+
     close,
   };
 };

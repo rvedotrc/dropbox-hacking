@@ -14,6 +14,12 @@ export type Payload =
       nClosest: number;
     }
   | {
+      route: "next-gen/basic-counts";
+    }
+  | {
+      route: "next-gen/list-of-days/without-samples";
+    }
+  | {
       route: "calendar";
     }
   | {

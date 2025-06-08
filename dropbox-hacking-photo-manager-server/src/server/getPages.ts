@@ -31,6 +31,16 @@ export default (app: Application, _context: Context): void => {
     </html>
   `;
 
+  app.get("/next-gen/basic-counts", (_req, res) => {
+    res.contentType("text/html");
+    res.send(pageAsString({ route: "next-gen/basic-counts" }));
+  });
+
+  app.get("/next-gen/list-of-days/without-samples", (_req, res) => {
+    res.contentType("text/html");
+    res.send(pageAsString({ route: "next-gen/list-of-days/without-samples" }));
+  });
+
   app.get("/stats", (_req, res) => {
     res.contentType("text/html");
     res.send(pageAsString({ route: "stats" }));

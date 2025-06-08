@@ -15,6 +15,11 @@ import { isDeepStrictEqual } from "util";
 import { fromExpressWebSocket } from "./fromExpressWebSocket.js";
 import { map } from "rxjs";
 import { serveRxFeed } from "./serveRxFeed.js";
+import type { RxFeedRequest } from "../../../../../dropbox-hacking-photo-manager-shared/dist/src/serverSideFeeds/types.js";
+import {
+  provideBasicCounts,
+  provideListOfDaysWithoutSamples,
+} from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 
 type IsUnchanged<V> = (a: V, b: V) => boolean;
 
@@ -62,6 +67,8 @@ export default (app: Application, context: Context): void => {
                 "type" in request &&
                 typeof request.type === "string"
               ) {
+                const typedRequest = request as RxFeedRequest;
+
                 const squish = <V>() =>
                   map(
                     compress(
@@ -69,33 +76,39 @@ export default (app: Application, context: Context): void => {
                     ),
                   );
 
-                if (request.type === "rx-days") {
+                if (typedRequest.type === "rx-days") {
                   return serveRxFeed(
                     context.dayRx().pipe(squish()),
                     () => writer,
                   );
-                }
-
-                if (request.type === "rx-photos") {
+                } else if (typedRequest.type === "rx-photos") {
                   return serveRxFeed(
                     context.photoRx().pipe(squish()),
                     () => writer,
                   );
-                }
-
-                if (request.type === "rx-files") {
+                } else if (typedRequest.type === "rx-files") {
                   return serveRxFeed(
                     context.imageFilesRx().pipe(squish()),
                     () => writer,
                   );
-                }
-
-                if (request.type === "rx-exif") {
+                } else if (typedRequest.type === "rx-exif") {
                   return serveRxFeed(
                     context.exifRx().pipe(squish()),
                     () => writer,
                   );
+                } else if (typedRequest.type === "ng.basic-counts") {
+                  return serveRxFeed(
+                    provideBasicCounts(context.fullDatabaseFeeds),
+                    () => writer,
+                  );
+                } else if (typedRequest.type === "ng.list-of-days") {
+                  return serveRxFeed(
+                    provideListOfDaysWithoutSamples(context.fullDatabaseFeeds),
+                    () => writer,
+                  );
                 }
+
+                const _ = typedRequest;
               }
 
               console.warn("Unrecognised request:", request);

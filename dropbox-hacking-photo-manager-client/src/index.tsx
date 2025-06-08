@@ -21,20 +21,81 @@ import ClosestTo from "./closest-to/index";
 import Stats from "./stats";
 import Month from "./month";
 import Year from "./year";
+import BasicCounts from "./next-gen/basic-counts";
+import NGDaysNoSamples from "./next-gen/list-of-days/without-samples";
 
 const toRender = ({ payload }: { payload: Payload }) => {
   if (payload.route === "closest-to")
-    return <ClosestTo gps={payload.gps} nClosest={payload.nClosest} />;
-  if (payload.route === "calendar") return <Calendar />;
-  if (payload.route === "days") return <ListOfDays withSamples={true} />;
-  if (payload.route === "days-plain") return <ListOfDays withSamples={false} />;
-  if (payload.route === "day") return <Day date={payload.date} />;
-  if (payload.route === "month") return <Month month={payload.month} />;
-  if (payload.route === "year") return <Year year={payload.year} />;
-  if (payload.route === "photo") return <Photo rev={payload.rev} />;
-  if (payload.route === "stats") return <Stats />;
+    return (
+      <WithWholeDatabaseFeeds>
+        <ClosestTo gps={payload.gps} nClosest={payload.nClosest} />
+      </WithWholeDatabaseFeeds>
+    );
+  if (payload.route === "calendar")
+    return (
+      <WithWholeDatabaseFeeds>
+        <Calendar />
+      </WithWholeDatabaseFeeds>
+    );
+  if (payload.route === "days")
+    return (
+      <WithWholeDatabaseFeeds>
+        <ListOfDays withSamples={true} />
+      </WithWholeDatabaseFeeds>
+    );
+  if (payload.route === "days-plain")
+    return (
+      <WithWholeDatabaseFeeds>
+        <ListOfDays withSamples={false} />
+      </WithWholeDatabaseFeeds>
+    );
+  if (payload.route === "day")
+    return (
+      <WithWholeDatabaseFeeds>
+        <Day date={payload.date} />
+      </WithWholeDatabaseFeeds>
+    );
+  if (payload.route === "month")
+    return (
+      <WithWholeDatabaseFeeds>
+        <Month month={payload.month} />
+      </WithWholeDatabaseFeeds>
+    );
+  if (payload.route === "year")
+    return (
+      <WithWholeDatabaseFeeds>
+        <Year year={payload.year} />
+      </WithWholeDatabaseFeeds>
+    );
+  if (payload.route === "photo")
+    return (
+      <WithWholeDatabaseFeeds>
+        <Photo rev={payload.rev} />
+      </WithWholeDatabaseFeeds>
+    );
+  if (payload.route === "stats")
+    return (
+      <WithWholeDatabaseFeeds>
+        <Stats />
+      </WithWholeDatabaseFeeds>
+    );
+
+  if (payload.route === "next-gen/basic-counts") return <BasicCounts />;
+  if (payload.route === "next-gen/list-of-days/without-samples")
+    return <NGDaysNoSamples />;
+
   return <span>Routing error</span>;
 };
+
+// const WithoutFeeds = ({ payload }: { payload: Payload }) => {};
+
+const WithWholeDatabaseFeeds = (props: React.PropsWithChildren) => (
+  <rxRecordFeedContext.defaultProvider>
+    <additionalFeeds.defaultProvider>
+      {props.children}
+    </additionalFeeds.defaultProvider>
+  </rxRecordFeedContext.defaultProvider>
+);
 
 const Root = ({
   initialState,
@@ -68,15 +129,11 @@ const Root = ({
   return (
     <routingContext.context.Provider value={router}>
       <multiplexerContext.defaultProvider accepter={accepter}>
-        <rxRecordFeedContext.defaultProvider>
-          <additionalFeeds.defaultProvider>
-            <websocket.defaultProvider>
-              <thumbnailLoaderContext.defaultProvider>
-                {toRender({ payload: state })}
-              </thumbnailLoaderContext.defaultProvider>
-            </websocket.defaultProvider>
-          </additionalFeeds.defaultProvider>
-        </rxRecordFeedContext.defaultProvider>
+        <websocket.defaultProvider>
+          <thumbnailLoaderContext.defaultProvider>
+            {toRender({ payload: state })}
+          </thumbnailLoaderContext.defaultProvider>
+        </websocket.defaultProvider>
       </multiplexerContext.defaultProvider>
     </routingContext.context.Provider>
   );

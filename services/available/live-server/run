@@ -13,6 +13,7 @@ exec ./with-live \
     env \
     EXIF_DB_DIR=/Users/rachel/git/github.com/blaahaj/dropbox-hacking-exif-db/var/live/exif \
     LS_CACHE_DIR=/Users/rachel/git/github.com/blaahaj/dropbox-hacking-ls-cache/var/live/ls \
+    MEDIAINFO_DB_DIR=/Users/rachel/git/github.com/blaahaj/dropbox-hacking-mediainfo-db/var/live/mediainfo \
     DAY_DB_DIR=var/live/day-db \
     PHOTO_DB_DIR=var/live/photo-db \
     PUBLIC_DIR=$PWD/dropbox-hacking-photo-manager-client/public \
