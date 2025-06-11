@@ -1,4 +1,4 @@
-import { Payload } from "dropbox-hacking-photo-manager-shared";
+import { Payload, urlForState } from "dropbox-hacking-photo-manager-shared";
 import * as React from "react";
 
 import { useRouter } from "./context/routingContext";
@@ -8,11 +8,17 @@ const samePageLink = ({
   ...props
 }: {
   state: Payload;
-} & React.JSX.IntrinsicElements["a"]): React.ReactElement | null => {
+} & Omit<
+  React.JSX.IntrinsicElements["a"],
+  "href"
+>): React.ReactElement | null => {
   const router = useRouter();
+
+  const href = urlForState(state);
 
   return (
     <a
+      href={href}
       {...props}
       onClick={(e) => {
         e.persist();
@@ -21,7 +27,7 @@ const samePageLink = ({
         }
 
         e.preventDefault();
-        window.history.pushState(state, "unused", props.href);
+        window.history.pushState(state, "unused", href);
         router.switchToPage(state);
       }}
     >

@@ -41,7 +41,6 @@ const PhotoTile = ({
     <SamePageLink
       className={"photoItem"}
       key={photo.namedFile.id}
-      href={`/photo/rev/${photo.namedFile.rev}`}
       state={{ route: "photo", rev: photo.namedFile.rev }}
       data-rev={photo.namedFile.rev}
     >

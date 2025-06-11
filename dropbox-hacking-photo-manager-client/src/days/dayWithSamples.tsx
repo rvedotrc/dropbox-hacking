@@ -46,10 +46,7 @@ export const dayWithSamples = ({
 
   return (
     <li key={day.date} {...{ [dayDateAttribute]: day.date }}>
-      <SamePageLink
-        state={{ route: "day", date: day.date }}
-        href={`/day/${day.date}`}
-      >
+      <SamePageLink state={{ route: "day", date: day.date }}>
         <div className={"dateAndStats"}>
           <span className={"date"}>{day.date}</span>
           <span className={"dayName"}>

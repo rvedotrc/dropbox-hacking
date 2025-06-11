@@ -4,6 +4,7 @@ import logRender from "../../logRender";
 import Navigate from "../../days/navigate";
 import type { NGDaysNoSamplesType } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import { useLatestValueFromServerFeed } from "../useLatestValueFromServerFeed";
+import SamePageLink from "../../samePageLink";
 
 const NGDaysNoSamples = () => {
   const latestValue = useLatestValueFromServerFeed<NGDaysNoSamplesType>({
@@ -31,7 +32,16 @@ const NGDaysNoSamples = () => {
           <tbody>
             {latestValue.map((row) => (
               <tr key={row.date}>
-                <td>{row.date}</td>
+                <td>
+                  <SamePageLink
+                    state={{
+                      route: "next-gen/day/files",
+                      date: row.date,
+                    }}
+                  >
+                    {row.date}
+                  </SamePageLink>
+                </td>
                 <td>{row.counts.images}</td>
                 <td>{row.counts.imagesWithExif}</td>
                 <td>{row.counts.videos}</td>

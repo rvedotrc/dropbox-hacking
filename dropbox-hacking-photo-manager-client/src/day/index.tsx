@@ -93,7 +93,6 @@ const DayWithData = ({
           <li>
             🔼{" "}
             <SamePageLink
-              href={`/month/${month}`}
               state={{
                 route: "month",
                 month,
@@ -107,7 +106,6 @@ const DayWithData = ({
             <li>
               {"◀️ "}
               <SamePageLink
-                href={`/day/${prevNext.previousDay}`}
                 state={{
                   route: "day",
                   date: prevNext.previousDay,
@@ -123,7 +121,6 @@ const DayWithData = ({
               <li>
                 {"▶️ "}
                 <SamePageLink
-                  href={`/day/${prevNext.nextDay}`}
                   state={{
                     route: "day",
                     date: prevNext.nextDay,

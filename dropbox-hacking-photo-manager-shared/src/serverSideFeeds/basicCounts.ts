@@ -46,6 +46,19 @@ export const provideBasicCounts = (feeds: FullDatabaseFeeds) =>
         counts: {
           photos: photos.size,
           exifs: exifs.size,
+          mediaInfos: mediaInfos.size,
+          mediaInfosWithoutMedia: mediaInfos
+            .values()
+            .filter((v) => !v.mediainfoData.media)
+            .toArray().length,
+          mediaInfosWithoutVideoTrack: mediaInfos
+            .values()
+            .filter((v) => {
+              const media = v.mediainfoData.media;
+              if (!media) return false;
+              return media.track.every((t) => t["@type"] !== "Video");
+            })
+            .toArray().length,
           allFiles: files.size,
           days: days.size,
           unusedExifs: unusedExifs.size,

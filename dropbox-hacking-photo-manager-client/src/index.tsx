@@ -23,6 +23,12 @@ import Month from "./month";
 import Year from "./year";
 import BasicCounts from "./next-gen/basic-counts";
 import NGDaysNoSamples from "./next-gen/list-of-days/without-samples";
+import NGDayFiles from "./next-gen/day/files";
+import NGContentHash from "./next-gen/contentHash";
+import NGFileId from "./next-gen/fileId";
+import NGFileRev from "./next-gen/fileRev";
+
+const ensureNever = <_ extends never>() => undefined;
 
 const toRender = ({ payload }: { payload: Payload }) => {
   if (payload.route === "closest-to")
@@ -83,6 +89,15 @@ const toRender = ({ payload }: { payload: Payload }) => {
   if (payload.route === "next-gen/basic-counts") return <BasicCounts />;
   if (payload.route === "next-gen/list-of-days/without-samples")
     return <NGDaysNoSamples />;
+  if (payload.route === "next-gen/day/files")
+    return <NGDayFiles date={payload.date} />;
+  if (payload.route === "next-gen/content-hash")
+    return <NGContentHash contentHash={payload.contentHash} />;
+  if (payload.route === "next-gen/file/id") return <NGFileId id={payload.id} />;
+  if (payload.route === "next-gen/file/rev")
+    return <NGFileRev rev={payload.rev} />;
+
+  ensureNever<typeof payload>();
 
   return <span>Routing error</span>;
 };

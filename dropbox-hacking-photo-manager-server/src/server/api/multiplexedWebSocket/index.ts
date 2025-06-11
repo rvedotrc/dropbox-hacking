@@ -18,10 +18,16 @@ import { serveRxFeed } from "./serveRxFeed.js";
 import type { RxFeedRequest } from "../../../../../dropbox-hacking-photo-manager-shared/dist/src/serverSideFeeds/types.js";
 import {
   provideBasicCounts,
+  provideContentHash,
+  provideDayFiles,
+  provideFileId,
+  provideFileRev,
   provideListOfDaysWithoutSamples,
 } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 
 type IsUnchanged<V> = (a: V, b: V) => boolean;
+
+const ensureNever = <_ extends never>() => undefined;
 
 export default (app: Application, context: Context): void => {
   if (!process.env.HOME) console.log(app, context);
@@ -106,7 +112,38 @@ export default (app: Application, context: Context): void => {
                     provideListOfDaysWithoutSamples(context.fullDatabaseFeeds),
                     () => writer,
                   );
+                } else if (typedRequest.type === "ng.day.files") {
+                  return serveRxFeed(
+                    provideDayFiles(context.fullDatabaseFeeds, {
+                      date: typedRequest.date,
+                    }),
+                    () => writer,
+                  );
+                } else if (typedRequest.type === "ng.content_hash") {
+                  return serveRxFeed(
+                    provideContentHash(context.fullDatabaseFeeds, {
+                      contentHash: typedRequest.contentHash,
+                    }),
+                    () => writer,
+                  );
+                } else if (typedRequest.type === "ng.file.id") {
+                  return serveRxFeed(
+                    provideFileId(context.fullDatabaseFeeds, {
+                      id: typedRequest.id,
+                    }),
+                    () => writer,
+                  );
+                } else if (typedRequest.type === "ng.file.rev") {
+                  return serveRxFeed(
+                    provideFileRev(context.fullDatabaseFeeds, {
+                      rev: typedRequest.rev,
+                    }),
+                    () => writer,
+                  );
                 }
+                // RVE-add-feed
+
+                ensureNever<typeof typedRequest>();
 
                 const _ = typedRequest;
               }

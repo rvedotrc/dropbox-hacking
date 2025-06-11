@@ -41,6 +41,36 @@ export default (app: Application, _context: Context): void => {
     res.send(pageAsString({ route: "next-gen/list-of-days/without-samples" }));
   });
 
+  app.get("/next-gen/file/id/:id", (req, res) => {
+    res.contentType("text/html");
+    res.send(pageAsString({ route: "next-gen/file/id", id: req.params.id }));
+  });
+
+  app.get("/next-gen/file/rev/:rev", (req, res) => {
+    res.contentType("text/html");
+    res.send(pageAsString({ route: "next-gen/file/rev", rev: req.params.rev }));
+  });
+
+  app.get("/next-gen/content-hash/:contentHash", (req, res) => {
+    res.contentType("text/html");
+    res.send(
+      pageAsString({
+        route: "next-gen/content-hash",
+        contentHash: req.params.contentHash,
+      }),
+    );
+  });
+
+  app.get(
+    "/next-gen/day/:date(\\d\\d\\d\\d-\\d\\d-\\d\\d)/files",
+    (req, res) => {
+      res.contentType("text/html");
+      res.send(
+        pageAsString({ route: "next-gen/day/files", date: req.params.date }),
+      );
+    },
+  );
+
   app.get("/stats", (_req, res) => {
     res.contentType("text/html");
     res.send(pageAsString({ route: "stats" }));

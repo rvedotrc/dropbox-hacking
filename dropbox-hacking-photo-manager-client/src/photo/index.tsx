@@ -71,7 +71,6 @@ const Photo = (props: { rev: string }): React.ReactElement | null => {
           <li>
             🔼{" "}
             <SamePageLink
-              href={`/day/${date}`}
               state={{
                 route: "day",
                 date,
@@ -85,7 +84,6 @@ const Photo = (props: { rev: string }): React.ReactElement | null => {
             <li>
               {"◀️ "}
               <SamePageLink
-                href={`/photo/rev/${prevNext.previousRev}`}
                 state={{
                   route: "photo",
                   rev: prevNext.previousRev,
@@ -101,7 +99,6 @@ const Photo = (props: { rev: string }): React.ReactElement | null => {
               <li>
                 {"▶️ "}
                 <SamePageLink
-                  href={`/photo/rev/${prevNext.nextRev}`}
                   state={{
                     route: "photo",
                     rev: prevNext.nextRev,
