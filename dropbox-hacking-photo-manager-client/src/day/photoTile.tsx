@@ -24,6 +24,7 @@ const PhotoTile = ({
   const loader = useThumbnailLoader();
 
   const thumbnail = useThumbnail(photo.namedFile.rev, loader)(isVisible);
+  // console.log({ rev: photo.namedFile.rev, isVisible, thumbnail: !!thumbnail });
 
   const tags = photo.exif.exifData.tags;
   const gps = tags ? GPSLatLong.fromExifTags(tags) : null;

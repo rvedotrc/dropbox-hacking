@@ -7,7 +7,7 @@ import { useLatestValueFromServerFeed } from "../useLatestValueFromServerFeed";
 
 const BasicCounts = () => {
   const latestValue = useLatestValueFromServerFeed<BasicCountsType>({
-    type: "ng.basic-counts",
+    type: "rx.ng.basic-counts",
   });
 
   return (

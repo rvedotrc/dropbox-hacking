@@ -8,7 +8,7 @@ import SamePageLink from "../../samePageLink";
 
 const NGContentHash = ({ contentHash }: { contentHash: string }) => {
   const latestValue = useLatestValueFromServerFeed<ContentHashResult>({
-    type: "ng.content_hash",
+    type: "rx.ng.content_hash",
     contentHash,
   });
 
@@ -30,7 +30,7 @@ const NGContentHash = ({ contentHash }: { contentHash: string }) => {
                 {" / "}
                 <SamePageLink
                   state={{
-                    route: "next-gen/file/id",
+                    route: "route/next-gen/file/id",
                     id: file.id,
                   }}
                 >
@@ -39,7 +39,7 @@ const NGContentHash = ({ contentHash }: { contentHash: string }) => {
                 {" / "}
                 <SamePageLink
                   state={{
-                    route: "next-gen/file/rev",
+                    route: "route/next-gen/file/rev",
                     rev: file.rev,
                   }}
                 >

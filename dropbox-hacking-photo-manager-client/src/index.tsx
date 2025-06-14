@@ -27,6 +27,7 @@ import NGDayFiles from "./next-gen/day/files";
 import NGContentHash from "./next-gen/contentHash";
 import NGFileId from "./next-gen/fileId";
 import NGFileRev from "./next-gen/fileRev";
+import Fsck from "./next-gen/fsck";
 
 const ensureNever = <_ extends never>() => undefined;
 
@@ -86,15 +87,17 @@ const toRender = ({ payload }: { payload: Payload }) => {
       </WithWholeDatabaseFeeds>
     );
 
-  if (payload.route === "next-gen/basic-counts") return <BasicCounts />;
-  if (payload.route === "next-gen/list-of-days/without-samples")
+  if (payload.route === "route/next-gen/basic-counts") return <BasicCounts />;
+  if (payload.route === "route/next-gen/fsck") return <Fsck />;
+  if (payload.route === "route/next-gen/list-of-days/without-samples")
     return <NGDaysNoSamples />;
-  if (payload.route === "next-gen/day/files")
+  if (payload.route === "route/next-gen/day/files")
     return <NGDayFiles date={payload.date} />;
-  if (payload.route === "next-gen/content-hash")
+  if (payload.route === "route/next-gen/content-hash")
     return <NGContentHash contentHash={payload.contentHash} />;
-  if (payload.route === "next-gen/file/id") return <NGFileId id={payload.id} />;
-  if (payload.route === "next-gen/file/rev")
+  if (payload.route === "route/next-gen/file/id")
+    return <NGFileId id={payload.id} />;
+  if (payload.route === "route/next-gen/file/rev")
     return <NGFileRev rev={payload.rev} />;
 
   ensureNever<typeof payload>();
@@ -172,9 +175,9 @@ document.addEventListener("DOMContentLoaded", () => {
       window.history.replaceState(payload, "unused");
       createRoot(container).render(
         // StrictMode removed: kills the EventSource stuff, for now
-        // <StrictMode>
-        <WrappedRoot initialState={payload} />,
-        // </StrictMode>,
+        <React.StrictMode>
+          <WrappedRoot initialState={payload} />
+        </React.StrictMode>,
       );
     }
   }

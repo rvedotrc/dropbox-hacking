@@ -33,29 +33,40 @@ export default (app: Application, _context: Context): void => {
 
   app.get("/next-gen/basic-counts", (_req, res) => {
     res.contentType("text/html");
-    res.send(pageAsString({ route: "next-gen/basic-counts" }));
+    res.send(pageAsString({ route: "route/next-gen/basic-counts" }));
+  });
+
+  app.get("/next-gen/fsck", (_req, res) => {
+    res.contentType("text/html");
+    res.send(pageAsString({ route: "route/next-gen/fsck" }));
   });
 
   app.get("/next-gen/list-of-days/without-samples", (_req, res) => {
     res.contentType("text/html");
-    res.send(pageAsString({ route: "next-gen/list-of-days/without-samples" }));
+    res.send(
+      pageAsString({ route: "route/next-gen/list-of-days/without-samples" }),
+    );
   });
 
   app.get("/next-gen/file/id/:id", (req, res) => {
     res.contentType("text/html");
-    res.send(pageAsString({ route: "next-gen/file/id", id: req.params.id }));
+    res.send(
+      pageAsString({ route: "route/next-gen/file/id", id: req.params.id }),
+    );
   });
 
   app.get("/next-gen/file/rev/:rev", (req, res) => {
     res.contentType("text/html");
-    res.send(pageAsString({ route: "next-gen/file/rev", rev: req.params.rev }));
+    res.send(
+      pageAsString({ route: "route/next-gen/file/rev", rev: req.params.rev }),
+    );
   });
 
   app.get("/next-gen/content-hash/:contentHash", (req, res) => {
     res.contentType("text/html");
     res.send(
       pageAsString({
-        route: "next-gen/content-hash",
+        route: "route/next-gen/content-hash",
         contentHash: req.params.contentHash,
       }),
     );
@@ -66,7 +77,10 @@ export default (app: Application, _context: Context): void => {
     (req, res) => {
       res.contentType("text/html");
       res.send(
-        pageAsString({ route: "next-gen/day/files", date: req.params.date }),
+        pageAsString({
+          route: "route/next-gen/day/files",
+          date: req.params.date,
+        }),
       );
     },
   );

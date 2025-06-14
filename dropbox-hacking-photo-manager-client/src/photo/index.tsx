@@ -62,8 +62,6 @@ const Photo = (props: { rev: string }): React.ReactElement | null => {
         : undefined,
   };
 
-  console.log({ date, sortedRevs, thisIndex, prevNext });
-
   return (
     <>
       <div className="navigation">

@@ -8,6 +8,7 @@ import { type Observable } from "rxjs";
 export * from "./types.js";
 export * from "./listOfDays.js";
 export * from "./basicCounts.js";
+export * from "./fsck.js";
 export * from "./dayFiles.js";
 export * from "./fileId.js";
 export * from "./fileRev.js";

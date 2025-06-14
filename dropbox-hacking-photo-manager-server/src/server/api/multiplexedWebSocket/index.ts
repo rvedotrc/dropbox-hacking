@@ -15,14 +15,15 @@ import { isDeepStrictEqual } from "util";
 import { fromExpressWebSocket } from "./fromExpressWebSocket.js";
 import { map } from "rxjs";
 import { serveRxFeed } from "./serveRxFeed.js";
-import type { RxFeedRequest } from "../../../../../dropbox-hacking-photo-manager-shared/dist/src/serverSideFeeds/types.js";
 import {
   provideBasicCounts,
   provideContentHash,
   provideDayFiles,
   provideFileId,
   provideFileRev,
+  provideFsck,
   provideListOfDaysWithoutSamples,
+  type RxFeedRequest,
 } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 
 type IsUnchanged<V> = (a: V, b: V) => boolean;
@@ -102,38 +103,43 @@ export default (app: Application, context: Context): void => {
                     context.exifRx().pipe(squish()),
                     () => writer,
                   );
-                } else if (typedRequest.type === "ng.basic-counts") {
+                } else if (typedRequest.type === "rx.ng.basic-counts") {
                   return serveRxFeed(
                     provideBasicCounts(context.fullDatabaseFeeds),
                     () => writer,
                   );
-                } else if (typedRequest.type === "ng.list-of-days") {
+                } else if (typedRequest.type === "rx.ng.fsck") {
+                  return serveRxFeed(
+                    provideFsck(context.fullDatabaseFeeds),
+                    () => writer,
+                  );
+                } else if (typedRequest.type === "rx.ng.list-of-days") {
                   return serveRxFeed(
                     provideListOfDaysWithoutSamples(context.fullDatabaseFeeds),
                     () => writer,
                   );
-                } else if (typedRequest.type === "ng.day.files") {
+                } else if (typedRequest.type === "rx.ng.day.files") {
                   return serveRxFeed(
                     provideDayFiles(context.fullDatabaseFeeds, {
                       date: typedRequest.date,
                     }),
                     () => writer,
                   );
-                } else if (typedRequest.type === "ng.content_hash") {
+                } else if (typedRequest.type === "rx.ng.content_hash") {
                   return serveRxFeed(
                     provideContentHash(context.fullDatabaseFeeds, {
                       contentHash: typedRequest.contentHash,
                     }),
                     () => writer,
                   );
-                } else if (typedRequest.type === "ng.file.id") {
+                } else if (typedRequest.type === "rx.ng.file.id") {
                   return serveRxFeed(
                     provideFileId(context.fullDatabaseFeeds, {
                       id: typedRequest.id,
                     }),
                     () => writer,
                   );
-                } else if (typedRequest.type === "ng.file.rev") {
+                } else if (typedRequest.type === "rx.ng.file.rev") {
                   return serveRxFeed(
                     provideFileRev(context.fullDatabaseFeeds, {
                       rev: typedRequest.rev,

@@ -14,25 +14,28 @@ export type Payload =
       nClosest: number;
     }
   | {
-      route: "next-gen/basic-counts";
+      route: "route/next-gen/basic-counts";
     }
   | {
-      route: "next-gen/list-of-days/without-samples";
+      route: "route/next-gen/fsck";
     }
   | {
-      route: "next-gen/day/files";
+      route: "route/next-gen/list-of-days/without-samples";
+    }
+  | {
+      route: "route/next-gen/day/files";
       date: string;
     }
   | {
-      route: "next-gen/file/id";
+      route: "route/next-gen/file/id";
       id: string;
     }
   | {
-      route: "next-gen/file/rev";
+      route: "route/next-gen/file/rev";
       rev: string;
     }
   | {
-      route: "next-gen/content-hash";
+      route: "route/next-gen/content-hash";
       contentHash: string;
     }
   | {
@@ -86,17 +89,19 @@ export const urlForState = (state: Payload): string => {
       return `/month/${state.month}`;
     case "photo":
       return `/photo/rev/${state.rev}`;
-    case "next-gen/basic-counts":
+    case "route/next-gen/basic-counts":
       return `/next-gen/basic-counts`;
-    case "next-gen/content-hash":
+    case "route/next-gen/fsck":
+      return `/next-gen/fsck`;
+    case "route/next-gen/content-hash":
       return `/next-gen/content-hash/${state.contentHash}`;
-    case "next-gen/day/files":
+    case "route/next-gen/day/files":
       return `/next-gen/day/${state.date}/files`;
-    case "next-gen/file/id":
+    case "route/next-gen/file/id":
       return `/next-gen/file/id/${state.id}`;
-    case "next-gen/file/rev":
+    case "route/next-gen/file/rev":
       return `/next-gen/file/rev/${state.rev}`;
-    case "next-gen/list-of-days/without-samples":
+    case "route/next-gen/list-of-days/without-samples":
       return `/next-gen/list-of-days/without-samples`;
     // RVE-add-route
   }

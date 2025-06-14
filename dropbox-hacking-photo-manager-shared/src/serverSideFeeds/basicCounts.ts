@@ -64,12 +64,12 @@ export const provideBasicCounts = (feeds: FullDatabaseFeeds) =>
           unusedExifs: unusedExifs.size,
           unusedMediaInfos: unusedMediaInfos.size,
           unusedPhotos: unusedPhotos.size,
-          imageCountsByTime: [...imageCountsByTime.entries()].sort((a, b) =>
-            a[0].localeCompare(b[0]),
-          ),
-          videoCountsByTime: [...videoCountsByTime.entries()].sort((a, b) =>
-            a[0].localeCompare(b[0]),
-          ),
+          // imageCountsByTime: [...imageCountsByTime.entries()].sort((a, b) =>
+          //   a[0].localeCompare(b[0]),
+          // ),
+          // videoCountsByTime: [...videoCountsByTime.entries()].sort((a, b) =>
+          //   a[0].localeCompare(b[0]),
+          // ),
         },
       };
     }),

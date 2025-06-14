@@ -8,7 +8,7 @@ import SamePageLink from "../../samePageLink";
 
 const NGDaysNoSamples = () => {
   const latestValue = useLatestValueFromServerFeed<NGDaysNoSamplesType>({
-    type: "ng.list-of-days",
+    type: "rx.ng.list-of-days",
     withSamples: false,
   });
 
@@ -23,10 +23,9 @@ const NGDaysNoSamples = () => {
           <thead>
             <tr>
               <th>Date</th>
-              <th>Images</th>
-              <th>Images with EXIF</th>
-              <th>Videos</th>
-              <th>Videos with MediaInfo</th>
+              <th>Images (with exif)</th>
+              <th>Videos (with mediainfo)</th>
+              <th>Description</th>
             </tr>
           </thead>
           <tbody>
@@ -35,16 +34,14 @@ const NGDaysNoSamples = () => {
                 <td>
                   <SamePageLink
                     state={{
-                      route: "next-gen/day/files",
+                      route: "route/next-gen/day/files",
                       date: row.date,
                     }}
                   >
                     {row.date}
                   </SamePageLink>
                 </td>
-                <td>{row.counts.images}</td>
                 <td>{row.counts.imagesWithExif}</td>
-                <td>{row.counts.videos}</td>
                 <td>{row.counts.videosWithMediaInfo}</td>
                 <td>{row.dayMetadata?.description ?? ""}</td>
               </tr>

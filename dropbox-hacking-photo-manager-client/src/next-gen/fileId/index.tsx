@@ -8,7 +8,7 @@ import SamePageLink from "../../samePageLink";
 
 const NGFileId = ({ id }: { id: string }) => {
   const latestValue = useLatestValueFromServerFeed<FileIdResult>({
-    type: "ng.file.id",
+    type: "rx.ng.file.id",
     id,
   });
 
@@ -22,9 +22,17 @@ const NGFileId = ({ id }: { id: string }) => {
 
       {latestValue?.file && (
         <>
+          <p>
+            <a
+              href={`https://www.dropbox.com/preview${latestValue.file.path_lower}?context=browse&role=personal`}
+            >
+              View in Dropbox
+            </a>
+          </p>
+
           <SamePageLink
             state={{
-              route: "next-gen/file/rev",
+              route: "route/next-gen/file/rev",
               rev: latestValue.file.rev,
             }}
           >
@@ -33,7 +41,7 @@ const NGFileId = ({ id }: { id: string }) => {
           {" / "}
           <SamePageLink
             state={{
-              route: "next-gen/content-hash",
+              route: "route/next-gen/content-hash",
               contentHash: latestValue.file.content_hash,
             }}
           >
@@ -44,7 +52,7 @@ const NGFileId = ({ id }: { id: string }) => {
 
           <SamePageLink
             state={{
-              route: "next-gen/day/files",
+              route: "route/next-gen/day/files",
               date: latestValue.file.client_modified.substring(0, 10),
             }}
           >
