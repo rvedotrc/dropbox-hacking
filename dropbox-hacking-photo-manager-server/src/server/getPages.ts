@@ -85,11 +85,6 @@ export default (app: Application, _context: Context): void => {
     },
   );
 
-  app.get("/stats", (_req, res) => {
-    res.contentType("text/html");
-    res.send(pageAsString({ route: "stats" }));
-  });
-
   app.get("/calendar", (_req, res) => {
     res.contentType("text/html");
     res.send(pageAsString({ route: "calendar" }));

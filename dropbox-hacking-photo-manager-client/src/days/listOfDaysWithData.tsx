@@ -9,7 +9,6 @@ import logRender from "../logRender";
 import DayWithSamples, { dayDateAttribute } from "./dayWithSamples";
 import { makeEmittableSubscribable } from "./emittableSubscribable";
 import Navigate from "./navigate";
-import Stats from "./stats";
 import useVisibilityTracking from "./useVisibilityTracking";
 
 const ListOfDaysWithData = ({
@@ -78,8 +77,6 @@ const ListOfDaysWithData = ({
       <Navigate />
 
       <h1>List of Days</h1>
-
-      <Stats days={days} />
 
       <p>Date; count of pics; of which with GPS</p>
 

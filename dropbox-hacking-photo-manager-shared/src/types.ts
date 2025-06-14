@@ -48,9 +48,6 @@ export type RouteState =
       route: "days-plain";
     }
   | {
-      route: "stats";
-    }
-  | {
       route: "day";
       date: string;
     }
@@ -81,8 +78,6 @@ export const urlForState = (state: RouteState): string => {
       return `/days`;
     case "days-plain":
       return `/days/plain`;
-    case "stats":
-      return `/stats`;
     case "year":
       return `/year/${state.year}`;
     case "month":

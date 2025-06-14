@@ -21,7 +21,6 @@ import ListOfDays from "./days/listOfDays";
 import logRender from "./logRender";
 import Photo from "./photo";
 import ClosestTo from "./closest-to/index";
-import Stats from "./stats";
 import Month from "./month";
 import Year from "./year";
 import BasicCounts from "./next-gen/basic-counts";
@@ -34,76 +33,71 @@ import Fsck from "./next-gen/fsck";
 
 const ensureNever = <_ extends never>() => undefined;
 
-const toRender = ({ payload }: { payload: RouteState }) => {
-  if (payload.route === "closest-to")
+const toRender = ({ routeState }: { routeState: RouteState }) => {
+  if (routeState.route === "closest-to")
     return (
       <WithWholeDatabaseFeeds>
-        <ClosestTo gps={payload.gps} nClosest={payload.nClosest} />
+        <ClosestTo gps={routeState.gps} nClosest={routeState.nClosest} />
       </WithWholeDatabaseFeeds>
     );
-  if (payload.route === "calendar")
+  if (routeState.route === "calendar")
     return (
       <WithWholeDatabaseFeeds>
         <Calendar />
       </WithWholeDatabaseFeeds>
     );
-  if (payload.route === "days")
+  if (routeState.route === "days")
     return (
       <WithWholeDatabaseFeeds>
         <ListOfDays withSamples={true} />
       </WithWholeDatabaseFeeds>
     );
-  if (payload.route === "days-plain")
+  if (routeState.route === "days-plain")
     return (
       <WithWholeDatabaseFeeds>
         <ListOfDays withSamples={false} />
       </WithWholeDatabaseFeeds>
     );
-  if (payload.route === "day")
+  if (routeState.route === "day")
     return (
       <WithWholeDatabaseFeeds>
-        <Day date={payload.date} />
+        <Day date={routeState.date} />
       </WithWholeDatabaseFeeds>
     );
-  if (payload.route === "month")
+  if (routeState.route === "month")
     return (
       <WithWholeDatabaseFeeds>
-        <Month month={payload.month} />
+        <Month month={routeState.month} />
       </WithWholeDatabaseFeeds>
     );
-  if (payload.route === "year")
+  if (routeState.route === "year")
     return (
       <WithWholeDatabaseFeeds>
-        <Year year={payload.year} />
+        <Year year={routeState.year} />
       </WithWholeDatabaseFeeds>
     );
-  if (payload.route === "photo")
+  if (routeState.route === "photo")
     return (
       <WithWholeDatabaseFeeds>
-        <Photo rev={payload.rev} />
-      </WithWholeDatabaseFeeds>
-    );
-  if (payload.route === "stats")
-    return (
-      <WithWholeDatabaseFeeds>
-        <Stats />
+        <Photo rev={routeState.rev} />
       </WithWholeDatabaseFeeds>
     );
 
-  if (payload.route === "route/next-gen/basic-counts") return <BasicCounts />;
-  if (payload.route === "route/next-gen/fsck") return <Fsck />;
-  if (payload.route === "route/next-gen/list-of-days/without-samples")
+  if (routeState.route === "route/next-gen/basic-counts")
+    return <BasicCounts />;
+  if (routeState.route === "route/next-gen/fsck") return <Fsck />;
+  if (routeState.route === "route/next-gen/list-of-days/without-samples")
     return <NGDaysNoSamples />;
-  if (payload.route === "route/next-gen/day/files")
-    return <NGDayFiles date={payload.date} />;
-  if (payload.route === "route/next-gen/content-hash")
-    return <NGContentHash contentHash={payload.contentHash} />;
-  if (payload.route === "route/next-gen/file/id")
-    return <NGFileId id={payload.id} />;
-  if (payload.route === "route/next-gen/file/rev")
-    return <NGFileRev rev={payload.rev} />;
+  if (routeState.route === "route/next-gen/day/files")
+    return <NGDayFiles date={routeState.date} />;
+  if (routeState.route === "route/next-gen/content-hash")
+    return <NGContentHash contentHash={routeState.contentHash} />;
+  if (routeState.route === "route/next-gen/file/id")
+    return <NGFileId id={routeState.id} />;
+  if (routeState.route === "route/next-gen/file/rev")
+    return <NGFileRev rev={routeState.rev} />;
 
-  ensureNever<typeof payload>();
+  ensureNever<typeof routeState>();
 
   return <span>Routing error</span>;
 };
@@ -150,7 +144,7 @@ const Root = ({
       <multiplexerContext.defaultProvider accepter={accepter}>
         <websocket.defaultProvider>
           <thumbnailLoaderContext.defaultProvider>
-            {toRender({ payload: state })}
+            {toRender({ routeState: state })}
           </thumbnailLoaderContext.defaultProvider>
         </websocket.defaultProvider>
       </multiplexerContext.defaultProvider>

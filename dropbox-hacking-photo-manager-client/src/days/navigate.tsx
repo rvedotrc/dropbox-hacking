@@ -13,8 +13,6 @@ const navigation = (): React.ReactElement | null => (
     <SamePageLink routeState={{ route: "days-plain" }}>
       List of days (plain)
     </SamePageLink>
-    {" | "}
-    <SamePageLink routeState={{ route: "stats" }}>Stats</SamePageLink>
     {" /// "}
     <SamePageLink routeState={{ route: "route/next-gen/basic-counts" }}>
       Basic counts
