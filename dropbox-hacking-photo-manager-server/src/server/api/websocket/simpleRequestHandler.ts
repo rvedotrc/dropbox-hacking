@@ -22,12 +22,14 @@ type H<I, O> = (
 // };
 
 const getSimpleRequestPayloadVerb = (payload: unknown): string | undefined =>
-  payload !== null &&
-  typeof payload === "object" &&
-  "verb" in payload &&
-  typeof payload.verb === "string"
-    ? payload.verb
-    : undefined;
+  (
+    payload !== null &&
+    typeof payload === "object" &&
+    "verb" in payload &&
+    typeof payload.verb === "string"
+  ) ?
+    payload.verb
+  : undefined;
 
 const countPending = (inner: H<unknown, unknown>): H<unknown, unknown> => {
   const pending: Record<string, { t0: number }> = {};
@@ -67,7 +69,7 @@ export const simpleRequestHandlerBuilder = (
     const handler = handlerMap[verb as keyof typeof handlerMap];
     if (!handler) return Promise.resolve(undefined);
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const payload_1 = await handler(simpleRequest.payload as any);
 
     return {
