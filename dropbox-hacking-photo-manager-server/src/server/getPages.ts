@@ -1,4 +1,4 @@
-import { Payload } from "dropbox-hacking-photo-manager-shared";
+import { RouteState } from "dropbox-hacking-photo-manager-shared";
 import { Application } from "express";
 
 import { Context } from "./context.js";
@@ -12,7 +12,7 @@ export default (app: Application, _context: Context): void => {
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;");
 
-  const pageAsString = (payload: Payload): string => `<!DOCTYPE html>
+  const pageAsString = (routeState: RouteState): string => `<!DOCTYPE html>
     <html>
         <head>
             <meta charset="utf-8">
@@ -24,8 +24,8 @@ export default (app: Application, _context: Context): void => {
             <div id="react_container"></div>
             <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin></script>
             <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin></script>
-            <script id="payload-script" src="/dist/main.js" data-payload="${htmlEncode(
-              JSON.stringify(payload),
+            <script id="payload-script" src="/dist/main.js" data-routestate="${htmlEncode(
+              JSON.stringify(routeState),
             )}"></script>
         </body>
     </html>

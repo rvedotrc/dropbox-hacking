@@ -74,7 +74,7 @@ export default ({
                 <td>{Math.round(item.distanceInMeters)} m</td>
                 <td>
                   <SamePageLink
-                    state={{
+                    routeState={{
                       route: "day",
                       date,
                     }}
@@ -84,7 +84,7 @@ export default ({
                 </td>
                 <td>
                   <SamePageLink
-                    state={{
+                    routeState={{
                       route: "photo",
                       rev: item.photo.namedFile.rev,
                     }}

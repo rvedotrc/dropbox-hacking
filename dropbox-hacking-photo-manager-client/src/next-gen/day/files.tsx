@@ -114,7 +114,7 @@ const FileRow = ({ file }: { file: DayFilesResult["files"][number] }) => (
   <tr key={file.namedFile.id}>
     <td>
       <SamePageLink
-        state={{
+        routeState={{
           route: "route/next-gen/file/id",
           id: file.namedFile.id,
         }}
@@ -124,7 +124,7 @@ const FileRow = ({ file }: { file: DayFilesResult["files"][number] }) => (
     </td>
     <td>
       <SamePageLink
-        state={{
+        routeState={{
           route: "route/next-gen/file/rev",
           rev: file.namedFile.rev,
         }}
@@ -134,7 +134,7 @@ const FileRow = ({ file }: { file: DayFilesResult["files"][number] }) => (
     </td>
     <td>
       <SamePageLink
-        state={{
+        routeState={{
           route: "route/next-gen/content-hash",
           contentHash: file.namedFile.content_hash,
         }}
@@ -231,7 +231,7 @@ const NGDayFiles = ({ date }: { date: string }) => {
                     {photo.namedFile.name.split(".").pop()}
                     <br />
                     <SamePageLink
-                      state={{
+                      routeState={{
                         route: "route/next-gen/file/rev",
                         rev: photo.namedFile.rev,
                       }}

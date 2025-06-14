@@ -29,7 +29,7 @@ const NGContentHash = ({ contentHash }: { contentHash: string }) => {
                 {file.client_modified}
                 {" / "}
                 <SamePageLink
-                  state={{
+                  routeState={{
                     route: "route/next-gen/file/id",
                     id: file.id,
                   }}
@@ -38,7 +38,7 @@ const NGContentHash = ({ contentHash }: { contentHash: string }) => {
                 </SamePageLink>
                 {" / "}
                 <SamePageLink
-                  state={{
+                  routeState={{
                     route: "route/next-gen/file/rev",
                     rev: file.rev,
                   }}

@@ -31,7 +31,7 @@ const NGFileId = ({ id }: { id: string }) => {
           </p>
 
           <SamePageLink
-            state={{
+            routeState={{
               route: "route/next-gen/file/rev",
               rev: latestValue.file.rev,
             }}
@@ -40,7 +40,7 @@ const NGFileId = ({ id }: { id: string }) => {
           </SamePageLink>
           {" / "}
           <SamePageLink
-            state={{
+            routeState={{
               route: "route/next-gen/content-hash",
               contentHash: latestValue.file.content_hash,
             }}
@@ -51,7 +51,7 @@ const NGFileId = ({ id }: { id: string }) => {
           <hr />
 
           <SamePageLink
-            state={{
+            routeState={{
               route: "route/next-gen/day/files",
               date: latestValue.file.client_modified.substring(0, 10),
             }}

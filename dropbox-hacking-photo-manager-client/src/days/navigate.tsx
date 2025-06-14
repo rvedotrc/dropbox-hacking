@@ -4,26 +4,28 @@ import SamePageLink from "../samePageLink";
 
 const navigation = (): React.ReactElement | null => (
   <p>
-    <SamePageLink state={{ route: "calendar" }}>Calendar</SamePageLink>
+    <SamePageLink routeState={{ route: "calendar" }}>Calendar</SamePageLink>
     {" | "}
-    <SamePageLink state={{ route: "days" }}>
+    <SamePageLink routeState={{ route: "days" }}>
       List of days (with sample pics)
     </SamePageLink>
     {" | "}
-    <SamePageLink state={{ route: "days-plain" }}>
+    <SamePageLink routeState={{ route: "days-plain" }}>
       List of days (plain)
     </SamePageLink>
     {" | "}
-    <SamePageLink state={{ route: "stats" }}>Stats</SamePageLink>
+    <SamePageLink routeState={{ route: "stats" }}>Stats</SamePageLink>
     {" /// "}
-    <SamePageLink state={{ route: "route/next-gen/basic-counts" }}>
+    <SamePageLink routeState={{ route: "route/next-gen/basic-counts" }}>
       Basic counts
     </SamePageLink>
     {" | "}
-    <SamePageLink state={{ route: "route/next-gen/fsck" }}>fsck</SamePageLink>
+    <SamePageLink routeState={{ route: "route/next-gen/fsck" }}>
+      fsck
+    </SamePageLink>
     {" | "}
     <SamePageLink
-      state={{ route: "route/next-gen/list-of-days/without-samples" }}
+      routeState={{ route: "route/next-gen/list-of-days/without-samples" }}
     >
       List of days
     </SamePageLink>

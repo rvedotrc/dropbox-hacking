@@ -65,7 +65,7 @@ const Year = ({ year }: { year: string }): React.ReactElement | null => {
             <li>
               {"◀️ "}
               <SamePageLink
-                state={{
+                routeState={{
                   route: "year",
                   year: prevNext.previousYear,
                 }}
@@ -80,7 +80,7 @@ const Year = ({ year }: { year: string }): React.ReactElement | null => {
               <li>
                 {"▶️ "}
                 <SamePageLink
-                  state={{
+                  routeState={{
                     route: "year",
                     year: prevNext.nextYear,
                   }}

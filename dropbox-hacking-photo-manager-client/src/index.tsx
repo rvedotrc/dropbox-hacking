@@ -1,6 +1,9 @@
 import * as React from "react";
 
-import { Payload, type IOHandler } from "dropbox-hacking-photo-manager-shared";
+import {
+  RouteState,
+  type IOHandler,
+} from "dropbox-hacking-photo-manager-shared";
 import { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 
@@ -31,7 +34,7 @@ import Fsck from "./next-gen/fsck";
 
 const ensureNever = <_ extends never>() => undefined;
 
-const toRender = ({ payload }: { payload: Payload }) => {
+const toRender = ({ payload }: { payload: RouteState }) => {
   if (payload.route === "closest-to")
     return (
       <WithWholeDatabaseFeeds>
@@ -105,8 +108,6 @@ const toRender = ({ payload }: { payload: Payload }) => {
   return <span>Routing error</span>;
 };
 
-// const WithoutFeeds = ({ payload }: { payload: Payload }) => {};
-
 const WithWholeDatabaseFeeds = (props: React.PropsWithChildren) => (
   <rxRecordFeedContext.defaultProvider>
     <additionalFeeds.defaultProvider>
@@ -116,17 +117,17 @@ const WithWholeDatabaseFeeds = (props: React.PropsWithChildren) => (
 );
 
 const Root = ({
-  initialState,
+  initialRouteState,
 }: {
-  initialState: Payload;
+  initialRouteState: RouteState;
 }): React.ReactElement | null => {
-  const [state, switchToPage] = useState(initialState);
+  const [state, switchToPage] = useState(initialRouteState);
 
   const router: Router = useMemo(() => ({ switchToPage }), []);
 
   useEffect(() => {
     const listener = (event: PopStateEvent) =>
-      switchToPage(event.state as Payload);
+      switchToPage(event.state as RouteState);
     window.addEventListener("popstate", listener);
     return () => window.removeEventListener("popstate", listener);
   }, []);
@@ -167,16 +168,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const ele = document.getElementById("payload-script");
 
   if (ele) {
-    const payload = JSON.parse(
-      ele.getAttribute("data-payload") || "null",
-    ) as Payload;
+    const routeState = JSON.parse(
+      ele.getAttribute("data-routestate") || "null",
+    ) as RouteState;
     const container = document.getElementById("react_container");
     if (container) {
-      window.history.replaceState(payload, "unused");
+      window.history.replaceState(routeState, "unused");
       createRoot(container).render(
         // StrictMode removed: kills the EventSource stuff, for now
         <React.StrictMode>
-          <WrappedRoot initialState={payload} />
+          <WrappedRoot initialRouteState={routeState} />
         </React.StrictMode>,
       );
     }

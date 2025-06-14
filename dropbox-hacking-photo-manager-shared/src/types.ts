@@ -7,7 +7,7 @@ export type DayMetadata = {
   description: string;
 };
 
-export type Payload =
+export type RouteState =
   | {
       route: "closest-to";
       gps: GPSLatNLongE;
@@ -69,7 +69,7 @@ export type Payload =
 
 export const ensureNever = (_: never) => undefined;
 
-export const urlForState = (state: Payload): string => {
+export const urlForState = (state: RouteState): string => {
   switch (state.route) {
     case "calendar":
       return `/days/calendar`;

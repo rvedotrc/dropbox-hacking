@@ -93,7 +93,7 @@ const DayWithData = ({
           <li>
             🔼{" "}
             <SamePageLink
-              state={{
+              routeState={{
                 route: "month",
                 month,
               }}
@@ -106,7 +106,7 @@ const DayWithData = ({
             <li>
               {"◀️ "}
               <SamePageLink
-                state={{
+                routeState={{
                   route: "day",
                   date: prevNext.previousDay,
                 }}
@@ -121,7 +121,7 @@ const DayWithData = ({
               <li>
                 {"▶️ "}
                 <SamePageLink
-                  state={{
+                  routeState={{
                     route: "day",
                     date: prevNext.nextDay,
                   }}

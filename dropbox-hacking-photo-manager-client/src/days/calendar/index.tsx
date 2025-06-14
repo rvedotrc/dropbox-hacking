@@ -84,7 +84,7 @@ const Calendar = () => {
                         return (
                           <div title={dateString}>
                             <SamePageLink
-                              state={{ route: "day", date: dateString }}
+                              routeState={{ route: "day", date: dateString }}
                             >
                               {count}
                             </SamePageLink>

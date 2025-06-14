@@ -68,7 +68,7 @@ const Month = ({ month }: { month: string }): React.ReactElement | null => {
           <li>
             🔼{" "}
             <SamePageLink
-              state={{
+              routeState={{
                 route: "year",
                 year: parentYear,
               }}
@@ -81,7 +81,7 @@ const Month = ({ month }: { month: string }): React.ReactElement | null => {
             <li>
               {"◀️ "}
               <SamePageLink
-                state={{
+                routeState={{
                   route: "month",
                   month: prevNext.previousMonth,
                 }}
@@ -96,7 +96,7 @@ const Month = ({ month }: { month: string }): React.ReactElement | null => {
               <li>
                 {"▶️ "}
                 <SamePageLink
-                  state={{
+                  routeState={{
                     route: "month",
                     month: prevNext.nextMonth,
                   }}

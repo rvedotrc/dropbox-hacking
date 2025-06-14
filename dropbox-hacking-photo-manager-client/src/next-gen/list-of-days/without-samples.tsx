@@ -33,7 +33,7 @@ const NGDaysNoSamples = () => {
               <tr key={row.date}>
                 <td>
                   <SamePageLink
-                    state={{
+                    routeState={{
                       route: "route/next-gen/day/files",
                       date: row.date,
                     }}
