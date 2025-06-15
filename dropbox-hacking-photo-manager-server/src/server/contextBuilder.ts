@@ -146,6 +146,7 @@ export default (args: {
     imageFilesRx: imageFilesRx["observable"],
     dayRx: dayRx["observable"],
     photoRx: photoRx["observable"],
+    photoRxUpdater: photoRx.update,
 
     lsFeed,
     exifDbFeed,

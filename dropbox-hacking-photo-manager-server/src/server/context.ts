@@ -34,6 +34,7 @@ export type Context = {
   dayRx: () => Observable<Record<string, DayMetadata>>;
   imageFilesRx: () => Observable<Record<string, NamedFile>>;
   photoRx: () => Observable<Record<string, PhotoDbEntry>>;
+  photoRxUpdater: (rev: string, entry: PhotoDbEntry) => Promise<void>;
 
   fullDatabaseFeeds: FullDatabaseFeeds;
 };

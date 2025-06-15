@@ -48,7 +48,8 @@ export type ClosestToResponse = {
 };
 
 export type PhotoDbEntry = {
-  tags: string[];
+  description?: string;
+  tags?: string[];
 };
 
 export type NamedFile = files.FileMetadata & {
