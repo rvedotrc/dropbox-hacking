@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import logRender from "../../logRender";
 import Navigate from "../../days/navigate";
@@ -11,6 +11,10 @@ const NGContentHash = ({ contentHash }: { contentHash: string }) => {
     type: "rx.ng.content_hash",
     contentHash,
   });
+
+  useEffect(() => {
+    document.title = "DPMNG - Content hash";
+  }, []);
 
   return (
     <>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import logRender from "../../logRender";
 import Navigate from "../../days/navigate";
@@ -12,11 +12,31 @@ const NGFileRev = ({ rev }: { rev: string }) => {
     rev,
   });
 
+  useEffect(() => {
+    document.title = `DPMNG - rev ${rev}`;
+  }, []);
+
   return (
     <>
       <Navigate />
 
       <h1>Rev {rev}</h1>
+
+      {/* <p>
+        <EditableTextField
+          key={photoDbEntry?.description ?? ""}
+          value={photoDbEntry?.description ?? ""}
+          onSave={onSaveDescription}
+        />
+      </p>
+
+      <p>
+        <EditableTextField
+          key={photoDbEntry?.tags?.join(" ") ?? ""}
+          value={photoDbEntry?.tags?.join(" ") ?? ""}
+          onSave={onSaveTags}
+        />
+      </p> */}
 
       <pre>{JSON.stringify(latestValue ?? null, null, 2)}</pre>
 

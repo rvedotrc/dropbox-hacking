@@ -186,7 +186,7 @@ const NGDayFiles = ({ date }: { date: string }) => {
   );
 
   useEffect(() => {
-    document.title = `DPM NG - ${date}`;
+    document.title = `DPMNG - ${date}`;
   });
 
   return (

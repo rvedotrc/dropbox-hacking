@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import logRender from "../../logRender";
 import Navigate from "../../days/navigate";
@@ -11,6 +11,10 @@ const NGDaysNoSamples = () => {
     type: "rx.ng.list-of-days",
     withSamples: false,
   });
+
+  useEffect(() => {
+    document.title = "DPMNG - Plain list of days";
+  }, []);
 
   return (
     <>

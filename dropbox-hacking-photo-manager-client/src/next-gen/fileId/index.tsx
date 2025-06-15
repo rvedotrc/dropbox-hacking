@@ -1,10 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import logRender from "../../logRender";
 import Navigate from "../../days/navigate";
 import type { FileIdResult } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import { useLatestValueFromServerFeed } from "../useLatestValueFromServerFeed";
-import SamePageLink from "../../samePageLink";
+import {
+  urlForState,
+  type RouteState,
+} from "dropbox-hacking-photo-manager-shared";
+import { useRouter } from "../../context/routingContext";
 
 const NGFileId = ({ id }: { id: string }) => {
   const latestValue = useLatestValueFromServerFeed<FileIdResult>({
@@ -12,52 +16,31 @@ const NGFileId = ({ id }: { id: string }) => {
     id,
   });
 
+  const router = useRouter();
+
+  useEffect(() => {
+    if (latestValue?.file) {
+      const routeState: RouteState = {
+        route: "route/next-gen/file/rev",
+        rev: latestValue.file.rev,
+      };
+      const href = urlForState(routeState);
+      window.history.pushState(routeState, "unused", href);
+      router.switchToPage(routeState);
+    }
+  }, [id, latestValue?.file?.rev]);
+
   return (
     <>
       <Navigate />
 
       <h1>ID {id}</h1>
 
-      <pre>{JSON.stringify(latestValue ?? null, null, 2)}</pre>
-
-      {latestValue?.file && (
+      {latestValue?.file ? (
+        <>Redirecting...</>
+      ) : (
         <>
-          <p>
-            <a
-              href={`https://www.dropbox.com/preview${latestValue.file.path_lower}?context=browse&role=personal`}
-            >
-              View in Dropbox
-            </a>
-          </p>
-
-          <SamePageLink
-            routeState={{
-              route: "route/next-gen/file/rev",
-              rev: latestValue.file.rev,
-            }}
-          >
-            {latestValue.file.rev}
-          </SamePageLink>
-          {" / "}
-          <SamePageLink
-            routeState={{
-              route: "route/next-gen/content-hash",
-              contentHash: latestValue.file.content_hash,
-            }}
-          >
-            {latestValue.file.content_hash}
-          </SamePageLink>
-
-          <hr />
-
-          <SamePageLink
-            routeState={{
-              route: "route/next-gen/day/files",
-              date: latestValue.file.client_modified.substring(0, 10),
-            }}
-          >
-            {latestValue.file.client_modified.substring(0, 10)}
-          </SamePageLink>
+          <p>No such file</p>
         </>
       )}
     </>

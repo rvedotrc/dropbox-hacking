@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import logRender from "../../logRender";
 import Navigate from "../../days/navigate";
@@ -10,13 +10,21 @@ const BasicCounts = () => {
     type: "rx.ng.basic-counts",
   });
 
+  useEffect(() => {
+    document.title = "DPMNG - Basic counts";
+  }, []);
+
   return (
     <>
       <Navigate />
 
       <h1>Basic Counts</h1>
 
-      <pre>{JSON.stringify(latestValue ?? null, null, 2)}</pre>
+      {latestValue ? (
+        <pre>{JSON.stringify(latestValue ?? null, null, 2)}</pre>
+      ) : (
+        "loading..."
+      )}
     </>
   );
 };

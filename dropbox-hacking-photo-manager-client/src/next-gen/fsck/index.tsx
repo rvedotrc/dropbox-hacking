@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import logRender from "../../logRender";
 import Navigate from "../../days/navigate";
@@ -10,13 +10,21 @@ const Fsck = () => {
     type: "rx.ng.fsck",
   });
 
+  useEffect(() => {
+    document.title = "DPMNG - fsck";
+  }, []);
+
   return (
     <>
       <Navigate />
 
       <h1>fsck</h1>
 
-      <pre>{JSON.stringify(latestValue ?? null, null, 2)}</pre>
+      {latestValue ? (
+        <pre>{JSON.stringify(latestValue ?? null, null, 2)}</pre>
+      ) : (
+        "loading..."
+      )}
     </>
   );
 };
