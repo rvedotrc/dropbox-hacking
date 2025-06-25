@@ -68,16 +68,16 @@ export const ensureNever = (_: never) => undefined;
 
 export const urlForState = (state: RouteState): string => {
   switch (state.route) {
-    case "calendar":
-      return `/days/calendar`;
     case "closest-to":
       return `/closest-to?degreesNorth=${state.gps.lat}&degreesEast=${state.gps.long}&n=${state.nClosest}`;
     case "day":
       return `/day/${state.date}`;
     case "days":
-      return `/days`;
+      return `/days/with-samples`;
     case "days-plain":
       return `/days/plain`;
+    case "calendar":
+      return `/days/calendar`;
     case "year":
       return `/year/${state.year}`;
     case "month":

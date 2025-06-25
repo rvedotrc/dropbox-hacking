@@ -52,8 +52,8 @@ export type PhotoDbEntry = {
   tags?: string[];
 };
 
-export type NamedFile = files.FileMetadata & {
-  path_lower: string;
-  path_display: string;
-  content_hash: string;
+export type NamedFile = Readonly<files.FileMetadata> & {
+  readonly path_lower: string;
+  readonly path_display: string;
+  readonly content_hash: string;
 };

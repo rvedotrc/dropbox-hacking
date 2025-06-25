@@ -8,8 +8,8 @@ import { useLatestValueFromServerFeed } from "../useLatestValueFromServerFeed";
 import SamePageLink from "../../samePageLink";
 import EditableTextField from "../../day/editableTextField";
 import useVisibilityTracking from "../../days/useVisibilityTracking";
-import PhotoTile from "../../day/photoTile";
-import type { Photo } from "dropbox-hacking-photo-manager-shared";
+// import PhotoTile from "../../day/photoTile";
+// import type { Photo } from "dropbox-hacking-photo-manager-shared";
 
 // const ImageFileDetails = ({ file }: { file: DayFilesImageFile }) => {
 //   const exifTags = file.exifFromHash!.exifData.tags;
@@ -145,8 +145,8 @@ const FileRow = ({ file }: { file: DayFilesResult["files"][number] }) => (
     <td>{file.namedFile.client_modified}</td>
     <td>{file.namedFile.size}</td>
     <td>
-      {file.content.exif && "+exif"}
-      {file.content.mediaInfo && "+mediainfo"}
+      {file.content.exif && "+exif "}
+      {file.content.mediaInfo && "+mediainfo "}
     </td>
     <td>{file.namedFile.name}</td>
   </tr>
@@ -189,6 +189,8 @@ const NGDayFiles = ({ date }: { date: string }) => {
     document.title = `DPMNG - ${date}`;
   });
 
+  if (new Date().getTime() === 0) console.log(visibleRevs);
+
   return (
     <>
       <Navigate />
@@ -207,7 +209,7 @@ const NGDayFiles = ({ date }: { date: string }) => {
 
           <p>{latestValue.files.length} files</p>
 
-          <div ref={parentRef} className={"photoList"}>
+          {/* <div ref={parentRef} className={"photoList"}>
             {latestValue.files
               // .filter((f) => f.content.exif)
               .toSorted((a, b) =>
@@ -216,15 +218,15 @@ const NGDayFiles = ({ date }: { date: string }) => {
                 ),
               )
               .map((photo) => {
-                if (photo.exif) {
-                  return (
-                    <PhotoTile
-                      key={photo.namedFile.rev}
-                      photo={photo as Photo}
-                      isVisible={visibleRevs.has(photo.namedFile.rev)}
-                    />
-                  );
-                }
+                // if (photo.exif) {
+                //   return (
+                //     <PhotoTile
+                //       key={photo.namedFile.rev}
+                //       photo={photo as Photo}
+                //       isVisible={visibleRevs.has(photo.namedFile.rev)}
+                //     />
+                //   );
+                // }
 
                 return (
                   <div key={photo.namedFile.rev} className={"photoItem"}>
@@ -232,16 +234,16 @@ const NGDayFiles = ({ date }: { date: string }) => {
                     <br />
                     <SamePageLink
                       routeState={{
-                        route: "route/next-gen/file/rev",
-                        rev: photo.namedFile.rev,
+                        route: "route/next-gen/content-hash",
+                        contentHash: photo.namedFile.content_hash,
                       }}
                     >
-                      {photo.namedFile.rev}
+                      {photo.namedFile.content_hash}
                     </SamePageLink>
                   </div>
                 );
               })}
-          </div>
+          </div> */}
 
           <table>
             <tbody>

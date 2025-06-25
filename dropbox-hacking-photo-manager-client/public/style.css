@@ -1,3 +1,8 @@
+body {
+  font-family: sans-serif;
+  padding: 1em;
+}
+
 .twelveMonths {
   display: grid;
   grid-template-columns: repeat(4, 1fr);

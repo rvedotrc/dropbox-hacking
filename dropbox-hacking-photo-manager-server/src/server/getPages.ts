@@ -85,12 +85,12 @@ export default (app: Application, _context: Context): void => {
     },
   );
 
-  app.get("/calendar", (_req, res) => {
+  app.get("/days/calendar", (_req, res) => {
     res.contentType("text/html");
     res.send(pageAsString({ route: "calendar" }));
   });
 
-  app.get("/days", (_req, res) => {
+  app.get("/days/with-samples", (_req, res) => {
     res.contentType("text/html");
     res.send(pageAsString({ route: "days" }));
   });
