@@ -30,6 +30,7 @@ import NGContentHash from "./next-gen/contentHash";
 import NGFileId from "./next-gen/fileId";
 import NGFileRev from "./next-gen/fileRev";
 import Fsck from "./next-gen/fsck";
+import ExifExplorer from "./next-gen/exifExplorer";
 
 const ensureNever = <_ extends never>() => undefined;
 
@@ -86,6 +87,8 @@ const toRender = ({ routeState }: { routeState: RouteState }) => {
   if (routeState.route === "route/next-gen/basic-counts")
     return <BasicCounts />;
   if (routeState.route === "route/next-gen/fsck") return <Fsck />;
+  if (routeState.route === "route/next-gen/exif-explorer")
+    return <ExifExplorer />;
   if (routeState.route === "route/next-gen/list-of-days/without-samples")
     return <NGDaysNoSamples />;
   if (routeState.route === "route/next-gen/day/files")
@@ -96,6 +99,7 @@ const toRender = ({ routeState }: { routeState: RouteState }) => {
     return <NGFileId id={routeState.id} />;
   if (routeState.route === "route/next-gen/file/rev")
     return <NGFileRev rev={routeState.rev} />;
+  // RVE-add-route
 
   ensureNever<typeof routeState>();
 

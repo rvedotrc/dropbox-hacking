@@ -71,53 +71,63 @@ const SummariseMediaInfo = ({
   mediaInfo: MediainfoFromHash;
 }) => {
   const css = `
+
 .mediaInfoGrid {
     display: grid;
+    grid-auto-flow: column;
+    width: fit-content;
 }
 
 .mediaInfoGrid > div {
-    border-radius: 0.3em;
-    margin: 0.2em;
+    border-radius: 0.4em;
+    margin: 0.1em;
     padding: 0.2em;
     padding-inline: 0.6em;
-    text-align: center;
+    text-align: left;
+    text-wrap: none;
 }
 
 .mediaInfoGrid > div.k1 {
-    grid-row: 1;
+    grid-column: 1;
     background: purple;
     color: white;
 }
 
 .mediaInfoGrid > div.k2 {
-    grid-row: 2;
+    grid-column: 2;
     background: green;
     color: white;
 }
 
 .mediaInfoGrid > div.v {
-    grid-row: 3;
+    grid-column: 3;
     background: blue;
     color: white;
 }
 
+.mediaInfoGrid .mig-c {
+    grid-row-start: 1;
+    grid-row-end: 4;
+}
+
 .mediaInfoGrid .mig-v {
-    grid-column-start: 2;
-    grid-column-end: 6;
+    grid-row-start: 4;
+    grid-row-end: 8;
 }
 
 .mediaInfoGrid .mig-a {
-    grid-column-start: 6;
-    grid-column-end: 10;
+    grid-row-start: 8;
+    grid-row-end: 12;
 }
 
 .resolutionName {
     background: white;
-    color: red;
-    padding: 0.35em 0.3em 0.2em;
+    color: blue;
+    padding: 0.15em 0.3em 0em;
     border-radius: 0.2em;
     margin-inline: 0.5em;
     font-size: 80%;
+    font-weight: bold;
 }
     `;
 
@@ -147,9 +157,13 @@ const SummariseMediaInfo = ({
   return (
     <>
       <div className="mediaInfoGrid">
-        <div className="mig-c k1">Container</div>
+        <div className="mig-c k1">General</div>
         <div className="mig-c-f k2">Format</div>
         <div className="mig-c-f v">{generalTrack?.Format_String ?? "-"}</div>
+        <div className="mig-c-d k2">Duration</div>
+        <div className="mig-c-d v">{generalTrack?.Duration_String ?? "-"}</div>
+        <div className="mig-c-s k2">File size</div>
+        <div className="mig-c-s v">{generalTrack?.FileSize_String4 ?? "-"}</div>
 
         <div className="mig-v k1">Video</div>
         <div className="mig-v-f k2">Format</div>
@@ -177,8 +191,8 @@ const SummariseMediaInfo = ({
         </div>
         <div className="mig-v-fps k2">fps</div>
         <div className="mig-v-fps v">
-          {videoTrack?.FrameRate_Maximum
-            ? Number(videoTrack.FrameRate_Maximum)
+          {videoTrack?.FrameRate
+            ? Math.round(Number(videoTrack.FrameRate))
             : "-"}
         </div>
 
@@ -204,7 +218,7 @@ const SummariseMediaInfo = ({
           id={checkboxId}
           type="checkbox"
           checked={expandFull}
-          onClick={(e) => setExpandFull(e.currentTarget.checked)}
+          onChange={(e) => setExpandFull(e.currentTarget.checked)}
         />{" "}
         <label htmlFor={checkboxId}>Show full mediainfo</label>
       </p>

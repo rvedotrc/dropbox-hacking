@@ -42,8 +42,10 @@ export const defaultProvider = (
       });
 
       newWebSocket.addEventListener("close", () => {
-        setConnect(undefined);
-        newSocket();
+        setTimeout(() => {
+          setConnect(undefined);
+          newSocket();
+        }, 500);
       });
     },
     [],

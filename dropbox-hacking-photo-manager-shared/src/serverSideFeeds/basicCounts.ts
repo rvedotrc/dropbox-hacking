@@ -4,6 +4,7 @@ import {
   videoFilenamePattern,
   type FullDatabaseFeeds,
 } from "./index.js";
+import { unambiguousPrefixLength } from "./unambiguousPrefixLength.js";
 
 export const provideBasicCounts = (feeds: FullDatabaseFeeds) =>
   combineLatest([
@@ -70,6 +71,14 @@ export const provideBasicCounts = (feeds: FullDatabaseFeeds) =>
           // videoCountsByTime: [...videoCountsByTime.entries()].sort((a, b) =>
           //   a[0].localeCompare(b[0]),
           // ),
+          unambiguousPrefixLengths: {
+            rev: unambiguousPrefixLength(
+              new Set([...files.values()].map((f) => f.rev)),
+            ),
+            fileContentHash: unambiguousPrefixLength(
+              new Set([...files.values()].map((f) => f.content_hash)),
+            ),
+          },
         },
       };
     }),

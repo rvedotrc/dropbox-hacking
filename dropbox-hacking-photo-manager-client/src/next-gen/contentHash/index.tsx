@@ -4,56 +4,19 @@ import logRender from "../../logRender";
 import Navigate from "../../days/navigate";
 import type { ContentHashResult } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import { useLatestValueFromServerFeed } from "../useLatestValueFromServerFeed";
-import SamePageLink from "../../samePageLink";
 import SummariseMediaInfo from "./SummariseMediaInfo";
 import SummariseExif from "./SummariseExif";
+import SummariseNamedFiles from "./SummariseNamedFiles";
+import ImagePreview from "./imagePreview";
 
 const Results = ({ latestValue }: { latestValue: ContentHashResult }) => {
   return (
     <>
+      <ImagePreview namedFile={latestValue.namedFiles[0]} />
+
       <h2>Files</h2>
 
-      <ol>
-        {latestValue.namedFiles.map((file) => (
-          <li key={file.id}>
-            {file.client_modified}
-            {" / "}
-            <SamePageLink
-              routeState={{
-                route: "route/next-gen/file/id",
-                id: file.id,
-              }}
-            >
-              {file.id}
-            </SamePageLink>
-            {" / "}
-            <SamePageLink
-              routeState={{
-                route: "route/next-gen/file/rev",
-                rev: file.rev,
-              }}
-            >
-              {file.rev}
-            </SamePageLink>
-            {" / "}
-            <SamePageLink
-              routeState={{
-                route: "route/next-gen/day/files",
-                date: file.client_modified.substring(0, 10),
-              }}
-            >
-              {file.client_modified.substring(0, 10)}
-            </SamePageLink>
-            {" / "}
-
-            <a
-              href={`https://www.dropbox.com/preview${file.path_lower}?context=browse&role=personal`}
-            >
-              View in Dropbox
-            </a>
-          </li>
-        ))}
-      </ol>
+      <SummariseNamedFiles namedFiles={latestValue.namedFiles} />
 
       <h2>Exif</h2>
 
@@ -88,7 +51,7 @@ const NGContentHash = ({ contentHash }: { contentHash: string }) => {
     <>
       <Navigate />
 
-      <h1>Content hash {contentHash}</h1>
+      <h1>Content hash {contentHash.substring(0, 10)}</h1>
 
       {latestValue ? <Results latestValue={latestValue} /> : "Loading..."}
     </>

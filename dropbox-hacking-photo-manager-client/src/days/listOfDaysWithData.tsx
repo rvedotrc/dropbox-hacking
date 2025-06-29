@@ -20,30 +20,30 @@ const ListOfDaysWithData = ({
   dayMetadata: DayMetadata[];
   withSamples: boolean;
 }): React.ReactElement | null => {
-  const [e, s] = useMemo(
+  const [_e, s] = useMemo(
     () => makeEmittableSubscribable<{ date: string; visible: boolean }>(),
     [],
   );
 
-  const diffEmitter = useMemo(() => {
-    const previouslyVisibleDates = new Set<string>();
+  // const diffEmitter = useMemo(() => {
+  //   const previouslyVisibleDates = new Set<string>();
 
-    return (visibleDates: Set<string>): void => {
-      for (const date of visibleDates) {
-        if (!previouslyVisibleDates.has(date)) {
-          previouslyVisibleDates.add(date);
-          e.emit({ date, visible: true });
-        }
-      }
+  //   return (visibleDates: Set<string>): void => {
+  //     for (const date of visibleDates) {
+  //       if (!previouslyVisibleDates.has(date)) {
+  //         previouslyVisibleDates.add(date);
+  //         e.emit({ date, visible: true });
+  //       }
+  //     }
 
-      for (const date of previouslyVisibleDates) {
-        if (!visibleDates.has(date)) {
-          previouslyVisibleDates.delete(date);
-          e.emit({ date, visible: false });
-        }
-      }
-    };
-  }, []);
+  //     for (const date of previouslyVisibleDates) {
+  //       if (!visibleDates.has(date)) {
+  //         previouslyVisibleDates.delete(date);
+  //         e.emit({ date, visible: false });
+  //       }
+  //     }
+  //   };
+  // }, []);
 
   // const [visibleDates, setVisibleDates] = useState<Set<string>>();
   const olRef = useRef<HTMLOListElement>(null);
@@ -65,12 +65,13 @@ const ListOfDaysWithData = ({
     [countsByDate, keyedMetadata],
   );
 
-  useVisibilityTracking({
-    parentRef: olRef,
-    listItemDataAttribute: dayDateAttribute,
-    onVisibleItems: diffEmitter,
-    deps: [days],
-  });
+  if (new Date().getTime() === 0)
+    useVisibilityTracking({
+      parentRef: olRef,
+      listItemDataAttribute: dayDateAttribute,
+      // onVisibleItems: diffEmitter,
+      // deps: [days],
+    });
 
   return (
     <div>

@@ -24,15 +24,15 @@ const DayWithData = ({
   dayMetadata: DayMetadataResponse;
   dayPhotos: PhotosResponse;
 }) => {
-  const [visibleRevs, setVisibleRevs] = useState<Set<string>>();
+  const [visibleRevs, _setVisibleRevs] = useState<Set<string>>();
 
   const parentRef = useRef<HTMLDivElement>(null);
 
   useVisibilityTracking({
     parentRef,
     listItemDataAttribute: "data-rev",
-    onVisibleItems: setVisibleRevs,
-    deps: [dayPhotos, parentRef.current],
+    // onVisibleItems: setVisibleRevs,
+    // deps: [dayPhotos, parentRef.current],
   });
 
   useEffect(() => {

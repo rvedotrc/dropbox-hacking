@@ -1,18 +1,17 @@
-import { DependencyList, RefObject, useEffect } from "react";
+import { RefObject, useEffect, useMemo } from "react";
+import { ReplaySubject, type Observable } from "rxjs";
 
 const scrollStationaryTimeout = 200;
 
 const useVisibilityTracking = ({
   parentRef,
   listItemDataAttribute,
-  onVisibleItems,
-  deps,
 }: {
   parentRef: RefObject<HTMLElement | null>;
   listItemDataAttribute: string;
-  onVisibleItems: (visible: Set<string>) => void;
-  deps: DependencyList | undefined;
-}): void =>
+}): Observable<ReadonlySet<string>> => {
+  const subject = useMemo(() => new ReplaySubject<ReadonlySet<string>>(1), []);
+
   useEffect(() => {
     const parent = parentRef.current;
     if (!parent) return;
@@ -35,7 +34,7 @@ const useVisibilityTracking = ({
         .filter((child) => queryElement(child) === 0)
         .map((item) => item.getAttribute(listItemDataAttribute) as string);
 
-      onVisibleItems(new Set(visibleItems));
+      subject.next(new Set(visibleItems));
     };
 
     let timer = window.setTimeout(onScrollStopped, scrollStationaryTimeout);
@@ -50,12 +49,14 @@ const useVisibilityTracking = ({
     parent.addEventListener("resize", listener);
 
     return () => {
-      // console.log("Stop scroll tracking for ", parent);
       window.removeEventListener("scroll", listener);
       window.removeEventListener("resize", listener);
       parent.removeEventListener("resize", listener);
       if (timer) window.clearTimeout(timer);
     };
-  }, deps);
+  }, []);
+
+  return subject;
+};
 
 export default useVisibilityTracking;

@@ -19,6 +19,7 @@ import {
   provideBasicCounts,
   provideContentHash,
   provideDayFiles,
+  provideExifExplorer,
   provideFileId,
   provideFileRev,
   provideFsck,
@@ -111,6 +112,11 @@ export default (app: Application, context: Context): void => {
                 } else if (typedRequest.type === "rx.ng.fsck") {
                   return serveRxFeed(
                     provideFsck(context.fullDatabaseFeeds),
+                    () => writer,
+                  );
+                } else if (typedRequest.type === "rx.ng.exif-explorer") {
+                  return serveRxFeed(
+                    provideExifExplorer(context.fullDatabaseFeeds),
                     () => writer,
                   );
                 } else if (typedRequest.type === "rx.ng.list-of-days") {

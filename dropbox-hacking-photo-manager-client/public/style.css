@@ -143,3 +143,7 @@ body {
 .description .noData {
   opacity: 0.3;
 }
+
+.editable.inactive:hover {
+  background-color: #ccf;
+}

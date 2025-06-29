@@ -8,6 +8,7 @@ export type RxFeedRequest =
   // more focussed feeds
   | { readonly type: "rx.ng.basic-counts" }
   | { readonly type: "rx.ng.fsck" }
+  | { readonly type: "rx.ng.exif-explorer" }
   | { readonly type: "rx.ng.list-of-days"; readonly withSamples: false }
   | { readonly type: "rx.ng.file.id"; readonly id: string }
   | { readonly type: "rx.ng.file.rev"; readonly rev: string }

@@ -13,6 +13,7 @@ export * from "./dayFiles.js";
 export * from "./fileId.js";
 export * from "./fileRev.js";
 export * from "./contentHash.js";
+export * from "./exifExplorer.js";
 // RVE-add-feed
 
 import * as exifDb from "@blaahaj/dropbox-hacking-exif-db";

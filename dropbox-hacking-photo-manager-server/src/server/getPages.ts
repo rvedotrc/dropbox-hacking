@@ -41,6 +41,11 @@ export default (app: Application, _context: Context): void => {
     res.send(pageAsString({ route: "route/next-gen/fsck" }));
   });
 
+  app.get("/next-gen/exif-explorer", (_req, res) => {
+    res.contentType("text/html");
+    res.send(pageAsString({ route: "route/next-gen/exif-explorer" }));
+  });
+
   app.get("/next-gen/list-of-days/without-samples", (_req, res) => {
     res.contentType("text/html");
     res.send(
@@ -99,6 +104,8 @@ export default (app: Application, _context: Context): void => {
     res.contentType("text/html");
     res.send(pageAsString({ route: "days-plain" }));
   });
+
+  // RVE-add-route
 
   app.get("/day/:date(\\d\\d\\d\\d-\\d\\d-\\d\\d)", (req, res) => {
     res.contentType("text/html");

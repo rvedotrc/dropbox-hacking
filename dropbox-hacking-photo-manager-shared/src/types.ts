@@ -20,6 +20,9 @@ export type RouteState =
       route: "route/next-gen/fsck";
     }
   | {
+      route: "route/next-gen/exif-explorer";
+    }
+  | {
       route: "route/next-gen/list-of-days/without-samples";
     }
   | {
@@ -63,6 +66,7 @@ export type RouteState =
       route: "photo";
       rev: string;
     };
+// RVE-add-route
 
 export const ensureNever = (_: never) => undefined;
 
@@ -88,6 +92,8 @@ export const urlForState = (state: RouteState): string => {
       return `/next-gen/basic-counts`;
     case "route/next-gen/fsck":
       return `/next-gen/fsck`;
+    case "route/next-gen/exif-explorer":
+      return `/next-gen/exif-explorer`;
     case "route/next-gen/content-hash":
       return `/next-gen/content-hash/${state.contentHash}`;
     case "route/next-gen/day/files":
