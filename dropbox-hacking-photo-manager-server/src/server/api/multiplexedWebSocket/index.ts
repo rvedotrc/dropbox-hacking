@@ -38,7 +38,7 @@ export default (app: Application, context: Context): void => {
     const id = getLogPrefix(req) || "?";
 
     try {
-      // console.log(`${id} New websocket`);
+      console.log(`${id} New websocket`);
 
       const closer = () => {
         process.nextTick(() => {
@@ -67,7 +67,7 @@ export default (app: Application, context: Context): void => {
           // const spiedAccept = spy(accept, "accept");
           const writer = accept({
             receive: (request) => {
-              console.log(`Server got request:`, request);
+              console.log(`${id} got request:`, request);
 
               if (
                 typeof request === "object" &&
@@ -160,7 +160,7 @@ export default (app: Application, context: Context): void => {
                 const _ = typedRequest;
               }
 
-              console.warn("Unrecognised request:", request);
+              console.warn(`${id} Unrecognised request:`, request);
               writer.close();
             },
             close: () => {},
@@ -180,6 +180,7 @@ export default (app: Application, context: Context): void => {
       ws.on("error", (...args) => console.log(`${id} ws error`, args));
 
       console.log(`${id} socket opened`);
+      ws.on("close", () => console.log(`${id} ws closed`));
     } catch (e) {
       console.error(`${id} threw`, e);
     }

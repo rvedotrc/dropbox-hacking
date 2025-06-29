@@ -2,17 +2,37 @@ import { useThumbnailLoader } from "../../context/thumbnails";
 import logRender from "../../logRender";
 import { useThumbnail } from "../../context/thumbnails/useThumbnail";
 import React from "react";
+import type { NamedFile } from "dropbox-hacking-photo-manager-shared";
+
+const dropboxThumbnailableExtensions: readonly string[] = [
+  "jpg",
+  "jpeg,",
+  "png",
+  "tiff",
+  "tif",
+  "gif",
+  "webp",
+  "ppm",
+  "bmp",
+];
 
 const MaybeVisibleThumbnail = ({
-  rev,
+  namedFile,
   visible,
 }: {
-  rev: string;
+  namedFile: NamedFile;
   visible: boolean;
 }) => {
   const loader = useThumbnailLoader();
 
-  const thumbnail = useThumbnail(rev, loader)(visible);
+  const ext = namedFile.path_lower.split(".").pop() as string;
+  const isThumbnailable = dropboxThumbnailableExtensions.includes(ext);
+  const thumbnail = useThumbnail(
+    namedFile.rev,
+    loader,
+  )(isThumbnailable && visible);
+
+  console.log([namedFile.name, ext, isThumbnailable, visible, !!thumbnail]);
 
   return (
     <>

@@ -48,7 +48,7 @@ const FileRow = ({
       </td>
       <td>v={String(visible)}</td>
       <td>
-        <MaybeVisibleThumbnail rev={file.namedFile.rev} visible={visible} />
+        <MaybeVisibleThumbnail namedFile={file.namedFile} visible={visible} />
       </td>
     </tr>
   );
