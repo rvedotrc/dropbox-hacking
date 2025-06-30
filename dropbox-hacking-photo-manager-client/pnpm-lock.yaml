@@ -26,9 +26,6 @@ importers:
       react-dom:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
-      rxjs:
-        specifier: ^7.8.2
-        version: 7.8.2
       webpack:
         specifier: ^5.88.2
         version: 5.97.1(webpack-cli@6.0.1)
@@ -54,6 +51,9 @@ importers:
       '@blaahaj/dropbox-hacking-exif-db':
         specifier: ^1.0.0
         version: 1.0.0(@types/node-fetch@2.6.12)
+      '@blaahaj/dropbox-hacking-mediainfo-db':
+        specifier: ^1.2.0
+        version: 1.2.0(@types/node-fetch@2.6.12)
       '@eslint/js':
         specifier: ^9.21.0
         version: 9.21.0
@@ -117,6 +117,9 @@ importers:
       prettier:
         specifier: ^3.0.3
         version: 3.4.2
+      rxjs:
+        specifier: ^7.8.2
+        version: 7.8.2
       source-map-loader:
         specifier: ^5.0.0
         version: 5.0.0(webpack@5.97.1)
@@ -779,11 +782,23 @@ packages:
     resolution: {integrity: sha512-6zABk/ECA/QYSCQ1NGiVwwbQerUCZ+TQbp64Q3AgmfNvurHH0j8TtXa1qbShXA6qqkpAj4V5W8pP6mLe1mcMqA==}
     engines: {node: '>=18'}
 
+  '@blaahaj/dropbox-hacking-downloader@1.0.1':
+    resolution: {integrity: sha512-gdD02fuXpHs12orXVFB0ZAKnAP40mrY8M+QNealMTkcmQGgjrvvaDYH1NVWk1k8JUMsJR/W1buhwX8jxkpRUzg==}
+
   '@blaahaj/dropbox-hacking-exif-db@1.0.0':
     resolution: {integrity: sha512-RcApdINaFz3MKtU/fxjmxvkuWjtPQwg3s0WAkzsGUsIRJoFZ6j0v+UmqyxQR0Ggx5LUzunEHvN0Jc7CGAU+MLg==}
 
+  '@blaahaj/dropbox-hacking-lister@1.0.0':
+    resolution: {integrity: sha512-0Q0UE0Je7I9SbdHVCpGSZQcoIrlaO/Go1/+BMpDFLPf5RvZCYA4a3ItroDj8tx5szaG+pYoPLBBiOOK9N4rr4A==}
+
+  '@blaahaj/dropbox-hacking-mediainfo-db@1.2.0':
+    resolution: {integrity: sha512-q+qejpqYBjLFcUwaJ+M942ac6PPzPSl5mRZqa4TFwz4t8czBSU2hSNjSSamDDoM/u+zZ5uXJxSNPIEmKvPKSRw==}
+
   '@blaahaj/dropbox-hacking-util@1.0.1':
     resolution: {integrity: sha512-kwPcC1dj8bEfScrrjCVKo1av5ZyfyrzgtzZJQNeMcXisbqVeQ0ik0fxSuwt9PI4JdLlxxq+8X1LXtfkyaNsxzg==}
+
+  '@blaahaj/dropbox-hacking-util@1.1.0':
+    resolution: {integrity: sha512-ZE4MZZStsa7TPed48MZk+ilHpWWn25xZ4vaswTTMW/HXupPKahSi2qlvOmLLZGM1ffOpdN+abzpQDM/f6pt0dA==}
 
   '@discoveryjs/json-ext@0.6.3':
     resolution: {integrity: sha512-4B4OijXeVNOPZlYA2oEwWOTkzyltLao+xbotHQeqN++Rv27Y6s818+n2Qkp8q+Fxhn0t/5lA5X1Mxktud8eayQ==}
@@ -3966,6 +3981,15 @@ snapshots:
 
   '@bcoe/v8-coverage@1.0.2': {}
 
+  '@blaahaj/dropbox-hacking-downloader@1.0.1(@types/node-fetch@2.6.12)':
+    dependencies:
+      '@blaahaj/dropbox-hacking-util': 1.1.0(@types/node-fetch@2.6.12)
+      dropbox: 10.34.0(@types/node-fetch@2.6.12)
+    transitivePeerDependencies:
+      - '@types/node-fetch'
+      - encoding
+      - supports-color
+
   '@blaahaj/dropbox-hacking-exif-db@1.0.0(@types/node-fetch@2.6.12)':
     dependencies:
       '@blaahaj/dropbox-hacking-util': 1.0.1(@types/node-fetch@2.6.12)
@@ -3976,7 +4000,36 @@ snapshots:
       - encoding
       - supports-color
 
+  '@blaahaj/dropbox-hacking-lister@1.0.0(@types/node-fetch@2.6.12)':
+    dependencies:
+      '@blaahaj/dropbox-hacking-util': 1.1.0(@types/node-fetch@2.6.12)
+      dropbox: 10.34.0(@types/node-fetch@2.6.12)
+    transitivePeerDependencies:
+      - '@types/node-fetch'
+      - encoding
+      - supports-color
+
+  '@blaahaj/dropbox-hacking-mediainfo-db@1.2.0(@types/node-fetch@2.6.12)':
+    dependencies:
+      '@blaahaj/dropbox-hacking-downloader': 1.0.1(@types/node-fetch@2.6.12)
+      '@blaahaj/dropbox-hacking-lister': 1.0.0(@types/node-fetch@2.6.12)
+      '@blaahaj/dropbox-hacking-util': 1.1.0(@types/node-fetch@2.6.12)
+      dropbox: 10.34.0(@types/node-fetch@2.6.12)
+    transitivePeerDependencies:
+      - '@types/node-fetch'
+      - encoding
+      - supports-color
+
   '@blaahaj/dropbox-hacking-util@1.0.1(@types/node-fetch@2.6.12)':
+    dependencies:
+      dropbox: 10.34.0(@types/node-fetch@2.6.12)
+      express: 4.21.2
+    transitivePeerDependencies:
+      - '@types/node-fetch'
+      - encoding
+      - supports-color
+
+  '@blaahaj/dropbox-hacking-util@1.1.0(@types/node-fetch@2.6.12)':
     dependencies:
       dropbox: 10.34.0(@types/node-fetch@2.6.12)
       express: 4.21.2
@@ -4095,7 +4148,7 @@ snapshots:
 
   '@testing-library/dom@10.4.0':
     dependencies:
-      '@babel/code-frame': 7.26.2
+      '@babel/code-frame': 7.27.1
       '@babel/runtime': 7.26.0
       '@types/aria-query': 5.0.4
       aria-query: 5.3.0

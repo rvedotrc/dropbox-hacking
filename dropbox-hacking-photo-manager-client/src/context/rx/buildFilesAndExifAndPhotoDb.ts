@@ -24,7 +24,7 @@ export const buildFilesAndExifAndPhotoDb = (
         const exif: ExifFromHash | undefined = e.image[namedFile.content_hash];
         if (!exif) continue;
 
-        const photoDbEntry: PhotoDbEntry | undefined = p.image[id];
+        const photoDbEntry: PhotoDbEntry | undefined = p.image[namedFile.rev];
         out[id] = { namedFile, exif, photoDbEntry };
       }
       return out;

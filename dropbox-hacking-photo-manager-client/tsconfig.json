@@ -8,10 +8,6 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     "outDir": "./public/dist/",
-    "paths": {
-      "@components/*": ["js/components/*"],
-      "lib/*": ["lib/*"]
-    },
     "resolveJsonModule": true,
     "sourceMap": true,
     "strictNullChecks": true,

@@ -26,6 +26,23 @@ export class GPSLatLong {
     return new GPSLatLong({ lat, long, latRef, longRef });
   }
 
+  public static fromMediaInfoRecordedAt(
+    at: string | null | undefined,
+  ): GPSLatLong | null {
+    if (!at) return null;
+
+    const m = at.match(/^([+-]\d+\.\d+)([+-]\d+\.\d+)([+-]\d+\.\d+)\/$/);
+    if (!m) return null;
+
+    // The altitude is discarded
+    return new GPSLatLong({
+      lat: Number(m[1]),
+      long: Number(m[2]),
+      latRef: "N",
+      longRef: "E",
+    });
+  }
+
   constructor(private readonly pos: GPSLatLongWithDirection) {}
 
   public asUnsigned(): GPSLatLongWithDirection {

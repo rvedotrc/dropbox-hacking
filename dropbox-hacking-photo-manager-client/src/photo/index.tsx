@@ -1,11 +1,12 @@
 import { GPSLatLong, Photo } from "dropbox-hacking-photo-manager-shared";
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import logRender from "../logRender";
 import { useLatestValue } from "../context/rx/useLatestValue";
 import { useAdditionalFeeds } from "../context/rx/additionalFeeds";
 import SamePageLink from "../samePageLink";
+import EditableTextField from "../day/editableTextField";
 
 const Photo = (props: { rev: string }): React.ReactElement | null => {
   const [previewSizes, setPreviewSizes] = useState<string[]>();
@@ -16,6 +17,36 @@ const Photo = (props: { rev: string }): React.ReactElement | null => {
     : undefined;
 
   const date = photo?.namedFile.client_modified.substring(0, 10);
+  const photoDbEntry = photo?.photoDbEntry;
+
+  const onSaveDescription = useMemo(
+    () => (newText: string) =>
+      fetch(`/api/photo/content_hash/${photo!.namedFile.content_hash}`, {
+        method: "PATCH",
+        cache: "no-cache",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ...(photoDbEntry ?? {}), description: newText }),
+      }).then(() => {}),
+    [props.rev, photoDbEntry],
+  );
+
+  const onSaveTags = useMemo(
+    () => (newText: string) =>
+      fetch(`/api/photo/content_hash/${photo!.namedFile.content_hash}`, {
+        method: "PATCH",
+        cache: "no-cache",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...(photoDbEntry ?? {}),
+          tags: newText.trim().replaceAll(/ /g, " ").split(" "),
+        }),
+      }).then(() => {}),
+    [props.rev, photoDbEntry],
+  );
 
   useEffect(() => {
     document.title = `DPM - Photo ${props.rev}`;
@@ -62,8 +93,6 @@ const Photo = (props: { rev: string }): React.ReactElement | null => {
         : undefined,
   };
 
-  console.log({ date, sortedRevs, thisIndex, prevNext });
-
   return (
     <>
       <div className="navigation">
@@ -71,8 +100,7 @@ const Photo = (props: { rev: string }): React.ReactElement | null => {
           <li>
             🔼{" "}
             <SamePageLink
-              href={`/day/${date}`}
-              state={{
+              routeState={{
                 route: "day",
                 date,
               }}
@@ -85,8 +113,7 @@ const Photo = (props: { rev: string }): React.ReactElement | null => {
             <li>
               {"◀️ "}
               <SamePageLink
-                href={`/photo/rev/${prevNext.previousRev}`}
-                state={{
+                routeState={{
                   route: "photo",
                   rev: prevNext.previousRev,
                 }}
@@ -101,8 +128,7 @@ const Photo = (props: { rev: string }): React.ReactElement | null => {
               <li>
                 {"▶️ "}
                 <SamePageLink
-                  href={`/photo/rev/${prevNext.nextRev}`}
-                  state={{
+                  routeState={{
                     route: "photo",
                     rev: prevNext.nextRev,
                   }}
@@ -116,6 +142,22 @@ const Photo = (props: { rev: string }): React.ReactElement | null => {
       </div>
 
       <h1>{props.rev}</h1>
+
+      <p>
+        <EditableTextField
+          key={photoDbEntry?.description ?? ""}
+          value={photoDbEntry?.description ?? ""}
+          onSave={onSaveDescription}
+        />
+      </p>
+
+      <p>
+        <EditableTextField
+          key={photoDbEntry?.tags?.join(" ") ?? ""}
+          value={photoDbEntry?.tags?.join(" ") ?? ""}
+          onSave={onSaveTags}
+        />
+      </p>
 
       <div>
         <a href={`/image/rev/${photo.namedFile.rev}`}>

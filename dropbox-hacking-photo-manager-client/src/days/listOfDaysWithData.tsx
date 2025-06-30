@@ -9,7 +9,6 @@ import logRender from "../logRender";
 import DayWithSamples, { dayDateAttribute } from "./dayWithSamples";
 import { makeEmittableSubscribable } from "./emittableSubscribable";
 import Navigate from "./navigate";
-import Stats from "./stats";
 import useVisibilityTracking from "./useVisibilityTracking";
 
 const ListOfDaysWithData = ({
@@ -21,30 +20,30 @@ const ListOfDaysWithData = ({
   dayMetadata: DayMetadata[];
   withSamples: boolean;
 }): React.ReactElement | null => {
-  const [e, s] = useMemo(
+  const [_e, s] = useMemo(
     () => makeEmittableSubscribable<{ date: string; visible: boolean }>(),
     [],
   );
 
-  const diffEmitter = useMemo(() => {
-    const previouslyVisibleDates = new Set<string>();
+  // const diffEmitter = useMemo(() => {
+  //   const previouslyVisibleDates = new Set<string>();
 
-    return (visibleDates: Set<string>): void => {
-      for (const date of visibleDates) {
-        if (!previouslyVisibleDates.has(date)) {
-          previouslyVisibleDates.add(date);
-          e.emit({ date, visible: true });
-        }
-      }
+  //   return (visibleDates: Set<string>): void => {
+  //     for (const date of visibleDates) {
+  //       if (!previouslyVisibleDates.has(date)) {
+  //         previouslyVisibleDates.add(date);
+  //         e.emit({ date, visible: true });
+  //       }
+  //     }
 
-      for (const date of previouslyVisibleDates) {
-        if (!visibleDates.has(date)) {
-          previouslyVisibleDates.delete(date);
-          e.emit({ date, visible: false });
-        }
-      }
-    };
-  }, []);
+  //     for (const date of previouslyVisibleDates) {
+  //       if (!visibleDates.has(date)) {
+  //         previouslyVisibleDates.delete(date);
+  //         e.emit({ date, visible: false });
+  //       }
+  //     }
+  //   };
+  // }, []);
 
   // const [visibleDates, setVisibleDates] = useState<Set<string>>();
   const olRef = useRef<HTMLOListElement>(null);
@@ -66,20 +65,19 @@ const ListOfDaysWithData = ({
     [countsByDate, keyedMetadata],
   );
 
-  useVisibilityTracking({
-    parentRef: olRef,
-    listItemDataAttribute: dayDateAttribute,
-    onVisibleItems: diffEmitter,
-    deps: [days],
-  });
+  if (new Date().getTime() === 0)
+    useVisibilityTracking({
+      parentRef: olRef,
+      listItemDataAttribute: dayDateAttribute,
+      // onVisibleItems: diffEmitter,
+      // deps: [days],
+    });
 
   return (
     <div>
       <Navigate />
 
       <h1>List of Days</h1>
-
-      <Stats days={days} />
 
       <p>Date; count of pics; of which with GPS</p>
 

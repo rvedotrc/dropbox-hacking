@@ -28,6 +28,19 @@ export default tseslint.config(
         },
       ],
       "@typescript-eslint/require-await": "off",
+
+      // *So* many false positives...
+      // and also wildly unhelpful error messages.
+      "@typescript-eslint/no-unsafe-argument": "off",
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "@typescript-eslint/no-unsafe-call": "off",
+      // -declaration-merging
+      // -enum-comparison
+      // -function-type
+      "@typescript-eslint/no-unsafe-member-access": "off",
+      // -return
+      // -type-assertion
+      // -unary-minus
     },
   },
   {

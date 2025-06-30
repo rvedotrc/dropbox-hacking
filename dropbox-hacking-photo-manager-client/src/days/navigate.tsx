@@ -4,21 +4,38 @@ import SamePageLink from "../samePageLink";
 
 const navigation = (): React.ReactElement | null => (
   <p>
-    <SamePageLink href={"/calendar"} state={{ route: "calendar" }}>
-      Calendar
+    <SamePageLink
+      routeState={{ route: "route/next-gen/list-of-days/without-samples" }}
+    >
+      List of days
+    </SamePageLink>
+
+    {" | "}
+
+    <SamePageLink routeState={{ route: "route/next-gen/basic-counts" }}>
+      Basic counts
     </SamePageLink>
     {" | "}
-    <SamePageLink href={"/days"} state={{ route: "days" }}>
+    <SamePageLink routeState={{ route: "route/next-gen/fsck" }}>
+      fsck
+    </SamePageLink>
+    {" | "}
+    <SamePageLink routeState={{ route: "route/next-gen/exif-explorer" }}>
+      EXIF explorer
+    </SamePageLink>
+
+    {" /// "}
+
+    <SamePageLink routeState={{ route: "calendar" }}>Calendar</SamePageLink>
+    {" | "}
+    <SamePageLink routeState={{ route: "days" }}>
       List of days (with sample pics)
     </SamePageLink>
     {" | "}
-    <SamePageLink href={"/days/plain"} state={{ route: "days-plain" }}>
+    <SamePageLink routeState={{ route: "days-plain" }}>
       List of days (plain)
     </SamePageLink>
-    {" | "}
-    <SamePageLink href={"/stats"} state={{ route: "stats" }}>
-      Stats
-    </SamePageLink>
+    {/* RVE-add-route */}
   </p>
 );
 

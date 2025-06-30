@@ -15,8 +15,25 @@ import { isDeepStrictEqual } from "util";
 import { fromExpressWebSocket } from "./fromExpressWebSocket.js";
 import { map } from "rxjs";
 import { serveRxFeed } from "./serveRxFeed.js";
+import {
+  provideBasicCounts,
+  provideContentHash,
+  provideDayFiles,
+  provideExifExplorer,
+  provideFileId,
+  provideFileRev,
+  provideFsck,
+  provideListOfDaysWithoutSamples,
+  provideClosestTo,
+  provideThumbnail,
+  type RxFeedRequest,
+} from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
+import { closestToHandlerBuilder } from "../websocket/closestToHandler.js";
+import { thumbnailHandlerBuilder } from "../websocket/thumbnailHandler.js";
 
 type IsUnchanged<V> = (a: V, b: V) => boolean;
+
+const ensureNever = <_ extends never>() => undefined;
 
 export default (app: Application, context: Context): void => {
   if (!process.env.HOME) console.log(app, context);
@@ -25,18 +42,19 @@ export default (app: Application, context: Context): void => {
     const id = getLogPrefix(req) || "?";
 
     try {
-      // console.log(`${id} New websocket`);
+      console.log(`${id} New websocket`);
 
-      const closer = () => {
+      const closer = (signal: NodeJS.Signals) => {
         process.nextTick(() => {
-          console.log(`${id} Closing websocket`);
+          console.log(`${id} Caught signal ${signal}, closing websocket`);
           ws.close();
+          console.log(`${id} remove SIGINT/SIGTERM listeners`);
           process.off("SIGINT", closer);
           process.off("SIGTERM", closer);
-          // messageHandler.close();
         });
       };
 
+      console.log(`${id} add SIGINT/SIGTERM listeners`);
       process.on("SIGINT", closer);
       process.on("SIGTERM", closer);
 
@@ -54,7 +72,7 @@ export default (app: Application, context: Context): void => {
           // const spiedAccept = spy(accept, "accept");
           const writer = accept({
             receive: (request) => {
-              console.log(`Server got request:`, request);
+              console.log(`${id} got request:`, JSON.stringify(request));
 
               if (
                 typeof request === "object" &&
@@ -62,6 +80,8 @@ export default (app: Application, context: Context): void => {
                 "type" in request &&
                 typeof request.type === "string"
               ) {
+                const typedRequest = request as RxFeedRequest;
+
                 const squish = <V>() =>
                   map(
                     compress(
@@ -69,36 +89,99 @@ export default (app: Application, context: Context): void => {
                     ),
                   );
 
-                if (request.type === "rx-days") {
+                if (typedRequest.type === "rx-days") {
                   return serveRxFeed(
                     context.dayRx().pipe(squish()),
                     () => writer,
                   );
-                }
-
-                if (request.type === "rx-photos") {
+                } else if (typedRequest.type === "rx-photos") {
                   return serveRxFeed(
                     context.photoRx().pipe(squish()),
                     () => writer,
                   );
-                }
-
-                if (request.type === "rx-files") {
+                } else if (typedRequest.type === "rx-files") {
                   return serveRxFeed(
                     context.imageFilesRx().pipe(squish()),
                     () => writer,
                   );
-                }
-
-                if (request.type === "rx-exif") {
+                } else if (typedRequest.type === "rx-exif") {
                   return serveRxFeed(
                     context.exifRx().pipe(squish()),
                     () => writer,
                   );
+                } else if (typedRequest.type === "rx.ng.basic-counts") {
+                  return serveRxFeed(
+                    provideBasicCounts(context.fullDatabaseFeeds),
+                    () => writer,
+                  );
+                } else if (typedRequest.type === "rx.ng.fsck") {
+                  return serveRxFeed(
+                    provideFsck(context.fullDatabaseFeeds),
+                    () => writer,
+                  );
+                } else if (typedRequest.type === "rx.ng.exif-explorer") {
+                  return serveRxFeed(
+                    provideExifExplorer(context.fullDatabaseFeeds),
+                    () => writer,
+                  );
+                } else if (typedRequest.type === "rx.ng.list-of-days") {
+                  return serveRxFeed(
+                    provideListOfDaysWithoutSamples(context.fullDatabaseFeeds),
+                    () => writer,
+                  );
+                } else if (typedRequest.type === "rx.ng.day.files") {
+                  return serveRxFeed(
+                    provideDayFiles(context.fullDatabaseFeeds, {
+                      date: typedRequest.date,
+                    }),
+                    () => writer,
+                  );
+                } else if (typedRequest.type === "rx.ng.content_hash") {
+                  return serveRxFeed(
+                    provideContentHash(context.fullDatabaseFeeds, {
+                      contentHash: typedRequest.contentHash,
+                    }),
+                    () => writer,
+                  );
+                } else if (typedRequest.type === "rx.ng.file.id") {
+                  return serveRxFeed(
+                    provideFileId(context.fullDatabaseFeeds, {
+                      id: typedRequest.id,
+                    }),
+                    () => writer,
+                  );
+                } else if (typedRequest.type === "rx.ng.file.rev") {
+                  return serveRxFeed(
+                    provideFileRev(context.fullDatabaseFeeds, {
+                      rev: typedRequest.rev,
+                    }),
+                    () => writer,
+                  );
+                } else if (typedRequest.type === "rx.ng.closest-to") {
+                  return serveRxFeed(
+                    provideClosestTo(
+                      context.fullDatabaseFeeds,
+                      typedRequest.request,
+                      closestToHandlerBuilder(context),
+                    ),
+                    () => writer,
+                  );
+                } else if (typedRequest.type === "rx.ng.thumbnail2") {
+                  return serveRxFeed(
+                    provideThumbnail(
+                      context.fullDatabaseFeeds,
+                      typedRequest.request,
+                      thumbnailHandlerBuilder(context),
+                    ),
+                    () => writer,
+                  );
                 }
+                // RVE-add-feed
+
+                ensureNever<typeof typedRequest>();
               }
 
-              console.warn("Unrecognised request:", request);
+              console.warn(`${id} Unrecognised request:`, request);
               writer.close();
             },
             close: () => {},
@@ -118,6 +201,11 @@ export default (app: Application, context: Context): void => {
       ws.on("error", (...args) => console.log(`${id} ws error`, args));
 
       console.log(`${id} socket opened`);
+      ws.on("close", () => {
+        console.log(`${id} ws closed, removing SIGINT/SIGTERM listeners`);
+        process.off("SIGINT", closer);
+        process.off("SIGTERM", closer);
+      });
     } catch (e) {
       console.error(`${id} threw`, e);
     }

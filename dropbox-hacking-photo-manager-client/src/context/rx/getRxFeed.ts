@@ -19,4 +19,5 @@ export const getRxFeed = <T, R>(
     });
 
     writer.send(request);
+    return () => writer.close();
   });

@@ -24,6 +24,7 @@ const PhotoTile = ({
   const loader = useThumbnailLoader();
 
   const thumbnail = useThumbnail(photo.namedFile.rev, loader)(isVisible);
+  // console.log({ rev: photo.namedFile.rev, isVisible, thumbnail: !!thumbnail });
 
   const tags = photo.exif.exifData.tags;
   const gps = tags ? GPSLatLong.fromExifTags(tags) : null;
@@ -41,8 +42,7 @@ const PhotoTile = ({
     <SamePageLink
       className={"photoItem"}
       key={photo.namedFile.id}
-      href={`/photo/rev/${photo.namedFile.rev}`}
-      state={{ route: "photo", rev: photo.namedFile.rev }}
+      routeState={{ route: "photo", rev: photo.namedFile.rev }}
       data-rev={photo.namedFile.rev}
     >
       <img
