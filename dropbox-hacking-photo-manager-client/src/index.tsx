@@ -35,11 +35,7 @@ const ensureNever = <_ extends never>() => undefined;
 
 const toRender = ({ routeState }: { routeState: RouteState }) => {
   if (routeState.route === "closest-to")
-    return (
-      <WithWholeDatabaseFeeds>
-        <ClosestTo gps={routeState.gps} nClosest={routeState.nClosest} />
-      </WithWholeDatabaseFeeds>
-    );
+    return <ClosestTo gps={routeState.gps} nClosest={routeState.nClosest} />;
   if (routeState.route === "calendar")
     return (
       <WithWholeDatabaseFeeds>
@@ -108,6 +104,7 @@ const toRender = ({ routeState }: { routeState: RouteState }) => {
 const WithWholeDatabaseFeeds = (props: React.PropsWithChildren) => (
   <rxRecordFeedContext.defaultProvider>
     <additionalFeeds.defaultProvider>
+      <h1>USING WHOLE DB FEED</h1>
       {props.children}
     </additionalFeeds.defaultProvider>
   </rxRecordFeedContext.defaultProvider>
