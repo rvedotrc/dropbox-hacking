@@ -31,8 +31,6 @@ const calculateDistance = (a: GPSLatLong, b: GPSLatNLongE): number =>
 
 export const closestToHandlerBuilder = (context: Context) => {
   return async (req: ClosestToRequest): Promise<ClosestToResponse> => {
-    console.debug({ req });
-
     const exif = await context.exifDbFeed.read();
     const ls = await context.lsFeed.read();
     if (ls.tag !== "ready") throw new Error("Not ready");
@@ -41,13 +39,12 @@ export const closestToHandlerBuilder = (context: Context) => {
       .map(([hash, data]) => ({
         hash,
         data,
-        gps: data.exifData.tags
-          ? GPSLatLong.fromExifTags(data.exifData.tags)
+        gps:
+          data.exifData.tags ?
+            GPSLatLong.fromExifTags(data.exifData.tags)
           : null,
       }))
       .filter(hasGPS);
-
-    console.debug(38, withGPS.length);
 
     const withDistance = withGPS
       .map((item) => ({
@@ -58,8 +55,6 @@ export const closestToHandlerBuilder = (context: Context) => {
 
     const truncated = withDistance.length > req.nClosest;
     withDistance.splice(req.nClosest);
-
-    console.debug({ truncated, n: withDistance.length });
 
     const wantedHashes = new Set(withDistance.map((t) => t.hash));
     const wantedImages = [...ls.entries.values()]
@@ -79,8 +74,6 @@ export const closestToHandlerBuilder = (context: Context) => {
           exif,
         })),
     );
-
-    console.debug({ n: items.length });
 
     return {
       truncated,
