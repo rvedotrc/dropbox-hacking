@@ -36,7 +36,7 @@
   "dependencies": {
     "@blaahaj/dropbox-hacking-exif-db": "^1.1.0",
     "@blaahaj/dropbox-hacking-ls-cache": "^1.1.0",
-    "@blaahaj/dropbox-hacking-mediainfo-db": "link:../../../blaahaj/dropbox-hacking-mediainfo-db",
+    "@blaahaj/dropbox-hacking-mediainfo-db": "^1.2.0",
     "@blaahaj/dropbox-hacking-util": "^1.0.1",
     "dropbox": "^10.34.0",
     "dropbox-hacking-photo-manager-shared": "link:../dropbox-hacking-photo-manager-shared",
