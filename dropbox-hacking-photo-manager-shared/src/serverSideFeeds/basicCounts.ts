@@ -57,7 +57,7 @@ export const provideBasicCounts = (feeds: FullDatabaseFeeds) =>
             .filter((v) => {
               const media = v.mediainfoData.media;
               if (!media) return false;
-              return media.track.every((t) => t["@type"] !== "Video");
+              return !media.track.some((t) => t["@type"] === "Video");
             })
             .toArray().length,
           allFiles: files.size,
