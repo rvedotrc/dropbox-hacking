@@ -16,21 +16,24 @@ export default (app: Application, context: Context): void => {
     try {
       // console.log(`${id} New websocket`);
 
-      const closer = () => {
+      const closer = (signal: NodeJS.Signals) => {
         process.nextTick(() => {
-          console.log(`${id} Closing websocket`);
+          console.log(
+            `${id} Caught ${signal}, Closing websocket and removing SIG listeners`,
+          );
           ws.close();
           process.off("SIGINT", closer);
           process.off("SIGTERM", closer);
         });
       };
 
+      console.log(`${id} Adding SIG listeners`);
       process.on("SIGINT", closer);
       process.on("SIGTERM", closer);
 
       const idle = () => {
-        console.log(`${id} Websocket marked as idle, closing`);
-        closer();
+        // console.log(`${id} Websocket marked as idle, closing`);
+        // closer();
       };
 
       let idleTimer = setTimeout(idle, IDLE_MILLIS);
@@ -51,29 +54,33 @@ export default (app: Application, context: Context): void => {
             messageHandler(p.value).then(
               (response) => {
                 if (response === undefined) {
-                  console.error(`Handler resolved undefined, no response sent`);
+                  console.error(
+                    `${id} Handler resolved undefined, no response sent`,
+                  );
                 } else {
-                  // console.debug(`ws send:`, response);
+                  console.debug(`${id} ws send:`, JSON.stringify(response));
                   ws.send(JSON.stringify(response));
                 }
               },
               (error) => {
                 console.error(
-                  `Request handler failed, no response sent:`,
+                  `${id} Request handler failed, no response sent:`,
                   error,
                 );
               },
             );
           } else {
-            console.error(`Failed to parse request, no response sent`);
+            console.error(`${id} Failed to parse request, no response sent`);
           }
         } else {
-          console.error(`Bad request type, no response sent`);
+          console.error(`${id} Bad request type, no response sent`);
         }
       });
 
       ws.on("close", (...args) => {
-        console.log(`${id} ws close`, args);
+        console.log(`${id} ws close, removing SIG listeners`, args);
+        process.off("SIGINT", closer);
+        process.off("SIGTERM", closer);
         clearTimeout(idleTimer);
       });
 

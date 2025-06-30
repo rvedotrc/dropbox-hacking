@@ -24,8 +24,12 @@ import {
   provideFileRev,
   provideFsck,
   provideListOfDaysWithoutSamples,
+  provideClosestTo,
+  provideThumbnail,
   type RxFeedRequest,
 } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
+import { closestToHandlerBuilder } from "../websocket/closestToHandler.js";
+import { thumbnailHandlerBuilder } from "../websocket/thumbnailHandler.js";
 
 type IsUnchanged<V> = (a: V, b: V) => boolean;
 
@@ -40,16 +44,17 @@ export default (app: Application, context: Context): void => {
     try {
       console.log(`${id} New websocket`);
 
-      const closer = () => {
+      const closer = (signal: NodeJS.Signals) => {
         process.nextTick(() => {
-          console.log(`${id} Closing websocket`);
+          console.log(`${id} Caught signal ${signal}, closing websocket`);
           ws.close();
+          console.log(`${id} remove SIGINT/SIGTERM listeners`);
           process.off("SIGINT", closer);
           process.off("SIGTERM", closer);
-          // messageHandler.close();
         });
       };
 
+      console.log(`${id} add SIGINT/SIGTERM listeners`);
       process.on("SIGINT", closer);
       process.on("SIGTERM", closer);
 
@@ -67,7 +72,7 @@ export default (app: Application, context: Context): void => {
           // const spiedAccept = spy(accept, "accept");
           const writer = accept({
             receive: (request) => {
-              console.log(`${id} got request:`, request);
+              console.log(`${id} got request:`, JSON.stringify(request));
 
               if (
                 typeof request === "object" &&
@@ -152,12 +157,28 @@ export default (app: Application, context: Context): void => {
                     }),
                     () => writer,
                   );
+                } else if (typedRequest.type === "rx.ng.closest-to") {
+                  return serveRxFeed(
+                    provideClosestTo(
+                      context.fullDatabaseFeeds,
+                      typedRequest.request,
+                      closestToHandlerBuilder(context),
+                    ),
+                    () => writer,
+                  );
+                } else if (typedRequest.type === "rx.ng.thumbnail2") {
+                  return serveRxFeed(
+                    provideThumbnail(
+                      context.fullDatabaseFeeds,
+                      typedRequest.request,
+                      thumbnailHandlerBuilder(context),
+                    ),
+                    () => writer,
+                  );
                 }
                 // RVE-add-feed
 
                 ensureNever<typeof typedRequest>();
-
-                const _ = typedRequest;
               }
 
               console.warn(`${id} Unrecognised request:`, request);
@@ -180,7 +201,11 @@ export default (app: Application, context: Context): void => {
       ws.on("error", (...args) => console.log(`${id} ws error`, args));
 
       console.log(`${id} socket opened`);
-      ws.on("close", () => console.log(`${id} ws closed`));
+      ws.on("close", () => {
+        console.log(`${id} ws closed, removing SIGINT/SIGTERM listeners`);
+        process.off("SIGINT", closer);
+        process.off("SIGTERM", closer);
+      });
     } catch (e) {
       console.error(`${id} threw`, e);
     }

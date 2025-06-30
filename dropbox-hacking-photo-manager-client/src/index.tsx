@@ -14,7 +14,6 @@ import * as rxRecordFeedContext from "./context/rx/rxRecordFeedContext";
 import * as additionalFeeds from "./context/rx/additionalFeeds";
 import { Router } from "./context/routingContext";
 import * as thumbnailLoaderContext from "./context/thumbnails";
-import * as websocket from "./context/websocket";
 import Day from "./day";
 import Calendar from "./days/calendar";
 import ListOfDays from "./days/listOfDays";
@@ -146,11 +145,9 @@ const Root = ({
   return (
     <routingContext.context.Provider value={router}>
       <multiplexerContext.defaultProvider accepter={accepter}>
-        <websocket.defaultProvider>
-          <thumbnailLoaderContext.defaultProvider>
-            {toRender({ routeState: state })}
-          </thumbnailLoaderContext.defaultProvider>
-        </websocket.defaultProvider>
+        <thumbnailLoaderContext.defaultProvider>
+          {toRender({ routeState: state })}
+        </thumbnailLoaderContext.defaultProvider>
       </multiplexerContext.defaultProvider>
     </routingContext.context.Provider>
   );
@@ -173,7 +170,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (container) {
       window.history.replaceState(routeState, "unused");
       createRoot(container).render(
-        // StrictMode removed: kills the EventSource stuff, for now
         <React.StrictMode>
           <WrappedRoot initialRouteState={routeState} />
         </React.StrictMode>,

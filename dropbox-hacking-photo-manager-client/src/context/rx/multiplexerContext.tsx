@@ -32,41 +32,82 @@ const NonRetryingSocketWrapper = (
   const instanceId = useMemo(() => generateId(), []);
   console.log("mxc NonRetryingSocketWrapper", instanceId);
 
-  const [socket, setSocket] = useState<WebSocket>();
+  // const [socket, setSocket] = useState<WebSocket>();
   const [t, setT] = useState<T>();
 
   useEffect(() => {
-    console.log("mxc NonRetryingSocketWrapper", instanceId, "create socket");
+    const id = generateId();
+    console.log(
+      "mxc NonRetryingSocketWrapper",
+      id,
+      instanceId,
+      "create socket",
+    );
     const s = new WebSocket("/api/ws2");
-    setSocket(s);
+    // setSocket(s);
 
-    s.addEventListener("open", () => {
-      console.log("mxc NonRetryingSocketWrapper", instanceId, "open");
+    const openListener = () => {
+      console.log(
+        "mxc NonRetryingSocketWrapper",
+        id,
+        instanceId,
+        "open",
+        s?.readyState,
+      );
       const io = multiplexer(
         transportAsJson(fromBrowserWebSocket(s)),
         props.accepter,
       );
       console.log("Made io", io);
       setT(() => io);
-    });
+    };
 
-    s.addEventListener("error", (errorEvent) => {
-      console.error(`SocketWrapper ${instanceId} error`, errorEvent);
-    });
+    const errorListener = (errorEvent: ErrorEvent) => {
+      console.error(
+        `mxc NonRetryingSocketWrapper`,
+        id,
+        instanceId,
+        "error",
+        errorEvent,
+        s?.readyState,
+      );
+    };
 
-    s.addEventListener("close", (closeEvent) => {
-      console.info(`SocketWrapper ${instanceId} close`, closeEvent);
+    const closeListener = (closeEvent: CloseEvent) => {
+      console.info(
+        `mxc NonRetryingSocketWrapper`,
+        id,
+        instanceId,
+        "close",
+        closeEvent,
+        s?.readyState,
+      );
       setT(undefined);
       props.onDead();
-    });
+    };
+
+    s.addEventListener("open", openListener);
+    s.addEventListener("error", errorListener);
+    s.addEventListener("close", closeListener);
 
     return () => {
-      console.log("mxc NonRetryingSocketWrapper", instanceId, "cleanup");
-      socket?.close();
+      console.log(
+        "mxc NonRetryingSocketWrapper",
+        id,
+        instanceId,
+        "cleanup",
+        s?.readyState,
+      );
+
+      s.removeEventListener("open", openListener);
+      s.removeEventListener("error", errorListener);
+      s.removeEventListener("close", closeListener);
+
+      s?.close();
     };
   }, []);
 
-  console.log("providing", t);
+  console.log("mxc NonRetryingSocketWrapper", instanceId, "providing", t);
 
   return <Provider value={t}>{props.children}</Provider>;
 };
@@ -75,18 +116,20 @@ const GivenFixedAccepter = (
   props: PropsWithChildren<{ accepter: (accept: T) => void }>,
 ): React.ReactElement | null => {
   const instanceId = useMemo(() => generateId(), []);
-  console.log("mxc GivenFixedAccepter", instanceId);
 
   const [sleepTimer, setSleepTimer] = useState<number>();
+  console.log("mxc GivenFixedAccepter", instanceId, sleepTimer);
 
   const onDead = useMemo(
     () => () => {
-      console.log(`mxc GivenFixedAccepter ${instanceId} dead!`);
-      setSleepTimer(
-        setTimeout(() => {
-          setSleepTimer(undefined);
-        }, 1000) as unknown as number,
-      );
+      if (!sleepTimer) {
+        console.log(`mxc GivenFixedAccepter ${instanceId} dead!`);
+        setSleepTimer(
+          setTimeout(() => {
+            setSleepTimer(undefined);
+          }, 1000) as unknown as number,
+        );
+      }
     },
     [],
   );

@@ -34,7 +34,7 @@ appWithWs.use((req, res, next) => {
   const startTime = new Date().getTime();
 
   const startingTimeout = setTimeout(() => {
-    console.log(`${requestId} starting (log message deferred)`);
+    console.log(`${requestId} starting (in progress...)`);
   }, 200);
 
   let requestClosed = false;
@@ -55,11 +55,13 @@ appWithWs.use((req, res, next) => {
   };
 
   req.on("close", () => {
+    console.log(`${requestId} req close`);
     requestClosed = true;
     checkClosed();
   });
 
   res.on("close", () => {
+    console.log(`${requestId} res close`);
     responseClosed = true;
     checkClosed();
   });

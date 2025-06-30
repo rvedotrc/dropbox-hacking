@@ -1,3 +1,5 @@
+import type { ClosestToRequest, ThumbnailRequest } from "../index.js";
+
 export type RxFeedRequest =
   // legacy whole-database stuff
   | { readonly type: "rx-days" }
@@ -13,9 +15,8 @@ export type RxFeedRequest =
   | { readonly type: "rx.ng.file.id"; readonly id: string }
   | { readonly type: "rx.ng.file.rev"; readonly rev: string }
   | { readonly type: "rx.ng.content_hash"; readonly contentHash: string }
-  | { readonly type: "rx.ng.day.files"; readonly date: string };
-// | { readonly type: "fsck" }
-// | { readonly type: "years" }
-// | { readonly type: "months"; readonly year: string }
+  | { readonly type: "rx.ng.day.files"; readonly date: string }
+  | { readonly type: "rx.ng.closest-to"; readonly request: ClosestToRequest }
+  | { readonly type: "rx.ng.thumbnail2"; readonly request: ThumbnailRequest };
 
 // RVE-add-feed

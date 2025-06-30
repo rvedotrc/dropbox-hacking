@@ -5,7 +5,6 @@ import type {
 
 import type { Context } from "../../context.js";
 import { pingHandlerBuilder } from "./pingHandler.js";
-import { thumbnailHandlerBuilder } from "./thumbnailHandler.js";
 import { closestToHandlerBuilder } from "./closestToHandler.js";
 
 // export type SimpleRequestHandler<I, O> = (request: I) => Promise<O>;
@@ -54,7 +53,6 @@ export const simpleRequestHandlerBuilder = (
   context: Context,
 ): H<unknown, unknown> => {
   const handlerMap = {
-    getThumbnail: thumbnailHandlerBuilder(context),
     ping: pingHandlerBuilder(context),
     closestTo: closestToHandlerBuilder(context),
   } as const;
