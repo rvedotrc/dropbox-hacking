@@ -25,16 +25,6 @@ const FileRow = ({
 
   return (
     <tr key={file.namedFile.id} data-rev={file.namedFile.rev}>
-      <td>
-        <SamePageLink
-          routeState={{
-            route: "route/next-gen/content-hash",
-            contentHash: file.namedFile.content_hash,
-          }}
-        >
-          hash
-        </SamePageLink>
-      </td>
       <td>{file.namedFile.client_modified.replace("T", " ")}</td>
       <td>
         {file.content.exif && "+exif "}
@@ -44,11 +34,27 @@ const FileRow = ({
       <td>
         {file.namedFile.name
           .toLocaleLowerCase()
-          .replaceAll(file.namedFile.content_hash, "HASH")}
+          .replaceAll(file.namedFile.content_hash, "#")}
       </td>
-      <td>v={String(visible)}</td>
       <td>
-        <MaybeVisibleThumbnail namedFile={file.namedFile} visible={visible} />
+        <SamePageLink
+          routeState={{
+            route: "route/next-gen/content-hash",
+            contentHash: file.namedFile.content_hash,
+          }}
+        >
+          <MaybeVisibleThumbnail namedFile={file.namedFile} visible={visible} />
+        </SamePageLink>
+      </td>
+      <td>
+        <div>{file.photoDbEntry?.description ?? ""}</div>
+        <div className="tags">
+          {(file.photoDbEntry?.tags ?? []).map((tag, index) => (
+            <span key={index} className={`tag tag-${tag}`}>
+              {tag}
+            </span>
+          ))}
+        </div>
       </td>
     </tr>
   );

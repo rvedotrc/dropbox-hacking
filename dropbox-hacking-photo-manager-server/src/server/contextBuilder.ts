@@ -87,7 +87,7 @@ export default (args: {
     mediaInfoByContentHash: mediaInfoRxMap.observable(),
     daysByDate: daysRxMap.observable(),
     allFilesByRev: allFilesRxMap.observable(),
-    photosById: photosRxMap.observable(),
+    photosByContentHash: photosRxMap.observable(),
   };
 
   const exifRx = buildForExifDb(exifDbDir);

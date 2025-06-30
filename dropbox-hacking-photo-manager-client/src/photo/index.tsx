@@ -21,7 +21,7 @@ const Photo = (props: { rev: string }): React.ReactElement | null => {
 
   const onSaveDescription = useMemo(
     () => (newText: string) =>
-      fetch(`/api/photo/rev/${props.rev}`, {
+      fetch(`/api/photo/content_hash/${photo!.namedFile.content_hash}`, {
         method: "PATCH",
         cache: "no-cache",
         headers: {
@@ -34,7 +34,7 @@ const Photo = (props: { rev: string }): React.ReactElement | null => {
 
   const onSaveTags = useMemo(
     () => (newText: string) =>
-      fetch(`/api/photo/rev/${props.rev}`, {
+      fetch(`/api/photo/content_hash/${photo!.namedFile.content_hash}`, {
         method: "PATCH",
         cache: "no-cache",
         headers: {

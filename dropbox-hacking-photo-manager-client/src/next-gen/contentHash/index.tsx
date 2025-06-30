@@ -8,11 +8,23 @@ import SummariseMediaInfo from "./SummariseMediaInfo";
 import SummariseExif from "./SummariseExif";
 import SummariseNamedFiles from "./SummariseNamedFiles";
 import ImagePreview from "./imagePreview";
+import EditablePhotoEntry from "./EditablePhotoEntry";
 
-const Results = ({ latestValue }: { latestValue: ContentHashResult }) => {
+const Results = ({
+  contentHash,
+  latestValue,
+}: {
+  contentHash: string;
+  latestValue: ContentHashResult;
+}) => {
   return (
     <>
       <ImagePreview namedFile={latestValue.namedFiles[0]} />
+
+      <EditablePhotoEntry
+        contentHash={contentHash}
+        photoDbEntry={latestValue.photoDbEntry}
+      />
 
       <h2>Files</h2>
 
@@ -53,7 +65,11 @@ const NGContentHash = ({ contentHash }: { contentHash: string }) => {
 
       <h1>Content hash {contentHash.substring(0, 10)}</h1>
 
-      {latestValue ? <Results latestValue={latestValue} /> : "Loading..."}
+      {latestValue ? (
+        <Results contentHash={contentHash} latestValue={latestValue} />
+      ) : (
+        "Loading..."
+      )}
     </>
   );
 };

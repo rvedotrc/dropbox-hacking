@@ -91,7 +91,7 @@ const areUnique = (things: Iterable<string>): boolean => {
 
 export const provideFsck = (feeds: FullDatabaseFeeds) =>
   combineLatest([
-    feeds.photosById,
+    feeds.photosByContentHash,
     feeds.exifsByContentHash,
     feeds.allFilesByRev,
     feeds.daysByDate,

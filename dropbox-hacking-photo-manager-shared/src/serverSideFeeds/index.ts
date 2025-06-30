@@ -31,5 +31,5 @@ export interface FullDatabaseFeeds {
   >;
   daysByDate: Observable<Map<string, DayMetadata>>;
   allFilesByRev: Observable<Map<string, NamedFile>>;
-  photosById: Observable<Map<string, PhotoDbEntry>>;
+  photosByContentHash: Observable<Map<string, PhotoDbEntry>>;
 }

@@ -26,6 +26,7 @@ const samePageLink = ({
           return;
         }
 
+        document.title = "UNSET TITLE";
         e.preventDefault();
         window.history.pushState(routeState, "unused", href);
         router.switchToPage(routeState);

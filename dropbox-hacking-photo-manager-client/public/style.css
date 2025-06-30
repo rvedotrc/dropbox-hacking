@@ -147,3 +147,21 @@ body {
 .editable.inactive:hover {
   background-color: #ccf;
 }
+
+.tags {
+  padding-block: 1em;
+}
+
+.tag {
+  font-family: monospace;
+  color: white;
+  background-color: blue;
+  border: 1px outset #777;
+  border-radius: 0.3em;
+  padding: 0.3em;
+  margin-inline-end: 0.5em;
+}
+
+td {
+  padding-inline-end: 1em;
+}

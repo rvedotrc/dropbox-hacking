@@ -62,7 +62,7 @@ const SummariseNamedFiles = ({
                   <a
                     href={`https://www.dropbox.com/preview${encodeURI(namedFile.path_display)}?context=browse&role=personal`}
                   >
-                    {basename.replaceAll(namedFile.content_hash, "HASH")}
+                    {basename.replaceAll(namedFile.content_hash, "#")}
                   </a>
                 </td>
               </tr>

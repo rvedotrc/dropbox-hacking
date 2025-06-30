@@ -8,7 +8,7 @@ import { unambiguousPrefixLength } from "./unambiguousPrefixLength.js";
 
 export const provideBasicCounts = (feeds: FullDatabaseFeeds) =>
   combineLatest([
-    feeds.photosById,
+    feeds.photosByContentHash,
     feeds.exifsByContentHash,
     feeds.allFilesByRev,
     feeds.daysByDate,
@@ -24,7 +24,7 @@ export const provideBasicCounts = (feeds: FullDatabaseFeeds) =>
       for (const file of files.values()) {
         unusedExifs.delete(file.content_hash);
         unusedMediaInfos.delete(file.content_hash);
-        unusedPhotos.delete(file.id);
+        unusedPhotos.delete(file.content_hash);
 
         const timeKey = file.client_modified.substring(0, 4);
 

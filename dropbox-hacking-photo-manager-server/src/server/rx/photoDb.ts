@@ -16,14 +16,14 @@ export const buildForPhotoDb = (path: string) => {
   return {
     observable: () => dbReplaySubject,
     close: () => dbReplaySubscription.unsubscribe(),
-    update: async (rev: string, entry: PhotoDbEntry) => {
+    update: async (args: { contentHash: string; entry: PhotoDbEntry }) => {
       const all = JSON.parse(
         await readFile(`${path}/photos.json`, { encoding: "utf-8" }),
       ) as PhotoDb;
 
-      if (isDeepStrictEqual(all[rev], entry)) return;
+      if (isDeepStrictEqual(all[args.contentHash], args.entry)) return;
 
-      all[rev] = entry;
+      all[args.contentHash] = args.entry;
 
       await writeFileAtomic(`${path}/photos.json`, JSON.stringify(all) + "\n", {
         encoding: "utf-8",

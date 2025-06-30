@@ -14,7 +14,7 @@ export type DayFilesResult = {
   files: {
     namedFile: NamedFile;
     exif: ExifFromHash | undefined;
-    photoDBEntry?: PhotoDbEntry;
+    photoDbEntry?: PhotoDbEntry;
     content: {
       exif?: ExifFromHash;
       mediaInfo?: MediainfoFromHash;
@@ -29,7 +29,7 @@ export const provideDayFiles = (
   combineLatest([
     feeds.allFilesByRev,
     feeds.daysByDate,
-    feeds.photosById,
+    feeds.photosByContentHash,
     feeds.exifsByContentHash,
     feeds.mediaInfoByContentHash,
   ]).pipe(
@@ -48,7 +48,7 @@ export const provideDayFiles = (
         .map((namedFile) => ({
           namedFile,
           exif: exifs.get(namedFile.content_hash),
-          photoDbEntry: photos.get(namedFile.id),
+          photoDbEntry: photos.get(namedFile.content_hash),
           content: {
             exif: exifs.get(namedFile.content_hash),
             mediaInfo: medaInfos.get(namedFile.content_hash),
