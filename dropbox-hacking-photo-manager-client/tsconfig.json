@@ -10,7 +10,6 @@
     "outDir": "./public/dist/",
     "paths": {
       "@components/*": ["./components/*"],
-      "@context/*": ["./context/*"],
       "@hooks/*": ["./hooks/*"],
       "@lib/*": ["./lib/*"],
       "@pages/*": ["./pages/*"]

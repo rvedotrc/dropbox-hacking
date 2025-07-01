@@ -4,7 +4,7 @@ import type {
 } from "dropbox-hacking-photo-manager-shared";
 
 import type { ThumbnailLoader } from "./types";
-import { getRxFeed } from "@context/rx/getRxFeed";
+import { getRxFeed } from "@lib/rxFeed/getRxFeed";
 import type { RxFeedRequest } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 
 export const websocketThumbnailLoader = (

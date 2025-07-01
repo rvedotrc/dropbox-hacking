@@ -1,11 +1,11 @@
 import * as React from "react";
 import { useEffect } from "react";
 
-import { useCountsByDate } from "@context/countsByDateContext";
+import { useCountsByDate } from "@hooks/legacyRxFeeds/countsByDateContext";
 import logRender from "@lib/logRender";
 import ListOfDaysWithData from "./listOfDaysWithData";
-import { useLatestValue } from "@context/rx/useLatestValue";
-import { useRxFeedsViaMultiplexer } from "@context/rx/rxRecordFeedContext";
+import { useLatestValue } from "@hooks/useLatestValue";
+import { useRxFeedsViaMultiplexer } from "@hooks/legacyRxFeeds/rxRecordFeedContext";
 
 const ListOfDays = ({
   withSamples,

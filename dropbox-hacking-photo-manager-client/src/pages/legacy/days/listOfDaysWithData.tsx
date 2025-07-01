@@ -9,7 +9,7 @@ import logRender from "@lib/logRender";
 import DayWithSamples, { dayDateAttribute } from "./dayWithSamples";
 import { makeEmittableSubscribable } from "./emittableSubscribable";
 import Navigate from "@components/navigate";
-import useVisibilityTracking from "./useVisibilityTracking";
+import useVisibilityTracking from "../../../hooks/useVisibilityTracking";
 
 const ListOfDaysWithData = ({
   countsByDate,

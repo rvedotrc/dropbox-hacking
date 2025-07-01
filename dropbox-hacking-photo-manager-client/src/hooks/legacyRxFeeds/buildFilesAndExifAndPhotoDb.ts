@@ -4,7 +4,7 @@ import type {
   PhotoDbEntry,
 } from "dropbox-hacking-photo-manager-shared";
 import { combineLatest, map } from "rxjs";
-import type { buildFromIO } from "./rxFeedClient";
+import type { buildFromIO } from "@lib/legacyRxFeeds/rxFeedClient";
 
 export const buildFilesAndExifAndPhotoDb = (
   feeds: ReturnType<typeof buildFromIO>["feeds"],

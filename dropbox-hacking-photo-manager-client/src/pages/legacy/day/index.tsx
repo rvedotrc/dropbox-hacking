@@ -5,14 +5,14 @@ import {
 import * as React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import useVisibilityTracking from "../days/useVisibilityTracking";
+import useVisibilityTracking from "../../../hooks/useVisibilityTracking";
 import logRender from "@lib/logRender";
 import EditableTextField from "@components/editableTextField";
 import PhotoTile from "@components/photoTile";
-import { useRxFeedsViaMultiplexer } from "@context/rx/rxRecordFeedContext";
+import { useRxFeedsViaMultiplexer } from "@hooks/legacyRxFeeds/rxRecordFeedContext";
 import { map } from "rxjs";
-import { useLatestValue } from "@context/rx/useLatestValue";
-import { useAdditionalFeeds } from "@context/rx/additionalFeeds";
+import { useLatestValue } from "@hooks/useLatestValue";
+import { useAdditionalFeeds } from "@hooks/legacyRxFeeds/additionalFeeds";
 import SamePageLink from "@components/samePageLink";
 
 const DayWithData = ({

@@ -1,6 +1,6 @@
-import { useRxFeedsViaMultiplexer } from "./rx/rxRecordFeedContext";
+import { useRxFeedsViaMultiplexer } from "./rxRecordFeedContext";
 import { map } from "rxjs";
-import { useLatestValue } from "./rx/useLatestValue";
+import { useLatestValue } from "@hooks/useLatestValue";
 import { useMemo } from "react";
 
 export const useDays = () => {

@@ -8,8 +8,8 @@ import { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 
 import { context as routingContext, type Router } from "@hooks/useRouter";
-import * as rxRecordFeedContext from "./context/rx/rxRecordFeedContext";
-import * as additionalFeeds from "./context/rx/additionalFeeds";
+import * as rxRecordFeedContext from "./hooks/legacyRxFeeds/rxRecordFeedContext";
+import * as additionalFeeds from "./hooks/legacyRxFeeds/additionalFeeds";
 import { defaultProvider as MultiplexerProvider } from "@hooks/useMultiplexer";
 import { defaultProvider as ThumbnailProvider } from "@hooks/useThumbnail";
 import Day from "@pages/legacy/day";

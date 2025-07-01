@@ -2,12 +2,12 @@ import * as React from "react";
 
 import logRender from "@lib/logRender";
 import SamePageLink from "@components/samePageLink";
-import { useAdditionalFeeds } from "@context/rx/additionalFeeds";
-import { useLatestValue } from "@context/rx/useLatestValue";
+import { useAdditionalFeeds } from "@hooks/legacyRxFeeds/additionalFeeds";
+import { useLatestValue } from "@hooks/useLatestValue";
 import { map } from "rxjs/operators";
 import { useMemo } from "react";
 import ListOfDaysWithData from "../days/listOfDaysWithData";
-import { useRxFeedsViaMultiplexer } from "@context/rx/rxRecordFeedContext";
+import { useRxFeedsViaMultiplexer } from "@hooks/legacyRxFeeds/rxRecordFeedContext";
 
 const Month = ({ month }: { month: string }): React.ReactElement | null => {
   const feeds = useAdditionalFeeds();

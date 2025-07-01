@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import logRender from "@lib/logRender";
 import type { DayFilesResult } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import SamePageLink from "@components/samePageLink";
-import useVisibilityTracking from "@pages/legacy/days/useVisibilityTracking";
+import useVisibilityTracking from "@hooks/useVisibilityTracking";
 import MaybeVisibleThumbnail from "./MaybeVisibleThumbnail";
 import { Observable } from "rxjs";
 

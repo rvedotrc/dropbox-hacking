@@ -1,13 +1,13 @@
 import * as React from "react";
 
 import logRender from "@lib/logRender";
-import { useAdditionalFeeds } from "@context/rx/additionalFeeds";
+import { useAdditionalFeeds } from "@hooks/legacyRxFeeds/additionalFeeds";
 import { useMemo } from "react";
-import { useLatestValue } from "@context/rx/useLatestValue";
+import { useLatestValue } from "@hooks/useLatestValue";
 import { map } from "rxjs/operators";
 import SamePageLink from "@components/samePageLink";
 import ListOfDaysWithData from "../days/listOfDaysWithData";
-import { useRxFeedsViaMultiplexer } from "@context/rx/rxRecordFeedContext";
+import { useRxFeedsViaMultiplexer } from "@hooks/legacyRxFeeds/rxRecordFeedContext";
 
 const Year = ({ year }: { year: string }): React.ReactElement | null => {
   const feeds = useAdditionalFeeds();

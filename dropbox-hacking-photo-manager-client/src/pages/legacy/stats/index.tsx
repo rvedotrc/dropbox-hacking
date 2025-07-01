@@ -3,11 +3,11 @@ import { useEffect, useMemo, useState } from "react";
 import { map, Observable } from "rxjs";
 
 import logRender from "@lib/logRender";
-import { useRxFeedsViaMultiplexer } from "@context/rx/rxRecordFeedContext";
-import type { ImageAndMaybeDelta } from "@context/rx/rxFeedClient";
+import { useRxFeedsViaMultiplexer } from "@hooks/legacyRxFeeds/rxRecordFeedContext";
+import type { ImageAndMaybeDelta } from "@lib/legacyRxFeeds/rxFeedClient";
 import Navigate from "@components/navigate";
-import { useLatestValue } from "@context/rx/useLatestValue";
-import { useAdditionalFeeds } from "@context/rx/additionalFeeds";
+import { useLatestValue } from "@hooks/useLatestValue";
+import { useAdditionalFeeds } from "@hooks/legacyRxFeeds/additionalFeeds";
 
 const Stats = () => {
   const feeds = useRxFeedsViaMultiplexer();

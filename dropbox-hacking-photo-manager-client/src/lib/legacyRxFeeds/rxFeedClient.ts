@@ -13,7 +13,7 @@ import {
   recordDeltaApplier,
 } from "dropbox-hacking-photo-manager-shared";
 import type { ExifFromHash } from "@blaahaj/dropbox-hacking-exif-db";
-import { getRxFeed } from "./getRxFeed";
+import { getRxFeed } from "@lib/rxFeed/getRxFeed";
 
 type REQUEST = { type: string };
 export type ImageAndMaybeDelta<I, D> = { image: I; delta?: D };
