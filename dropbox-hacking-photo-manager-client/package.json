@@ -54,6 +54,7 @@
   "main": "index.js",
   "name": "dropbox-hacking-photo-manager-client",
   "scripts": {
+    "version": "node --version ; npm --version",
     "build": "pnpm format && pnpm run test:lint && pnpm run compile",
     "build:watch": "rebuild -r . --exclude public/dist -- sh -c 'if ! pnpm test:prettier ; then pnpm format ; else pnpm run test:lint && pnpm run compile ; fi'",
     "compile": "webpack --mode development",
@@ -64,5 +65,9 @@
     "test:lint": "eslint",
     "test:unit": "c8 node --enable-source-maps --experimental-test-coverage --test './dist/spec/**/*.js'"
   },
-  "version": "1.0.0"
+  "version": "1.0.0",
+  "engines": {
+    "npm": "10.9.2",
+    "node": "22.14.0"
+  }
 }

@@ -1,7 +1,7 @@
 import * as React from "react";
 
-import logRender from "@/logRender";
-import SamePageLink from "@/components/samePageLink";
+import logRender from "@lib/logRender";
+import SamePageLink from "@components/samePageLink";
 import { useAdditionalFeeds } from "@/context/rx/additionalFeeds";
 import { useLatestValue } from "@/context/rx/useLatestValue";
 import { map } from "rxjs/operators";

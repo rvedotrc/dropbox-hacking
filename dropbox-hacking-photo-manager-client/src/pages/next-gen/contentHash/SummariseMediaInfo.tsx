@@ -1,6 +1,6 @@
 import React, { useEffect, useId, useState } from "react";
 import type { MediainfoFromHash } from "@blaahaj/dropbox-hacking-mediainfo-db";
-import logRender from "@/logRender";
+import logRender from "@lib/logRender";
 import { GPSLatLong } from "dropbox-hacking-photo-manager-shared";
 
 // e.g. "+56.1278+012.3032+000.090/",

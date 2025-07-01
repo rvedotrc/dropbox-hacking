@@ -1,6 +1,6 @@
 import React, { useId, useState } from "react";
 import type { ExifFromHash } from "@blaahaj/dropbox-hacking-exif-db";
-import logRender from "@/logRender";
+import logRender from "@lib/logRender";
 import { GPSLatLong } from "dropbox-hacking-photo-manager-shared";
 
 const SummariseExif = ({ exif }: { exif: ExifFromHash }) => {

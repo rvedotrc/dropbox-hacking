@@ -6,6 +6,7 @@ import { nullLoader } from "./nullThumbnailLoader";
 import type { ThumbnailLoader } from "./types";
 import { websocketThumbnailLoader } from "./websocketThumbnailLoader";
 import { useMultiplexer } from "@/context/rx/multiplexerContext";
+import { useThumbnail } from "./useThumbnail";
 
 export const context = createContext<ThumbnailLoader>(nullLoader);
 export const useThumbnailLoader = (): ThumbnailLoader => useContext(context);
@@ -24,3 +25,5 @@ export const defaultProvider = (
 
   return <context.Provider value={loader}>{props.children}</context.Provider>;
 };
+
+export default useThumbnail;

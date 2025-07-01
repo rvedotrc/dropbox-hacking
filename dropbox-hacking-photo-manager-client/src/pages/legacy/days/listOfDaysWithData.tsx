@@ -5,10 +5,10 @@ import {
 import * as React from "react";
 import { useMemo, useRef } from "react";
 
-import logRender from "@/logRender";
+import logRender from "@lib/logRender";
 import DayWithSamples, { dayDateAttribute } from "./dayWithSamples";
 import { makeEmittableSubscribable } from "./emittableSubscribable";
-import Navigate from "@/components/navigate";
+import Navigate from "@components/navigate";
 import useVisibilityTracking from "./useVisibilityTracking";
 
 const ListOfDaysWithData = ({

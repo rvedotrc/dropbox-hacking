@@ -1,11 +1,11 @@
 import * as React from "react";
 
-import logRender from "@/logRender";
+import logRender from "@lib/logRender";
 import { useAdditionalFeeds } from "@/context/rx/additionalFeeds";
 import { useMemo } from "react";
 import { useLatestValue } from "@/context/rx/useLatestValue";
 import { map } from "rxjs/operators";
-import SamePageLink from "@/components/samePageLink";
+import SamePageLink from "@components/samePageLink";
 import ListOfDaysWithData from "../days/listOfDaysWithData";
 import { useRxFeedsViaMultiplexer } from "@/context/rx/rxRecordFeedContext";
 

@@ -1,10 +1,9 @@
 import { GPSLatLong, Photo } from "dropbox-hacking-photo-manager-shared";
 import * as React from "react";
 
-import { useThumbnailLoader } from "@/context/thumbnails";
-import { useThumbnail } from "@/context/thumbnails/useThumbnail";
-import logRender from "@/logRender";
-import SamePageLink from "@/components/samePageLink";
+import useThumbnail from "@hooks/useThumbnail";
+import logRender from "@lib/logRender";
+import SamePageLink from "@components/samePageLink";
 
 const cleanedName = (photo: Photo) => {
   if (photo.namedFile.content_hash) {
@@ -21,9 +20,7 @@ const PhotoTile = ({
   photo: Photo;
   isVisible: boolean;
 }): React.ReactElement | null => {
-  const loader = useThumbnailLoader();
-
-  const thumbnail = useThumbnail(photo.namedFile.rev, loader)(isVisible);
+  const thumbnail = useThumbnail(photo.namedFile.rev)(isVisible);
   // console.log({ rev: photo.namedFile.rev, isVisible, thumbnail: !!thumbnail });
 
   const tags = photo.exif.exifData.tags;

@@ -1,5 +1,5 @@
 import type { NamedFile } from "dropbox-hacking-photo-manager-shared";
-import logRender from "@/logRender";
+import logRender from "@lib/logRender";
 import React from "react";
 
 const ImagePreview = ({ namedFile }: { namedFile: NamedFile }) => (

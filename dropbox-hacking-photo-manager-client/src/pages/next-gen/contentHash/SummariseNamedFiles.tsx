@@ -1,7 +1,7 @@
 import type { NamedFile } from "dropbox-hacking-photo-manager-shared";
-import logRender from "@/logRender";
+import logRender from "@lib/logRender";
 import React, { useId, useState } from "react";
-import SamePageLink from "@/components/samePageLink";
+import SamePageLink from "@components/samePageLink";
 
 const SummariseNamedFiles = ({
   namedFiles,

@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import logRender from "@/logRender";
+import logRender from "@lib/logRender";
 
 const MonthBox = (props: {
   year: number;

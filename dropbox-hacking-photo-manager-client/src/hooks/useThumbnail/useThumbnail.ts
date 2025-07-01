@@ -1,6 +1,6 @@
 import { useEffect, useReducer } from "react";
 
-import type { ThumbnailLoader } from "./types";
+import { useThumbnailLoader } from ".";
 
 type R = string | null;
 
@@ -15,7 +15,9 @@ type A =
   | { action: "loaded"; thumbnail: R }
   | { action: "expired" };
 
-export const useThumbnail = (rev: string, loader: ThumbnailLoader) => {
+export const useThumbnail = (rev: string) => {
+  const loader = useThumbnailLoader();
+
   const [state, dispatch] = useReducer(
     (s: T, a: A): T => {
       if (s.state === "idle") {

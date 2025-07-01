@@ -1,14 +1,14 @@
 import React, { useEffect } from "react";
 
-import logRender from "@/logRender";
-import Navigate from "@/components/navigate";
+import logRender from "@lib/logRender";
+import Navigate from "@components/navigate";
 import type { FileIdResult } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import { useLatestValueFromServerFeed } from "../useLatestValueFromServerFeed";
 import {
   urlForState,
   type RouteState,
 } from "dropbox-hacking-photo-manager-shared";
-import useRouter from "@/hooks/useRouter";
+import useRouter from "@hooks/useRouter";
 
 const NGFileId = ({ id }: { id: string }) => {
   const latestValue = useLatestValueFromServerFeed<FileIdResult>({

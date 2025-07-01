@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import SamePageLink from "@/components/samePageLink";
+import SamePageLink from "@components/samePageLink";
 
 const navigation = (): React.ReactElement | null => (
   <p>
