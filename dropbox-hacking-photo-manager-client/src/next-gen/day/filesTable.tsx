@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import logRender from "../../logRender";
+import logRender from "@/logRender";
 import type { DayFilesResult } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import SamePageLink from "../../samePageLink";
 import useVisibilityTracking from "../../days/useVisibilityTracking";

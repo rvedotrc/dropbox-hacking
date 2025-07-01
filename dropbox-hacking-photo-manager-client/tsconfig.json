@@ -8,6 +8,9 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     "outDir": "./public/dist/",
+    "paths": {
+      "@/*": ["./*"]
+    },
     "resolveJsonModule": true,
     "sourceMap": true,
     "strictNullChecks": true,

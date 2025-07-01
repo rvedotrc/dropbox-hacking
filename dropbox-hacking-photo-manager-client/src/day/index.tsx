@@ -6,7 +6,7 @@ import * as React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import useVisibilityTracking from "../days/useVisibilityTracking";
-import logRender from "../logRender";
+import logRender from "@/logRender";
 import EditableTextField from "./editableTextField";
 import PhotoTile from "./photoTile";
 import { useRxFeedsViaMultiplexer } from "../context/rx/rxRecordFeedContext";

@@ -2,7 +2,7 @@ import { GPSLatLong, Photo } from "dropbox-hacking-photo-manager-shared";
 import * as React from "react";
 import { useEffect, useMemo, useState } from "react";
 
-import logRender from "../logRender";
+import logRender from "@/logRender";
 import { useLatestValue } from "../context/rx/useLatestValue";
 import { useAdditionalFeeds } from "../context/rx/additionalFeeds";
 import SamePageLink from "../samePageLink";

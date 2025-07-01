@@ -17,7 +17,7 @@ import * as thumbnailLoaderContext from "./context/thumbnails";
 import Day from "./day";
 import Calendar from "./days/calendar";
 import ListOfDays from "./days/listOfDays";
-import logRender from "./logRender";
+import logRender from "@/logRender";
 import Photo from "./photo";
 import ClosestTo from "./closest-to/index";
 import Month from "./month";

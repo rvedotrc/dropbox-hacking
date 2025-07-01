@@ -1,5 +1,5 @@
 import { execSync } from "node:child_process";
-import { resolve } from "node:path";
+import path, { resolve } from "node:path";
 import webpack from "webpack";
 
 const gitRevision = execSync("git rev-parse HEAD").toString().replace(/\n/, "");
@@ -42,6 +42,9 @@ const config: webpack.Configuration = {
     }),
   ],
   resolve: {
+    alias: {
+      "@/*": path.resolve(import.meta.dirname, "src/*"),
+    },
     extensions: [".js", ".ts", ".tsx"],
   },
 };

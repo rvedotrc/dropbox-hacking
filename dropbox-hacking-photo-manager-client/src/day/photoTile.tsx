@@ -3,7 +3,7 @@ import * as React from "react";
 
 import { useThumbnailLoader } from "../context/thumbnails";
 import { useThumbnail } from "../context/thumbnails/useThumbnail";
-import logRender from "../logRender";
+import logRender from "@/logRender";
 import SamePageLink from "../samePageLink";
 
 const cleanedName = (photo: Photo) => {

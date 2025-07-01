@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import logRender from "../../logRender";
+import logRender from "@/logRender";
 import type { PhotoDbEntry } from "dropbox-hacking-photo-manager-shared";
 import EditableTextField from "../../day/editableTextField";
 

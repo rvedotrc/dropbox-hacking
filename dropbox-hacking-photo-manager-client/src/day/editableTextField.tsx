@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 
-import logRender from "../logRender";
+import logRender from "@/logRender";
 
 const EditableTextField = (props: {
   value: string;

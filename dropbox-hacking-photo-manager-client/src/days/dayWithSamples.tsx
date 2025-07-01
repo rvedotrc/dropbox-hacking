@@ -3,7 +3,7 @@ import * as React from "react";
 import { useEffect, useMemo, useState } from "react";
 
 import EditableTextField from "../day/editableTextField";
-import logRender from "../logRender";
+import logRender from "@/logRender";
 import SamePageLink from "../samePageLink";
 import type { Subscribable } from "./emittableSubscribable";
 import SamplePhoto from "./samplePhoto";

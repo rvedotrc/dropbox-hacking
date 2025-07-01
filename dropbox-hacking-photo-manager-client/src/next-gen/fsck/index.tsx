@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 
-import logRender from "../../logRender";
+import logRender from "@/logRender";
 import Navigate from "../../days/navigate";
 import type { FsckType } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import { useLatestValueFromServerFeed } from "../useLatestValueFromServerFeed";

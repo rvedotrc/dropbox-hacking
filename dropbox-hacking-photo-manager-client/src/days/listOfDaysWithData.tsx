@@ -5,7 +5,7 @@ import {
 import * as React from "react";
 import { useMemo, useRef } from "react";
 
-import logRender from "../logRender";
+import logRender from "@/logRender";
 import DayWithSamples, { dayDateAttribute } from "./dayWithSamples";
 import { makeEmittableSubscribable } from "./emittableSubscribable";
 import Navigate from "./navigate";

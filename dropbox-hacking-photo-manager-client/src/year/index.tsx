@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import logRender from "../logRender";
+import logRender from "@/logRender";
 import { useAdditionalFeeds } from "../context/rx/additionalFeeds";
 import { useMemo } from "react";
 import { useLatestValue } from "../context/rx/useLatestValue";

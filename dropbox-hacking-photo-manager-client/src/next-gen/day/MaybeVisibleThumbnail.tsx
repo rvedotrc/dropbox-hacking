@@ -1,5 +1,5 @@
 import { useThumbnailLoader } from "../../context/thumbnails";
-import logRender from "../../logRender";
+import logRender from "@/logRender";
 import { useThumbnail } from "../../context/thumbnails/useThumbnail";
 import React from "react";
 import type { NamedFile } from "dropbox-hacking-photo-manager-shared";
