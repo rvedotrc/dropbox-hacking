@@ -14,7 +14,7 @@ import {
   useState,
 } from "react";
 import { fromBrowserWebSocket } from "./fromBrowserWebSocketString";
-import { generateId } from "../../context/websocket/id";
+import { generateId } from "@/context/websocket/id";
 
 type T = IOHandler<unknown, unknown>;
 

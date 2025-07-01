@@ -1,10 +1,10 @@
 import * as React from "react";
 import { useEffect } from "react";
 
-import { useCountsByDate } from "../../context/countsByDateContext";
+import { useCountsByDate } from "@/context/countsByDateContext";
 import logRender from "@/logRender";
 import SamePageLink from "@/components/samePageLink";
-import Navigate from "../navigate";
+import Navigate from "@/pages/legacy/days/navigate";
 import MonthBox from "./monthBox";
 import TwelveMonths from "./twelveMonths";
 

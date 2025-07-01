@@ -1,8 +1,8 @@
 import { Photo } from "dropbox-hacking-photo-manager-shared";
 import * as React from "react";
 
-import { useThumbnailLoader } from "../context/thumbnails";
-import { useThumbnail } from "../context/thumbnails/useThumbnail";
+import { useThumbnailLoader } from "@/context/thumbnails";
+import { useThumbnail } from "@/context/thumbnails/useThumbnail";
 import logRender from "@/logRender";
 
 const samplePhoto = ({

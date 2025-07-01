@@ -5,7 +5,7 @@ import { discardingThumbnailLoader } from "./discardingThumbnailLoader";
 import { nullLoader } from "./nullThumbnailLoader";
 import type { ThumbnailLoader } from "./types";
 import { websocketThumbnailLoader } from "./websocketThumbnailLoader";
-import { useMultiplexer } from "../../context/rx/multiplexerContext";
+import { useMultiplexer } from "@/context/rx/multiplexerContext";
 
 export const context = createContext<ThumbnailLoader>(nullLoader);
 export const useThumbnailLoader = (): ThumbnailLoader => useContext(context);

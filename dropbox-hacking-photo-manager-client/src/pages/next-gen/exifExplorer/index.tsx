@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 
 import logRender from "@/logRender";
-import Navigate from "@/days/navigate";
+import Navigate from "@/pages/legacy/days/navigate";
 import { useLatestValueFromServerFeed } from "../useLatestValueFromServerFeed";
 import type { ExifExplorerType } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 

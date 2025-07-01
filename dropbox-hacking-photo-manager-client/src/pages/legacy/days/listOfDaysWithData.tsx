@@ -8,7 +8,7 @@ import { useMemo, useRef } from "react";
 import logRender from "@/logRender";
 import DayWithSamples, { dayDateAttribute } from "./dayWithSamples";
 import { makeEmittableSubscribable } from "./emittableSubscribable";
-import Navigate from "./navigate";
+import Navigate from "@/pages/legacy/days/navigate";
 import useVisibilityTracking from "./useVisibilityTracking";
 
 const ListOfDaysWithData = ({
