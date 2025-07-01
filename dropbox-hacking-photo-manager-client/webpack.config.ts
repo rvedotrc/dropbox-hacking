@@ -43,8 +43,8 @@ const config: webpack.Configuration = {
   ],
   resolve: {
     alias: {
-      "@/*": path.resolve(__dirname, "src/*"),
       "@components/*": path.resolve(__dirname, "src/components/*"),
+      "@context/*": path.resolve(__dirname, "src/context/*"),
       "@hooks/*": path.resolve(__dirname, "src/hooks/*"),
       "@lib/*": path.resolve(__dirname, "src/lib/*"),
       "@pages/*": path.resolve(__dirname, "src/pages/*"),

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useEffect } from "react";
 
-import { useCountsByDate } from "@/context/countsByDateContext";
+import { useCountsByDate } from "@context/countsByDateContext";
 import logRender from "@lib/logRender";
 import SamePageLink from "@components/samePageLink";
 import Navigate from "@components/navigate";

@@ -65,9 +65,5 @@
     "test:lint": "eslint",
     "test:unit": "c8 node --enable-source-maps --experimental-test-coverage --test './dist/spec/**/*.js'"
   },
-  "version": "1.0.0",
-  "engines": {
-    "npm": "10.9.2",
-    "node": "22.14.0"
-  }
+  "version": "1.0.0"
 }

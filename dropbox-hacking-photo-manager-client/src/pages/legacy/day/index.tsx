@@ -9,10 +9,10 @@ import useVisibilityTracking from "../days/useVisibilityTracking";
 import logRender from "@lib/logRender";
 import EditableTextField from "@components/editableTextField";
 import PhotoTile from "@components/photoTile";
-import { useRxFeedsViaMultiplexer } from "@/context/rx/rxRecordFeedContext";
+import { useRxFeedsViaMultiplexer } from "@context/rx/rxRecordFeedContext";
 import { map } from "rxjs";
-import { useLatestValue } from "@/context/rx/useLatestValue";
-import { useAdditionalFeeds } from "@/context/rx/additionalFeeds";
+import { useLatestValue } from "@context/rx/useLatestValue";
+import { useAdditionalFeeds } from "@context/rx/additionalFeeds";
 import SamePageLink from "@components/samePageLink";
 
 const DayWithData = ({

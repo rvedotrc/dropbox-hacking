@@ -7,7 +7,7 @@ import {
   type PropsWithChildren,
 } from "react";
 import { buildFromIO } from "./rxFeedClient";
-import { useMultiplexer } from "./multiplexerContext";
+import useMultiplexer from "@hooks/useMultiplexer";
 
 type FEEDS = ReturnType<typeof buildFromIO>["feeds"];
 

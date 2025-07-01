@@ -7,11 +7,10 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 
-import * as multiplexerContext from "./context/rx/multiplexerContext";
-
 import { context as routingContext, type Router } from "@hooks/useRouter";
 import * as rxRecordFeedContext from "./context/rx/rxRecordFeedContext";
 import * as additionalFeeds from "./context/rx/additionalFeeds";
+import { defaultProvider as MultiplexerProvider } from "@hooks/useMultiplexer";
 import { defaultProvider as ThumbnailProvider } from "@hooks/useThumbnail";
 import Day from "@pages/legacy/day";
 import Calendar from "@pages/legacy/days/calendar";
@@ -140,9 +139,9 @@ const Root = ({
 
   return (
     <routingContext.Provider value={router}>
-      <multiplexerContext.defaultProvider accepter={accepter}>
+      <MultiplexerProvider accepter={accepter}>
         <ThumbnailProvider>{toRender({ routeState: state })}</ThumbnailProvider>
-      </multiplexerContext.defaultProvider>
+      </MultiplexerProvider>
     </routingContext.Provider>
   );
 };

@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import {
+  fromBasicWebSocket,
   IOHandler,
   multiplexer,
   transportAsJson,
@@ -13,15 +14,15 @@ import {
   useMemo,
   useState,
 } from "react";
-import { fromBrowserWebSocket } from "./fromBrowserWebSocketString";
-import { generateId } from "@/context/websocket/id";
+import generateId from "@lib/generateId";
 
 type T = IOHandler<unknown, unknown>;
 
-export const context = createContext<T | undefined>(undefined);
+const context = createContext<T | undefined>(undefined);
 const Provider = context.Provider;
 
-export const useMultiplexer = (): T | undefined => useContext(context);
+const useMultiplexer = (): T | undefined => useContext(context);
+export default useMultiplexer;
 
 const NonRetryingSocketWrapper = (
   props: PropsWithChildren<{
@@ -152,3 +153,8 @@ export const defaultProvider = (
 
   return <GivenFixedAccepter key={key} {...props} />;
 };
+
+const fromBrowserWebSocket = (
+  webSocket: WebSocket,
+): IOHandler<string, string> =>
+  fromBasicWebSocket<WebSocket["readyState"], string, string>(webSocket);
