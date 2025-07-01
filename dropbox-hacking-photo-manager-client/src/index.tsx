@@ -24,8 +24,6 @@ import BasicCounts from "@pages/next-gen/basic-counts";
 import NGDaysNoSamples from "@pages/next-gen/list-of-days/without-samples";
 import NGDayFiles from "@pages/next-gen/day/files";
 import NGContentHash from "@pages/next-gen/contentHash";
-import NGFileId from "@pages/next-gen/fileId";
-import NGFileRev from "@pages/next-gen/fileRev";
 import Fsck from "@pages/next-gen/fsck";
 import ExifExplorer from "@pages/next-gen/exifExplorer";
 
@@ -88,10 +86,6 @@ const toRender = ({ routeState }: { routeState: RouteState }) => {
     return <NGDayFiles date={routeState.date} />;
   if (routeState.route === "route/next-gen/content-hash")
     return <NGContentHash contentHash={routeState.contentHash} />;
-  if (routeState.route === "route/next-gen/file/id")
-    return <NGFileId id={routeState.id} />;
-  if (routeState.route === "route/next-gen/file/rev")
-    return <NGFileRev rev={routeState.rev} />;
   // RVE-add-route
 
   ensureNever<typeof routeState>();

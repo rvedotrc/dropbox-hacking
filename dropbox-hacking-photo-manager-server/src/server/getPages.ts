@@ -53,20 +53,6 @@ export default (app: Application, _context: Context): void => {
     );
   });
 
-  app.get("/next-gen/file/id/:id", (req, res) => {
-    res.contentType("text/html");
-    res.send(
-      pageAsString({ route: "route/next-gen/file/id", id: req.params.id }),
-    );
-  });
-
-  app.get("/next-gen/file/rev/:rev", (req, res) => {
-    res.contentType("text/html");
-    res.send(
-      pageAsString({ route: "route/next-gen/file/rev", rev: req.params.rev }),
-    );
-  });
-
   app.get("/next-gen/content-hash/:contentHash", (req, res) => {
     res.contentType("text/html");
     res.send(
