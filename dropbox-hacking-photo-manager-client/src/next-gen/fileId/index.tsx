@@ -8,7 +8,7 @@ import {
   urlForState,
   type RouteState,
 } from "dropbox-hacking-photo-manager-shared";
-import { useRouter } from "../../context/routingContext";
+import useRouter from "@/hooks/useRouter";
 
 const NGFileId = ({ id }: { id: string }) => {
   const latestValue = useLatestValueFromServerFeed<FileIdResult>({

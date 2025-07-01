@@ -9,10 +9,8 @@ const nullRouter: Router = {
   switchToPage: (_: RouteState) => undefined,
 };
 
-const context = createContext<Router>(nullRouter);
+export const context = createContext<Router>(nullRouter);
 
-export const useRouter = (): Router => useContext(context);
+const useRouter = (): Router => useContext(context);
 
-export default {
-  context,
-};
+export default useRouter;

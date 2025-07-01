@@ -9,10 +9,9 @@ import { createRoot } from "react-dom/client";
 
 import * as multiplexerContext from "./context/rx/multiplexerContext";
 
-import routingContext from "./context/routingContext";
+import { context as routingContext, type Router } from "@/hooks/useRouter";
 import * as rxRecordFeedContext from "./context/rx/rxRecordFeedContext";
 import * as additionalFeeds from "./context/rx/additionalFeeds";
-import { Router } from "./context/routingContext";
 import * as thumbnailLoaderContext from "./context/thumbnails";
 import Day from "./day";
 import Calendar from "./days/calendar";
@@ -140,13 +139,13 @@ const Root = ({
   );
 
   return (
-    <routingContext.context.Provider value={router}>
+    <routingContext.Provider value={router}>
       <multiplexerContext.defaultProvider accepter={accepter}>
         <thumbnailLoaderContext.defaultProvider>
           {toRender({ routeState: state })}
         </thumbnailLoaderContext.defaultProvider>
       </multiplexerContext.defaultProvider>
-    </routingContext.context.Provider>
+    </routingContext.Provider>
   );
 };
 
