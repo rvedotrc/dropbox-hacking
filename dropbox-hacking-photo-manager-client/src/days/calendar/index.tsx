@@ -3,7 +3,7 @@ import { useEffect } from "react";
 
 import { useCountsByDate } from "../../context/countsByDateContext";
 import logRender from "@/logRender";
-import SamePageLink from "../../samePageLink";
+import SamePageLink from "@/components/samePageLink";
 import Navigate from "../navigate";
 import MonthBox from "./monthBox";
 import TwelveMonths from "./twelveMonths";

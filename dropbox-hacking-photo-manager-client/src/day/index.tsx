@@ -13,7 +13,7 @@ import { useRxFeedsViaMultiplexer } from "../context/rx/rxRecordFeedContext";
 import { map } from "rxjs";
 import { useLatestValue } from "../context/rx/useLatestValue";
 import { useAdditionalFeeds } from "../context/rx/additionalFeeds";
-import SamePageLink from "../samePageLink";
+import SamePageLink from "@/components/samePageLink";
 
 const DayWithData = ({
   date,

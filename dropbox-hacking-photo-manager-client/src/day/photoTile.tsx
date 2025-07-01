@@ -4,7 +4,7 @@ import * as React from "react";
 import { useThumbnailLoader } from "../context/thumbnails";
 import { useThumbnail } from "../context/thumbnails/useThumbnail";
 import logRender from "@/logRender";
-import SamePageLink from "../samePageLink";
+import SamePageLink from "@/components/samePageLink";
 
 const cleanedName = (photo: Photo) => {
   if (photo.namedFile.content_hash) {

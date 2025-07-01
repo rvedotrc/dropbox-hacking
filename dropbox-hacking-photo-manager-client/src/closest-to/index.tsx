@@ -5,7 +5,7 @@ import type {
   GPSLatNLongE,
 } from "dropbox-hacking-photo-manager-shared";
 import SamplePhoto from "../days/samplePhoto";
-import SamePageLink from "../samePageLink";
+import SamePageLink from "@/components/samePageLink";
 import { useLatestValueFromServerFeed } from "../next-gen/useLatestValueFromServerFeed";
 
 export default ({

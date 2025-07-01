@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import EditableTextField from "../day/editableTextField";
 import logRender from "@/logRender";
-import SamePageLink from "../samePageLink";
+import SamePageLink from "@/components/samePageLink";
 import type { Subscribable } from "./emittableSubscribable";
 import SamplePhoto from "./samplePhoto";
 

@@ -4,7 +4,7 @@ import logRender from "@/logRender";
 import Navigate from "../../days/navigate";
 import type { FileRevResult } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import { useLatestValueFromServerFeed } from "../useLatestValueFromServerFeed";
-import SamePageLink from "../../samePageLink";
+import SamePageLink from "@/components/samePageLink";
 
 const NGFileRev = ({ rev }: { rev: string }) => {
   const latestValue = useLatestValueFromServerFeed<FileRevResult>({
