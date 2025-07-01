@@ -6,7 +6,7 @@ import type {
 } from "dropbox-hacking-photo-manager-shared";
 import SamplePhoto from "../days/samplePhoto";
 import SamePageLink from "@/components/samePageLink";
-import { useLatestValueFromServerFeed } from "../next-gen/useLatestValueFromServerFeed";
+import { useLatestValueFromServerFeed } from "@/pages/next-gen/useLatestValueFromServerFeed";
 
 export default ({
   gps,

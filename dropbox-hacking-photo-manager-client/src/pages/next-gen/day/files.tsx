@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo } from "react";
 
 import logRender from "@/logRender";
-import Navigate from "../../days/navigate";
+import Navigate from "@/days/navigate";
 import type { DayFilesResult } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import { useLatestValueFromServerFeed } from "../useLatestValueFromServerFeed";
-import EditableTextField from "../../day/editableTextField";
+import EditableTextField from "@/day/editableTextField";
 import FilesTable from "./filesTable";
 import { useIdentity } from "./useIdentity";
 

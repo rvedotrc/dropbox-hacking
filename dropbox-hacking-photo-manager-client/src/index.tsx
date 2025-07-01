@@ -21,14 +21,14 @@ import Photo from "./photo";
 import ClosestTo from "./closest-to/index";
 import Month from "./month";
 import Year from "./year";
-import BasicCounts from "./next-gen/basic-counts";
-import NGDaysNoSamples from "./next-gen/list-of-days/without-samples";
-import NGDayFiles from "./next-gen/day/files";
-import NGContentHash from "./next-gen/contentHash";
-import NGFileId from "./next-gen/fileId";
-import NGFileRev from "./next-gen/fileRev";
-import Fsck from "./next-gen/fsck";
-import ExifExplorer from "./next-gen/exifExplorer";
+import BasicCounts from "@/pages/next-gen/basic-counts";
+import NGDaysNoSamples from "@/pages/next-gen/list-of-days/without-samples";
+import NGDayFiles from "@/pages/next-gen/day/files";
+import NGContentHash from "@/pages/next-gen/contentHash";
+import NGFileId from "@/pages/next-gen/fileId";
+import NGFileRev from "@/pages/next-gen/fileRev";
+import Fsck from "@/pages/next-gen/fsck";
+import ExifExplorer from "@/pages/next-gen/exifExplorer";
 
 const ensureNever = <_ extends never>() => undefined;
 

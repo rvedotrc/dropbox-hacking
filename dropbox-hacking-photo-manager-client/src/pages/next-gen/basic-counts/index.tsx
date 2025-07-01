@@ -1,24 +1,24 @@
 import React, { useEffect } from "react";
 
 import logRender from "@/logRender";
-import Navigate from "../../days/navigate";
-import type { FsckType } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
+import Navigate from "@/days/navigate";
+import type { BasicCountsType } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import { useLatestValueFromServerFeed } from "../useLatestValueFromServerFeed";
 
-const Fsck = () => {
-  const latestValue = useLatestValueFromServerFeed<FsckType>({
-    type: "rx.ng.fsck",
+const BasicCounts = () => {
+  const latestValue = useLatestValueFromServerFeed<BasicCountsType>({
+    type: "rx.ng.basic-counts",
   });
 
   useEffect(() => {
-    document.title = "DPMNG - fsck";
+    document.title = "DPMNG - Basic counts";
   }, []);
 
   return (
     <>
       <Navigate />
 
-      <h1>fsck</h1>
+      <h1>Basic Counts</h1>
 
       {latestValue ? (
         <pre>{JSON.stringify(latestValue ?? null, null, 2)}</pre>
@@ -29,4 +29,4 @@ const Fsck = () => {
   );
 };
 
-export default logRender(Fsck);
+export default logRender(BasicCounts);
