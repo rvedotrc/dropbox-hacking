@@ -7,29 +7,27 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 
-import * as multiplexerContext from "./context/rx/multiplexerContext";
-
-import routingContext from "./context/routingContext";
-import * as rxRecordFeedContext from "./context/rx/rxRecordFeedContext";
-import * as additionalFeeds from "./context/rx/additionalFeeds";
-import { Router } from "./context/routingContext";
-import * as thumbnailLoaderContext from "./context/thumbnails";
-import Day from "./day";
-import Calendar from "./days/calendar";
-import ListOfDays from "./days/listOfDays";
-import logRender from "./logRender";
-import Photo from "./photo";
-import ClosestTo from "./closest-to/index";
-import Month from "./month";
-import Year from "./year";
-import BasicCounts from "./next-gen/basic-counts";
-import NGDaysNoSamples from "./next-gen/list-of-days/without-samples";
-import NGDayFiles from "./next-gen/day/files";
-import NGContentHash from "./next-gen/contentHash";
-import NGFileId from "./next-gen/fileId";
-import NGFileRev from "./next-gen/fileRev";
-import Fsck from "./next-gen/fsck";
-import ExifExplorer from "./next-gen/exifExplorer";
+import { context as routingContext, type Router } from "@hooks/useRouter";
+import * as rxRecordFeedContext from "./hooks/legacyRxFeeds/rxRecordFeedContext";
+import * as additionalFeeds from "./hooks/legacyRxFeeds/additionalFeeds";
+import { defaultProvider as MultiplexerProvider } from "@hooks/useMultiplexer";
+import { defaultProvider as ThumbnailProvider } from "@hooks/useThumbnail";
+import Day from "@pages/legacy/day";
+import Calendar from "@pages/legacy/days/calendar";
+import ListOfDays from "@pages/legacy/days/listOfDays";
+import logRender from "@lib/logRender";
+import Photo from "@pages/legacy/photo";
+import ClosestTo from "@pages/legacy/closest-to/index";
+import Month from "@pages/legacy/month";
+import Year from "@pages/legacy/year";
+import BasicCounts from "@pages/next-gen/basic-counts";
+import NGDaysNoSamples from "@pages/next-gen/list-of-days/without-samples";
+import NGDayFiles from "@pages/next-gen/day/files";
+import NGContentHash from "@pages/next-gen/contentHash";
+import NGFileId from "@pages/next-gen/fileId";
+import NGFileRev from "@pages/next-gen/fileRev";
+import Fsck from "@pages/next-gen/fsck";
+import ExifExplorer from "@pages/next-gen/exifExplorer";
 
 const ensureNever = <_ extends never>() => undefined;
 
@@ -140,13 +138,11 @@ const Root = ({
   );
 
   return (
-    <routingContext.context.Provider value={router}>
-      <multiplexerContext.defaultProvider accepter={accepter}>
-        <thumbnailLoaderContext.defaultProvider>
-          {toRender({ routeState: state })}
-        </thumbnailLoaderContext.defaultProvider>
-      </multiplexerContext.defaultProvider>
-    </routingContext.context.Provider>
+    <routingContext.Provider value={router}>
+      <MultiplexerProvider accepter={accepter}>
+        <ThumbnailProvider>{toRender({ routeState: state })}</ThumbnailProvider>
+      </MultiplexerProvider>
+    </routingContext.Provider>
   );
 };
 

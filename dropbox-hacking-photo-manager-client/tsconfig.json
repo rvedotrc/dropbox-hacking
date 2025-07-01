@@ -8,6 +8,12 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     "outDir": "./public/dist/",
+    "paths": {
+      "@components/*": ["./components/*"],
+      "@hooks/*": ["./hooks/*"],
+      "@lib/*": ["./lib/*"],
+      "@pages/*": ["./pages/*"]
+    },
     "resolveJsonModule": true,
     "sourceMap": true,
     "strictNullChecks": true,
