@@ -7,8 +7,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import useVisibilityTracking from "../days/useVisibilityTracking";
 import logRender from "@/logRender";
-import EditableTextField from "./editableTextField";
-import PhotoTile from "./photoTile";
+import EditableTextField from "@/components/editableTextField";
+import PhotoTile from "@/components/photoTile";
 import { useRxFeedsViaMultiplexer } from "@/context/rx/rxRecordFeedContext";
 import { map } from "rxjs";
 import { useLatestValue } from "@/context/rx/useLatestValue";

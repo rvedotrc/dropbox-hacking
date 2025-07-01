@@ -2,7 +2,7 @@ import { CountsByDateEntry } from "dropbox-hacking-photo-manager-shared";
 import * as React from "react";
 import { useEffect, useMemo, useState } from "react";
 
-import EditableTextField from "../day/editableTextField";
+import EditableTextField from "@/components/editableTextField";
 import logRender from "@/logRender";
 import SamePageLink from "@/components/samePageLink";
 import type { Subscribable } from "./emittableSubscribable";

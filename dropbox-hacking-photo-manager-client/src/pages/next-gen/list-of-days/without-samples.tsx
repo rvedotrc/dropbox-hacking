@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 
 import logRender from "@/logRender";
-import Navigate from "@/pages/legacy/days/navigate";
+import Navigate from "@/components/navigate";
 import type { NGDaysNoSamplesType } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import { useLatestValueFromServerFeed } from "../useLatestValueFromServerFeed";
 import SamePageLink from "@/components/samePageLink";

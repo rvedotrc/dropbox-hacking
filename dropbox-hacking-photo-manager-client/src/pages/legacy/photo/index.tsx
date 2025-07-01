@@ -6,7 +6,7 @@ import logRender from "@/logRender";
 import { useLatestValue } from "@/context/rx/useLatestValue";
 import { useAdditionalFeeds } from "@/context/rx/additionalFeeds";
 import SamePageLink from "@/components/samePageLink";
-import EditableTextField from "../day/editableTextField";
+import EditableTextField from "@/components/editableTextField";
 
 const Photo = (props: { rev: string }): React.ReactElement | null => {
   const [previewSizes, setPreviewSizes] = useState<string[]>();

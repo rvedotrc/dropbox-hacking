@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import logRender from "@/logRender";
 import type { PhotoDbEntry } from "dropbox-hacking-photo-manager-shared";
-import EditableTextField from "@/pages/legacy/day/editableTextField";
+import EditableTextField from "@/components/editableTextField";
 
 const EditablePhotoEntry = ({
   contentHash,

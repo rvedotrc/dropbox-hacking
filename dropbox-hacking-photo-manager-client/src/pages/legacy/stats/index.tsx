@@ -5,7 +5,7 @@ import { map, Observable } from "rxjs";
 import logRender from "@/logRender";
 import { useRxFeedsViaMultiplexer } from "@/context/rx/rxRecordFeedContext";
 import type { ImageAndMaybeDelta } from "@/context/rx/rxFeedClient";
-import Navigate from "@/pages/legacy/days/navigate";
+import Navigate from "@/components/navigate";
 import { useLatestValue } from "@/context/rx/useLatestValue";
 import { useAdditionalFeeds } from "@/context/rx/additionalFeeds";
 
