@@ -16,6 +16,10 @@ const navigation = (): React.ReactElement | null => (
       Basic counts
     </SamePageLink>
     {" | "}
+    <SamePageLink routeState={{ route: "route/next-gen/tags", tag: null }}>
+      tags
+    </SamePageLink>
+    {" | "}
     <SamePageLink routeState={{ route: "route/next-gen/fsck" }}>
       fsck
     </SamePageLink>

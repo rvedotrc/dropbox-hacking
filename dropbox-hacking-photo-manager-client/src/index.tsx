@@ -8,8 +8,8 @@ import { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 
 import { context as routingContext, type Router } from "@hooks/useRouter";
-import * as rxRecordFeedContext from "./hooks/legacyRxFeeds/rxRecordFeedContext";
-import * as additionalFeeds from "./hooks/legacyRxFeeds/additionalFeeds";
+import * as rxRecordFeedContext from "@hooks/legacyRxFeeds/rxRecordFeedContext";
+import * as additionalFeeds from "@hooks/legacyRxFeeds/additionalFeeds";
 import { defaultProvider as MultiplexerProvider } from "@hooks/useMultiplexer";
 import { defaultProvider as ThumbnailProvider } from "@hooks/useThumbnail";
 import Day from "@pages/legacy/day";
@@ -25,7 +25,9 @@ import NGDaysNoSamples from "@pages/next-gen/list-of-days/without-samples";
 import NGDayFiles from "@pages/next-gen/day/files";
 import NGContentHash from "@pages/next-gen/contentHash";
 import Fsck from "@pages/next-gen/fsck";
+import Tags from "@pages/next-gen/tags";
 import ExifExplorer from "@pages/next-gen/exifExplorer";
+// RVE-add-route
 
 const ensureNever = <_ extends never>() => undefined;
 
@@ -78,6 +80,8 @@ const toRender = ({ routeState }: { routeState: RouteState }) => {
   if (routeState.route === "route/next-gen/basic-counts")
     return <BasicCounts />;
   if (routeState.route === "route/next-gen/fsck") return <Fsck />;
+  if (routeState.route === "route/next-gen/tags")
+    return <Tags tag={routeState.tag} />;
   if (routeState.route === "route/next-gen/exif-explorer")
     return <ExifExplorer />;
   if (routeState.route === "route/next-gen/list-of-days/without-samples")

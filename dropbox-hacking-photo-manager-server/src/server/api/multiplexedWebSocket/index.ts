@@ -26,6 +26,7 @@ import {
   provideListOfDaysWithoutSamples,
   provideClosestTo,
   provideThumbnail,
+  provideTags,
   type RxFeedRequest,
 } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import { closestToHandlerBuilder } from "../websocket/closestToHandler.js";
@@ -173,6 +174,11 @@ export default (app: Application, context: Context): void => {
                       typedRequest.request,
                       thumbnailHandlerBuilder(context),
                     ),
+                    () => writer,
+                  );
+                } else if (typedRequest.type === "rx.ng.tags") {
+                  return serveRxFeed(
+                    provideTags(context.fullDatabaseFeeds),
                     () => writer,
                   );
                 }

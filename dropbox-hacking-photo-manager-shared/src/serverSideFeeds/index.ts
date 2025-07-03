@@ -16,6 +16,7 @@ export * from "./contentHash.js";
 export * from "./exifExplorer.js";
 export * from "./closestTo.js";
 export * from "./thumbnail.js";
+export * from "./tags.js";
 // RVE-add-feed
 
 import * as exifDb from "@blaahaj/dropbox-hacking-exif-db";

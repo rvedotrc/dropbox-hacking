@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import logRender from "@lib/logRender";
 import Navigate from "@components/navigate";
 import type { ContentHashResult } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
-import { useLatestValueFromServerFeed } from "../../../hooks/useLatestValueFromServerFeed";
+import { useLatestValueFromServerFeed } from "@hooks/useLatestValueFromServerFeed";
 import SummariseMediaInfo from "./SummariseMediaInfo";
 import SummariseExif from "./SummariseExif";
 import SummariseNamedFiles from "./SummariseNamedFiles";

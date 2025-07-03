@@ -17,6 +17,10 @@ export type RouteState =
       route: "route/next-gen/basic-counts";
     }
   | {
+      route: "route/next-gen/tags";
+      tag: string | null;
+    }
+  | {
       route: "route/next-gen/fsck";
     }
   | {
@@ -84,6 +88,8 @@ export const urlForState = (state: RouteState): string => {
       return `/next-gen/basic-counts`;
     case "route/next-gen/fsck":
       return `/next-gen/fsck`;
+    case "route/next-gen/tags":
+      return `/next-gen/tags${state.tag === null ? "" : `/${state.tag}`}`;
     case "route/next-gen/exif-explorer":
       return `/next-gen/exif-explorer`;
     case "route/next-gen/content-hash":

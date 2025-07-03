@@ -41,6 +41,18 @@ export default (app: Application, _context: Context): void => {
     res.send(pageAsString({ route: "route/next-gen/fsck" }));
   });
 
+  app.get("/next-gen/tags", (_req, res) => {
+    res.contentType("text/html");
+    res.send(pageAsString({ route: "route/next-gen/tags", tag: null }));
+  });
+
+  app.get("/next-gen/tags/:tag", (req, res) => {
+    res.contentType("text/html");
+    res.send(
+      pageAsString({ route: "route/next-gen/tags", tag: req.params.tag }),
+    );
+  });
+
   app.get("/next-gen/exif-explorer", (_req, res) => {
     res.contentType("text/html");
     res.send(pageAsString({ route: "route/next-gen/exif-explorer" }));
