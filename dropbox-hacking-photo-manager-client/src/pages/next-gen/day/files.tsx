@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import logRender from "@lib/logRender";
 import Navigate from "@components/navigate";
@@ -7,6 +7,7 @@ import { useLatestValueFromServerFeed } from "@hooks/useLatestValueFromServerFee
 import EditableTextField from "@components/editableTextField";
 import FilesTable from "./filesTable";
 import { useIdentity } from "@hooks/useIdentity";
+import MultiTagEditor from "./MultiTagEditor";
 
 const NGDayFiles = ({ date }: { date: string }) => {
   console.log("NGDayFiles", useIdentity());
@@ -35,6 +36,10 @@ const NGDayFiles = ({ date }: { date: string }) => {
     document.title = `DPMNG - ${date}`;
   });
 
+  const [selectedContentHashes, setSelectedContentHashes] = useState<
+    ReadonlySet<string>
+  >(() => new Set());
+
   return (
     <>
       <Navigate />
@@ -53,7 +58,21 @@ const NGDayFiles = ({ date }: { date: string }) => {
 
           <p>{latestValue.files.length} files</p>
 
-          <FilesTable files={latestValue.files} />
+          {selectedContentHashes.size > 0 && (
+            <MultiTagEditor
+              key={[...selectedContentHashes].toSorted().join(" ")}
+              contentHashes={selectedContentHashes}
+              files={latestValue.files.filter((f) =>
+                selectedContentHashes.has(f.namedFile.content_hash),
+              )}
+            />
+          )}
+
+          <FilesTable
+            files={latestValue.files}
+            selectedContentHashes={selectedContentHashes}
+            onSelectedContentHashes={(t) => setSelectedContentHashes(t)}
+          />
         </>
       ) : (
         "loading..."

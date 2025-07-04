@@ -5,6 +5,7 @@ import Navigate from "@components/navigate";
 import type { NGDaysNoSamplesType } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import { useLatestValueFromServerFeed } from "@hooks/useLatestValueFromServerFeed";
 import SamePageLink from "@components/samePageLink";
+import TagsWithCounts from "../day/TagsWithCounts";
 
 const NGDaysNoSamples = () => {
   const latestValue = useLatestValueFromServerFeed<NGDaysNoSamplesType>({
@@ -30,6 +31,7 @@ const NGDaysNoSamples = () => {
               <th>Images (with exif)</th>
               <th>Videos (with mediainfo)</th>
               <th>Description</th>
+              <th>Tags</th>
             </tr>
           </thead>
           <tbody>
@@ -48,6 +50,9 @@ const NGDaysNoSamples = () => {
                 <td>{row.counts.imagesWithExif}</td>
                 <td>{row.counts.videosWithMediaInfo}</td>
                 <td>{row.dayMetadata?.description ?? ""}</td>
+                <td>
+                  <TagsWithCounts tags={row.photoTags} />
+                </td>
               </tr>
             ))}
           </tbody>

@@ -14,6 +14,10 @@ import logRender from "@lib/logRender";
 const EditableTextField = (props: {
   value: string;
   onSave: (newValue: string) => Promise<void>;
+  renderInactive?: (props: {
+    value: string;
+    placeholderText: string;
+  }) => React.ReactNode;
 }): React.ReactElement | null => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [editingValue, setEditingValue] = useState<string>(props.value.trim());
@@ -68,6 +72,8 @@ const EditableTextField = (props: {
     [doSave, doCancel],
   );
 
+  const placeholderText = "(click to edit)";
+
   if (!isEditing) {
     return (
       <span
@@ -76,7 +82,9 @@ const EditableTextField = (props: {
           props.value ? "editable inactive hasData" : "editable inactive noData"
         }
       >
-        {props.value || "(click to edit)"}
+        {props.renderInactive
+          ? props.renderInactive({ value: props.value, placeholderText })
+          : props.value || placeholderText}
       </span>
     );
   } else {

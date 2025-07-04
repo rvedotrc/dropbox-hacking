@@ -21,6 +21,7 @@ export type DaySummaryWithoutSamples = {
     imagesWithExif: number;
     videosWithMediaInfo: number;
   };
+  photoTags: Record<string, number>;
 };
 
 export const provideListOfDaysWithoutSamples = (
@@ -31,8 +32,9 @@ export const provideListOfDaysWithoutSamples = (
     feeds.mediaInfoByContentHash,
     feeds.allFilesByRev,
     feeds.daysByDate,
+    feeds.photosByContentHash,
   ]).pipe(
-    map(([exifs, mediaInfos, allFiles, days]) => {
+    map(([exifs, mediaInfos, allFiles, days, photosByContentHash]) => {
       const out = new Map<string, DaySummaryWithoutSamples>();
 
       for (const [date, dayMetadata] of days.entries()) {
@@ -43,6 +45,7 @@ export const provideListOfDaysWithoutSamples = (
             imagesWithExif: 0,
             videosWithMediaInfo: 0,
           },
+          photoTags: {} as Record<string, number>,
         });
       }
 
@@ -55,7 +58,7 @@ export const provideListOfDaysWithoutSamples = (
         const hasExif = exifs.has(file.content_hash);
         const hasMediaInfo = mediaInfos.has(file.content_hash);
 
-        const e = out.get(date);
+        let e = out.get(date);
         if (e) {
           if (isImage) {
             if (hasExif) ++e.counts.imagesWithExif;
@@ -65,14 +68,24 @@ export const provideListOfDaysWithoutSamples = (
             if (hasMediaInfo) ++e.counts.videosWithMediaInfo;
           }
         } else {
-          out.set(date, {
+          e = {
             date,
             dayMetadata: null,
             counts: {
               imagesWithExif: isImage && hasExif ? 1 : 0,
               videosWithMediaInfo: isVideo && hasMediaInfo ? 1 : 0,
             },
-          });
+            photoTags: {},
+          };
+
+          out.set(date, e);
+        }
+
+        const photoDbEntry = photosByContentHash.get(file.content_hash);
+        if (photoDbEntry) {
+          for (const tag of photoDbEntry.tags ?? []) {
+            e.photoTags[tag] = (e.photoTags[tag] ?? 0) + 1;
+          }
         }
       }
 

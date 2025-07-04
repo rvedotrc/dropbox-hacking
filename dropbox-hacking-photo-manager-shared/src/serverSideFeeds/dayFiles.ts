@@ -54,6 +54,13 @@ export const provideDayFiles = (
             mediaInfo: medaInfos.get(namedFile.content_hash),
           },
         }))
+        .filter(
+          (item) =>
+            item.exif ||
+            item.photoDbEntry ||
+            item.content.mediaInfo ||
+            item.namedFile.path_lower.match(/\.cr3$/),
+        )
         .toArray()
         .toSorted((a, b) =>
           a.namedFile.client_modified.localeCompare(
