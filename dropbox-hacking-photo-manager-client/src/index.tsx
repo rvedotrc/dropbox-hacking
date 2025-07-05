@@ -161,9 +161,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (container) {
       window.history.replaceState(routeState, "unused");
       createRoot(container).render(
-        <React.StrictMode>
-          <WrappedRoot initialRouteState={routeState} />
-        </React.StrictMode>,
+        // <React.StrictMode>
+        <WrappedRoot initialRouteState={routeState} />,
+        // </React.StrictMode>,
       );
     }
   }

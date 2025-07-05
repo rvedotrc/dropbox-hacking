@@ -17,11 +17,8 @@ export const websocketThumbnailLoader = (
       getRxFeed<ThumbnailResponse, RxFeedRequest>(
         {
           type: "rx.ng.thumbnail2",
-          request: {
-            verb: "getThumbnail",
-            rev,
-            size: { [".tag"]: "w128h128" },
-          },
+          rev,
+          size: { [".tag"]: "w128h128" },
         },
         mx,
       ).subscribe({

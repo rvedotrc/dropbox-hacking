@@ -1,12 +1,12 @@
 import {
   GPSLatLong,
-  type ClosestToRequest,
   type ClosestToResponse,
   type GPSLatNLongE,
   type NamedFile,
 } from "dropbox-hacking-photo-manager-shared";
 
 import type { Context } from "../../context.js";
+import type { ClosestToRequest } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 
 const hasGPS = <T extends { gps: GPSLatLong | null }>(
   item: T,
@@ -39,8 +39,9 @@ export const closestToHandlerBuilder = (context: Context) => {
       .map(([hash, data]) => ({
         hash,
         data,
-        gps: data.exifData.tags
-          ? GPSLatLong.fromExifTags(data.exifData.tags)
+        gps:
+          data.exifData.tags ?
+            GPSLatLong.fromExifTags(data.exifData.tags)
           : null,
       }))
       .filter(hasGPS);

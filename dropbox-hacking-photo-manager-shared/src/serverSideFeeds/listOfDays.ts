@@ -5,14 +5,17 @@ import {
   type ObservedValueOf,
 } from "rxjs";
 
-export * from "./types.js";
-
 import {
   imageFilenamePattern,
   videoFilenamePattern,
   type FullDatabaseFeeds,
 } from "./index.js";
 import type { DayMetadata } from "../types.js";
+
+export type ListOfDaysRequest = {
+  readonly type: "rx.ng.list-of-days";
+  readonly withSamples: false;
+};
 
 export type DaySummaryWithoutSamples = {
   date: string;
@@ -26,6 +29,7 @@ export type DaySummaryWithoutSamples = {
 
 export const provideListOfDaysWithoutSamples = (
   feeds: FullDatabaseFeeds,
+  _req: ListOfDaysRequest,
 ): Observable<DaySummaryWithoutSamples[]> =>
   combineLatest([
     feeds.exifsByContentHash,

@@ -1,7 +1,11 @@
 import { combineLatest, map, type ObservedValueOf } from "rxjs";
 import type { FullDatabaseFeeds } from "./index.js";
 
-export const provideTags = (feeds: FullDatabaseFeeds) =>
+export type TagsRequest = {
+  readonly type: "rx.ng.tags";
+};
+
+export const provideTags = (feeds: FullDatabaseFeeds, _req: TagsRequest) =>
   combineLatest([feeds.photosByContentHash, feeds.allFilesByRev]).pipe(
     map(([photos, files]) => {
       const contentHashes = new Set(files.values().map((f) => f.content_hash));

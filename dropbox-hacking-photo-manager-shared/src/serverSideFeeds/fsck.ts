@@ -89,7 +89,9 @@ const areUnique = (things: Iterable<string>): boolean => {
   return true;
 };
 
-export const provideFsck = (feeds: FullDatabaseFeeds) =>
+export type FsckRequest = { readonly type: "rx.ng.fsck" };
+
+export const provideFsck = (feeds: FullDatabaseFeeds, _req: FsckRequest) =>
   combineLatest([
     feeds.photosByContentHash,
     feeds.exifsByContentHash,

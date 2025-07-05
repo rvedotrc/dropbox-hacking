@@ -1,18 +1,21 @@
 import { combineLatest, map, type Observable } from "rxjs";
 
-export * from "./types.js";
-
 import { type FullDatabaseFeeds } from "./index.js";
 import type { NamedFile } from "../ws.js";
 
+export type FileRevRequest = {
+  readonly type: "rx.ng.file.rev";
+  readonly rev: string;
+};
+
 export type FileRevResult = {
-  file?: NamedFile;
+  readonly file?: NamedFile;
 };
 
 export const provideFileRev = (
   feeds: FullDatabaseFeeds,
-  { rev }: { rev: string },
+  req: FileRevRequest,
 ): Observable<FileRevResult> =>
   combineLatest([feeds.allFilesByRev]).pipe(
-    map(([allFiles]) => ({ file: allFiles.get(rev) })),
+    map(([allFiles]) => ({ file: allFiles.get(req.rev) })),
   );
