@@ -26,6 +26,7 @@ import {
   provideListOfDaysWithoutSamples,
   provideClosestTo,
   provideThumbnail,
+  provideTags,
   type RxFeedRequest,
 } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import { closestToHandlerBuilder } from "../websocket/closestToHandler.js";
@@ -111,68 +112,69 @@ export default (app: Application, context: Context): void => {
                   );
                 } else if (typedRequest.type === "rx.ng.basic-counts") {
                   return serveRxFeed(
-                    provideBasicCounts(context.fullDatabaseFeeds),
+                    provideBasicCounts(context.fullDatabaseFeeds, typedRequest),
                     () => writer,
                   );
                 } else if (typedRequest.type === "rx.ng.fsck") {
                   return serveRxFeed(
-                    provideFsck(context.fullDatabaseFeeds),
+                    provideFsck(context.fullDatabaseFeeds, typedRequest),
                     () => writer,
                   );
                 } else if (typedRequest.type === "rx.ng.exif-explorer") {
                   return serveRxFeed(
-                    provideExifExplorer(context.fullDatabaseFeeds),
+                    provideExifExplorer(
+                      context.fullDatabaseFeeds,
+                      typedRequest,
+                    ),
                     () => writer,
                   );
                 } else if (typedRequest.type === "rx.ng.list-of-days") {
                   return serveRxFeed(
-                    provideListOfDaysWithoutSamples(context.fullDatabaseFeeds),
+                    provideListOfDaysWithoutSamples(
+                      context.fullDatabaseFeeds,
+                      typedRequest,
+                    ),
                     () => writer,
                   );
                 } else if (typedRequest.type === "rx.ng.day.files") {
                   return serveRxFeed(
-                    provideDayFiles(context.fullDatabaseFeeds, {
-                      date: typedRequest.date,
-                    }),
+                    provideDayFiles(context.fullDatabaseFeeds, typedRequest),
                     () => writer,
                   );
                 } else if (typedRequest.type === "rx.ng.content_hash") {
                   return serveRxFeed(
-                    provideContentHash(context.fullDatabaseFeeds, {
-                      contentHash: typedRequest.contentHash,
-                    }),
+                    provideContentHash(context.fullDatabaseFeeds, typedRequest),
                     () => writer,
                   );
                 } else if (typedRequest.type === "rx.ng.file.id") {
                   return serveRxFeed(
-                    provideFileId(context.fullDatabaseFeeds, {
-                      id: typedRequest.id,
-                    }),
+                    provideFileId(context.fullDatabaseFeeds, typedRequest),
                     () => writer,
                   );
                 } else if (typedRequest.type === "rx.ng.file.rev") {
                   return serveRxFeed(
-                    provideFileRev(context.fullDatabaseFeeds, {
-                      rev: typedRequest.rev,
-                    }),
+                    provideFileRev(context.fullDatabaseFeeds, typedRequest),
                     () => writer,
                   );
                 } else if (typedRequest.type === "rx.ng.closest-to") {
+                  const handler = provideClosestTo(
+                    closestToHandlerBuilder(context),
+                  );
                   return serveRxFeed(
-                    provideClosestTo(
-                      context.fullDatabaseFeeds,
-                      typedRequest.request,
-                      closestToHandlerBuilder(context),
-                    ),
+                    handler(context.fullDatabaseFeeds, typedRequest),
                     () => writer,
                   );
                 } else if (typedRequest.type === "rx.ng.thumbnail2") {
+                  const handler = provideThumbnail(
+                    thumbnailHandlerBuilder(context),
+                  );
                   return serveRxFeed(
-                    provideThumbnail(
-                      context.fullDatabaseFeeds,
-                      typedRequest.request,
-                      thumbnailHandlerBuilder(context),
-                    ),
+                    handler(context.fullDatabaseFeeds, typedRequest),
+                    () => writer,
+                  );
+                } else if (typedRequest.type === "rx.ng.tags") {
+                  return serveRxFeed(
+                    provideTags(context.fullDatabaseFeeds, typedRequest),
                     () => writer,
                   );
                 }

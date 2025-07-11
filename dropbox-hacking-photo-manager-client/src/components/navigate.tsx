@@ -16,6 +16,10 @@ const navigation = (): React.ReactElement | null => (
       Basic counts
     </SamePageLink>
     {" | "}
+    <SamePageLink routeState={{ route: "route/next-gen/tags", tag: null }}>
+      tags
+    </SamePageLink>
+    {" | "}
     <SamePageLink routeState={{ route: "route/next-gen/fsck" }}>
       fsck
     </SamePageLink>
@@ -36,6 +40,18 @@ const navigation = (): React.ReactElement | null => (
       List of days (plain)
     </SamePageLink>
     {/* RVE-add-route */}
+
+    {" /// "}
+
+    <button
+      onClick={() =>
+        void document
+          .getElementById("react_container")!
+          .requestFullscreen({ navigationUI: "show" })
+      }
+    >
+      Full screen
+    </button>
   </p>
 );
 

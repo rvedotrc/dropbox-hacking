@@ -1,18 +1,23 @@
 import { combineLatest, map, type Observable } from "rxjs";
 
-export * from "./types.js";
-
 import { type FullDatabaseFeeds } from "./index.js";
 import type { NamedFile } from "../ws.js";
 
+export type FileIdRequest = {
+  readonly type: "rx.ng.file.id";
+  readonly id: string;
+};
+
 export type FileIdResult = {
-  file?: NamedFile;
+  readonly file?: NamedFile;
 };
 
 export const provideFileId = (
   feeds: FullDatabaseFeeds,
-  { id }: { id: string },
+  req: FileIdRequest,
 ): Observable<FileIdResult> =>
   combineLatest([feeds.allFilesByRev]).pipe(
-    map(([allFiles]) => ({ file: allFiles.values().find((f) => f.id === id) })),
+    map(([allFiles]) => ({
+      file: allFiles.values().find((f) => f.id === req.id),
+    })),
   );

@@ -29,6 +29,23 @@ export const buildForPhotoDb = (path: string) => {
         encoding: "utf-8",
       });
     },
+    transform: async (mutate: (current: PhotoDb) => Promise<PhotoDb>) => {
+      const oldDb = JSON.parse(
+        await readFile(`${path}/photos.json`, { encoding: "utf-8" }),
+      ) as PhotoDb;
+
+      const newDb = await mutate(oldDb);
+
+      if (isDeepStrictEqual(oldDb, newDb)) return;
+
+      await writeFileAtomic(
+        `${path}/photos.json`,
+        JSON.stringify(newDb) + "\n",
+        {
+          encoding: "utf-8",
+        },
+      );
+    },
   };
 };
 

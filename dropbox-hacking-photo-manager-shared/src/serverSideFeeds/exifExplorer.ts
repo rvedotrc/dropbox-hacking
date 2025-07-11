@@ -4,7 +4,12 @@ import { type FullDatabaseFeeds } from "./index.js";
 const isBlank = (v: unknown) =>
   v === null || v === undefined || (typeof v === "string" && v.trim() === "");
 
-export const provideExifExplorer = (feeds: FullDatabaseFeeds) =>
+export type ExifExplorerRequest = { readonly type: "rx.ng.exif-explorer" };
+
+export const provideExifExplorer = (
+  feeds: FullDatabaseFeeds,
+  _req: ExifExplorerRequest,
+) =>
   combineLatest([feeds.exifsByContentHash]).pipe(
     map(([exifs]) => {
       let entries = 0;

@@ -17,12 +17,9 @@ export default ({
 }) => {
   const data = useLatestValueFromServerFeed<ClosestToResponse>({
     type: "rx.ng.closest-to",
-    request: {
-      verb: "closestTo",
-      from: gps,
-      nClosest: nClosest ?? 100,
-      maxDistanceInMeters: 2000,
-    },
+    from: gps,
+    nClosest: nClosest ?? 100,
+    maxDistanceInMeters: 2000,
   });
 
   return data ? (

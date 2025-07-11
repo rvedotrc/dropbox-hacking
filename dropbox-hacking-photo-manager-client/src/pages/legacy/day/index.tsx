@@ -5,7 +5,7 @@ import {
 import * as React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import useVisibilityTracking from "../../../hooks/useVisibilityTracking";
+import useVisibilityTracking from "@hooks/useVisibilityTracking";
 import logRender from "@lib/logRender";
 import EditableTextField from "@components/editableTextField";
 import PhotoTile from "@components/photoTile";

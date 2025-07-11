@@ -8,8 +8,8 @@ import { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 
 import { context as routingContext, type Router } from "@hooks/useRouter";
-import * as rxRecordFeedContext from "./hooks/legacyRxFeeds/rxRecordFeedContext";
-import * as additionalFeeds from "./hooks/legacyRxFeeds/additionalFeeds";
+import * as rxRecordFeedContext from "@hooks/legacyRxFeeds/rxRecordFeedContext";
+import * as additionalFeeds from "@hooks/legacyRxFeeds/additionalFeeds";
 import { defaultProvider as MultiplexerProvider } from "@hooks/useMultiplexer";
 import { defaultProvider as ThumbnailProvider } from "@hooks/useThumbnail";
 import Day from "@pages/legacy/day";
@@ -24,10 +24,10 @@ import BasicCounts from "@pages/next-gen/basic-counts";
 import NGDaysNoSamples from "@pages/next-gen/list-of-days/without-samples";
 import NGDayFiles from "@pages/next-gen/day/files";
 import NGContentHash from "@pages/next-gen/contentHash";
-import NGFileId from "@pages/next-gen/fileId";
-import NGFileRev from "@pages/next-gen/fileRev";
 import Fsck from "@pages/next-gen/fsck";
+import Tags from "@pages/next-gen/tags";
 import ExifExplorer from "@pages/next-gen/exifExplorer";
+// RVE-add-route
 
 const ensureNever = <_ extends never>() => undefined;
 
@@ -78,20 +78,19 @@ const toRender = ({ routeState }: { routeState: RouteState }) => {
     );
 
   if (routeState.route === "route/next-gen/basic-counts")
-    return <BasicCounts />;
-  if (routeState.route === "route/next-gen/fsck") return <Fsck />;
+    return <BasicCounts {...routeState} />;
+  if (routeState.route === "route/next-gen/fsck")
+    return <Fsck {...routeState} />;
+  if (routeState.route === "route/next-gen/tags")
+    return <Tags {...routeState} />;
   if (routeState.route === "route/next-gen/exif-explorer")
-    return <ExifExplorer />;
+    return <ExifExplorer {...routeState} />;
   if (routeState.route === "route/next-gen/list-of-days/without-samples")
-    return <NGDaysNoSamples />;
+    return <NGDaysNoSamples {...routeState} />;
   if (routeState.route === "route/next-gen/day/files")
-    return <NGDayFiles date={routeState.date} />;
+    return <NGDayFiles {...routeState} />;
   if (routeState.route === "route/next-gen/content-hash")
-    return <NGContentHash contentHash={routeState.contentHash} />;
-  if (routeState.route === "route/next-gen/file/id")
-    return <NGFileId id={routeState.id} />;
-  if (routeState.route === "route/next-gen/file/rev")
-    return <NGFileRev rev={routeState.rev} />;
+    return <NGContentHash {...routeState} />;
   // RVE-add-route
 
   ensureNever<typeof routeState>();
@@ -118,8 +117,10 @@ const Root = ({
   const router: Router = useMemo(() => ({ switchToPage }), []);
 
   useEffect(() => {
-    const listener = (event: PopStateEvent) =>
-      switchToPage(event.state as RouteState);
+    const listener = (event: PopStateEvent) => {
+      console.log(`popstate switchToPage`, event.state);
+      return switchToPage(event.state as RouteState);
+    };
     window.addEventListener("popstate", listener);
     return () => window.removeEventListener("popstate", listener);
   }, []);
@@ -163,9 +164,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (container) {
       window.history.replaceState(routeState, "unused");
       createRoot(container).render(
-        <React.StrictMode>
-          <WrappedRoot initialRouteState={routeState} />
-        </React.StrictMode>,
+        // <React.StrictMode>
+        <WrappedRoot initialRouteState={routeState} />,
+        // </React.StrictMode>,
       );
     }
   }

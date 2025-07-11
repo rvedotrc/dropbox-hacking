@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import logRender from "@lib/logRender";
 import type { PhotoDbEntry } from "dropbox-hacking-photo-manager-shared";
 import EditableTextField from "@components/editableTextField";
+import Tags from "../day/Tags";
 
 const EditablePhotoEntry = ({
   contentHash,
@@ -33,7 +34,7 @@ const EditablePhotoEntry = ({
         },
         body: JSON.stringify({
           ...(photoDbEntry ?? {}),
-          tags: newText.trim().replaceAll(/ /g, " ").split(" "),
+          tags: newText.trim().replaceAll(/ /g, " ").split(" ").filter(Boolean),
         }),
       }).then(() => {}),
     [contentHash, photoDbEntry],
@@ -56,6 +57,13 @@ const EditablePhotoEntry = ({
           key={photoDbEntry.tags?.join(" ") ?? ""}
           value={photoDbEntry.tags?.join(" ") ?? ""}
           onSave={onSaveTags}
+          renderInactive={({ value, placeholderText }) =>
+            value === "" ? (
+              placeholderText
+            ) : (
+              <Tags tags={photoDbEntry.tags ?? []} />
+            )
+          }
         />
       </p>
     </div>

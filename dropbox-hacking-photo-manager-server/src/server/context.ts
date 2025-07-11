@@ -11,6 +11,7 @@ import { EventEmitter } from "events";
 import DayDb from "./dayDb.js";
 import type { Observable } from "rxjs";
 import type { FullDatabaseFeeds } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
+import type { PhotoDb } from "./rx/photoDb.js";
 
 export type SubscribableData<T> = EventEmitter & {
   on: (eventName: "change", fn: () => void) => void;
@@ -38,6 +39,9 @@ export type Context = {
     contentHash: string;
     entry: PhotoDbEntry;
   }) => Promise<void>;
+  photoRxTransformer: (
+    transform: (old: PhotoDb) => Promise<PhotoDb>,
+  ) => Promise<void>;
 
   fullDatabaseFeeds: FullDatabaseFeeds;
 };

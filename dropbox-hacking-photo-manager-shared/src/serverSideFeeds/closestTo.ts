@@ -1,17 +1,25 @@
 import { Observable } from "rxjs";
 
-export * from "./types.js";
-
 import { type FullDatabaseFeeds } from "./index.js";
-import type { ClosestToRequest, ClosestToResponse } from "../ws.js";
+import type { ClosestToResponse } from "../ws.js";
+import type { GPSLatNLongE } from "../gpsLatLong.js";
 
-export const provideClosestTo = (
-  _feeds: FullDatabaseFeeds,
-  req: ClosestToRequest,
-  handler: (req: ClosestToRequest) => Promise<ClosestToResponse>,
-): Observable<ClosestToResponse> =>
-  new Observable<ClosestToResponse>((subscriber) => {
-    handler(req)
-      .then((resp) => subscriber.next(resp))
-      .catch((err) => subscriber.error(err));
-  });
+export type ClosestToRequest = {
+  readonly type: "rx.ng.closest-to";
+
+  readonly from: GPSLatNLongE;
+  readonly nClosest: number;
+  readonly maxDistanceInMeters: number;
+};
+
+export const provideClosestTo =
+  (handler: (req: ClosestToRequest) => Promise<ClosestToResponse>) =>
+  (
+    _feeds: FullDatabaseFeeds,
+    req: ClosestToRequest,
+  ): Observable<ClosestToResponse> =>
+    new Observable<ClosestToResponse>((subscriber) => {
+      handler(req)
+        .then((resp) => subscriber.next(resp))
+        .catch((err) => subscriber.error(err));
+    });

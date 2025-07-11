@@ -10,7 +10,7 @@ export const useLatestValueFromServerFeed = <V>(
 
   const observer = useMemo(
     () => (mx ? getRxFeed<V, RxFeedRequest>(request, mx) : undefined),
-    [mx],
+    [mx, JSON.stringify(request)],
   );
 
   const [latestValue, setLatestValue] = useState<V>();

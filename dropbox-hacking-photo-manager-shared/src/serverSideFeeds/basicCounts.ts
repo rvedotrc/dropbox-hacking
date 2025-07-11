@@ -6,7 +6,14 @@ import {
 } from "./index.js";
 import { unambiguousPrefixLength } from "./unambiguousPrefixLength.js";
 
-export const provideBasicCounts = (feeds: FullDatabaseFeeds) =>
+export type BasicCountsRequest = {
+  readonly type: "rx.ng.basic-counts";
+};
+
+export const provideBasicCounts = (
+  feeds: FullDatabaseFeeds,
+  _req: BasicCountsRequest,
+) =>
   combineLatest([
     feeds.photosByContentHash,
     feeds.exifsByContentHash,

@@ -41,6 +41,18 @@ export default (app: Application, _context: Context): void => {
     res.send(pageAsString({ route: "route/next-gen/fsck" }));
   });
 
+  app.get("/next-gen/tags", (_req, res) => {
+    res.contentType("text/html");
+    res.send(pageAsString({ route: "route/next-gen/tags", tag: null }));
+  });
+
+  app.get("/next-gen/tags/:tag", (req, res) => {
+    res.contentType("text/html");
+    res.send(
+      pageAsString({ route: "route/next-gen/tags", tag: req.params.tag }),
+    );
+  });
+
   app.get("/next-gen/exif-explorer", (_req, res) => {
     res.contentType("text/html");
     res.send(pageAsString({ route: "route/next-gen/exif-explorer" }));
@@ -50,20 +62,6 @@ export default (app: Application, _context: Context): void => {
     res.contentType("text/html");
     res.send(
       pageAsString({ route: "route/next-gen/list-of-days/without-samples" }),
-    );
-  });
-
-  app.get("/next-gen/file/id/:id", (req, res) => {
-    res.contentType("text/html");
-    res.send(
-      pageAsString({ route: "route/next-gen/file/id", id: req.params.id }),
-    );
-  });
-
-  app.get("/next-gen/file/rev/:rev", (req, res) => {
-    res.contentType("text/html");
-    res.send(
-      pageAsString({ route: "route/next-gen/file/rev", rev: req.params.rev }),
     );
   });
 

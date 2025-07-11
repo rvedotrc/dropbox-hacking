@@ -1,7 +1,7 @@
 import { watch } from "fs";
 import { readFile } from "fs/promises";
 import { dirname } from "path";
-import { debounceTime, Observable } from "rxjs";
+import { debounceTime, Observable, tap } from "rxjs";
 
 export const addSequence = <T>(): ((value: T) => {
   value: T;
@@ -25,7 +25,9 @@ export const jsonFileObservableViaLoader = <T>(
   dTime: number,
 ) =>
   pathChangedObservable(dir)
+    .pipe(tap(() => console.log(`path changed ${dir}`)))
     .pipe(debounceTime(dTime))
+    .pipe(tap(() => console.log(`path changed ${dir} (debounced)`)))
     .pipe(
       (incoming) =>
         new Observable<T>((outgoing) => {

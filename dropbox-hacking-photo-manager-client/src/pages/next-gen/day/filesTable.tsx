@@ -1,88 +1,143 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 
 import logRender from "@lib/logRender";
 import type { DayFilesResult } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
-import SamePageLink from "@components/samePageLink";
 import useVisibilityTracking from "@hooks/useVisibilityTracking";
-import MaybeVisibleThumbnail from "./MaybeVisibleThumbnail";
-import { Observable } from "rxjs";
+import FileRow from "./FileRow";
 
-const FileRow = ({
-  file,
-  observableVisibleItems,
+const FilesTable = ({
+  files,
+  selectedContentHashes,
+  onSelectedContentHashes,
+  date,
 }: {
-  file: DayFilesResult["files"][number];
-  observableVisibleItems: Observable<ReadonlySet<string>>;
+  files: DayFilesResult["files"];
+  selectedContentHashes: ReadonlySet<string>;
+  onSelectedContentHashes: (selectedContentHashes: ReadonlySet<string>) => void;
+  date: string;
 }) => {
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const sub = observableVisibleItems.subscribe((s) =>
-      setVisible(s.has(file.namedFile.rev)),
-    );
-    return () => sub.unsubscribe();
-  }, [observableVisibleItems, file]);
-
-  return (
-    <tr key={file.namedFile.id} data-rev={file.namedFile.rev}>
-      <td>{file.namedFile.client_modified.replace("T", " ")}</td>
-      <td>
-        {file.content.exif && "+exif "}
-        {file.content.mediaInfo && "+mediainfo "}
-      </td>
-      <td>{file.namedFile.name.split(".").pop()?.toLocaleLowerCase()}</td>
-      <td>
-        {file.namedFile.name
-          .toLocaleLowerCase()
-          .replaceAll(file.namedFile.content_hash, "#")}
-      </td>
-      <td>
-        <SamePageLink
-          routeState={{
-            route: "route/next-gen/content-hash",
-            contentHash: file.namedFile.content_hash,
-          }}
-        >
-          <MaybeVisibleThumbnail namedFile={file.namedFile} visible={visible} />
-        </SamePageLink>
-      </td>
-      <td>
-        <div>{file.photoDbEntry?.description ?? ""}</div>
-        <div className="tags">
-          {(file.photoDbEntry?.tags ?? []).map((tag, index) => (
-            <span key={index} className={`tag tag-${tag}`}>
-              {tag}
-            </span>
-          ))}
-        </div>
-      </td>
-    </tr>
-  );
-};
-
-const LoggedFileRow = logRender(FileRow);
-
-const FilesTable = ({ files }: { files: DayFilesResult["files"] }) => {
-  const parentRef = useRef<HTMLTableSectionElement>(null);
+  const parentRef = useRef<HTMLOListElement>(null);
 
   const observableVisibleItems = useVisibilityTracking({
     parentRef,
     listItemDataAttribute: "data-rev",
   });
 
+  console.log([...selectedContentHashes].toSorted().join(" "));
+
+  const countSelected = files.filter((f) =>
+    selectedContentHashes.has(f.namedFile.content_hash),
+  ).length;
+  const countAll = files.length;
+
+  const setAll = (which: "all" | "none", checked: boolean) => {
+    if ((which === "all") === checked) {
+      onSelectedContentHashes(
+        new Set(files.map((f) => f.namedFile.content_hash)),
+      );
+    } else {
+      onSelectedContentHashes(new Set());
+    }
+  };
+
+  const [focusedRev, setFocusedRev] = useState<string>();
+
   return (
-    <table>
-      <tbody ref={parentRef}>
+    <>
+      <p>
+        <input
+          type="checkbox"
+          disabled={countAll === 0}
+          checked={countSelected === countAll}
+          onChange={useMemo(() => (e) => setAll("all", e.target.checked), [])}
+        />{" "}
+        all
+        <br />
+        <input
+          type="checkbox"
+          disabled={countAll === 0}
+          checked={countSelected === 0}
+          onChange={useMemo(() => (e) => setAll("none", e.target.checked), [])}
+        />{" "}
+        none
+      </p>
+
+      <ol
+        ref={parentRef}
+        className="files"
+        onKeyDown={(e) => {
+          if (files.length === 0) return;
+          if (!(!e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey)) return;
+
+          if (e.key === "j") {
+            const idx = files.findIndex(
+              (item) => item.namedFile.rev === focusedRev,
+            );
+            const newIndex = (idx + 1) % files.length;
+            setFocusedRev(files[newIndex].namedFile.rev);
+          }
+
+          if (e.key === "k") {
+            const idx = files.findIndex(
+              (item) => item.namedFile.rev === focusedRev,
+            );
+            const newIndex = idx <= 0 ? files.length - 1 : idx - 1;
+            setFocusedRev(files[newIndex].namedFile.rev);
+          }
+
+          if (e.key === "y" || e.key === "n") {
+            const want = e.key === "y";
+
+            const idx = files.findIndex(
+              (item) => item.namedFile.rev === focusedRev,
+            );
+            const focusedFile: (typeof files)[number] | undefined = files[idx];
+
+            if (
+              focusedFile &&
+              selectedContentHashes.has(focusedFile.namedFile.content_hash) !==
+                want
+            ) {
+              const copy = new Set(selectedContentHashes);
+              if (want) copy.add(focusedFile.namedFile.content_hash);
+              else copy.delete(focusedFile.namedFile.content_hash);
+              onSelectedContentHashes(copy);
+            }
+
+            const newIndex = (idx + 1) % files.length;
+            setFocusedRev(files[newIndex].namedFile.rev);
+          }
+
+          if (e.key === "q") onSelectedContentHashes(new Set());
+          if (e.key === "a")
+            onSelectedContentHashes(
+              new Set(files.map((f) => f.namedFile.content_hash)),
+            );
+
+          console.log({ key: e });
+        }}
+      >
         {observableVisibleItems &&
           files.map((f) => (
-            <LoggedFileRow
+            <FileRow
               key={f.namedFile.id}
               file={f}
+              focused={f.namedFile.rev === focusedRev}
               observableVisibleItems={observableVisibleItems}
+              selected={selectedContentHashes.has(f.namedFile.content_hash)}
+              onSelected={(selected) => {
+                const t = new Set(selectedContentHashes);
+                if (selected) t.add(f.namedFile.content_hash);
+                else t.delete(f.namedFile.content_hash);
+
+                onSelectedContentHashes(t);
+                setFocusedRev(f.namedFile.rev);
+              }}
+              date={date}
             />
           ))}
-      </tbody>
-    </table>
+      </ol>
+    </>
   );
 };
 
