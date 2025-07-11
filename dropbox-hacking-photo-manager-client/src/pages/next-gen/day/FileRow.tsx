@@ -12,12 +12,14 @@ const FileRow = ({
   observableVisibleItems,
   selected,
   onSelected,
+  date,
 }: {
   file: DayFilesResult["files"][number];
   focused: boolean;
   observableVisibleItems: Observable<ReadonlySet<string>>;
   selected: boolean;
   onSelected: (selected: boolean) => void;
+  date: string;
 }) => {
   const [visible, setVisible] = useState(false);
 
@@ -63,8 +65,12 @@ const FileRow = ({
             () => ({
               route: "route/next-gen/content-hash",
               contentHash: file.namedFile.content_hash,
+              context: {
+                date,
+                rev: file.namedFile.rev,
+              },
             }),
-            [file.namedFile.content_hash],
+            [file.namedFile.content_hash, file.namedFile.rev, date],
           )}
         >
           <MaybeVisibleThumbnail namedFile={file.namedFile} visible={visible} />

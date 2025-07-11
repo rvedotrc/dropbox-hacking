@@ -21,6 +21,8 @@ export const multiplexer = <I, O>(
 
   const underlyingReader: Incoming<IDHolder & WrappedPayload<I>> = {
     receive: (underlyingMessage) => {
+      console.debug("mx receive", underlyingMessage.id, underlyingMessage.tag);
+
       if (underlyingMessage.tag === "open") {
         if (readersById.has(underlyingMessage.id)) {
           throw new Error("Duplicate multiplexer ID");
@@ -30,6 +32,7 @@ export const multiplexer = <I, O>(
               throw new Error("Duplicate multiplexer ID");
             }
 
+            console.debug("mx accepted connection", underlyingMessage.id);
             readersById.set(underlyingMessage.id, newReader);
 
             return {

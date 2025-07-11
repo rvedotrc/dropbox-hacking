@@ -40,6 +40,18 @@ const navigation = (): React.ReactElement | null => (
       List of days (plain)
     </SamePageLink>
     {/* RVE-add-route */}
+
+    {" /// "}
+
+    <button
+      onClick={() =>
+        void document
+          .getElementById("react_container")!
+          .requestFullscreen({ navigationUI: "show" })
+      }
+    >
+      Full screen
+    </button>
   </p>
 );
 

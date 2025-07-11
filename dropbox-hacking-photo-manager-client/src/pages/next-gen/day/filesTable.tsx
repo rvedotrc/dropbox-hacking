@@ -9,10 +9,12 @@ const FilesTable = ({
   files,
   selectedContentHashes,
   onSelectedContentHashes,
+  date,
 }: {
   files: DayFilesResult["files"];
   selectedContentHashes: ReadonlySet<string>;
   onSelectedContentHashes: (selectedContentHashes: ReadonlySet<string>) => void;
+  date: string;
 }) => {
   const parentRef = useRef<HTMLOListElement>(null);
 
@@ -131,6 +133,7 @@ const FilesTable = ({
                 onSelectedContentHashes(t);
                 setFocusedRev(f.namedFile.rev);
               }}
+              date={date}
             />
           ))}
       </ol>

@@ -95,23 +95,17 @@ const MultiTagEditor = ({
   };
 
   return (
-    <div
-      style={{
-        position: "sticky",
-        top: 0,
-        background: "rgb(255, 205, 255)",
-        padding: "0.5em",
-        width: "fit-content",
-      }}
-    >
-      <p>Multi-file tag editor!</p>
-      <p>editing {files.length} files</p>
+    <div className="multiTagEditor">
+      <div className="itemCount">
+        editing {files.length === 1 ? "1 item" : `${files.length} items`}
+      </div>
       <form
         onSubmit={(e) => {
           e.preventDefault();
           if (isSpecValid) doUpdate();
         }}
       >
+        Tags:{" "}
         <input
           style={{ backgroundColor: isSpecValid ? "#fff" : "#faa" }}
           type="text"

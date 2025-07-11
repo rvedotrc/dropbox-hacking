@@ -78,18 +78,19 @@ const toRender = ({ routeState }: { routeState: RouteState }) => {
     );
 
   if (routeState.route === "route/next-gen/basic-counts")
-    return <BasicCounts />;
-  if (routeState.route === "route/next-gen/fsck") return <Fsck />;
+    return <BasicCounts {...routeState} />;
+  if (routeState.route === "route/next-gen/fsck")
+    return <Fsck {...routeState} />;
   if (routeState.route === "route/next-gen/tags")
-    return <Tags tag={routeState.tag} />;
+    return <Tags {...routeState} />;
   if (routeState.route === "route/next-gen/exif-explorer")
-    return <ExifExplorer />;
+    return <ExifExplorer {...routeState} />;
   if (routeState.route === "route/next-gen/list-of-days/without-samples")
-    return <NGDaysNoSamples />;
+    return <NGDaysNoSamples {...routeState} />;
   if (routeState.route === "route/next-gen/day/files")
-    return <NGDayFiles date={routeState.date} />;
+    return <NGDayFiles {...routeState} />;
   if (routeState.route === "route/next-gen/content-hash")
-    return <NGContentHash contentHash={routeState.contentHash} />;
+    return <NGContentHash {...routeState} />;
   // RVE-add-route
 
   ensureNever<typeof routeState>();
@@ -116,8 +117,10 @@ const Root = ({
   const router: Router = useMemo(() => ({ switchToPage }), []);
 
   useEffect(() => {
-    const listener = (event: PopStateEvent) =>
-      switchToPage(event.state as RouteState);
+    const listener = (event: PopStateEvent) => {
+      console.log(`popstate switchToPage`, event.state);
+      return switchToPage(event.state as RouteState);
+    };
     window.addEventListener("popstate", listener);
     return () => window.removeEventListener("popstate", listener);
   }, []);

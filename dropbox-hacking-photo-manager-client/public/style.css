@@ -1,6 +1,16 @@
 body {
   font-family: sans-serif;
   padding: 1em;
+  background: #000;
+  color: #fff;
+}
+
+a[href] {
+  color: orange;
+}
+
+#react_container:fullscreen {
+  overflow: scroll;
 }
 
 .twelveMonths {
@@ -218,4 +228,18 @@ ol.files div.thumbnail img {
 .tag.tag-nsfw {
   background: red;
   border-color: red;
+}
+
+.multiTagEditor {
+  position: sticky;
+  top: 0;
+  background: rgb(255, 205, 255);
+  color: black;
+  padding: 0.5em;
+  width: fit-content;
+  font-size: smaller;
+}
+
+.multiTagEditor > .itemCount {
+  margin-block: 0.2em;
 }

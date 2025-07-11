@@ -36,6 +36,10 @@ export type RouteState =
   | {
       route: "route/next-gen/content-hash";
       contentHash: string;
+      context?: {
+        date: string;
+        rev: string;
+      };
     }
   | {
       route: "calendar";
