@@ -1,16 +1,16 @@
-import { Dropbox } from "dropbox";
 import * as exifDb from "@blaahaj/dropbox-hacking-exif-db";
 import * as lsCache from "@blaahaj/dropbox-hacking-ls-cache";
+import { Dropbox } from "dropbox";
 import {
   DayMetadata,
   type NamedFile,
   type PhotoDbEntry,
 } from "dropbox-hacking-photo-manager-shared";
+import type { FullDatabaseFeeds } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import { EventEmitter } from "events";
+import type { Observable } from "rxjs";
 
 import DayDb from "./dayDb.js";
-import type { Observable } from "rxjs";
-import type { FullDatabaseFeeds } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import type { PhotoDb } from "./rx/photoDb.js";
 
 export type SubscribableData<T> = EventEmitter & {

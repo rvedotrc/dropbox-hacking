@@ -1,7 +1,8 @@
-import { Dropbox } from "dropbox";
 import { ExifDB } from "@blaahaj/dropbox-hacking-exif-db";
 import * as LsCache from "@blaahaj/dropbox-hacking-ls-cache";
 import { getDropboxClient } from "@blaahaj/dropbox-hacking-util";
+import { Dropbox } from "dropbox";
+import type { FullDatabaseFeeds } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import { EventEmitter } from "events";
 import * as fs from "fs";
 
@@ -11,9 +12,8 @@ import debounce from "./debounce.js";
 import { buildForDayDb, buildForDayDbMap } from "./rx/dayDb.js";
 import { buildForExifDb, buildForExifDbMap } from "./rx/exifDb.js";
 import { buildForLsCache, buildForLsCacheMapAllFiles } from "./rx/lsCache.js";
-import { buildForPhotoDb, buildForPhotoDbMap } from "./rx/photoDb.js";
-import type { FullDatabaseFeeds } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import { buildForMediaInfoDbMap } from "./rx/mediaInfoDb.js";
+import { buildForPhotoDb, buildForPhotoDbMap } from "./rx/photoDb.js";
 
 class FilesystemBasedFeed<T>
   extends EventEmitter

@@ -1,9 +1,11 @@
-import { map, ReplaySubject } from "rxjs";
-import { jsonFileObservable } from "./util.js";
-import type { PhotoDbEntry } from "dropbox-hacking-photo-manager-shared";
 import { readFile } from "node:fs/promises";
 import { isDeepStrictEqual } from "node:util";
+
+import type { PhotoDbEntry } from "dropbox-hacking-photo-manager-shared";
+import { map, ReplaySubject } from "rxjs";
 import writeFileAtomic from "write-file-atomic";
+
+import { jsonFileObservable } from "./util.js";
 
 export type PhotoDb = Record<string, PhotoDbEntry>;
 

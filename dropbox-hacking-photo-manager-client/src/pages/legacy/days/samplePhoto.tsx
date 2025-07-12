@@ -1,8 +1,7 @@
-import { Photo } from "dropbox-hacking-photo-manager-shared";
-import * as React from "react";
-
 import useThumbnail from "@hooks/useThumbnail";
 import logRender from "@lib/logRender";
+import { Photo } from "dropbox-hacking-photo-manager-shared";
+import * as React from "react";
 
 const samplePhoto = ({
   photo,

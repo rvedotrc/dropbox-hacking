@@ -1,11 +1,12 @@
-import { map } from "rxjs";
-import type { buildFilesAndExifAndPhotoDb } from "./buildFilesAndExifAndPhotoDb";
 import type { ExifFromHash } from "@blaahaj/dropbox-hacking-exif-db";
 import type {
+  CountsByDateEntry,
   NamedFile,
   PhotoDbEntry,
-  CountsByDateEntry,
 } from "dropbox-hacking-photo-manager-shared";
+import { map } from "rxjs";
+
+import type { buildFilesAndExifAndPhotoDb } from "./buildFilesAndExifAndPhotoDb";
 
 const sample = <T>(items: readonly T[]): T[] => {
   if (items.length === 0) return [];

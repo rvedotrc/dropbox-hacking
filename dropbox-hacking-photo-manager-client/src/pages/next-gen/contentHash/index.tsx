@@ -1,18 +1,18 @@
+import Navigate from "@components/navigate";
+import SamePageLink from "@components/samePageLink";
+import { useLatestValueFromServerFeed } from "@hooks/useLatestValueFromServerFeed";
+import logRender from "@lib/logRender";
+import {
+  type ContentHashResult,
+  DayFilesResult,
+} from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import React, { useEffect } from "react";
 
-import logRender from "@lib/logRender";
-import Navigate from "@components/navigate";
-import {
-  DayFilesResult,
-  type ContentHashResult,
-} from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
-import { useLatestValueFromServerFeed } from "@hooks/useLatestValueFromServerFeed";
-import SummariseMediaInfo from "./SummariseMediaInfo";
-import SummariseExif from "./SummariseExif";
-import SummariseNamedFiles from "./SummariseNamedFiles";
-import ImagePreview from "./imagePreview";
 import EditablePhotoEntry from "./EditablePhotoEntry";
-import SamePageLink from "@components/samePageLink";
+import ImagePreview from "./imagePreview";
+import SummariseExif from "./SummariseExif";
+import SummariseMediaInfo from "./SummariseMediaInfo";
+import SummariseNamedFiles from "./SummariseNamedFiles";
 
 const Results = ({
   contentHash,

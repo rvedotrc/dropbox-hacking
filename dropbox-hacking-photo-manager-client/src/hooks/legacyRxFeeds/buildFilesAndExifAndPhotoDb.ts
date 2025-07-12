@@ -1,10 +1,10 @@
 import type { ExifFromHash } from "@blaahaj/dropbox-hacking-exif-db";
+import type { buildFromIO } from "@lib/legacyRxFeeds/rxFeedClient";
 import type {
   NamedFile,
   PhotoDbEntry,
 } from "dropbox-hacking-photo-manager-shared";
 import { combineLatest, map } from "rxjs";
-import type { buildFromIO } from "@lib/legacyRxFeeds/rxFeedClient";
 
 export const buildFilesAndExifAndPhotoDb = (
   feeds: ReturnType<typeof buildFromIO>["feeds"],

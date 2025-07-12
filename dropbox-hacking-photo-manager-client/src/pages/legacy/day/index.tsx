@@ -1,19 +1,18 @@
+import EditableTextField from "@components/editableTextField";
+import PhotoTile from "@components/photoTile";
+import SamePageLink from "@components/samePageLink";
+import { useAdditionalFeeds } from "@hooks/legacyRxFeeds/additionalFeeds";
+import { useRxFeedsViaMultiplexer } from "@hooks/legacyRxFeeds/rxRecordFeedContext";
+import { useLatestValue } from "@hooks/useLatestValue";
+import useVisibilityTracking from "@hooks/useVisibilityTracking";
+import logRender from "@lib/logRender";
 import {
   DayMetadataResponse,
   PhotosResponse,
 } from "dropbox-hacking-photo-manager-shared";
 import * as React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
-
-import useVisibilityTracking from "@hooks/useVisibilityTracking";
-import logRender from "@lib/logRender";
-import EditableTextField from "@components/editableTextField";
-import PhotoTile from "@components/photoTile";
-import { useRxFeedsViaMultiplexer } from "@hooks/legacyRxFeeds/rxRecordFeedContext";
 import { map } from "rxjs";
-import { useLatestValue } from "@hooks/useLatestValue";
-import { useAdditionalFeeds } from "@hooks/legacyRxFeeds/additionalFeeds";
-import SamePageLink from "@components/samePageLink";
 
 const DayWithData = ({
   date,

@@ -5,12 +5,12 @@ import {
   type ObservedValueOf,
 } from "rxjs";
 
+import type { DayMetadata } from "../types.js";
 import {
+  type FullDatabaseFeeds,
   imageFilenamePattern,
   videoFilenamePattern,
-  type FullDatabaseFeeds,
 } from "./index.js";
-import type { DayMetadata } from "../types.js";
 
 export type ListOfDaysRequest = {
   readonly type: "rx.ng.list-of-days";

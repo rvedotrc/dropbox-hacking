@@ -1,7 +1,6 @@
-import React, { useEffect } from "react";
-
-import logRender from "@lib/logRender";
 import Navigate from "@components/navigate";
+import logRender from "@lib/logRender";
+import React, { useEffect } from "react";
 
 const SingleTag = ({ tag }: { tag: string }) => {
   useEffect(() => {

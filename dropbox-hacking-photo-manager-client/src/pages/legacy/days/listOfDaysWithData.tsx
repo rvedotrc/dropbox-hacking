@@ -1,3 +1,6 @@
+import Navigate from "@components/navigate";
+import useVisibilityTracking from "@hooks/useVisibilityTracking";
+import logRender from "@lib/logRender";
 import {
   CountsByDate,
   DayMetadata,
@@ -5,11 +8,8 @@ import {
 import * as React from "react";
 import { useMemo, useRef } from "react";
 
-import logRender from "@lib/logRender";
 import DayWithSamples, { dayDateAttribute } from "./dayWithSamples";
 import { makeEmittableSubscribable } from "./emittableSubscribable";
-import Navigate from "@components/navigate";
-import useVisibilityTracking from "@hooks/useVisibilityTracking";
 
 const ListOfDaysWithData = ({
   countsByDate,

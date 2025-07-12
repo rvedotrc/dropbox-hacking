@@ -1,4 +1,4 @@
-import type { DeltaMaker, DeltaApplier } from "./deltaFeed.js";
+import type { DeltaApplier, DeltaMaker } from "./deltaFeed.js";
 
 export type RecordDelta<K extends string, V> = (
   | { tag: "added"; key: K; newValue: V }

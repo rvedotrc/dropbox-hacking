@@ -1,13 +1,12 @@
+import Navigate from "@components/navigate";
+import { useAdditionalFeeds } from "@hooks/legacyRxFeeds/additionalFeeds";
+import { useRxFeedsViaMultiplexer } from "@hooks/legacyRxFeeds/rxRecordFeedContext";
+import { useLatestValue } from "@hooks/useLatestValue";
+import type { ImageAndMaybeDelta } from "@lib/legacyRxFeeds/rxFeedClient";
+import logRender from "@lib/logRender";
 import * as React from "react";
 import { useEffect, useMemo, useState } from "react";
 import { map, Observable } from "rxjs";
-
-import logRender from "@lib/logRender";
-import { useRxFeedsViaMultiplexer } from "@hooks/legacyRxFeeds/rxRecordFeedContext";
-import type { ImageAndMaybeDelta } from "@lib/legacyRxFeeds/rxFeedClient";
-import Navigate from "@components/navigate";
-import { useLatestValue } from "@hooks/useLatestValue";
-import { useAdditionalFeeds } from "@hooks/legacyRxFeeds/additionalFeeds";
 
 const Stats = () => {
   const feeds = useRxFeedsViaMultiplexer();

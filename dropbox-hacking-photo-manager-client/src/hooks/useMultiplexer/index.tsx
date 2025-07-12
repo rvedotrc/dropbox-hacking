@@ -1,7 +1,7 @@
-import * as React from "react";
-
-import { PropsWithChildren, useContext, useMemo } from "react";
 import generateId from "@lib/generateId";
+import * as React from "react";
+import { PropsWithChildren, useContext, useMemo } from "react";
+
 import { context, type T } from "./context";
 import { GivenFixedAccepter } from "./GivenFixedAccepter";
 

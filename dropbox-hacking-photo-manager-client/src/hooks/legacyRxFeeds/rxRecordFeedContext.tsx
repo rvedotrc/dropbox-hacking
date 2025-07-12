@@ -1,13 +1,13 @@
+import useMultiplexer from "@hooks/useMultiplexer";
+import { buildFromIO } from "@lib/legacyRxFeeds/rxFeedClient";
 import React from "react";
 import {
   createContext,
+  type PropsWithChildren,
   useContext,
   useEffect,
   useState,
-  type PropsWithChildren,
 } from "react";
-import { buildFromIO } from "@lib/legacyRxFeeds/rxFeedClient";
-import useMultiplexer from "@hooks/useMultiplexer";
 
 type FEEDS = ReturnType<typeof buildFromIO>["feeds"];
 

@@ -1,12 +1,12 @@
-import React from "react";
-
+import SamePageLink from "@components/samePageLink";
+import { useLatestValueFromServerFeed } from "@hooks/useLatestValueFromServerFeed";
 import type {
   ClosestToResponse,
   GPSLatNLongE,
 } from "dropbox-hacking-photo-manager-shared";
+import React from "react";
+
 import SamplePhoto from "../days/samplePhoto";
-import SamePageLink from "@components/samePageLink";
-import { useLatestValueFromServerFeed } from "@hooks/useLatestValueFromServerFeed";
 
 export default ({
   gps,

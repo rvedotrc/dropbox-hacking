@@ -1,9 +1,8 @@
-import React, { useEffect } from "react";
-
-import logRender from "@lib/logRender";
 import Navigate from "@components/navigate";
 import { useLatestValueFromServerFeed } from "@hooks/useLatestValueFromServerFeed";
+import logRender from "@lib/logRender";
 import type { ExifExplorerType } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
+import React, { useEffect } from "react";
 
 type Counts = ExifExplorerType["tagCounts"][number][1];
 type Entry = [string, Counts];

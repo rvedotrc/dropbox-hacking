@@ -22,8 +22,17 @@ export default [
   ),
   {
     plugins: {
-      "@typescript-eslint": typescriptEslint,
       "simple-import-sort": simpleImportSort,
+    },
+    rules: {
+      "simple-import-sort/imports": "error",
+      "simple-import-sort/exports": "error",
+    },
+  },
+
+  {
+    plugins: {
+      "@typescript-eslint": typescriptEslint,
     },
 
     languageOptions: {
@@ -50,9 +59,6 @@ export default [
           caughtErrorsIgnorePattern: "^_",
         },
       ],
-
-      "simple-import-sort/imports": "error",
-      "simple-import-sort/exports": "error",
     },
   },
 ];

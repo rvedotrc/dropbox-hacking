@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ReplaySubject, type Observable } from "rxjs";
+import { type Observable, ReplaySubject } from "rxjs";
 
 export const useLatestValue = <T>(
   obs: Observable<T> | undefined,

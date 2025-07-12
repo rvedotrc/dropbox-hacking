@@ -1,8 +1,9 @@
 import { combineLatest, map, type ObservedValueOf } from "rxjs";
+
 import {
+  type FullDatabaseFeeds,
   imageFilenamePattern,
   videoFilenamePattern,
-  type FullDatabaseFeeds,
 } from "./index.js";
 import { unambiguousPrefixLength } from "./unambiguousPrefixLength.js";
 

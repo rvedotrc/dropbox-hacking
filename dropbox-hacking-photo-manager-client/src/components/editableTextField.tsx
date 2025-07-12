@@ -1,3 +1,4 @@
+import logRender from "@lib/logRender";
 import * as React from "react";
 import {
   ChangeEvent,
@@ -8,8 +9,6 @@ import {
   useRef,
   useState,
 } from "react";
-
-import logRender from "@lib/logRender";
 
 const EditableTextField = (props: {
   value: string;

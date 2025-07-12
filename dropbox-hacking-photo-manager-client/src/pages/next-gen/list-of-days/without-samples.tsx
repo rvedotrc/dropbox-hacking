@@ -1,10 +1,10 @@
+import Navigate from "@components/navigate";
+import SamePageLink from "@components/samePageLink";
+import { useLatestValueFromServerFeed } from "@hooks/useLatestValueFromServerFeed";
+import logRender from "@lib/logRender";
+import type { NGDaysNoSamplesType } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import React, { useEffect } from "react";
 
-import logRender from "@lib/logRender";
-import Navigate from "@components/navigate";
-import type { NGDaysNoSamplesType } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
-import { useLatestValueFromServerFeed } from "@hooks/useLatestValueFromServerFeed";
-import SamePageLink from "@components/samePageLink";
 import TagsWithCounts from "../day/TagsWithCounts";
 
 const NGDaysNoSamples = () => {

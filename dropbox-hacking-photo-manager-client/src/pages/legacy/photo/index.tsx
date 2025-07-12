@@ -1,12 +1,11 @@
+import EditableTextField from "@components/editableTextField";
+import SamePageLink from "@components/samePageLink";
+import { useAdditionalFeeds } from "@hooks/legacyRxFeeds/additionalFeeds";
+import { useLatestValue } from "@hooks/useLatestValue";
+import logRender from "@lib/logRender";
 import { GPSLatLong, Photo } from "dropbox-hacking-photo-manager-shared";
 import * as React from "react";
 import { useEffect, useMemo, useState } from "react";
-
-import logRender from "@lib/logRender";
-import { useLatestValue } from "@hooks/useLatestValue";
-import { useAdditionalFeeds } from "@hooks/legacyRxFeeds/additionalFeeds";
-import SamePageLink from "@components/samePageLink";
-import EditableTextField from "@components/editableTextField";
 
 const Photo = (props: { rev: string }): React.ReactElement | null => {
   const [previewSizes, setPreviewSizes] = useState<string[]>();

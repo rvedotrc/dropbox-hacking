@@ -1,6 +1,5 @@
-import * as React from "react";
-
 import logRender from "@lib/logRender";
+import * as React from "react";
 
 const TwelveMonths = (props: {
   year: number;

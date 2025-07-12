@@ -1,10 +1,10 @@
-import React, { useEffect, useMemo, useState } from "react";
-
+import SamePageLink from "@components/samePageLink";
 import logRender from "@lib/logRender";
 import type { DayFilesResult } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
-import SamePageLink from "@components/samePageLink";
-import MaybeVisibleThumbnail from "./MaybeVisibleThumbnail";
+import React, { useEffect, useMemo, useState } from "react";
 import { Observable } from "rxjs";
+
+import MaybeVisibleThumbnail from "./MaybeVisibleThumbnail";
 
 const FileRow = ({
   file,

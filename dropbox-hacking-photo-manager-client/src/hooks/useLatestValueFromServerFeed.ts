@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
 import useMultiplexer from "@hooks/useMultiplexer";
 import { getRxFeed } from "@lib/rxFeed/getRxFeed";
 import type { RxFeedRequest } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
+import { useEffect, useMemo, useState } from "react";
 
 export const useLatestValueFromServerFeed = <V>(
   request: RxFeedRequest,

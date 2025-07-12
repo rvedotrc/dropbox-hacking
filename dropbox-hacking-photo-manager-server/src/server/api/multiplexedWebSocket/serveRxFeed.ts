@@ -1,7 +1,6 @@
 import type { RxFeedResponse } from "dropbox-hacking-photo-manager-shared";
-import { Observable } from "rxjs";
-
 import { IOHandler } from "dropbox-hacking-photo-manager-shared";
+import { Observable } from "rxjs";
 
 export const serveRxFeed = <T>(
   observable: Observable<T>,

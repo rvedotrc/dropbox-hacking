@@ -1,7 +1,7 @@
-import React, { useId, useState } from "react";
 import type { ExifFromHash } from "@blaahaj/dropbox-hacking-exif-db";
 import logRender from "@lib/logRender";
 import { GPSLatLong } from "dropbox-hacking-photo-manager-shared";
+import React, { useId, useState } from "react";
 
 const SummariseExif = ({ exif }: { exif: ExifFromHash }) => {
   const [expandFull, setExpandFull] = useState(false);

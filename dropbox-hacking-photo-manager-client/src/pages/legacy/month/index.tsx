@@ -1,13 +1,13 @@
-import * as React from "react";
-
-import logRender from "@lib/logRender";
 import SamePageLink from "@components/samePageLink";
 import { useAdditionalFeeds } from "@hooks/legacyRxFeeds/additionalFeeds";
-import { useLatestValue } from "@hooks/useLatestValue";
-import { map } from "rxjs/operators";
-import { useMemo } from "react";
-import ListOfDaysWithData from "../days/listOfDaysWithData";
 import { useRxFeedsViaMultiplexer } from "@hooks/legacyRxFeeds/rxRecordFeedContext";
+import { useLatestValue } from "@hooks/useLatestValue";
+import logRender from "@lib/logRender";
+import * as React from "react";
+import { useMemo } from "react";
+import { map } from "rxjs/operators";
+
+import ListOfDaysWithData from "../days/listOfDaysWithData";
 
 const Month = ({ month }: { month: string }): React.ReactElement | null => {
   const feeds = useAdditionalFeeds();

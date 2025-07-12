@@ -1,8 +1,8 @@
 import { Observable } from "rxjs";
 
-import { type FullDatabaseFeeds } from "./index.js";
-import type { ClosestToResponse } from "../ws.js";
 import type { GPSLatNLongE } from "../gpsLatLong.js";
+import type { ClosestToResponse } from "../ws.js";
+import { type FullDatabaseFeeds } from "./index.js";
 
 export type ClosestToRequest = {
   readonly type: "rx.ng.closest-to";

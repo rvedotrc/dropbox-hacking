@@ -1,5 +1,6 @@
 import { execSync } from "node:child_process";
 import path, { resolve } from "node:path";
+
 import webpack from "webpack";
 
 const gitRevision = execSync("git rev-parse HEAD").toString().replace(/\n/, "");
