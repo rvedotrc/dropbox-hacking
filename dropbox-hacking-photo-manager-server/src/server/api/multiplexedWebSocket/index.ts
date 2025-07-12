@@ -75,7 +75,7 @@ export default (app: Application, context: Context): void => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (accept: IOHandler<any, any>) => {
           // const spiedAccept = spy(accept, "accept");
-          const writer = accept({
+          const sender = accept({
             receive: (request) => {
               console.log(`${id} got request:`, JSON.stringify(request));
 
@@ -97,32 +97,32 @@ export default (app: Application, context: Context): void => {
                 if (typedRequest.type === "rx-days") {
                   return serveRxFeed(
                     context.dayRx().pipe(squish()),
-                    () => writer,
+                    () => sender,
                   );
                 } else if (typedRequest.type === "rx-photos") {
                   return serveRxFeed(
                     context.photoRx().pipe(squish()),
-                    () => writer,
+                    () => sender,
                   );
                 } else if (typedRequest.type === "rx-files") {
                   return serveRxFeed(
                     context.imageFilesRx().pipe(squish()),
-                    () => writer,
+                    () => sender,
                   );
                 } else if (typedRequest.type === "rx-exif") {
                   return serveRxFeed(
                     context.exifRx().pipe(squish()),
-                    () => writer,
+                    () => sender,
                   );
                 } else if (typedRequest.type === "rx.ng.basic-counts") {
                   return serveRxFeed(
                     provideBasicCounts(context.fullDatabaseFeeds, typedRequest),
-                    () => writer,
+                    () => sender,
                   );
                 } else if (typedRequest.type === "rx.ng.fsck") {
                   return serveRxFeed(
                     provideFsck(context.fullDatabaseFeeds, typedRequest),
-                    () => writer,
+                    () => sender,
                   );
                 } else if (typedRequest.type === "rx.ng.exif-explorer") {
                   return serveRxFeed(
@@ -130,7 +130,7 @@ export default (app: Application, context: Context): void => {
                       context.fullDatabaseFeeds,
                       typedRequest,
                     ),
-                    () => writer,
+                    () => sender,
                   );
                 } else if (typedRequest.type === "rx.ng.list-of-days") {
                   return serveRxFeed(
@@ -138,27 +138,27 @@ export default (app: Application, context: Context): void => {
                       context.fullDatabaseFeeds,
                       typedRequest,
                     ),
-                    () => writer,
+                    () => sender,
                   );
                 } else if (typedRequest.type === "rx.ng.day.files") {
                   return serveRxFeed(
                     provideDayFiles(context.fullDatabaseFeeds, typedRequest),
-                    () => writer,
+                    () => sender,
                   );
                 } else if (typedRequest.type === "rx.ng.content_hash") {
                   return serveRxFeed(
                     provideContentHash(context.fullDatabaseFeeds, typedRequest),
-                    () => writer,
+                    () => sender,
                   );
                 } else if (typedRequest.type === "rx.ng.file.id") {
                   return serveRxFeed(
                     provideFileId(context.fullDatabaseFeeds, typedRequest),
-                    () => writer,
+                    () => sender,
                   );
                 } else if (typedRequest.type === "rx.ng.file.rev") {
                   return serveRxFeed(
                     provideFileRev(context.fullDatabaseFeeds, typedRequest),
-                    () => writer,
+                    () => sender,
                   );
                 } else if (typedRequest.type === "rx.ng.closest-to") {
                   const handler = provideClosestTo(
@@ -166,7 +166,7 @@ export default (app: Application, context: Context): void => {
                   );
                   return serveRxFeed(
                     handler(context.fullDatabaseFeeds, typedRequest),
-                    () => writer,
+                    () => sender,
                   );
                 } else if (typedRequest.type === "rx.ng.thumbnail2") {
                   const handler = provideThumbnail(
@@ -174,12 +174,12 @@ export default (app: Application, context: Context): void => {
                   );
                   return serveRxFeed(
                     handler(context.fullDatabaseFeeds, typedRequest),
-                    () => writer,
+                    () => sender,
                   );
                 } else if (typedRequest.type === "rx.ng.tags") {
                   return serveRxFeed(
                     provideTags(context.fullDatabaseFeeds, typedRequest),
-                    () => writer,
+                    () => sender,
                   );
                 }
                 // RVE-add-feed
@@ -188,7 +188,7 @@ export default (app: Application, context: Context): void => {
               }
 
               console.warn(`${id} Unrecognised request:`, request);
-              writer.close();
+              sender.close();
             },
             close: () => {},
           });

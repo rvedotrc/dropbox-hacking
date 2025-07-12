@@ -6,20 +6,20 @@ export const serveRxFeed = <T>(
   observable: Observable<T>,
   io: IOHandler<never, RxFeedResponse<T>>,
 ): void => {
-  const writer = io({
-    receive: () => writer.close(),
+  const sender = io({
+    receive: () => sender.close(),
     close: () => subscription?.unsubscribe(),
   });
 
   const subscription = observable.subscribe({
-    next: (value) => writer.send({ tag: "next", value }),
+    next: (value) => sender.send({ tag: "next", value }),
     complete: () => {
-      writer.send({ tag: "complete" });
-      writer.close();
+      sender.send({ tag: "complete" });
+      sender.close();
     },
     error: (error) => {
-      writer.send({ tag: "error", error });
-      writer.close();
+      sender.send({ tag: "error", error });
+      sender.close();
     },
   });
 };

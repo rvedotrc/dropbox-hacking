@@ -20,18 +20,18 @@ export interface BasicWebSocket<S, I, O> {
 export const fromBasicWebSocket = <S, I, O>(
   webSocket: BasicWebSocket<S, I, O>,
 ): IOHandler<I, O> => {
-  return (reader) => {
+  return (receiver) => {
     if (webSocket.readyState !== webSocket.OPEN)
       throw new Error("Socket is not OPEN");
 
     const closeListener = () => {
       webSocket.removeEventListener("close", closeListener);
       webSocket.removeEventListener("message", messageListener);
-      reader.close();
+      receiver.close();
     };
 
     const messageListener = (message: { data: I }) => {
-      reader.receive(message.data);
+      receiver.receive(message.data);
     };
 
     webSocket.addEventListener("close", closeListener);

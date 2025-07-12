@@ -6,14 +6,14 @@ export const transportAsJson =
   <I extends JSONValue, O extends JSONValue>(
     underlying: IOHandler<string, string>,
   ): IOHandler<I, O> =>
-  (reader) => {
-    const underlyingWriter = underlying({
-      receive: (message) => reader.receive(JSON.parse(message) as I),
-      close: () => reader.close(),
+  (receiver) => {
+    const underlyingSender = underlying({
+      receive: (message) => receiver.receive(JSON.parse(message) as I),
+      close: () => receiver.close(),
     });
 
     return {
-      send: (message) => underlyingWriter.send(JSON.stringify(message)),
-      close: () => underlyingWriter.close(),
+      send: (message) => underlyingSender.send(JSON.stringify(message)),
+      close: () => underlyingSender.close(),
     };
   };

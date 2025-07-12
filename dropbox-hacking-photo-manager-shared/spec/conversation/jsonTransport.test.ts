@@ -4,26 +4,26 @@ import { it, suite } from "node:test";
 import type { JSONValue } from "@blaahaj/json";
 
 import {
-  type Incoming,
-  type Outgoing,
+  type Receiver,
+  type Sender,
   transportAsJson,
 } from "../../src/index.js";
 
 const createHarness = () => {
   const stringsSent: (string | undefined)[] = [];
-  const stringSender: Outgoing<string> = {
+  const stringSender: Sender<string> = {
     send: (message) => stringsSent.push(message),
     close: () => stringsSent.push(undefined),
   };
 
   const objectsReceived: (JSONValue | undefined)[] = [];
-  const objectReceiver: Incoming<JSONValue> = {
+  const objectReceiver: Receiver<JSONValue> = {
     receive: (message) => objectsReceived.push(message),
     close: () => objectsReceived.push(undefined),
   };
 
-  let stringReceiver: Incoming<string> =
-    undefined as unknown as Incoming<string>;
+  let stringReceiver: Receiver<string> =
+    undefined as unknown as Receiver<string>;
   const objectSender = transportAsJson((r) => {
     stringReceiver = r;
     return stringSender;
