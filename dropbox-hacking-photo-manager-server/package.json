@@ -40,6 +40,7 @@
     "@blaahaj/dropbox-hacking-ls-cache": "^1.1.0",
     "@blaahaj/dropbox-hacking-mediainfo-db": "^1.2.0",
     "@blaahaj/dropbox-hacking-util": "^1.0.1",
+    "@blaahaj/json": "^1.0.1",
     "dropbox": "^10.34.0",
     "dropbox-hacking-photo-manager-shared": "link:../dropbox-hacking-photo-manager-shared",
     "express": "^4.21.2",

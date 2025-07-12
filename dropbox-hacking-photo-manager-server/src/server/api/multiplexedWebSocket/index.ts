@@ -1,3 +1,4 @@
+import type { JSONValue } from "@blaahaj/json";
 import {
   compress,
   type IDHolder,
@@ -63,14 +64,16 @@ export default (app: Application, context: Context): void => {
       const socketIO = fromExpressWebSocket(ws);
       // const spiedSocket = spy(socketIO, "socket");
       const usingJSON = transportAsJson<
-        IDHolder & WrappedPayload<unknown>,
-        IDHolder & WrappedPayload<unknown>
+        IDHolder & WrappedPayload<JSONValue>,
+        IDHolder & WrappedPayload<JSONValue>
       >(socketIO);
 
       const connect = multiplexer(
         // spy(usingJSON, "using-json"),
         usingJSON,
-        (accept: IOHandler<unknown, unknown>) => {
+        // FIXME: JSONValue type safety
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (accept: IOHandler<any, any>) => {
           // const spiedAccept = spy(accept, "accept");
           const writer = accept({
             receive: (request) => {

@@ -1,8 +1,11 @@
+import type { JSONValue } from "@blaahaj/json";
 import generateId from "@lib/generateId";
 import {
+  type IDHolder,
   type IOHandler,
   multiplexer,
   transportAsJson,
+  type WrappedPayload,
 } from "dropbox-hacking-photo-manager-shared";
 import React, {
   type PropsWithChildren,
@@ -48,7 +51,10 @@ export const NonRetryingSocketWrapper = (
         s?.readyState,
       );
       const io = multiplexer(
-        transportAsJson(fromBrowserWebSocket(s)),
+        transportAsJson<
+          IDHolder & WrappedPayload<JSONValue>,
+          IDHolder & WrappedPayload<JSONValue>
+        >(fromBrowserWebSocket(s)),
         props.accepter,
       );
       console.log("Made io", io);

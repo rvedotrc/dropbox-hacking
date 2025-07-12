@@ -1,6 +1,7 @@
 {
   "author": "Rachel Evans <rachel@rachelevans.org>",
   "dependencies": {
+    "@blaahaj/json": "^1.0.1",
     "array-uniq": "^3.0.0",
     "dropbox-hacking-photo-manager-shared": "link:../dropbox-hacking-photo-manager-shared",
     "events": "^3.3.0",

@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@blaahaj/json':
+        specifier: ^1.0.1
+        version: 1.0.1
       array-uniq:
         specifier: ^3.0.0
         version: 3.0.0
@@ -802,6 +805,9 @@ packages:
 
   '@blaahaj/dropbox-hacking-util@1.1.0':
     resolution: {integrity: sha512-ZE4MZZStsa7TPed48MZk+ilHpWWn25xZ4vaswTTMW/HXupPKahSi2qlvOmLLZGM1ffOpdN+abzpQDM/f6pt0dA==}
+
+  '@blaahaj/json@1.0.1':
+    resolution: {integrity: sha512-2pViV2D3M9by7gX+OLgEDQKM76zCjnG3Kb2CsRMUUzaFzPcCVpsa5DJsvBwcDtHj6oDrPoj8Wmg7id5DwCsOzQ==}
 
   '@discoveryjs/json-ext@0.6.3':
     resolution: {integrity: sha512-4B4OijXeVNOPZlYA2oEwWOTkzyltLao+xbotHQeqN++Rv27Y6s818+n2Qkp8q+Fxhn0t/5lA5X1Mxktud8eayQ==}
@@ -4045,6 +4051,8 @@ snapshots:
       - '@types/node-fetch'
       - encoding
       - supports-color
+
+  '@blaahaj/json@1.0.1': {}
 
   '@discoveryjs/json-ext@0.6.3': {}
 

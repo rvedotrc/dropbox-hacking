@@ -1,7 +1,11 @@
+import type { JSONValue } from "@blaahaj/json";
+
 import type { IOHandler } from "./types.js";
 
 export const transportAsJson =
-  <I, O>(underlying: IOHandler<string, string>): IOHandler<I, O> =>
+  <I extends JSONValue, O extends JSONValue>(
+    underlying: IOHandler<string, string>,
+  ): IOHandler<I, O> =>
   (reader) => {
     const underlyingWriter = underlying({
       receive: (message) => reader.receive(JSON.parse(message) as I),

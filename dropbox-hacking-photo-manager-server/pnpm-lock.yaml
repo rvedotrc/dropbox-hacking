@@ -20,6 +20,9 @@ importers:
       '@blaahaj/dropbox-hacking-util':
         specifier: ^1.0.1
         version: 1.0.1(@types/node-fetch@2.6.12)
+      '@blaahaj/json':
+        specifier: ^1.0.1
+        version: 1.0.1
       dropbox:
         specifier: ^10.34.0
         version: 10.34.0(@types/node-fetch@2.6.12)
@@ -105,6 +108,9 @@ packages:
 
   '@blaahaj/dropbox-hacking-util@1.1.0':
     resolution: {integrity: sha512-ZE4MZZStsa7TPed48MZk+ilHpWWn25xZ4vaswTTMW/HXupPKahSi2qlvOmLLZGM1ffOpdN+abzpQDM/f6pt0dA==}
+
+  '@blaahaj/json@1.0.1':
+    resolution: {integrity: sha512-2pViV2D3M9by7gX+OLgEDQKM76zCjnG3Kb2CsRMUUzaFzPcCVpsa5DJsvBwcDtHj6oDrPoj8Wmg7id5DwCsOzQ==}
 
   '@eslint-community/eslint-utils@4.4.1':
     resolution: {integrity: sha512-s3O3waFUrMV8P/XaF/+ZTp1X9XBZW1a4B97ZnjQF2KYWaFD2A8KyFBsrsfSjEmjn3RGWAIuvlneuZm3CUK3jbA==}
@@ -1244,6 +1250,8 @@ snapshots:
       - '@types/node-fetch'
       - encoding
       - supports-color
+
+  '@blaahaj/json@1.0.1': {}
 
   '@eslint-community/eslint-utils@4.4.1(eslint@9.21.0)':
     dependencies:
