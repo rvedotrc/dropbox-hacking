@@ -14,6 +14,9 @@ importers:
       '@blaahaj/dropbox-hacking-mediainfo-db':
         specifier: ^1.2.0
         version: 1.2.0(@types/node-fetch@2.6.12)
+      '@blaahaj/geometry':
+        specifier: ^1.0.0
+        version: 1.0.0
       '@blaahaj/json':
         specifier: ^1.0.1
         version: 1.0.1
@@ -81,6 +84,9 @@ packages:
 
   '@blaahaj/dropbox-hacking-util@1.1.0':
     resolution: {integrity: sha512-ZE4MZZStsa7TPed48MZk+ilHpWWn25xZ4vaswTTMW/HXupPKahSi2qlvOmLLZGM1ffOpdN+abzpQDM/f6pt0dA==}
+
+  '@blaahaj/geometry@1.0.0':
+    resolution: {integrity: sha512-5bPCKbWYOY9eovcABZgKeMpd2xsGnYySASLJr8k8obqU1wu4WYKHceeI20ulVi1Bw0nfv21KoYJzB2I6wwrCng==}
 
   '@blaahaj/json@1.0.1':
     resolution: {integrity: sha512-2pViV2D3M9by7gX+OLgEDQKM76zCjnG3Kb2CsRMUUzaFzPcCVpsa5DJsvBwcDtHj6oDrPoj8Wmg7id5DwCsOzQ==}
@@ -1151,6 +1157,8 @@ snapshots:
       - '@types/node-fetch'
       - encoding
       - supports-color
+
+  '@blaahaj/geometry@1.0.0': {}
 
   '@blaahaj/json@1.0.1': {}
 
