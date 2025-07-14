@@ -1,4 +1,4 @@
-import type { DeltaMaker, DeltaApplier } from "./deltaFeed.js";
+import type { DeltaApplier, DeltaMaker } from "./deltaFeed.js";
 
 export type MapDelta<K, V> = readonly (
   | { readonly tag: "added"; readonly key: K; readonly newValue: V }

@@ -1,10 +1,9 @@
+import Navigate from "@components/navigate";
+import SamePageLink from "@components/samePageLink";
+import logRender from "@lib/logRender";
 import * as React from "react";
 import { useEffect } from "react";
 
-import { useCountsByDate } from "@hooks/legacyRxFeeds/countsByDateContext";
-import logRender from "@lib/logRender";
-import SamePageLink from "@components/samePageLink";
-import Navigate from "@components/navigate";
 import MonthBox from "./monthBox";
 import TwelveMonths from "./twelveMonths";
 
@@ -15,7 +14,8 @@ type Year = {
 };
 
 const Calendar = () => {
-  const countsByDate = useCountsByDate();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const countsByDate = null as any;
 
   useEffect(() => {
     document.title = "DPM - Calendar";
@@ -84,7 +84,10 @@ const Calendar = () => {
                         return (
                           <div title={dateString}>
                             <SamePageLink
-                              routeState={{ route: "day", date: dateString }}
+                              routeState={{
+                                route: "route/next-gen/day/files",
+                                date: dateString,
+                              }}
                             >
                               {count}
                             </SamePageLink>

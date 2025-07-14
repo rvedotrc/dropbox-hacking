@@ -1,10 +1,10 @@
-import { combineLatest, map, type Observable } from "rxjs";
-
-import { type FullDatabaseFeeds } from "./index.js";
-import type { DayMetadata } from "../types.js";
-import type { NamedFile, PhotoDbEntry } from "../ws.js";
 import type { ExifFromHash } from "@blaahaj/dropbox-hacking-exif-db";
 import type { MediainfoFromHash } from "@blaahaj/dropbox-hacking-mediainfo-db";
+import { combineLatest, map, type Observable } from "rxjs";
+
+import type { DayMetadata } from "../types.js";
+import type { NamedFile, PhotoDbEntry } from "../ws.js";
+import { type FullDatabaseFeeds } from "./index.js";
 
 export type DayFilesRequest = {
   readonly type: "rx.ng.day.files";

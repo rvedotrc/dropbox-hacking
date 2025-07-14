@@ -1,27 +1,23 @@
+import EditableTextField from "@components/editableTextField";
+import Navigate from "@components/navigate";
+import SamePageLink from "@components/samePageLink";
+import { useIdentity } from "@hooks/useIdentity";
+import { useLatestValueFromServerFeed } from "@hooks/useLatestValueFromServerFeed";
+import logRender from "@lib/logRender";
 import React, { useEffect, useMemo, useState } from "react";
 
-import logRender from "@lib/logRender";
-import Navigate from "@components/navigate";
-import type {
-  DayFilesResult,
-  DaySummaryWithoutSamples,
-} from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
-import { useLatestValueFromServerFeed } from "@hooks/useLatestValueFromServerFeed";
-import EditableTextField from "@components/editableTextField";
 import FilesTable from "./filesTable";
-import { useIdentity } from "@hooks/useIdentity";
 import MultiTagEditor from "./MultiTagEditor";
-import SamePageLink from "@components/samePageLink";
 
 const NGDayFiles = ({ date }: { date: string }) => {
   console.log("NGDayFiles", useIdentity());
 
-  const latestValue = useLatestValueFromServerFeed<DayFilesResult>({
+  const latestValue = useLatestValueFromServerFeed({
     type: "rx.ng.day.files",
     date,
   });
 
-  const listOfDays = useLatestValueFromServerFeed<DaySummaryWithoutSamples[]>({
+  const listOfDays = useLatestValueFromServerFeed({
     type: "rx.ng.list-of-days",
     withSamples: false,
   });

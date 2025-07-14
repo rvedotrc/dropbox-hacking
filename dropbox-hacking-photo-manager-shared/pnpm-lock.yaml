@@ -14,6 +14,12 @@ importers:
       '@blaahaj/dropbox-hacking-mediainfo-db':
         specifier: ^1.2.0
         version: 1.2.0(@types/node-fetch@2.6.12)
+      '@blaahaj/geometry':
+        specifier: ^1.0.0
+        version: 1.0.0
+      '@blaahaj/json':
+        specifier: ^1.0.1
+        version: 1.0.1
       ts-exif-parser:
         specifier: ^0.2.2
         version: 0.2.2
@@ -39,6 +45,9 @@ importers:
       eslint:
         specifier: ^9.21.0
         version: 9.21.0
+      eslint-plugin-simple-import-sort:
+        specifier: ^12.1.1
+        version: 12.1.1(eslint@9.21.0)
       prettier:
         specifier: ^3.4.2
         version: 3.4.2
@@ -75,6 +84,12 @@ packages:
 
   '@blaahaj/dropbox-hacking-util@1.1.0':
     resolution: {integrity: sha512-ZE4MZZStsa7TPed48MZk+ilHpWWn25xZ4vaswTTMW/HXupPKahSi2qlvOmLLZGM1ffOpdN+abzpQDM/f6pt0dA==}
+
+  '@blaahaj/geometry@1.0.0':
+    resolution: {integrity: sha512-5bPCKbWYOY9eovcABZgKeMpd2xsGnYySASLJr8k8obqU1wu4WYKHceeI20ulVi1Bw0nfv21KoYJzB2I6wwrCng==}
+
+  '@blaahaj/json@1.0.1':
+    resolution: {integrity: sha512-2pViV2D3M9by7gX+OLgEDQKM76zCjnG3Kb2CsRMUUzaFzPcCVpsa5DJsvBwcDtHj6oDrPoj8Wmg7id5DwCsOzQ==}
 
   '@eslint-community/eslint-utils@4.4.1':
     resolution: {integrity: sha512-s3O3waFUrMV8P/XaF/+ZTp1X9XBZW1a4B97ZnjQF2KYWaFD2A8KyFBsrsfSjEmjn3RGWAIuvlneuZm3CUK3jbA==}
@@ -450,6 +465,11 @@ packages:
   escape-string-regexp@4.0.0:
     resolution: {integrity: sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==}
     engines: {node: '>=10'}
+
+  eslint-plugin-simple-import-sort@12.1.1:
+    resolution: {integrity: sha512-6nuzu4xwQtE3332Uz0to+TxDQYRLTKRESSc2hefVT48Zc8JthmN23Gx9lnYhu0FtkRSL1oxny3kJ2aveVhmOVA==}
+    peerDependencies:
+      eslint: '>=5.0.0'
 
   eslint-scope@8.2.0:
     resolution: {integrity: sha512-PHlWUfG6lvPc3yvP5A4PNyBL1W8fkDUccmI21JUu/+GKZBoH/W5u6usENXUrWFRsyoW5ACUjFGgAFQp5gUlb/A==}
@@ -1138,6 +1158,10 @@ snapshots:
       - encoding
       - supports-color
 
+  '@blaahaj/geometry@1.0.0': {}
+
+  '@blaahaj/json@1.0.1': {}
+
   '@eslint-community/eslint-utils@4.4.1(eslint@9.21.0)':
     dependencies:
       eslint: 9.21.0
@@ -1528,6 +1552,10 @@ snapshots:
   escape-html@1.0.3: {}
 
   escape-string-regexp@4.0.0: {}
+
+  eslint-plugin-simple-import-sort@12.1.1(eslint@9.21.0):
+    dependencies:
+      eslint: 9.21.0
 
   eslint-scope@8.2.0:
     dependencies:

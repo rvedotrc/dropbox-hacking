@@ -1,6 +1,5 @@
-import * as React from "react";
-
 import SamePageLink from "@components/samePageLink";
+import * as React from "react";
 
 const navigation = (): React.ReactElement | null => (
   <p>
@@ -27,19 +26,6 @@ const navigation = (): React.ReactElement | null => (
     <SamePageLink routeState={{ route: "route/next-gen/exif-explorer" }}>
       EXIF explorer
     </SamePageLink>
-
-    {" /// "}
-
-    <SamePageLink routeState={{ route: "calendar" }}>Calendar</SamePageLink>
-    {" | "}
-    <SamePageLink routeState={{ route: "days" }}>
-      List of days (with sample pics)
-    </SamePageLink>
-    {" | "}
-    <SamePageLink routeState={{ route: "days-plain" }}>
-      List of days (plain)
-    </SamePageLink>
-    {/* RVE-add-route */}
 
     {" /// "}
 

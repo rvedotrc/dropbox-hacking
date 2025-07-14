@@ -1,16 +1,11 @@
+import { geoHackUrl } from "@blaahaj/geometry/geoHack";
+import type {
+  GPSLatLongWithDirection,
+  GPSLatNLongE,
+} from "@blaahaj/geometry/latlong";
 import { ExifTags } from "ts-exif-parser";
 
-export type GPSLatNLongE = {
-  readonly lat: number;
-  readonly long: number;
-};
-
-export type GPSLatLongWithDirection = {
-  readonly lat: number;
-  readonly long: number;
-  readonly latRef: "N" | "S";
-  readonly longRef: "E" | "W";
-};
+export { GPSLatNLongE } from "@blaahaj/geometry/latlong";
 
 export class GPSLatLong {
   public static fromExifTags(tags: ExifTags): GPSLatLong | null {
@@ -62,11 +57,10 @@ export class GPSLatLong {
   }
 
   public geoHackUrl(args: { title: string }): string {
-    // GeoHack also accepts dd_mm_ss
-    return (
-      `https://geohack.toolforge.org/geohack.php` +
-      `?pagename=${encodeURIComponent(args.title)}` +
-      `&params=${this.pos.lat}_${this.pos.latRef}_${this.pos.long}_${this.pos.longRef}`
-    );
+    return geoHackUrl({
+      position: this.pos,
+      pageName: args.title,
+      encodeURIComponent,
+    });
   }
 }

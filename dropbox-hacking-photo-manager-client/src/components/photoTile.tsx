@@ -1,9 +1,8 @@
-import { GPSLatLong, Photo } from "dropbox-hacking-photo-manager-shared";
-import * as React from "react";
-
+import SamePageLink from "@components/samePageLink";
 import useThumbnail from "@hooks/useThumbnail";
 import logRender from "@lib/logRender";
-import SamePageLink from "@components/samePageLink";
+import { GPSLatLong, Photo } from "dropbox-hacking-photo-manager-shared";
+import * as React from "react";
 
 const cleanedName = (photo: Photo) => {
   if (photo.namedFile.content_hash) {
@@ -39,7 +38,10 @@ const PhotoTile = ({
     <SamePageLink
       className={"photoItem"}
       key={photo.namedFile.id}
-      routeState={{ route: "photo", rev: photo.namedFile.rev }}
+      routeState={{
+        route: "route/next-gen/content-hash",
+        contentHash: photo.namedFile.content_hash,
+      }}
       data-rev={photo.namedFile.rev}
     >
       <img

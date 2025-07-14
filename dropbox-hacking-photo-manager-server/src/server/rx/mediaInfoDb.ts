@@ -1,10 +1,11 @@
-import { ReplaySubject } from "rxjs";
-import { jsonFileObservableViaLoader } from "./util.js";
 import {
   ContentHash,
   MediainfoDB,
   MediainfoFromHash,
 } from "@blaahaj/dropbox-hacking-mediainfo-db";
+import { ReplaySubject } from "rxjs";
+
+import { jsonFileObservableViaLoader } from "./util.js";
 
 export const buildForMediaInfoDbMap = (dbDir: string) => {
   const observable = jsonFileObservableViaLoader(

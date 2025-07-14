@@ -1,4 +1,5 @@
 import type { files } from "dropbox";
+
 import type { Photo } from "./types.js";
 
 export type ThumbnailResponse = {

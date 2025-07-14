@@ -1,6 +1,7 @@
-import { map, ReplaySubject } from "rxjs";
-import DayDb from "../dayDb.js";
 import type { DayMetadata } from "dropbox-hacking-photo-manager-shared";
+import { map, ReplaySubject } from "rxjs";
+
+import DayDb from "../dayDb.js";
 import { jsonFileObservableViaLoader } from "./util.js";
 
 export const buildForDayDb = (dbDir: string) => {

@@ -1,6 +1,7 @@
 {
   "author": "Rachel Evans <rachel@rachelevans.org>",
   "dependencies": {
+    "@blaahaj/json": "^1.0.1",
     "array-uniq": "^3.0.0",
     "dropbox-hacking-photo-manager-shared": "link:../dropbox-hacking-photo-manager-shared",
     "events": "^3.3.0",
@@ -36,6 +37,7 @@
     "eslint-plugin-jest": "^28.10.0",
     "eslint-plugin-prettier": "^5.0.0",
     "eslint-plugin-react": "^7.18.3",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
     "html-loader": "^5.1.0",
     "html-webpack-plugin": "^5.5.3",
     "identity-obj-proxy": "^3.0.0",
@@ -58,6 +60,7 @@
     "build": "pnpm format && pnpm run test:lint && pnpm run compile",
     "build:watch": "rebuild -r . --exclude public/dist -- sh -c 'if ! pnpm test:prettier ; then pnpm format ; else pnpm run test:lint && pnpm run compile ; fi'",
     "compile": "webpack --mode development",
+    "fix": "eslint --fix",
     "format": "prettier --write .",
     "rebuild": "rebuild package.json package-lock.json tsconfig.json .babelrc webpack.config.js src .git/refs -- npm run-script build",
     "test": "concurrently --group pnpm:test:*",

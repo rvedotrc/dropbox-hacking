@@ -1,15 +1,20 @@
+import type { JSONValue } from "@blaahaj/json";
 import generateId from "@lib/generateId";
 import {
-  multiplexer,
-  transportAsJson,
+  type IDHolder,
   type IOHandler,
+  multiplexer,
+  spy,
+  transportAsJson,
+  type WrappedPayload,
 } from "dropbox-hacking-photo-manager-shared";
 import React, {
   type PropsWithChildren,
+  useEffect,
   useMemo,
   useState,
-  useEffect,
 } from "react";
+
 import { Provider } from "./context";
 import { fromBrowserWebSocket } from "./fromBrowserWebSocket";
 
@@ -47,7 +52,10 @@ export const NonRetryingSocketWrapper = (
         s?.readyState,
       );
       const io = multiplexer(
-        transportAsJson(fromBrowserWebSocket(s)),
+        transportAsJson<
+          IDHolder & WrappedPayload<JSONValue>,
+          IDHolder & WrappedPayload<JSONValue>
+        >(spy(fromBrowserWebSocket(s), "browser-websocket-io")),
         props.accepter,
       );
       console.log("Made io", io);

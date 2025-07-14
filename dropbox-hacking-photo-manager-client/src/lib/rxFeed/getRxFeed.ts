@@ -6,18 +6,26 @@ import { Observable } from "rxjs";
 
 export const getRxFeed = <T, R>(
   request: R,
+
   io: IOHandler<RxFeedResponse<T>, R>,
 ): Observable<T> =>
   new Observable<T>((subscriber) => {
-    const writer = io({
+    const sender = io({
       receive: (m) => {
         if (m.tag === "next") subscriber.next(m.value);
         if (m.tag === "complete") subscriber.complete();
         if (m.tag === "error") subscriber.error(m.error);
       },
-      close: () => subscriber.unsubscribe(),
+      close: () => {
+        console.log("getRxFeed received close");
+        subscriber.unsubscribe();
+      },
     });
 
-    writer.send(request);
-    return () => writer.close();
+    sender.send(request);
+
+    return () => {
+      console.log("getRxFeed observer close");
+      sender.close();
+    };
   });

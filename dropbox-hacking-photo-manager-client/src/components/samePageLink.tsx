@@ -1,7 +1,6 @@
+import useRouter from "@hooks/useRouter";
 import { RouteState, urlForState } from "dropbox-hacking-photo-manager-shared";
 import * as React from "react";
-
-import useRouter from "@hooks/useRouter";
 
 const samePageLink = ({
   routeState,

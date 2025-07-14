@@ -1,7 +1,8 @@
 import generateId from "@lib/generateId";
 import React, { type PropsWithChildren, useMemo, useState } from "react";
-import { NonRetryingSocketWrapper } from "./NonRetryingSocketWrapper";
+
 import { Provider, type T } from "./context";
+import { NonRetryingSocketWrapper } from "./NonRetryingSocketWrapper";
 
 export const GivenFixedAccepter = (
   props: PropsWithChildren<{ accepter: (accept: T) => void }>,

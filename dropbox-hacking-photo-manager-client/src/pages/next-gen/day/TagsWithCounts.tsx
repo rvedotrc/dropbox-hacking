@@ -1,5 +1,5 @@
-import React, { type CSSProperties } from "react";
 import logRender from "@lib/logRender";
+import React, { type CSSProperties } from "react";
 
 const TagsWithCounts = ({
   tags,

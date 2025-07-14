@@ -1,7 +1,7 @@
+import type { PhotoDbEntry } from "dropbox-hacking-photo-manager-shared";
 import { Application } from "express";
 
 import { Context } from "../context.js";
-import type { PhotoDbEntry } from "dropbox-hacking-photo-manager-shared";
 
 export default (app: Application, context: Context): void => {
   app.post("/api/multi-photo-tags", async (req, res) => {

@@ -1,13 +1,13 @@
-export interface Incoming<T> {
+export interface Receiver<T> {
   readonly receive: (message: T) => void;
   readonly close: () => void;
 }
 
-export interface Outgoing<T> {
+export interface Sender<T> {
   readonly send: (message: T) => void;
-  readonly close: () => void; // triggers the reader's close()
+  readonly close: () => void; // triggers the receiver's close()
 }
 
 export interface IOHandler<I, O> {
-  (reader: Incoming<I>): Outgoing<O>;
+  (receiver: Receiver<I>): Sender<O>;
 }

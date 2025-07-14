@@ -1,7 +1,7 @@
-import logRender from "@lib/logRender";
 import useThumbnail from "@hooks/useThumbnail";
-import React from "react";
+import logRender from "@lib/logRender";
 import type { NamedFile } from "dropbox-hacking-photo-manager-shared";
+import React from "react";
 
 const dropboxThumbnailableExtensions: readonly string[] = [
   "jpg",

@@ -1,11 +1,11 @@
+import { getRxFeed } from "@lib/rxFeed/getRxFeed";
 import type {
   IOHandler,
   ThumbnailResponse,
 } from "dropbox-hacking-photo-manager-shared";
+import type { RxFeedRequest } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 
 import type { ThumbnailLoader } from "./types";
-import { getRxFeed } from "@lib/rxFeed/getRxFeed";
-import type { RxFeedRequest } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 
 export const websocketThumbnailLoader = (
   mx: IOHandler<unknown, unknown> | undefined,
@@ -14,7 +14,7 @@ export const websocketThumbnailLoader = (
     new Promise<string | null>((resolve, reject) => {
       if (!mx) return resolve(null);
 
-      getRxFeed<ThumbnailResponse, RxFeedRequest>(
+      const subscription = getRxFeed<ThumbnailResponse, RxFeedRequest>(
         {
           type: "rx.ng.thumbnail2",
           rev,
@@ -22,7 +22,10 @@ export const websocketThumbnailLoader = (
         },
         mx,
       ).subscribe({
-        next: (v) => resolve(v.thumbnail),
+        next: (v) => {
+          resolve(v.thumbnail);
+          subscription.unsubscribe();
+        },
         error: (e) => reject(e instanceof Error ? e : new Error(e)),
       });
     }),

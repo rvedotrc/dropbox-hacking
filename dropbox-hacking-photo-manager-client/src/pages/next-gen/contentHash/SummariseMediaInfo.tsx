@@ -1,7 +1,7 @@
-import React, { useEffect, useId, useState } from "react";
 import type { MediainfoFromHash } from "@blaahaj/dropbox-hacking-mediainfo-db";
 import logRender from "@lib/logRender";
 import { GPSLatLong } from "dropbox-hacking-photo-manager-shared";
+import React, { useEffect, useId, useState } from "react";
 
 // e.g. "+56.1278+012.3032+000.090/",
 const RecordedLocation = ({ location }: { location: string }) => {

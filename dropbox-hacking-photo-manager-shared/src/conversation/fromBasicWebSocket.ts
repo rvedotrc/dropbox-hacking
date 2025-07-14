@@ -1,3 +1,4 @@
+import { spy } from "./spy.js";
 import type { IOHandler } from "./types.js";
 
 export interface BasicWebSocket<S, I, O> {
@@ -20,18 +21,18 @@ export interface BasicWebSocket<S, I, O> {
 export const fromBasicWebSocket = <S, I, O>(
   webSocket: BasicWebSocket<S, I, O>,
 ): IOHandler<I, O> => {
-  return (reader) => {
+  return spy((receiver) => {
     if (webSocket.readyState !== webSocket.OPEN)
       throw new Error("Socket is not OPEN");
 
     const closeListener = () => {
       webSocket.removeEventListener("close", closeListener);
       webSocket.removeEventListener("message", messageListener);
-      reader.close();
+      receiver.close();
     };
 
     const messageListener = (message: { data: I }) => {
-      reader.receive(message.data);
+      receiver.receive(message.data);
     };
 
     webSocket.addEventListener("close", closeListener);
@@ -41,5 +42,5 @@ export const fromBasicWebSocket = <S, I, O>(
       send: (payload) => webSocket.send(payload),
       close: () => webSocket.close(),
     };
-  };
+  }, "mx-on-websocket");
 };

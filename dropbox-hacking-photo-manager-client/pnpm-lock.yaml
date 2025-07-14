@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@blaahaj/json':
+        specifier: ^1.0.1
+        version: 1.0.1
       array-uniq:
         specifier: ^3.0.0
         version: 3.0.0
@@ -105,6 +108,9 @@ importers:
       eslint-plugin-react:
         specifier: ^7.18.3
         version: 7.37.3(eslint@9.17.0)
+      eslint-plugin-simple-import-sort:
+        specifier: ^12.1.1
+        version: 12.1.1(eslint@9.17.0)
       html-loader:
         specifier: ^5.1.0
         version: 5.1.0(webpack@5.97.1)
@@ -799,6 +805,9 @@ packages:
 
   '@blaahaj/dropbox-hacking-util@1.1.0':
     resolution: {integrity: sha512-ZE4MZZStsa7TPed48MZk+ilHpWWn25xZ4vaswTTMW/HXupPKahSi2qlvOmLLZGM1ffOpdN+abzpQDM/f6pt0dA==}
+
+  '@blaahaj/json@1.0.1':
+    resolution: {integrity: sha512-2pViV2D3M9by7gX+OLgEDQKM76zCjnG3Kb2CsRMUUzaFzPcCVpsa5DJsvBwcDtHj6oDrPoj8Wmg7id5DwCsOzQ==}
 
   '@discoveryjs/json-ext@0.6.3':
     resolution: {integrity: sha512-4B4OijXeVNOPZlYA2oEwWOTkzyltLao+xbotHQeqN++Rv27Y6s818+n2Qkp8q+Fxhn0t/5lA5X1Mxktud8eayQ==}
@@ -1662,6 +1671,11 @@ packages:
     engines: {node: '>=4'}
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8 || ^9.7
+
+  eslint-plugin-simple-import-sort@12.1.1:
+    resolution: {integrity: sha512-6nuzu4xwQtE3332Uz0to+TxDQYRLTKRESSc2hefVT48Zc8JthmN23Gx9lnYhu0FtkRSL1oxny3kJ2aveVhmOVA==}
+    peerDependencies:
+      eslint: '>=5.0.0'
 
   eslint-scope@5.1.1:
     resolution: {integrity: sha512-2NxwbF/hZ0KpepYN0cNbo+FN6XoK7GaHlQhgx/hIZl6Va0bF45RQOOwhLIy8lQDbuCiadSLCBnH2CFYquit5bw==}
@@ -4038,6 +4052,8 @@ snapshots:
       - encoding
       - supports-color
 
+  '@blaahaj/json@1.0.1': {}
+
   '@discoveryjs/json-ext@0.6.3': {}
 
   '@eslint-community/eslint-utils@4.4.1(eslint@9.17.0)':
@@ -5074,6 +5090,10 @@ snapshots:
       semver: 6.3.1
       string.prototype.matchall: 4.0.12
       string.prototype.repeat: 1.0.0
+
+  eslint-plugin-simple-import-sort@12.1.1(eslint@9.17.0):
+    dependencies:
+      eslint: 9.17.0
 
   eslint-scope@5.1.1:
     dependencies:

@@ -1,5 +1,6 @@
 import { generateId } from "./id.js";
-import type { Incoming, IOHandler } from "./types.js";
+import { spy } from "./spy.js";
+import type { IOHandler, Receiver } from "./types.js";
 
 export type IDHolder = {
   id: string;
@@ -17,47 +18,53 @@ export const multiplexer = <I, O>(
   >,
   listener: (handler: IOHandler<I, O>) => void,
 ): IOHandler<I, O> => {
-  const readersById: Map<string, Incoming<I>> = new Map();
+  const receiversById: Map<string, Receiver<I>> = new Map();
 
-  const underlyingReader: Incoming<IDHolder & WrappedPayload<I>> = {
+  const underlyingReader: Receiver<IDHolder & WrappedPayload<I>> = {
     receive: (underlyingMessage) => {
       console.debug("mx receive", underlyingMessage.id, underlyingMessage.tag);
 
       if (underlyingMessage.tag === "open") {
-        if (readersById.has(underlyingMessage.id)) {
+        if (receiversById.has(underlyingMessage.id)) {
           throw new Error("Duplicate multiplexer ID");
         } else {
-          listener((newReader) => {
-            if (readersById.has(underlyingMessage.id)) {
-              throw new Error("Duplicate multiplexer ID");
-            }
+          listener(
+            spy((newReader) => {
+              if (receiversById.has(underlyingMessage.id)) {
+                throw new Error("Duplicate multiplexer ID");
+              }
 
-            console.debug("mx accepted connection", underlyingMessage.id);
-            readersById.set(underlyingMessage.id, newReader);
+              console.debug("mx accepted connection", underlyingMessage.id);
+              receiversById.set(underlyingMessage.id, newReader);
 
-            return {
-              send: (message) =>
-                underlyingWriter.send({
-                  tag: "message",
-                  id: underlyingMessage.id,
-                  message,
-                }),
-              close: () => {
-                readersById.delete(underlyingMessage.id);
-                underlyingWriter.send({
-                  tag: "close",
-                  id: underlyingMessage.id,
-                });
-                newReader.close();
-              },
-            };
-          });
+              return {
+                send: (message) =>
+                  underlyingSender.send({
+                    tag: "message",
+                    id: underlyingMessage.id,
+                    message,
+                  }),
+                close: () => {
+                  console.debug(
+                    "mx connection sending close",
+                    underlyingMessage.id,
+                  );
+                  receiversById.delete(underlyingMessage.id);
+                  underlyingSender.send({
+                    tag: "close",
+                    id: underlyingMessage.id,
+                  });
+                  newReader.close();
+                },
+              };
+            }, `mx-listener ${underlyingMessage.id}`),
+          );
         }
       } else if (underlyingMessage.tag === "message") {
-        const reader = readersById.get(underlyingMessage.id);
+        const receiver = receiversById.get(underlyingMessage.id);
 
-        if (reader) {
-          reader.receive(underlyingMessage.message);
+        if (receiver) {
+          receiver.receive(underlyingMessage.message);
         } else {
           console.error(
             "message for non-open conversation",
@@ -65,11 +72,12 @@ export const multiplexer = <I, O>(
           );
         }
       } else if (underlyingMessage.tag === "close") {
-        const reader = readersById.get(underlyingMessage.id);
+        const receiver = receiversById.get(underlyingMessage.id);
 
-        if (reader) {
-          readersById.delete(underlyingMessage.id);
-          reader.close();
+        if (receiver) {
+          console.debug("mx connection received close", underlyingMessage.id);
+          receiversById.delete(underlyingMessage.id);
+          receiver.close();
         } else {
           console.error("close of non-open conversation", underlyingMessage.id);
         }
@@ -79,26 +87,37 @@ export const multiplexer = <I, O>(
     },
 
     close: () => {
-      for (const reader of readersById.values()) reader.close();
-      readersById.clear();
+      for (const receiver of receiversById.values()) receiver.close();
+      receiversById.clear();
     },
   };
 
-  const underlyingWriter = underlying(underlyingReader);
+  const underlyingSender = underlying(underlyingReader);
 
-  return (reader) => {
+  const mx: IOHandler<I, O> = (receiver) => {
     const id = generateId();
-    if (readersById.has(id)) throw new Error(`id conflict`);
+    if (receiversById.has(id)) throw new Error(`id conflict`);
 
-    readersById.set(id, reader);
-    underlyingWriter.send({ id, tag: "open" });
+    receiversById.set(id, receiver);
+    underlyingSender.send({ id, tag: "open" });
 
     return {
-      send: (message) => underlyingWriter.send({ id, tag: "message", message }),
+      send: (message) => underlyingSender.send({ id, tag: "message", message }),
       close: () => {
-        readersById.delete(id);
-        reader.close();
+        console.debug("mx connection sending close", id);
+        receiversById.delete(id);
+        underlyingSender.send({ id, tag: "close" });
+        receiver.close();
       },
     };
   };
+
+  const r = spy(mx, "multiplexer");
+
+  Object.defineProperty(r, "inspect", {
+    value: () =>
+      `<Multiplexer conns=[${receiversById.keys().toArray().join(",")}]>`,
+  });
+
+  return r;
 };

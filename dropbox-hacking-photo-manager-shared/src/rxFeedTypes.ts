@@ -1,4 +1,4 @@
 export type RxFeedResponse<T> =
-  | { tag: "next"; value: T }
-  | { tag: "complete" }
-  | { tag: "error"; error: unknown };
+  | { readonly tag: "next"; readonly value: T }
+  | { readonly tag: "complete" }
+  | { readonly tag: "error"; readonly error: unknown };

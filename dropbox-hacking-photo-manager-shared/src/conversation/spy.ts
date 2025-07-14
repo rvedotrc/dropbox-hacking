@@ -2,17 +2,17 @@ import type { IOHandler } from "./types.js";
 
 export const spy =
   <I, O>(underlying: IOHandler<I, O>, label: string): IOHandler<I, O> =>
-  (reader) => {
+  (receiver) => {
     console.log(`spy [${label}]: connecting`);
 
-    const underlyingWriter = underlying({
+    const underlyingSender = underlying({
       receive: (message) => {
         console.log(`spy [${label}]: received`, message);
-        reader.receive(message);
+        receiver.receive(message);
       },
       close: () => {
-        console.log(`spy [${label}]: reader-close`);
-        reader.close();
+        console.log(`spy [${label}]: receiver-close`);
+        receiver.close();
       },
     });
 
@@ -20,11 +20,11 @@ export const spy =
     return {
       send: (message) => {
         console.log(`spy [${label}]: send`, message);
-        underlyingWriter.send(message);
+        underlyingSender.send(message);
       },
       close: () => {
-        console.log(`spy [${label}]: writer-close`);
-        underlyingWriter.close();
+        console.log(`spy [${label}]: sender-close`);
+        underlyingSender.close();
       },
     };
   };

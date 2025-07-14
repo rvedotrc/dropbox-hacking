@@ -1,8 +1,8 @@
-import React, { useMemo, useRef, useState } from "react";
-
+import useVisibilityTracking from "@hooks/useVisibilityTracking";
 import logRender from "@lib/logRender";
 import type { DayFilesResult } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
-import useVisibilityTracking from "@hooks/useVisibilityTracking";
+import React, { useMemo, useRef, useState } from "react";
+
 import FileRow from "./FileRow";
 
 const FilesTable = ({

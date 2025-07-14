@@ -1,10 +1,12 @@
+import { extname } from "node:path";
+
 import { combineLatest, map, type ObservedValueOf } from "rxjs";
+
 import {
+  type FullDatabaseFeeds,
   imageFilenamePattern,
   videoFilenamePattern,
-  type FullDatabaseFeeds,
 } from "./index.js";
-import { extname } from "node:path";
 
 // https://en.wikipedia.org/wiki/Exif
 const exifableFileExtensions = [

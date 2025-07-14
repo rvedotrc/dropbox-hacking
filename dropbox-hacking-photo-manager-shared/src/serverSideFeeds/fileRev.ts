@@ -1,7 +1,7 @@
 import { combineLatest, map, type Observable } from "rxjs";
 
-import { type FullDatabaseFeeds } from "./index.js";
 import type { NamedFile } from "../ws.js";
+import { type FullDatabaseFeeds } from "./index.js";
 
 export type FileRevRequest = {
   readonly type: "rx.ng.file.rev";

@@ -1,12 +1,10 @@
+import Navigate from "@components/navigate";
+import { useLatestValueFromServerFeed } from "@hooks/useLatestValueFromServerFeed";
+import logRender from "@lib/logRender";
 import React, { useEffect } from "react";
 
-import logRender from "@lib/logRender";
-import Navigate from "@components/navigate";
-import type { FsckType } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
-import { useLatestValueFromServerFeed } from "@hooks/useLatestValueFromServerFeed";
-
 const Fsck = () => {
-  const latestValue = useLatestValueFromServerFeed<FsckType>({
+  const latestValue = useLatestValueFromServerFeed({
     type: "rx.ng.fsck",
   });
 

@@ -1,5 +1,5 @@
 import { RefObject, useEffect, useMemo } from "react";
-import { ReplaySubject, type Observable } from "rxjs";
+import { type Observable, ReplaySubject } from "rxjs";
 
 const scrollStationaryTimeout = 200;
 
