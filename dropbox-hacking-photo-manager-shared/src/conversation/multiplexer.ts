@@ -58,8 +58,10 @@ export const multiplexer = <I, O>(
                       });
                       newReader.close();
                     },
+                    inspect: () => ``,
                   };
                 },
+                inspect: () => ``,
               },
               `mx-listener ${underlyingMessage.id}`,
             ),
@@ -95,6 +97,8 @@ export const multiplexer = <I, O>(
       for (const receiver of receiversById.values()) receiver.close();
       receiversById.clear();
     },
+
+    inspect: () => ``,
   };
 
   const underlyingSender = underlying.connect(underlyingReader);
@@ -116,8 +120,10 @@ export const multiplexer = <I, O>(
           underlyingSender.send({ id, tag: "close" });
           receiver.close();
         },
+        inspect: () => ``,
       };
     },
+    inspect: () => ``,
   };
 
   const r = spy(mx, "multiplexer");

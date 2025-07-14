@@ -7,11 +7,13 @@ export const join = <A, B>(
   const readA = {
     receive: (message: A) => writeA.send(message),
     close: () => writeA.close(),
+    inspect: () => ``,
   };
 
   const readB = {
     receive: (message: B) => writeB.send(message),
     close: () => writeB.close(),
+    inspect: () => ``,
   };
 
   const writeA = readsBWritesA.connect(readB);

@@ -9,11 +9,14 @@ export const transportAsJson = <I extends JSONValue, O extends JSONValue>(
     const underlyingSender = underlying.connect({
       receive: (message) => receiver.receive(JSON.parse(message) as I),
       close: () => receiver.close(),
+      inspect: () => ``,
     });
 
     return {
       send: (message) => underlyingSender.send(JSON.stringify(message)),
       close: () => underlyingSender.close(),
+      inspect: () => ``,
     };
   },
+  inspect: () => ``,
 });

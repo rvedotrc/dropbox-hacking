@@ -14,12 +14,14 @@ const createHarness = () => {
   const stringSender: Sender<string> = {
     send: (message) => stringsSent.push(message),
     close: () => stringsSent.push(undefined),
+    inspect: () => ``,
   };
 
   const objectsReceived: (JSONValue | undefined)[] = [];
   const objectReceiver: Receiver<JSONValue> = {
     receive: (message) => objectsReceived.push(message),
     close: () => objectsReceived.push(undefined),
+    inspect: () => ``,
   };
 
   let stringReceiver: Receiver<string> =
@@ -29,6 +31,7 @@ const createHarness = () => {
       stringReceiver = r;
       return stringSender;
     },
+    inspect: () => ``,
   }).connect(objectReceiver);
 
   return {

@@ -16,6 +16,7 @@ export const spy = <I, O>(
         console.log(`spy [${label}]: receiver-close`);
         receiver.close();
       },
+      inspect: () => ``,
     });
 
     console.log(`spy [${label}]: connected`);
@@ -28,6 +29,8 @@ export const spy = <I, O>(
         console.log(`spy [${label}]: sender-close`);
         underlyingSender.close();
       },
+      inspect: () => ``,
     };
   },
+  inspect: () => ``,
 });

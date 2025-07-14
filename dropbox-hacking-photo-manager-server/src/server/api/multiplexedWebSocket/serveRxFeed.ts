@@ -9,6 +9,7 @@ export const serveRxFeed = <T>(
   const sender = io.connect({
     receive: () => sender.close(),
     close: () => subscription?.unsubscribe(),
+    inspect: () => ``,
   });
 
   const subscription = observable.subscribe({

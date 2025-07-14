@@ -28,6 +28,7 @@ export const getRxFeed = <
         console.log("getRxFeed received close");
         subscriber.unsubscribe();
       },
+      inspect: () => ``,
     });
 
     sender.send(request);

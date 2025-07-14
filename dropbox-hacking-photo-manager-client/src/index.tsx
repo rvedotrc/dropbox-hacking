@@ -70,6 +70,7 @@ const Root = ({
           w.send(`Thank you for saying ${m as string}`);
         },
         close: () => {},
+        inspect: () => ``,
       });
     },
     [],

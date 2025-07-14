@@ -92,6 +92,7 @@ export default (app: Application, context: Context): void => {
               });
             },
             close: () => subscription?.unsubscribe(),
+            inspect: () => ``,
           });
         },
       );

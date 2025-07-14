@@ -43,8 +43,10 @@ export const fromBasicWebSocket = <S, I, O>(
         return {
           send: (payload) => webSocket.send(payload),
           close: () => webSocket.close(),
+          inspect: () => ``,
         };
       },
+      inspect: () => ``,
     },
     "mx-on-websocket",
   );
