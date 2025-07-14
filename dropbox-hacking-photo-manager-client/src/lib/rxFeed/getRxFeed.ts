@@ -28,7 +28,7 @@ export const getRxFeed = <
         console.log("getRxFeed received close");
         subscriber.unsubscribe();
       },
-      inspect: () => ``,
+      inspect: () => `<Sender for outgoing connection on ${io.inspect()}>`,
     });
 
     sender.send(request);

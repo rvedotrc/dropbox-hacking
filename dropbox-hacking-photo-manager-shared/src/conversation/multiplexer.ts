@@ -1,9 +1,8 @@
 import { generateId } from "./id.js";
-import { spy } from "./spy.js";
-import type { IOHandler, Receiver } from "./types.js";
+import type { IOHandler, Receiver, Sender } from "./types.js";
 
 export type IDHolder = {
-  id: string;
+  readonly id: string;
 };
 
 export type WrappedPayload<T> =
@@ -12,84 +11,74 @@ export type WrappedPayload<T> =
   | { readonly tag: "close" };
 
 export const multiplexer = <I, O>(
-  underlying: IOHandler<
-    IDHolder & WrappedPayload<I>,
-    IDHolder & WrappedPayload<O>
-  >,
+  base: IOHandler<IDHolder & WrappedPayload<I>, IDHolder & WrappedPayload<O>>,
   listener: (handler: IOHandler<I, O>) => void,
 ): IOHandler<I, O> => {
   const receiversById: Map<string, Receiver<I>> = new Map();
+  let mx = { inspect: () => "[placeholder]" } as IOHandler<I, O>;
 
-  const underlyingReader: Receiver<IDHolder & WrappedPayload<I>> = {
-    receive: (underlyingMessage) => {
-      console.debug("mx receive", underlyingMessage.id, underlyingMessage.tag);
+  const baseReader: Receiver<IDHolder & WrappedPayload<I>> = {
+    receive: (mxControlMessage) => {
+      const { id, tag } = mxControlMessage;
+      console.debug("mx receive", id, tag);
 
-      if (underlyingMessage.tag === "open") {
-        if (receiversById.has(underlyingMessage.id)) {
+      if (tag === "open") {
+        if (receiversById.has(id)) {
           throw new Error("Duplicate multiplexer ID");
         } else {
-          listener(
-            spy(
-              {
-                connect: (newReader) => {
-                  if (receiversById.has(underlyingMessage.id)) {
-                    throw new Error("Duplicate multiplexer ID");
-                  }
+          listener({
+            connect: (incomingReceiver) => {
+              if (receiversById.has(id)) {
+                throw new Error("Duplicate multiplexer ID");
+              }
 
-                  console.debug("mx accepted connection", underlyingMessage.id);
-                  receiversById.set(underlyingMessage.id, newReader);
+              console.debug("mx accepted connection", id);
+              receiversById.set(mxControlMessage.id, incomingReceiver);
 
-                  return {
-                    send: (message) =>
-                      underlyingSender.send({
-                        tag: "message",
-                        id: underlyingMessage.id,
-                        message,
-                      }),
-                    close: () => {
-                      console.debug(
-                        "mx connection sending close",
-                        underlyingMessage.id,
-                      );
-                      receiversById.delete(underlyingMessage.id);
-                      underlyingSender.send({
-                        tag: "close",
-                        id: underlyingMessage.id,
-                      });
-                      newReader.close();
-                    },
-                    inspect: () => ``,
-                  };
+              const incomingSender: Sender<O> = {
+                send: (message) =>
+                  baseSender.send({
+                    tag: "message",
+                    id,
+                    message,
+                  }),
+                close: () => {
+                  console.debug("mx connection sending close", id);
+                  receiversById.delete(id);
+                  baseSender.send({
+                    tag: "close",
+                    id,
+                  });
+                  incomingReceiver.close();
                 },
-                inspect: () => ``,
-              },
-              `mx-listener ${underlyingMessage.id}`,
-            ),
-          );
+                inspect: () =>
+                  `<Sender for incoming ${id} over ${mx.inspect()}>`,
+              };
+
+              return incomingSender;
+            },
+            inspect: () =>
+              `<Connector for incoming ${id} over ${mx.inspect()}>`,
+          });
         }
-      } else if (underlyingMessage.tag === "message") {
-        const receiver = receiversById.get(underlyingMessage.id);
+      } else if (tag === "message") {
+        const receiver = receiversById.get(mxControlMessage.id);
 
         if (receiver) {
-          receiver.receive(underlyingMessage.message);
+          receiver.receive(mxControlMessage.message);
         } else {
-          console.error(
-            "message for non-open conversation",
-            underlyingMessage.id,
-          );
+          console.error("message for non-open conversation", id);
         }
-      } else if (underlyingMessage.tag === "close") {
-        const receiver = receiversById.get(underlyingMessage.id);
+      } else if (tag === "close") {
+        const receiver = receiversById.get(id);
 
         if (receiver) {
-          console.debug("mx connection received close", underlyingMessage.id);
-          receiversById.delete(underlyingMessage.id);
+          console.debug("mx connection received close", id);
+          receiversById.delete(mxControlMessage.id);
           receiver.close();
         } else {
-          console.error("close of non-open conversation", underlyingMessage.id);
+          console.error("close of non-open conversation", id);
         }
-      } else {
-        throw new Error(`Bad tag in payload`, underlyingMessage);
       }
     },
 
@@ -98,40 +87,32 @@ export const multiplexer = <I, O>(
       receiversById.clear();
     },
 
-    inspect: () => ``,
+    inspect: () => `<BaseReader for ${mx.inspect()}>`,
   };
 
-  const underlyingSender = underlying.connect(underlyingReader);
+  const baseSender = base.connect(baseReader);
 
-  const mx: IOHandler<I, O> = {
-    connect: (receiver) => {
+  mx = {
+    connect: (outgoingReceiver) => {
       const id = generateId();
       if (receiversById.has(id)) throw new Error(`id conflict`);
 
-      receiversById.set(id, receiver);
-      underlyingSender.send({ id, tag: "open" });
+      receiversById.set(id, outgoingReceiver);
+      baseSender.send({ id, tag: "open" });
 
       return {
-        send: (message) =>
-          underlyingSender.send({ id, tag: "message", message }),
+        send: (message) => baseSender.send({ id, tag: "message", message }),
         close: () => {
           console.debug("mx connection sending close", id);
           receiversById.delete(id);
-          underlyingSender.send({ id, tag: "close" });
-          receiver.close();
+          baseSender.send({ id, tag: "close" });
+          outgoingReceiver.close();
         },
-        inspect: () => ``,
+        inspect: () => `<Sender for ${id} over ${mx.inspect()}>`,
       };
     },
-    inspect: () => ``,
+    inspect: () => `<Multiplexer over ${base.inspect()}>`,
   };
 
-  const r = spy(mx, "multiplexer");
-
-  Object.defineProperty(r, "inspect", {
-    value: () =>
-      `<Multiplexer conns=[${receiversById.keys().toArray().join(",")}]>`,
-  });
-
-  return r;
+  return mx;
 };

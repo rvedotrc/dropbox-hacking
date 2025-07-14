@@ -3,7 +3,6 @@ import {
   type IDHolder,
   type IOHandler,
   multiplexer,
-  spy,
   transportAsJson,
   type WrappedPayload,
 } from "dropbox-hacking-photo-manager-shared";
@@ -51,19 +50,16 @@ export default (app: Application, context: Context): void => {
       process.on("SIGTERM", closer);
 
       const socketIO = fromExpressWebSocket(ws);
-      // const spiedSocket = spy(socketIO, "socket");
       const usingJSON = transportAsJson<
         IDHolder & WrappedPayload<RxFeedRequest>,
         IDHolder & WrappedPayload<JSONValue>
       >(socketIO);
 
       const connect = multiplexer(
-        // spy(usingJSON, "using-json"),
         usingJSON,
         // FIXME: JSONValue type safety
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (accept: IOHandler<RxFeedRequest, any>) => {
-          // const spiedAccept = spy(accept, "accept");
           let subscription: Subscription | undefined;
 
           const sender = accept.connect({
@@ -92,21 +88,17 @@ export default (app: Application, context: Context): void => {
               });
             },
             close: () => subscription?.unsubscribe(),
-            inspect: () => ``,
+            inspect: () =>
+              `<Sender for incoming connection over ${accept.inspect()}>`,
           });
         },
       );
 
-      const _spiedConnect = spy(connect, "connect");
-
       {
-        const dump =
-          "inspect" in connect
-            ? (connect.inspect as () => string)
-            : () => "(no inspect available)";
-
         const hup = () =>
-          process.nextTick(() => console.log(`${id} dump: ${dump()}`));
+          process.nextTick(() =>
+            console.log(`${id} dump: ${connect.inspect()}`),
+          );
         process.on("SIGHUP", hup);
         ws.on("close", () => process.off("SIGHUP", hup));
       }
