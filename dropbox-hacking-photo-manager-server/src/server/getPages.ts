@@ -88,59 +88,14 @@ export default (app: Application, _context: Context): void => {
     },
   );
 
-  app.get("/days/calendar", (_req, res) => {
-    res.contentType("text/html");
-    res.send(pageAsString({ route: "calendar" }));
-  });
-
-  app.get("/days/with-samples", (_req, res) => {
-    res.contentType("text/html");
-    res.send(pageAsString({ route: "days" }));
-  });
-
-  app.get("/days/plain", (_req, res) => {
-    res.contentType("text/html");
-    res.send(pageAsString({ route: "days-plain" }));
-  });
-
   // RVE-add-route
 
   app.get("/day/:date(\\d\\d\\d\\d-\\d\\d-\\d\\d)", (req, res) => {
     res.contentType("text/html");
     res.send(
       pageAsString({
-        route: "day",
+        route: "route/next-gen/day/files",
         date: req.params.date,
-      }),
-    );
-  });
-
-  app.get("/month/:month(\\d\\d\\d\\d-\\d\\d)", (req, res) => {
-    res.contentType("text/html");
-    res.send(
-      pageAsString({
-        route: "month",
-        month: req.params.month,
-      }),
-    );
-  });
-
-  app.get("/year/:year(\\d\\d\\d\\d)", (req, res) => {
-    res.contentType("text/html");
-    res.send(
-      pageAsString({
-        route: "year",
-        year: req.params.year,
-      }),
-    );
-  });
-
-  app.get("/photo/rev/:rev", (req, res) => {
-    res.contentType("text/html");
-    res.send(
-      pageAsString({
-        route: "photo",
-        rev: req.params.rev,
       }),
     );
   });

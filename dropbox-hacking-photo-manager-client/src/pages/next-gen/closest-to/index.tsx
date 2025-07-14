@@ -3,7 +3,7 @@ import { useLatestValueFromServerFeed } from "@hooks/useLatestValueFromServerFee
 import type { GPSLatNLongE } from "dropbox-hacking-photo-manager-shared";
 import React from "react";
 
-import SamplePhoto from "../days/samplePhoto";
+// import SamplePhoto from "../../legacy/days/samplePhoto";
 
 export default ({
   gps,
@@ -31,7 +31,7 @@ export default ({
                 <td>
                   <SamePageLink
                     routeState={{
-                      route: "day",
+                      route: "route/next-gen/day/files",
                       date,
                     }}
                   >
@@ -41,11 +41,11 @@ export default ({
                 <td>
                   <SamePageLink
                     routeState={{
-                      route: "photo",
-                      rev: item.photo.namedFile.rev,
+                      route: "route/next-gen/content-hash",
+                      contentHash: item.photo.namedFile.content_hash,
                     }}
                   >
-                    <SamplePhoto photo={item.photo} visible={true} />
+                    {"<SamplePhoto photo={item.photo} visible={true} />"}
                   </SamePageLink>
                 </td>
               </tr>

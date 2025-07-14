@@ -17,7 +17,6 @@ const SummariseNamedFiles = ({
         <thead>
           <tr>
             <th>mtime</th>
-            <th>rev</th>
             <th>dirname</th>
             <th>basename</th>
           </tr>
@@ -33,25 +32,12 @@ const SummariseNamedFiles = ({
             return (
               <tr key={namedFile.id}>
                 <td>
-                  <SamePageLink routeState={{ route: "day", date }}>
-                    [old]
-                  </SamePageLink>{" "}
                   <SamePageLink
                     routeState={{ route: "route/next-gen/day/files", date }}
                   >
                     {date}
                   </SamePageLink>{" "}
                   {time}
-                </td>
-                <td>
-                  <SamePageLink
-                    routeState={{
-                      route: "photo",
-                      rev: namedFile.rev,
-                    }}
-                  >
-                    [old]
-                  </SamePageLink>
                 </td>
                 <td>
                   <a href={`https://www.dropbox.com/home${encodeURI(dirname)}`}>

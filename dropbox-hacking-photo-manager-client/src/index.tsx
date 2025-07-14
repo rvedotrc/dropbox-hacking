@@ -1,17 +1,9 @@
-import * as additionalFeeds from "@hooks/legacyRxFeeds/additionalFeeds";
-import * as rxRecordFeedContext from "@hooks/legacyRxFeeds/rxRecordFeedContext";
 import { defaultProvider as MultiplexerProvider } from "@hooks/useMultiplexer";
 import { context as routingContext, type Router } from "@hooks/useRouter";
 import { defaultProvider as ThumbnailProvider } from "@hooks/useThumbnail";
 import logRender from "@lib/logRender";
-import ClosestTo from "@pages/legacy/closest-to/index";
-import Day from "@pages/legacy/day";
-import Calendar from "@pages/legacy/days/calendar";
-import ListOfDays from "@pages/legacy/days/listOfDays";
-import Month from "@pages/legacy/month";
-import Photo from "@pages/legacy/photo";
-import Year from "@pages/legacy/year";
 import BasicCounts from "@pages/next-gen/basic-counts";
+import ClosestTo from "@pages/next-gen/closest-to/index";
 import NGContentHash from "@pages/next-gen/contentHash";
 import NGDayFiles from "@pages/next-gen/day/files";
 import ExifExplorer from "@pages/next-gen/exifExplorer";
@@ -30,51 +22,7 @@ import { createRoot } from "react-dom/client";
 const ensureNever = <_ extends never>() => undefined;
 
 const toRender = ({ routeState }: { routeState: RouteState }) => {
-  if (routeState.route === "closest-to")
-    return <ClosestTo gps={routeState.gps} nClosest={routeState.nClosest} />;
-  if (routeState.route === "calendar")
-    return (
-      <WithWholeDatabaseFeeds>
-        <Calendar />
-      </WithWholeDatabaseFeeds>
-    );
-  if (routeState.route === "days")
-    return (
-      <WithWholeDatabaseFeeds>
-        <ListOfDays withSamples={true} />
-      </WithWholeDatabaseFeeds>
-    );
-  if (routeState.route === "days-plain")
-    return (
-      <WithWholeDatabaseFeeds>
-        <ListOfDays withSamples={false} />
-      </WithWholeDatabaseFeeds>
-    );
-  if (routeState.route === "day")
-    return (
-      <WithWholeDatabaseFeeds>
-        <Day date={routeState.date} />
-      </WithWholeDatabaseFeeds>
-    );
-  if (routeState.route === "month")
-    return (
-      <WithWholeDatabaseFeeds>
-        <Month month={routeState.month} />
-      </WithWholeDatabaseFeeds>
-    );
-  if (routeState.route === "year")
-    return (
-      <WithWholeDatabaseFeeds>
-        <Year year={routeState.year} />
-      </WithWholeDatabaseFeeds>
-    );
-  if (routeState.route === "photo")
-    return (
-      <WithWholeDatabaseFeeds>
-        <Photo rev={routeState.rev} />
-      </WithWholeDatabaseFeeds>
-    );
-
+  if (routeState.route === "closest-to") return <ClosestTo {...routeState} />;
   if (routeState.route === "route/next-gen/basic-counts")
     return <BasicCounts {...routeState} />;
   if (routeState.route === "route/next-gen/fsck")
@@ -95,15 +43,6 @@ const toRender = ({ routeState }: { routeState: RouteState }) => {
 
   return <span>Routing error</span>;
 };
-
-const WithWholeDatabaseFeeds = (props: React.PropsWithChildren) => (
-  <rxRecordFeedContext.defaultProvider>
-    <additionalFeeds.defaultProvider>
-      <h1>USING WHOLE DB FEED</h1>
-      {props.children}
-    </additionalFeeds.defaultProvider>
-  </rxRecordFeedContext.defaultProvider>
-);
 
 const Root = ({
   initialRouteState,

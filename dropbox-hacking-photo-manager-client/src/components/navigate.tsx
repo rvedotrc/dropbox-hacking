@@ -29,19 +29,6 @@ const navigation = (): React.ReactElement | null => (
 
     {" /// "}
 
-    <SamePageLink routeState={{ route: "calendar" }}>Calendar</SamePageLink>
-    {" | "}
-    <SamePageLink routeState={{ route: "days" }}>
-      List of days (with sample pics)
-    </SamePageLink>
-    {" | "}
-    <SamePageLink routeState={{ route: "days-plain" }}>
-      List of days (plain)
-    </SamePageLink>
-    {/* RVE-add-route */}
-
-    {" /// "}
-
     <button
       onClick={() =>
         void document

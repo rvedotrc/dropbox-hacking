@@ -38,7 +38,10 @@ const PhotoTile = ({
     <SamePageLink
       className={"photoItem"}
       key={photo.namedFile.id}
-      routeState={{ route: "photo", rev: photo.namedFile.rev }}
+      routeState={{
+        route: "route/next-gen/content-hash",
+        contentHash: photo.namedFile.content_hash,
+      }}
       data-rev={photo.namedFile.rev}
     >
       <img

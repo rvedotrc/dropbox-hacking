@@ -41,31 +41,6 @@ export type RouteState =
         date: string;
         rev: string;
       };
-    }
-  | {
-      route: "calendar";
-    }
-  | {
-      route: "days";
-    }
-  | {
-      route: "days-plain";
-    }
-  | {
-      route: "day";
-      date: string;
-    }
-  | {
-      route: "month";
-      month: string;
-    }
-  | {
-      route: "year";
-      year: string;
-    }
-  | {
-      route: "photo";
-      rev: string;
     };
 // RVE-add-route
 
@@ -75,20 +50,6 @@ export const urlForState = (state: RouteState): string => {
   switch (state.route) {
     case "closest-to":
       return `/closest-to?degreesNorth=${state.gps.lat}&degreesEast=${state.gps.long}&n=${state.nClosest}`;
-    case "day":
-      return `/day/${state.date}`;
-    case "days":
-      return `/days/with-samples`;
-    case "days-plain":
-      return `/days/plain`;
-    case "calendar":
-      return `/days/calendar`;
-    case "year":
-      return `/year/${state.year}`;
-    case "month":
-      return `/month/${state.month}`;
-    case "photo":
-      return `/photo/rev/${state.rev}`;
     case "route/next-gen/basic-counts":
       return `/next-gen/basic-counts`;
     case "route/next-gen/fsck":
