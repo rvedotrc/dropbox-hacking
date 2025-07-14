@@ -21,26 +21,31 @@ export interface BasicWebSocket<S, I, O> {
 export const fromBasicWebSocket = <S, I, O>(
   webSocket: BasicWebSocket<S, I, O>,
 ): IOHandler<I, O> => {
-  return spy((receiver) => {
-    if (webSocket.readyState !== webSocket.OPEN)
-      throw new Error("Socket is not OPEN");
+  return spy(
+    {
+      connect: (receiver) => {
+        if (webSocket.readyState !== webSocket.OPEN)
+          throw new Error("Socket is not OPEN");
 
-    const closeListener = () => {
-      webSocket.removeEventListener("close", closeListener);
-      webSocket.removeEventListener("message", messageListener);
-      receiver.close();
-    };
+        const closeListener = () => {
+          webSocket.removeEventListener("close", closeListener);
+          webSocket.removeEventListener("message", messageListener);
+          receiver.close();
+        };
 
-    const messageListener = (message: { data: I }) => {
-      receiver.receive(message.data);
-    };
+        const messageListener = (message: { data: I }) => {
+          receiver.receive(message.data);
+        };
 
-    webSocket.addEventListener("close", closeListener);
-    webSocket.addEventListener("message", messageListener);
+        webSocket.addEventListener("close", closeListener);
+        webSocket.addEventListener("message", messageListener);
 
-    return {
-      send: (payload) => webSocket.send(payload),
-      close: () => webSocket.close(),
-    };
-  }, "mx-on-websocket");
+        return {
+          send: (payload) => webSocket.send(payload),
+          close: () => webSocket.close(),
+        };
+      },
+    },
+    "mx-on-websocket",
+  );
 };

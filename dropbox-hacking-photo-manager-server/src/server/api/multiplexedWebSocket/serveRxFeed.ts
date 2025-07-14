@@ -6,7 +6,7 @@ export const serveRxFeed = <T>(
   observable: Observable<T>,
   io: IOHandler<never, RxFeedResponse<T>>,
 ): void => {
-  const sender = io({
+  const sender = io.connect({
     receive: () => sender.close(),
     close: () => subscription?.unsubscribe(),
   });

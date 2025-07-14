@@ -21,7 +21,7 @@ export const websocketThumbnailLoader = (
         {
           type: "rx.ng.thumbnail2",
           rev,
-          size: { ".tag": "w128h128" },
+          size: "w128h128",
         },
         mx,
       ).subscribe({

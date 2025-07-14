@@ -14,6 +14,6 @@ export const join = <A, B>(
     close: () => writeB.close(),
   };
 
-  const writeA = readsBWritesA(readB);
-  const writeB = readsAWritesB(readA);
+  const writeA = readsBWritesA.connect(readB);
+  const writeB = readsAWritesB.connect(readA);
 };

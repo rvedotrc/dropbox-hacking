@@ -24,10 +24,12 @@ const createHarness = () => {
 
   let stringReceiver: Receiver<string> =
     undefined as unknown as Receiver<string>;
-  const objectSender = transportAsJson((r) => {
-    stringReceiver = r;
-    return stringSender;
-  })(objectReceiver);
+  const objectSender = transportAsJson({
+    connect: (r) => {
+      stringReceiver = r;
+      return stringSender;
+    },
+  }).connect(objectReceiver);
 
   return {
     stringReceiver,

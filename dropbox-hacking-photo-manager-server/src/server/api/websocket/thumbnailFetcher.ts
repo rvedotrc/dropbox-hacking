@@ -4,7 +4,7 @@ import type { Context } from "../../context.js";
 
 export type ThumbnailFetcher = (args: {
   rev: string;
-  size: files.ThumbnailSize;
+  size: files.ThumbnailSize[".tag"];
 }) => Promise<{ base64JPEG: string } | null>;
 
 export const nullThumbnailFetcher = (): ThumbnailFetcher => () =>
@@ -16,7 +16,7 @@ export const singleThumbnailFetcher =
     context.dropboxClient.then((dbx) =>
       dbx
         .filesGetThumbnailBatch({
-          entries: [{ path: `rev:${args.rev}`, size: args.size }],
+          entries: [{ path: `rev:${args.rev}`, size: { ".tag": args.size } }],
         })
         .then((r) =>
           r.status === 200 &&
@@ -80,7 +80,7 @@ export const batchingThumbnailFetcher = (
     new Promise<Awaited<ReturnType<ThumbnailFetcher>>>((resolve, reject) => {
       if (waiting.length === 0) timer = setTimeout(flush, maxWait);
       waiting.push({
-        req: { path: `rev:${req.rev}`, size: req.size },
+        req: { path: `rev:${req.rev}`, size: { ".tag": req.size } },
         resolve,
         reject,
       });

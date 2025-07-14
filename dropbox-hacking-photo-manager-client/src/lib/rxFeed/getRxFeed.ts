@@ -18,7 +18,7 @@ export const getRxFeed = <
   io: IOHandler<RxFeedResponse<RES>, REQ>,
 ): Observable<RES> =>
   new Observable<RES>((subscriber) => {
-    const sender = io({
+    const sender = io.connect({
       receive: (m) => {
         if (m.tag === "next") subscriber.next(m.value);
         if (m.tag === "complete") subscriber.complete();

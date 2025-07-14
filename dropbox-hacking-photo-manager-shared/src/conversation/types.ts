@@ -9,5 +9,5 @@ export interface Sender<T> {
 }
 
 export interface IOHandler<I, O> {
-  (receiver: Receiver<I>): Sender<O>;
+  readonly connect: (receiver: Receiver<I>) => Sender<O>;
 }

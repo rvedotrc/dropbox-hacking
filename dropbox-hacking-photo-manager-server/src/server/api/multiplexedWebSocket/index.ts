@@ -15,13 +15,13 @@ import {
   type RxFeedRequest,
 } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import type { Application } from "express-ws";
+import type { Subscription } from "rxjs";
 import type { Observable } from "rxjs/internal/Observable";
 
 import type { Context } from "../../context.js";
 import { getLogPrefix } from "../../main.js";
 import { thumbnailHandlerBuilder } from "../websocket/thumbnailHandler.js";
 import { fromExpressWebSocket } from "./fromExpressWebSocket.js";
-import { serveRxFeed } from "./serveRxFeed.js";
 
 // const ensureNever = <_ extends never>() => undefined;
 
@@ -53,7 +53,7 @@ export default (app: Application, context: Context): void => {
       const socketIO = fromExpressWebSocket(ws);
       // const spiedSocket = spy(socketIO, "socket");
       const usingJSON = transportAsJson<
-        IDHolder & WrappedPayload<JSONValue>,
+        IDHolder & WrappedPayload<RxFeedRequest>,
         IDHolder & WrappedPayload<JSONValue>
       >(socketIO);
 
@@ -62,37 +62,36 @@ export default (app: Application, context: Context): void => {
         usingJSON,
         // FIXME: JSONValue type safety
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (accept: IOHandler<any, any>) => {
+        (accept: IOHandler<RxFeedRequest, any>) => {
           // const spiedAccept = spy(accept, "accept");
-          const sender = accept({
+          let subscription: Subscription | undefined;
+
+          const sender = accept.connect({
             receive: (request) => {
               console.log(`${id} got request:`, JSON.stringify(request));
 
-              if (
-                typeof request === "object" &&
-                request !== null &&
-                "type" in request &&
-                typeof request.type === "string"
-              ) {
-                const typedRequest = request as RxFeedRequest;
+              const type = request.type;
 
-                const type = typedRequest.type;
+              const provider = feedMap[type].provider as (
+                feeds: FullDatabaseFeeds,
+                request: RequestTypeFor<typeof type>,
+              ) => Observable<ResponseTypeFor<typeof type>>;
 
-                const provider = feedMap[type].provider as (
-                  feeds: FullDatabaseFeeds,
-                  request: RequestTypeFor<typeof type>,
-                ) => Observable<ResponseTypeFor<typeof type>>;
+              const observable = provider(context.fullDatabaseFeeds, request);
 
-                const obs = provider(context.fullDatabaseFeeds, typedRequest);
-                return serveRxFeed(obs, () => sender);
-
-                // ensureNever<typeof typedRequest>();
-              }
-
-              console.warn(`${id} Unrecognised request:`, request);
-              sender.close();
+              subscription = observable.subscribe({
+                next: (value) => sender.send({ tag: "next", value }),
+                complete: () => {
+                  sender.send({ tag: "complete" });
+                  sender.close();
+                },
+                error: (error) => {
+                  sender.send({ tag: "error", error });
+                  sender.close();
+                },
+              });
             },
-            close: () => {},
+            close: () => subscription?.unsubscribe(),
           });
         },
       );
