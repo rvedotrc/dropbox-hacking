@@ -12,6 +12,8 @@ import {
 import {
   buildFeedMap,
   type FullDatabaseFeeds,
+  type RequestTypeFor,
+  type ResponseTypeFor,
   type RxFeedRequest,
 } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import type { Application } from "express-ws";
@@ -108,14 +110,18 @@ export default (app: Application, context: Context): void => {
                     () => sender,
                   );
                 } else {
-                  const feed = feedMap[typedRequest.type];
-                  const provider = feed.provider as (
+                  const type = typedRequest.type;
+
+                  const provider = feedMap[type].provider as (
                     feeds: FullDatabaseFeeds,
-                    request: RxFeedRequest,
-                  ) => Observable<JSONValue>;
+                    request: RequestTypeFor<typeof type>,
+                  ) => Observable<ResponseTypeFor<typeof type>>;
+
                   const obs = provider(context.fullDatabaseFeeds, typedRequest);
                   return serveRxFeed(obs, () => sender);
                 }
+
+                // ensureNever<typeof typedRequest>();
               }
 
               console.warn(`${id} Unrecognised request:`, request);

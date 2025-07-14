@@ -45,9 +45,8 @@ export const provideClosestTo = (
         .map(([hash, data]) => ({
           hash,
           data,
-          gps:
-            data.exifData.tags ?
-              GPSLatLong.fromExifTags(data.exifData.tags)
+          gps: data.exifData.tags
+            ? GPSLatLong.fromExifTags(data.exifData.tags)
             : null,
         }))
         .filter(hasGPS);

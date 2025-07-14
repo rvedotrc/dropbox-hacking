@@ -43,6 +43,10 @@ export const multiplexer = <I, O>(
                   message,
                 }),
               close: () => {
+                console.debug(
+                  "mx connection sending close",
+                  underlyingMessage.id,
+                );
                 receiversById.delete(underlyingMessage.id);
                 underlyingSender.send({
                   tag: "close",
@@ -68,6 +72,7 @@ export const multiplexer = <I, O>(
         const receiver = receiversById.get(underlyingMessage.id);
 
         if (receiver) {
+          console.debug("mx connection received close", underlyingMessage.id);
           receiversById.delete(underlyingMessage.id);
           receiver.close();
         } else {
@@ -96,6 +101,7 @@ export const multiplexer = <I, O>(
     return {
       send: (message) => underlyingSender.send({ id, tag: "message", message }),
       close: () => {
+        console.debug("mx connection sending close", id);
         receiversById.delete(id);
         receiver.close();
       },

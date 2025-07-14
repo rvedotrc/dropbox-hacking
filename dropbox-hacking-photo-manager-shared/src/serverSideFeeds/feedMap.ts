@@ -1,4 +1,4 @@
-import type { Observable } from "rxjs";
+import type { Observable, ObservedValueOf } from "rxjs";
 
 import type { ThumbnailResponse } from "../index.js";
 import { provideBasicCounts } from "./basicCounts.js";
@@ -78,3 +78,13 @@ export const buildFeedMap = (
 
   return f11;
 };
+
+type FeedMap = ReturnType<typeof buildFeedMap>;
+
+export type RequestTypeFor<K extends keyof FeedMap> = {
+  [KEY in K]: Parameters<FeedMap[KEY]["provider"]>[1];
+}[K];
+
+export type ResponseTypeFor<K extends keyof FeedMap> = {
+  [KEY in K]: ObservedValueOf<ReturnType<FeedMap[KEY]["provider"]>>;
+}[K];
