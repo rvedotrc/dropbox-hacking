@@ -10,14 +10,7 @@ import { jsonFileObservable } from "./util.js";
 export type PhotoDb = Record<string, PhotoDbEntry>;
 
 export const buildForPhotoDb = (path: string) => {
-  const dbObservable = jsonFileObservable<PhotoDb>(`${path}/photos.json`, 100);
-
-  const dbReplaySubject = new ReplaySubject<Record<string, PhotoDbEntry>>(1);
-  const dbReplaySubscription = dbObservable.subscribe(dbReplaySubject);
-
   return {
-    observable: () => dbReplaySubject,
-    close: () => dbReplaySubscription.unsubscribe(),
     update: async (args: { contentHash: string; entry: PhotoDbEntry }) => {
       const all = JSON.parse(
         await readFile(`${path}/photos.json`, { encoding: "utf-8" }),

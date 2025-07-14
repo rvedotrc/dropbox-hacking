@@ -6,13 +6,6 @@ import type {
 import { type Observable } from "rxjs";
 
 export type RxFeedRequest =
-  // legacy whole-database stuff
-  | { readonly type: "rx-days" }
-  | { readonly type: "rx-exif" }
-  | { readonly type: "rx-photos" }
-  | { readonly type: "rx-files" }
-
-  // more focussed feeds
   | BasicCountsRequest
   | ClosestToRequest
   | ContentHashRequest

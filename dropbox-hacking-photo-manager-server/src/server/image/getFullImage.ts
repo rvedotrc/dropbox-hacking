@@ -1,31 +1,29 @@
-import { files } from "dropbox";
 import { Application } from "express";
 import * as https from "https";
+import { map } from "rxjs";
 
 import { Context } from "../context.js";
 
+const revExistsBuilder =
+  (context: Context) =>
+  (rev: string): Promise<boolean> =>
+    new Promise<boolean>((resolve) => {
+      const obs = context.fullDatabaseFeeds.allFilesByRev.pipe(
+        map((files) => files.has(rev)),
+      );
+      const subscription = obs.subscribe((exists) => {
+        resolve(exists);
+        process.nextTick(() => subscription.unsubscribe());
+      });
+    });
+
 export default (app: Application, context: Context): void => {
+  const revExists = revExistsBuilder(context);
+
   app.get("/image/rev/:rev", (req, res) =>
-    Promise.all([context.lsFeed.read(), context.dropboxClient]).then(
-      ([state, dbx]) => {
-        if (state.tag !== "ready") {
-          res.status(503);
-          res.json({ error: `ls cache not ready (${state.tag})` });
-          return;
-        }
-
-        const findPhoto = (rev: string): files.FileMetadataReference | null => {
-          for (const metadata of state.entries.values()) {
-            if (metadata[".tag"] === "file" && metadata.rev === rev)
-              return metadata;
-          }
-
-          return null;
-        };
-
-        const file = findPhoto(req.params.rev);
-
-        if (!file) {
+    Promise.all([revExists(req.params.rev), context.dropboxClient]).then(
+      ([exists, dbx]) => {
+        if (!exists) {
           res.status(404);
           res.json({ error: `Photo not found` });
           return;
@@ -35,7 +33,7 @@ export default (app: Application, context: Context): void => {
         // const expiresAt = new Date(new Date().getTime() + expirySeconds * 1000);
 
         return dbx
-          .filesGetTemporaryLink({ path: `rev:${file.rev}` })
+          .filesGetTemporaryLink({ path: `rev:${req.params.rev}` })
           .then((r) => r.result.link)
           .then((url) => {
             https.get(url, {}, (imageRes) => {

@@ -1,10 +1,8 @@
 import type { JSONValue } from "@blaahaj/json";
 import {
-  compress,
   type IDHolder,
   type IOHandler,
   multiplexer,
-  recordDeltaMaker,
   spy,
   transportAsJson,
   type WrappedPayload,
@@ -17,17 +15,13 @@ import {
   type RxFeedRequest,
 } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import type { Application } from "express-ws";
-import { map } from "rxjs";
 import type { Observable } from "rxjs/internal/Observable";
-import { isDeepStrictEqual } from "util";
 
 import type { Context } from "../../context.js";
 import { getLogPrefix } from "../../main.js";
 import { thumbnailHandlerBuilder } from "../websocket/thumbnailHandler.js";
 import { fromExpressWebSocket } from "./fromExpressWebSocket.js";
 import { serveRxFeed } from "./serveRxFeed.js";
-
-type IsUnchanged<V> = (a: V, b: V) => boolean;
 
 // const ensureNever = <_ extends never>() => undefined;
 
@@ -82,44 +76,15 @@ export default (app: Application, context: Context): void => {
               ) {
                 const typedRequest = request as RxFeedRequest;
 
-                const squish = <V>() =>
-                  map(
-                    compress(
-                      recordDeltaMaker(isDeepStrictEqual as IsUnchanged<V>),
-                    ),
-                  );
+                const type = typedRequest.type;
 
-                if (typedRequest.type === "rx-days") {
-                  return serveRxFeed(
-                    context.dayRx().pipe(squish()),
-                    () => sender,
-                  );
-                } else if (typedRequest.type === "rx-photos") {
-                  return serveRxFeed(
-                    context.photoRx().pipe(squish()),
-                    () => sender,
-                  );
-                } else if (typedRequest.type === "rx-files") {
-                  return serveRxFeed(
-                    context.imageFilesRx().pipe(squish()),
-                    () => sender,
-                  );
-                } else if (typedRequest.type === "rx-exif") {
-                  return serveRxFeed(
-                    context.exifRx().pipe(squish()),
-                    () => sender,
-                  );
-                } else {
-                  const type = typedRequest.type;
+                const provider = feedMap[type].provider as (
+                  feeds: FullDatabaseFeeds,
+                  request: RequestTypeFor<typeof type>,
+                ) => Observable<ResponseTypeFor<typeof type>>;
 
-                  const provider = feedMap[type].provider as (
-                    feeds: FullDatabaseFeeds,
-                    request: RequestTypeFor<typeof type>,
-                  ) => Observable<ResponseTypeFor<typeof type>>;
-
-                  const obs = provider(context.fullDatabaseFeeds, typedRequest);
-                  return serveRxFeed(obs, () => sender);
-                }
+                const obs = provider(context.fullDatabaseFeeds, typedRequest);
+                return serveRxFeed(obs, () => sender);
 
                 // ensureNever<typeof typedRequest>();
               }
