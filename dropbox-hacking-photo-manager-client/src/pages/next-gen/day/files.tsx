@@ -4,10 +4,6 @@ import SamePageLink from "@components/samePageLink";
 import { useIdentity } from "@hooks/useIdentity";
 import { useLatestValueFromServerFeed } from "@hooks/useLatestValueFromServerFeed";
 import logRender from "@lib/logRender";
-import type {
-  DayFilesResult,
-  DaySummaryWithoutSamples,
-} from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import React, { useEffect, useMemo, useState } from "react";
 
 import FilesTable from "./filesTable";
@@ -16,12 +12,12 @@ import MultiTagEditor from "./MultiTagEditor";
 const NGDayFiles = ({ date }: { date: string }) => {
   console.log("NGDayFiles", useIdentity());
 
-  const latestValue = useLatestValueFromServerFeed<DayFilesResult>({
+  const latestValue = useLatestValueFromServerFeed({
     type: "rx.ng.day.files",
     date,
   });
 
-  const listOfDays = useLatestValueFromServerFeed<DaySummaryWithoutSamples[]>({
+  const listOfDays = useLatestValueFromServerFeed({
     type: "rx.ng.list-of-days",
     withSamples: false,
   });

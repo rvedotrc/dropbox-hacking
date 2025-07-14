@@ -79,7 +79,7 @@ export const buildFeedMap = (
   return f11;
 };
 
-type FeedMap = ReturnType<typeof buildFeedMap>;
+export type FeedMap = ReturnType<typeof buildFeedMap>;
 
 export type RequestTypeFor<K extends keyof FeedMap> = {
   [KEY in K]: Parameters<FeedMap[KEY]["provider"]>[1];

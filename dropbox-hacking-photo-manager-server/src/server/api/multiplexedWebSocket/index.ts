@@ -134,6 +134,18 @@ export default (app: Application, context: Context): void => {
 
       const _spiedConnect = spy(connect, "connect");
 
+      {
+        const dump =
+          "inspect" in connect
+            ? (connect.inspect as () => string)
+            : () => "(no inspect available)";
+
+        const hup = () =>
+          process.nextTick(() => console.log(`${id} dump: ${dump()}`));
+        process.on("SIGHUP", hup);
+        ws.on("close", () => process.off("SIGHUP", hup));
+      }
+
       ws.on("open", (..._args) => console.log(`${id} ws open`));
       ws.on("ping", (..._args) => console.log(`${id} ws ping`));
       ws.on("pong", (..._args) => console.log(`${id} ws pong`));

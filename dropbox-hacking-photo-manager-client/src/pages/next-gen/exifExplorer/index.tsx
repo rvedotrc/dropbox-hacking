@@ -9,7 +9,7 @@ type Entry = [string, Counts];
 type EntrySorter = (a: Entry, b: Entry) => number;
 
 const ExifExplorer = () => {
-  const latestValue = useLatestValueFromServerFeed<ExifExplorerType>({
+  const latestValue = useLatestValueFromServerFeed({
     type: "rx.ng.exif-explorer",
   });
 

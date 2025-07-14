@@ -2,10 +2,7 @@ import Navigate from "@components/navigate";
 import SamePageLink from "@components/samePageLink";
 import { useLatestValueFromServerFeed } from "@hooks/useLatestValueFromServerFeed";
 import logRender from "@lib/logRender";
-import {
-  type ContentHashResult,
-  DayFilesResult,
-} from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
+import { type ContentHashResult } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import React, { useEffect } from "react";
 
 import EditablePhotoEntry from "./EditablePhotoEntry";
@@ -58,7 +55,7 @@ const PrevNextFileNav = ({
 }: {
   context: { date: string; rev: string };
 }) => {
-  const dayFiles = useLatestValueFromServerFeed<DayFilesResult>({
+  const dayFiles = useLatestValueFromServerFeed({
     type: "rx.ng.day.files",
     date: context.date,
   });
@@ -131,7 +128,7 @@ const NGContentHash = ({
   contentHash: string;
   context?: { date: string; rev: string };
 }) => {
-  const latestValue = useLatestValueFromServerFeed<ContentHashResult>({
+  const latestValue = useLatestValueFromServerFeed({
     type: "rx.ng.content_hash",
     contentHash,
   });
@@ -143,7 +140,6 @@ const NGContentHash = ({
   return (
     <>
       <Navigate />
-
       {context && (
         <PrevNextFileNav
           key={`${context.date} ${context.rev}`}

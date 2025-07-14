@@ -2,11 +2,10 @@ import Navigate from "@components/navigate";
 import SamePageLink from "@components/samePageLink";
 import { useLatestValueFromServerFeed } from "@hooks/useLatestValueFromServerFeed";
 import logRender from "@lib/logRender";
-import type { TagsType } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import React, { useEffect } from "react";
 
 const ListOfTags = () => {
-  const latestValue = useLatestValueFromServerFeed<TagsType>({
+  const latestValue = useLatestValueFromServerFeed({
     type: "rx.ng.tags",
   });
 

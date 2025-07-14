@@ -16,9 +16,16 @@ export const getRxFeed = <T, R>(
         if (m.tag === "complete") subscriber.complete();
         if (m.tag === "error") subscriber.error(m.error);
       },
-      close: () => subscriber.unsubscribe(),
+      close: () => {
+        console.log("getRxFeed received close");
+        subscriber.unsubscribe();
+      },
     });
 
     sender.send(request);
-    return () => sender.close();
+
+    return () => {
+      console.log("getRxFeed observer close");
+      sender.close();
+    };
   });

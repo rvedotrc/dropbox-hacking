@@ -2,13 +2,12 @@ import Navigate from "@components/navigate";
 import SamePageLink from "@components/samePageLink";
 import { useLatestValueFromServerFeed } from "@hooks/useLatestValueFromServerFeed";
 import logRender from "@lib/logRender";
-import type { NGDaysNoSamplesType } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import React, { useEffect } from "react";
 
 import TagsWithCounts from "../day/TagsWithCounts";
 
 const NGDaysNoSamples = () => {
-  const latestValue = useLatestValueFromServerFeed<NGDaysNoSamplesType>({
+  const latestValue = useLatestValueFromServerFeed({
     type: "rx.ng.list-of-days",
     withSamples: false,
   });

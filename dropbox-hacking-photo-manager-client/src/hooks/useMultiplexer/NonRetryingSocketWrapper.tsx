@@ -4,6 +4,7 @@ import {
   type IDHolder,
   type IOHandler,
   multiplexer,
+  spy,
   transportAsJson,
   type WrappedPayload,
 } from "dropbox-hacking-photo-manager-shared";
@@ -54,7 +55,7 @@ export const NonRetryingSocketWrapper = (
         transportAsJson<
           IDHolder & WrappedPayload<JSONValue>,
           IDHolder & WrappedPayload<JSONValue>
-        >(fromBrowserWebSocket(s)),
+        >(spy(fromBrowserWebSocket(s), "browser-websocket-io")),
         props.accepter,
       );
       console.log("Made io", io);

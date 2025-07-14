@@ -1,11 +1,10 @@
 import Navigate from "@components/navigate";
 import { useLatestValueFromServerFeed } from "@hooks/useLatestValueFromServerFeed";
 import logRender from "@lib/logRender";
-import type { BasicCountsType } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import React, { useEffect } from "react";
 
 const BasicCounts = () => {
-  const latestValue = useLatestValueFromServerFeed<BasicCountsType>({
+  const latestValue = useLatestValueFromServerFeed({
     type: "rx.ng.basic-counts",
   });
 

@@ -1,9 +1,6 @@
 import SamePageLink from "@components/samePageLink";
 import { useLatestValueFromServerFeed } from "@hooks/useLatestValueFromServerFeed";
-import type {
-  ClosestToResponse,
-  GPSLatNLongE,
-} from "dropbox-hacking-photo-manager-shared";
+import type { GPSLatNLongE } from "dropbox-hacking-photo-manager-shared";
 import React from "react";
 
 import SamplePhoto from "../days/samplePhoto";
@@ -15,7 +12,7 @@ export default ({
   gps: GPSLatNLongE;
   nClosest?: number;
 }) => {
-  const data = useLatestValueFromServerFeed<ClosestToResponse>({
+  const data = useLatestValueFromServerFeed({
     type: "rx.ng.closest-to",
     from: gps,
     nClosest: nClosest ?? 100,
