@@ -1,29 +1,30 @@
 import useMultiplexer from "@hooks/useMultiplexer";
 import { getRxFeed } from "@lib/rxFeed/getRxFeed";
 import type {
-  FeedMap,
-  RequestTypeFor,
+  IOHandler,
+  RxFeedResponse,
+} from "dropbox-hacking-photo-manager-shared";
+import type {
   ResponseTypeFor,
+  RxFeedRequest,
 } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import { useEffect, useMemo, useState } from "react";
 
 export const useLatestValueFromServerFeed = <
-  REQ extends RequestTypeFor<keyof FeedMap>,
+  REQ extends RxFeedRequest,
+  NAME extends REQ["type"],
+  RES extends ResponseTypeFor<NAME>,
 >(
   request: REQ,
 ) => {
-  const mx = useMultiplexer();
+  const mx = useMultiplexer() as IOHandler<RxFeedResponse<RES>, REQ>;
 
   const observer = useMemo(
-    () =>
-      mx
-        ? getRxFeed<ResponseTypeFor<REQ["type"]>, REQ>(request, mx)
-        : undefined,
+    () => (mx ? getRxFeed(request, mx) : undefined),
     [mx, JSON.stringify(request)],
   );
 
-  const [latestValue, setLatestValue] =
-    useState<ResponseTypeFor<REQ["type"]>>();
+  const [latestValue, setLatestValue] = useState<RES>();
 
   useEffect(() => {
     if (observer) {

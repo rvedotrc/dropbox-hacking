@@ -2,14 +2,22 @@ import type {
   IOHandler,
   RxFeedResponse,
 } from "dropbox-hacking-photo-manager-shared";
+import type {
+  FeedMap,
+  RequestTypeFor,
+  ResponseTypeFor,
+} from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import { Observable } from "rxjs";
 
-export const getRxFeed = <T, R>(
-  request: R,
-
-  io: IOHandler<RxFeedResponse<T>, R>,
-): Observable<T> =>
-  new Observable<T>((subscriber) => {
+export const getRxFeed = <
+  NAME extends keyof FeedMap,
+  RES extends ResponseTypeFor<NAME>,
+  REQ extends RequestTypeFor<NAME>,
+>(
+  request: REQ,
+  io: IOHandler<RxFeedResponse<RES>, REQ>,
+): Observable<RES> =>
+  new Observable<RES>((subscriber) => {
     const sender = io({
       receive: (m) => {
         if (m.tag === "next") subscriber.next(m.value);
