@@ -10,36 +10,29 @@ import {
   type WrappedPayload,
 } from "dropbox-hacking-photo-manager-shared";
 import {
-  provideBasicCounts,
-  provideClosestTo,
-  provideContentHash,
-  provideDayFiles,
-  provideExifExplorer,
-  provideFileId,
-  provideFileRev,
-  provideFsck,
-  provideListOfDaysWithoutSamples,
-  provideTags,
-  provideThumbnail,
+  buildFeedMap,
+  type FullDatabaseFeeds,
   type RxFeedRequest,
 } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import type { Application } from "express-ws";
 import { map } from "rxjs";
+import type { Observable } from "rxjs/internal/Observable";
 import { isDeepStrictEqual } from "util";
 
 import type { Context } from "../../context.js";
 import { getLogPrefix } from "../../main.js";
-import { closestToHandlerBuilder } from "../websocket/closestToHandler.js";
 import { thumbnailHandlerBuilder } from "../websocket/thumbnailHandler.js";
 import { fromExpressWebSocket } from "./fromExpressWebSocket.js";
 import { serveRxFeed } from "./serveRxFeed.js";
 
 type IsUnchanged<V> = (a: V, b: V) => boolean;
 
-const ensureNever = <_ extends never>() => undefined;
+// const ensureNever = <_ extends never>() => undefined;
 
 export default (app: Application, context: Context): void => {
   if (!process.env.HOME) console.log(app, context);
+
+  const feedMap = buildFeedMap(thumbnailHandlerBuilder(context));
 
   app.ws("/api/ws2", function (ws, req) {
     const id = getLogPrefix(req) || "?";
@@ -114,77 +107,15 @@ export default (app: Application, context: Context): void => {
                     context.exifRx().pipe(squish()),
                     () => sender,
                   );
-                } else if (typedRequest.type === "rx.ng.basic-counts") {
-                  return serveRxFeed(
-                    provideBasicCounts(context.fullDatabaseFeeds, typedRequest),
-                    () => sender,
-                  );
-                } else if (typedRequest.type === "rx.ng.fsck") {
-                  return serveRxFeed(
-                    provideFsck(context.fullDatabaseFeeds, typedRequest),
-                    () => sender,
-                  );
-                } else if (typedRequest.type === "rx.ng.exif-explorer") {
-                  return serveRxFeed(
-                    provideExifExplorer(
-                      context.fullDatabaseFeeds,
-                      typedRequest,
-                    ),
-                    () => sender,
-                  );
-                } else if (typedRequest.type === "rx.ng.list-of-days") {
-                  return serveRxFeed(
-                    provideListOfDaysWithoutSamples(
-                      context.fullDatabaseFeeds,
-                      typedRequest,
-                    ),
-                    () => sender,
-                  );
-                } else if (typedRequest.type === "rx.ng.day.files") {
-                  return serveRxFeed(
-                    provideDayFiles(context.fullDatabaseFeeds, typedRequest),
-                    () => sender,
-                  );
-                } else if (typedRequest.type === "rx.ng.content_hash") {
-                  return serveRxFeed(
-                    provideContentHash(context.fullDatabaseFeeds, typedRequest),
-                    () => sender,
-                  );
-                } else if (typedRequest.type === "rx.ng.file.id") {
-                  return serveRxFeed(
-                    provideFileId(context.fullDatabaseFeeds, typedRequest),
-                    () => sender,
-                  );
-                } else if (typedRequest.type === "rx.ng.file.rev") {
-                  return serveRxFeed(
-                    provideFileRev(context.fullDatabaseFeeds, typedRequest),
-                    () => sender,
-                  );
-                } else if (typedRequest.type === "rx.ng.closest-to") {
-                  const handler = provideClosestTo(
-                    closestToHandlerBuilder(context),
-                  );
-                  return serveRxFeed(
-                    handler(context.fullDatabaseFeeds, typedRequest),
-                    () => sender,
-                  );
-                } else if (typedRequest.type === "rx.ng.thumbnail2") {
-                  const handler = provideThumbnail(
-                    thumbnailHandlerBuilder(context),
-                  );
-                  return serveRxFeed(
-                    handler(context.fullDatabaseFeeds, typedRequest),
-                    () => sender,
-                  );
-                } else if (typedRequest.type === "rx.ng.tags") {
-                  return serveRxFeed(
-                    provideTags(context.fullDatabaseFeeds, typedRequest),
-                    () => sender,
-                  );
+                } else {
+                  const feed = feedMap[typedRequest.type];
+                  const provider = feed.provider as (
+                    feeds: FullDatabaseFeeds,
+                    request: RxFeedRequest,
+                  ) => Observable<JSONValue>;
+                  const obs = provider(context.fullDatabaseFeeds, typedRequest);
+                  return serveRxFeed(obs, () => sender);
                 }
-                // RVE-add-feed
-
-                ensureNever<typeof typedRequest>();
               }
 
               console.warn(`${id} Unrecognised request:`, request);
