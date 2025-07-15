@@ -1,7 +1,7 @@
 import generateId from "@lib/generateId";
 import type {
   IOHandler,
-  RxFeedResponse,
+  ObservableUpdate,
 } from "dropbox-hacking-photo-manager-shared";
 import type {
   FeedMap,
@@ -16,7 +16,7 @@ export const getRxFeed = <
   REQ extends RequestTypeFor<NAME>,
 >(
   request: REQ,
-  io: IOHandler<RxFeedResponse<RES>, REQ>,
+  io: IOHandler<ObservableUpdate<RES>, REQ>,
 ): Observable<RES> =>
   new Observable<RES>((subscriber) => {
     const id = generateId();

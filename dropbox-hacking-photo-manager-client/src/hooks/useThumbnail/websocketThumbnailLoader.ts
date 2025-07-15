@@ -1,7 +1,7 @@
 import { getRxFeed } from "@lib/rxFeed/getRxFeed";
 import type {
   IOHandler,
-  RxFeedResponse,
+  ObservableUpdate,
   ThumbnailResponse,
 } from "dropbox-hacking-photo-manager-shared";
 import type { ThumbnailRequest } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
@@ -10,7 +10,7 @@ import type { ThumbnailLoader } from "./types";
 
 export const websocketThumbnailLoader = (
   mx:
-    | IOHandler<RxFeedResponse<ThumbnailResponse>, ThumbnailRequest>
+    | IOHandler<ObservableUpdate<ThumbnailResponse>, ThumbnailRequest>
     | undefined,
 ): ThumbnailLoader => ({
   getThumbnail: (rev: string) =>
