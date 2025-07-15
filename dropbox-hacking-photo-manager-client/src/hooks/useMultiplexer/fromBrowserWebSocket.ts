@@ -5,5 +5,6 @@ import {
 
 export const fromBrowserWebSocket = (
   webSocket: WebSocket,
+  id: string,
 ): IOHandler<string, string> =>
-  fromBasicWebSocket<WebSocket["readyState"], string, string>(webSocket);
+  fromBasicWebSocket<WebSocket["readyState"], string, string>(webSocket, id);

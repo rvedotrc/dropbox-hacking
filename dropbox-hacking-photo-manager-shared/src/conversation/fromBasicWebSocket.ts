@@ -1,4 +1,5 @@
-import { spy } from "./spy.js";
+import { generateId } from "./id.js";
+import { spyOnConnector } from "./spy.js";
 import type { IOHandler } from "./types.js";
 
 export interface BasicWebSocket<S, I, O> {
@@ -20,27 +21,40 @@ export interface BasicWebSocket<S, I, O> {
 
 export const fromBasicWebSocket = <S, I, O>(
   webSocket: BasicWebSocket<S, I, O>,
+  socketId: string,
 ): IOHandler<I, O> => {
-  return spy((receiver) => {
-    if (webSocket.readyState !== webSocket.OPEN)
-      throw new Error("Socket is not OPEN");
+  const id = generateId();
+  console.debug(`fromBasicWebSocket(${socketId}) -> ${id}`);
 
-    const closeListener = () => {
-      webSocket.removeEventListener("close", closeListener);
-      webSocket.removeEventListener("message", messageListener);
-      receiver.close();
-    };
+  const connector: IOHandler<I, O> = {
+    connect: (receiver) => {
+      if (webSocket.readyState !== webSocket.OPEN)
+        throw new Error("Socket is not OPEN");
 
-    const messageListener = (message: { data: I }) => {
-      receiver.receive(message.data);
-    };
+      const closeListener = () => {
+        webSocket.removeEventListener("close", closeListener);
+        webSocket.removeEventListener("message", messageListener);
+        receiver.close();
+      };
 
-    webSocket.addEventListener("close", closeListener);
-    webSocket.addEventListener("message", messageListener);
+      const messageListener = (message: { data: I }) => {
+        receiver.receive(message.data);
+      };
 
-    return {
-      send: (payload) => webSocket.send(payload),
-      close: () => webSocket.close(),
-    };
-  }, "mx-on-websocket");
+      webSocket.addEventListener("close", closeListener);
+      webSocket.addEventListener("message", messageListener);
+
+      const senderId = generateId();
+      console.debug(`connect(${id}) -> R=${receiver.inspect()} S=${senderId}`);
+
+      return {
+        send: (payload) => webSocket.send(payload),
+        close: () => webSocket.close(),
+        inspect: () => senderId,
+      };
+    },
+    inspect: () => id,
+  };
+
+  return spyOnConnector(connector);
 };

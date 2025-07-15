@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="402" height="626" viewBox="-150 -150 300 455" xmlns:bx="https://boxy-svg.com">
+  <defs>
+    <linearGradient id="color-0" bx:pinned="true" gradientUnits="userSpaceOnUse">
+      <title>pin</title>
+      <stop style="stop-color: rgb(220, 72, 65);"/>
+    </linearGradient>
+    <linearGradient id="color-1" bx:pinned="true" gradientUnits="userSpaceOnUse">
+      <title>dot</title>
+      <stop style="stop-color: rgb(255, 255, 255);"/>
+    </linearGradient>
+  </defs>
+  <ellipse style="stroke-width: 10px; stroke: url(&quot;#color-0&quot;); fill: url(&quot;#color-0&quot;);" cx="0" cy="0" rx="130" ry="130"/>
+  <path style="stroke-width: 10px; stroke-linejoin: round; stroke: url(&quot;#color-0&quot;); fill: url(&quot;#color-0&quot;);" d="M 120 49 C 105 90 80 110 52 155 C 24 200 16 237 0 280 C -16 237 -24 200 -52 155 C -80 110 -105 90 -120 49"/>
+  <ellipse style="stroke-width: 0; stroke: rgb(255, 0, 0); fill: url(&quot;#color-1&quot;);" cx="0" cy="0" rx="60" ry="60"/>
+</svg>

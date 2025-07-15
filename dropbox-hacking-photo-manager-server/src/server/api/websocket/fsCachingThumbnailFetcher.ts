@@ -7,15 +7,15 @@ import type { ThumbnailFetcher } from "./thumbnailFetcher.js";
 
 const pathFor = async (
   rev: string,
-  size: files.ThumbnailSize,
-  format: files.ThumbnailFormat,
-  mode: files.ThumbnailMode,
+  size: files.ThumbnailSize[".tag"],
+  format: files.ThumbnailFormat[".tag"],
+  mode: files.ThumbnailMode[".tag"],
 ): Promise<string> => {
   const hash = await crypto.subtle.digest({ name: "SHA-1" }, Buffer.from(rev));
 
   const slice = Buffer.from(hash.slice(0, 1)).toString("hex");
 
-  return `./var/cache/thumbnails/${slice}/${rev}.${size[".tag"]}.${mode[".tag"]}.${format[".tag"]}`;
+  return `./var/cache/thumbnails/${slice}/${rev}.${size}.${mode}.${format}`;
 };
 
 const trySave = async (content: string, filename: string): Promise<void> => {
@@ -47,12 +47,7 @@ const backgroundSave = async (base64JPEG: string, filename: string) => {
 export const fsCachingThumbnailFetcher =
   (_context: Context, _backend: ThumbnailFetcher): ThumbnailFetcher =>
   async (args) => {
-    const filename = await pathFor(
-      args.rev,
-      args.size,
-      { ".tag": "jpeg" },
-      { ".tag": "strict" },
-    );
+    const filename = await pathFor(args.rev, args.size, "jpeg", "strict");
 
     try {
       const base64JPEG = await readFile(filename, { encoding: "utf-8" });

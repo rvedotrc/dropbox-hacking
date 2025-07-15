@@ -14,20 +14,25 @@ const createHarness = () => {
   const stringSender: Sender<string> = {
     send: (message) => stringsSent.push(message),
     close: () => stringsSent.push(undefined),
+    inspect: () => `[test code]`,
   };
 
   const objectsReceived: (JSONValue | undefined)[] = [];
   const objectReceiver: Receiver<JSONValue> = {
     receive: (message) => objectsReceived.push(message),
     close: () => objectsReceived.push(undefined),
+    inspect: () => `[test code]`,
   };
 
   let stringReceiver: Receiver<string> =
     undefined as unknown as Receiver<string>;
-  const objectSender = transportAsJson((r) => {
-    stringReceiver = r;
-    return stringSender;
-  })(objectReceiver);
+  const objectSender = transportAsJson({
+    connect: (r) => {
+      stringReceiver = r;
+      return stringSender;
+    },
+    inspect: () => `[test code]`,
+  }).connect(objectReceiver);
 
   return {
     stringReceiver,

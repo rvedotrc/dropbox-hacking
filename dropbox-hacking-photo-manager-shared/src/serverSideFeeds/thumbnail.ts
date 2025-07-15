@@ -7,7 +7,7 @@ import { type FullDatabaseFeeds } from "./index.js";
 export type ThumbnailRequest = {
   readonly type: "rx.ng.thumbnail2";
   readonly rev: string;
-  readonly size: files.ThumbnailSize;
+  readonly size: files.ThumbnailSize[".tag"];
 };
 
 export const provideThumbnail =

@@ -1,5 +1,6 @@
 import SamePageLink from "@components/samePageLink";
 import logRender from "@lib/logRender";
+import { GPSLatLong } from "dropbox-hacking-photo-manager-shared";
 import type { DayFilesResult } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import React, { useEffect, useMemo, useState } from "react";
 import { Observable } from "rxjs";
@@ -23,6 +24,35 @@ const FileRow = ({
 }) => {
   const [visible, setVisible] = useState(false);
 
+  const tags = file.content.exif?.exifData.tags;
+  const generalTrack = file.content.mediaInfo?.mediainfoData.media?.track.find(
+    (track) => track["@type"] === "General",
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ) as any;
+  const gps = tags
+    ? GPSLatLong.fromExifTags(tags)
+    : generalTrack?.Recorded_Location
+      ? GPSLatLong.fromMediaInfoRecordedAt(generalTrack.Recorded_Location)
+      : null;
+
+  const make =
+    file.content.exif?.exifData.tags?.Make ??
+    generalTrack?.Encoded_Hardware_CompanyName ??
+    "";
+  const model =
+    file.content.exif?.exifData.tags?.Model ??
+    generalTrack?.Encoded_Hardware_Name ??
+    "";
+  const deviceIcon = /EX-Z3|FinePix HS10 HS11|Canon PowerShot SX70 HS/.test(
+    model,
+  )
+    ? "/camera-icon.dark.svg"
+    : /iPhone 4S|Pixel|Pixel 2|iPhone 12 mini/.test(model)
+      ? "/mobile-phone.svg"
+      : file.namedFile.name.toLocaleLowerCase().startsWith("dji")
+        ? "/drone.svg"
+        : null;
+
   useEffect(() => {
     const sub = observableVisibleItems.subscribe((s) =>
       setVisible(s.has(file.namedFile.rev)),
@@ -44,15 +74,29 @@ const FileRow = ({
           [onSelected],
         )}
       />
+      <div className="icons">
+        {gps && (
+          <img
+            src="/gps-pin.dark.svg"
+            style={{ width: "1em", height: "2em" }}
+          />
+        )}
+
+        {deviceIcon && (
+          <img src={deviceIcon} style={{ width: "2em", height: "2em" }} />
+        )}
+
+        {file.content.exif && <span>exif</span>}
+        {file.content.mediaInfo && <span>mediainfo</span>}
+      </div>
       <time className="mtime">
         {file.namedFile.client_modified.replace("T", " ")}
       </time>
-      <div className="flags">
-        {file.content.exif && "+exif "}
-        {file.content.mediaInfo && "+mediainfo "}
-      </div>
-      <div className="fileext">
-        {file.namedFile.name.split(".").pop()?.toLocaleLowerCase()}
+      <div className={"makeAndModel"}>
+        {make || "[none]"}{" "}
+        {(model.startsWith(make)
+          ? model.replace(make, "").trimStart()
+          : model) || "[none]"}
       </div>
       <div className="basename">
         {file.namedFile.name

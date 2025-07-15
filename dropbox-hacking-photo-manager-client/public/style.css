@@ -225,6 +225,17 @@ ol.files div.thumbnail img {
   margin: auto;
 }
 
+ol.files > li .icons {
+  text-align: center;
+  height: 3em;
+  display: flex;
+  align-items: center;
+}
+
+ol.files > li .icons > * {
+  margin-inline: 0.2em;
+}
+
 .tag.tag-nsfw {
   background: red;
   border-color: red;

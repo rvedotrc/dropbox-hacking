@@ -64,12 +64,13 @@ const Root = ({
 
   const accepter = useMemo(
     () => (accept: IOHandler<unknown, unknown>) => {
-      const w = accept({
+      const w = accept.connect({
         receive: (m) => {
           console.log(`The server connected to me and said:`, m);
           w.send(`Thank you for saying ${m as string}`);
         },
         close: () => {},
+        inspect: () => `[unused code]`,
       });
     },
     [],
