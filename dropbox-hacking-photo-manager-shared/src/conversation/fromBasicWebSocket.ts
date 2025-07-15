@@ -1,3 +1,4 @@
+import { generateId } from "./id.js";
 import { spyOnConnector } from "./spy.js";
 import type { IOHandler } from "./types.js";
 
@@ -20,7 +21,11 @@ export interface BasicWebSocket<S, I, O> {
 
 export const fromBasicWebSocket = <S, I, O>(
   webSocket: BasicWebSocket<S, I, O>,
+  socketId: string,
 ): IOHandler<I, O> => {
+  const id = generateId();
+  console.debug(`fromBasicWebSocket(${socketId}) -> ${id}`);
+
   const connector: IOHandler<I, O> = {
     connect: (receiver) => {
       if (webSocket.readyState !== webSocket.OPEN)
@@ -39,14 +44,16 @@ export const fromBasicWebSocket = <S, I, O>(
       webSocket.addEventListener("close", closeListener);
       webSocket.addEventListener("message", messageListener);
 
+      const senderId = generateId();
+      console.debug(`connect(${id}) -> R=${receiver.inspect()} S=${senderId}`);
+
       return {
         send: (payload) => webSocket.send(payload),
         close: () => webSocket.close(),
-        inspect: () =>
-          `<Sender over ${connector.inspect()}, paired with ${receiver.inspect()}>`,
+        inspect: () => senderId,
       };
     },
-    inspect: () => `<Connector over WebSocket>`,
+    inspect: () => id,
   };
 
   return spyOnConnector(connector);

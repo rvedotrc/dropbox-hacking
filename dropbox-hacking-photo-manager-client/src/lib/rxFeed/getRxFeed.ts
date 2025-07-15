@@ -1,3 +1,4 @@
+import generateId from "@lib/generateId";
 import type {
   IOHandler,
   RxFeedResponse,
@@ -18,23 +19,23 @@ export const getRxFeed = <
   io: IOHandler<RxFeedResponse<RES>, REQ>,
 ): Observable<RES> =>
   new Observable<RES>((subscriber) => {
+    const id = generateId();
+    console.debug(`getRxFeed(${request.type}, ${io.inspect()}) -> ${id}`);
+
     const sender = io.connect({
       receive: (m) => {
         if (m.tag === "next") subscriber.next(m.value);
         if (m.tag === "complete") subscriber.complete();
         if (m.tag === "error") subscriber.error(m.error);
       },
-      close: () => {
-        console.log("getRxFeed received close");
-        subscriber.unsubscribe();
-      },
-      inspect: () => `<Sender for outgoing connection on ${io.inspect()}>`,
+      close: () => subscriber.unsubscribe(),
+      inspect: () => id,
     });
 
     sender.send(request);
 
     return () => {
-      console.log("getRxFeed observer close");
+      console.log(`getRxFeed [${id}] observer close`);
       sender.close();
     };
   });

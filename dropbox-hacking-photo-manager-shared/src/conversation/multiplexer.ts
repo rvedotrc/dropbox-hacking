@@ -12,28 +12,37 @@ export type WrappedPayload<T> =
 
 export const multiplexer = <I, O>(
   base: IOHandler<IDHolder & WrappedPayload<I>, IDHolder & WrappedPayload<O>>,
-  listener: (handler: IOHandler<I, O>) => void,
+  listenerCallback: (handler: IOHandler<I, O>) => void,
 ): IOHandler<I, O> => {
+  const multiplexerId = generateId();
   const receiversById: Map<string, Receiver<I>> = new Map();
   let mx = { inspect: () => "[placeholder]" } as IOHandler<I, O>;
+
+  const baseReceiverId = generateId();
 
   const baseReader: Receiver<IDHolder & WrappedPayload<I>> = {
     receive: (mxControlMessage) => {
       const { id, tag } = mxControlMessage;
-      console.debug("mx receive", id, tag);
 
       if (tag === "open") {
         if (receiversById.has(id)) {
-          throw new Error("Duplicate multiplexer ID");
+          throw new Error(
+            `Multiplexer ${multiplexerId} already has conversation ${id}`,
+          );
         } else {
-          listener({
+          const listenerId = generateId();
+          const listener: IOHandler<I, O> = {
             connect: (incomingReceiver) => {
               if (receiversById.has(id)) {
-                throw new Error("Duplicate multiplexer ID");
+                throw new Error(
+                  `Multiplexer ${multiplexerId} already has conversation ${id}`,
+                );
               }
 
-              console.debug("mx accepted connection", id);
               receiversById.set(mxControlMessage.id, incomingReceiver);
+              console.debug(
+                `mx accept(${listenerId}) -> R=${incomingReceiver.inspect()} S=${id} (count=${receiversById.size})`,
+              );
 
               const incomingSender: Sender<O> = {
                 send: (message) =>
@@ -43,23 +52,26 @@ export const multiplexer = <I, O>(
                     message,
                   }),
                 close: () => {
-                  console.debug("mx connection sending close", id);
                   receiversById.delete(id);
                   baseSender.send({
                     tag: "close",
                     id,
                   });
                   incomingReceiver.close();
+                  console.debug(
+                    `${multiplexerId} ${id} closed (count=${receiversById.size})`,
+                  );
                 },
-                inspect: () =>
-                  `<Sender for incoming ${id} over ${mx.inspect()}>`,
+                inspect: () => id,
               };
 
               return incomingSender;
             },
-            inspect: () =>
-              `<Connector for incoming ${id} over ${mx.inspect()}>`,
-          });
+            inspect: () => listenerId,
+          };
+
+          console.debug(`mx listener ${id} -> ${listenerId}`);
+          listenerCallback(listener);
         }
       } else if (tag === "message") {
         const receiver = receiversById.get(mxControlMessage.id);
@@ -73,9 +85,11 @@ export const multiplexer = <I, O>(
         const receiver = receiversById.get(id);
 
         if (receiver) {
-          console.debug("mx connection received close", id);
-          receiversById.delete(mxControlMessage.id);
+          receiversById.delete(id);
           receiver.close();
+          console.debug(
+            `${multiplexerId} ${id} closed (count=${receiversById.size})`,
+          );
         } else {
           console.error("close of non-open conversation", id);
         }
@@ -83,11 +97,18 @@ export const multiplexer = <I, O>(
     },
 
     close: () => {
-      for (const receiver of receiversById.values()) receiver.close();
+      for (const [id, receiver] of receiversById.entries()) {
+        console.debug(
+          `${multiplexerId} mx-close, sending a receive-close for ${id}`,
+        );
+
+        receiver.close();
+      }
+
       receiversById.clear();
     },
 
-    inspect: () => `<BaseReader for ${mx.inspect()}>`,
+    inspect: () => baseReceiverId,
   };
 
   const baseSender = base.connect(baseReader);
@@ -100,19 +121,29 @@ export const multiplexer = <I, O>(
       receiversById.set(id, outgoingReceiver);
       baseSender.send({ id, tag: "open" });
 
+      console.debug(
+        `connect(${id}) -> R=${outgoingReceiver.inspect()} S=${id} (count=${receiversById.size})`,
+      );
+
       return {
         send: (message) => baseSender.send({ id, tag: "message", message }),
         close: () => {
-          console.debug("mx connection sending close", id);
           receiversById.delete(id);
+          console.debug(
+            `${multiplexerId} ${id} closed (count=${receiversById.size})`,
+          );
           baseSender.send({ id, tag: "close" });
           outgoingReceiver.close();
         },
-        inspect: () => `<Sender for ${id} over ${mx.inspect()}>`,
+        inspect: () => id,
       };
     },
-    inspect: () => `<Multiplexer over ${base.inspect()}>`,
+    inspect: () => multiplexerId,
   };
+
+  console.debug(
+    `multiplexer(${base.inspect()}) -> ${multiplexerId} BR=${baseReceiverId} BS=${baseSender.inspect()}`,
+  );
 
   return mx;
 };

@@ -70,7 +70,7 @@ const Root = ({
           w.send(`Thank you for saying ${m as string}`);
         },
         close: () => {},
-        inspect: () => `394586`,
+        inspect: () => `[unused code]`,
       });
     },
     [],

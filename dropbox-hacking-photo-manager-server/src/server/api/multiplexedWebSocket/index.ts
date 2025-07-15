@@ -1,5 +1,6 @@
 import type { JSONValue } from "@blaahaj/json";
 import {
+  generateId,
   type IDHolder,
   type IOHandler,
   multiplexer,
@@ -30,26 +31,33 @@ export default (app: Application, context: Context): void => {
   const feedMap = buildFeedMap(thumbnailHandlerBuilder(context));
 
   app.ws("/api/ws2", function (ws, req) {
-    const id = getLogPrefix(req) || "?";
+    const socketId = generateId();
+    console.log(`${getLogPrefix(req) || "?"} -> ${socketId}`);
 
     try {
-      console.log(`${id} New websocket`);
+      console.log(`${socketId} New websocket`);
 
       const closer = (signal: NodeJS.Signals) => {
         process.nextTick(() => {
-          console.log(`${id} Caught signal ${signal}, closing websocket`);
+          console.log(`${socketId} Caught signal ${signal}, closing websocket`);
           ws.close();
-          console.log(`${id} remove SIGINT/SIGTERM listeners`);
+          console.log(`${socketId} remove SIGINT/SIGTERM listeners`);
           process.off("SIGINT", closer);
           process.off("SIGTERM", closer);
         });
       };
 
-      console.log(`${id} add SIGINT/SIGTERM listeners`);
+      console.log(`${socketId} add SIGINT/SIGTERM listeners`);
       process.on("SIGINT", closer);
       process.on("SIGTERM", closer);
 
-      const socketIO = fromExpressWebSocket(ws);
+      ws.on("close", () => {
+        console.log(`${socketId} ws closed, removing SIGINT/SIGTERM listeners`);
+        process.off("SIGINT", closer);
+        process.off("SIGTERM", closer);
+      });
+
+      const socketIO = fromExpressWebSocket(ws, socketId);
       const usingJSON = transportAsJson<
         IDHolder & WrappedPayload<RxFeedRequest>,
         IDHolder & WrappedPayload<JSONValue>
@@ -62,9 +70,12 @@ export default (app: Application, context: Context): void => {
         (accept: IOHandler<RxFeedRequest, any>) => {
           let subscription: Subscription | undefined;
 
+          const receiverId = generateId();
           const sender = accept.connect({
             receive: (request) => {
-              console.log(`${id} got request:`, JSON.stringify(request));
+              console.log(
+                `${receiverId} got request: ${JSON.stringify(request)}`,
+              );
 
               const type = request.type;
 
@@ -88,38 +99,34 @@ export default (app: Application, context: Context): void => {
               });
             },
             close: () => subscription?.unsubscribe(),
-            inspect: () =>
-              `<Sender for incoming connection over ${accept.inspect()}>`,
+            inspect: () => receiverId,
           });
+
+          console.debug(
+            `connect(${accept.inspect()}) -> R=${receiverId} S=${sender.inspect()}`,
+          );
         },
       );
 
       {
         const hup = () =>
           process.nextTick(() =>
-            console.log(`${id} dump: ${connect.inspect()}`),
+            console.log(`${socketId} dump: ${connect.inspect()}`),
           );
         process.on("SIGHUP", hup);
         ws.on("close", () => process.off("SIGHUP", hup));
       }
 
-      ws.on("open", (..._args) => console.log(`${id} ws open`));
-      ws.on("ping", (..._args) => console.log(`${id} ws ping`));
-      ws.on("pong", (..._args) => console.log(`${id} ws pong`));
-      // // ws.on("upgrade", (..._args) => console.log(`${id} ws upgrade`));
+      // ws.on("open", (..._args) => console.log(`${id} ws open`));
+      // ws.on("ping", (..._args) => console.log(`${id} ws ping`));
+      // ws.on("pong", (..._args) => console.log(`${id} ws pong`));
+      // ws.on("upgrade", (..._args) => console.log(`${id} ws upgrade`));
       ws.on("unexpected-response", (..._args) =>
-        console.log(`${id} ws unexpected response`),
+        console.log(`${socketId} ws unexpected response`),
       );
-      ws.on("error", (...args) => console.log(`${id} ws error`, args));
-
-      console.log(`${id} socket opened`);
-      ws.on("close", () => {
-        console.log(`${id} ws closed, removing SIGINT/SIGTERM listeners`);
-        process.off("SIGINT", closer);
-        process.off("SIGTERM", closer);
-      });
+      ws.on("error", (...args) => console.log(`${socketId} ws error`, args));
     } catch (e) {
-      console.error(`${id} threw`, e);
+      console.error(`${socketId} threw`, e);
     }
   });
 };

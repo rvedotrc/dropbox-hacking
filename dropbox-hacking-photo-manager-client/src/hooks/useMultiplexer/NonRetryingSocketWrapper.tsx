@@ -54,7 +54,7 @@ export const NonRetryingSocketWrapper = (
         transportAsJson<
           IDHolder & WrappedPayload<JSONValue>,
           IDHolder & WrappedPayload<JSONValue>
-        >(fromBrowserWebSocket(s)),
+        >(fromBrowserWebSocket(s, id)),
         props.accepter,
       );
       console.log("Made io", io);
