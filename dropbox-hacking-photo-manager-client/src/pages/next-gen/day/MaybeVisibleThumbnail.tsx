@@ -13,6 +13,11 @@ const dropboxThumbnailableExtensions: readonly string[] = [
   "webp",
   "ppm",
   "bmp",
+
+  // And observationally also:
+  "cr3",
+  "mov",
+  "mp4",
 ];
 
 const MaybeVisibleThumbnail = ({
