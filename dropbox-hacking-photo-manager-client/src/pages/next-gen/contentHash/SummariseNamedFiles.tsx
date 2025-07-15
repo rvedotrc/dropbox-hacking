@@ -1,16 +1,13 @@
 import SamePageLink from "@components/samePageLink";
 import logRender from "@lib/logRender";
 import type { NamedFile } from "dropbox-hacking-photo-manager-shared";
-import React, { useId, useState } from "react";
+import React from "react";
 
 const SummariseNamedFiles = ({
   namedFiles,
 }: {
   namedFiles: readonly NamedFile[];
 }) => {
-  const [expandFull, setExpandFull] = useState(false);
-  const checkboxId = useId();
-
   return (
     <>
       <table>
@@ -56,18 +53,6 @@ const SummariseNamedFiles = ({
           })}
         </tbody>
       </table>
-
-      <p>
-        <input
-          id={checkboxId}
-          type="checkbox"
-          checked={expandFull}
-          onChange={(e) => setExpandFull(e.currentTarget.checked)}
-        />{" "}
-        <label htmlFor={checkboxId}>Show full file data</label>
-      </p>
-
-      {expandFull && <pre>{JSON.stringify(namedFiles, null, 2)}</pre>}
     </>
   );
 };

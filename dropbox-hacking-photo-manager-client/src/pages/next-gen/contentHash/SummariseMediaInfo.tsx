@@ -1,67 +1,12 @@
 import type { MediainfoFromHash } from "@blaahaj/dropbox-hacking-mediainfo-db";
 import logRender from "@lib/logRender";
-import { GPSLatLong } from "dropbox-hacking-photo-manager-shared";
-import React, { useEffect, useId, useState } from "react";
-
-// e.g. "+56.1278+012.3032+000.090/",
-const RecordedLocation = ({ location }: { location: string }) => {
-  const gps = GPSLatLong.fromMediaInfoRecordedAt(location);
-  if (!gps) return;
-
-  return (
-    <p>
-      <a href={gps.googleMapsUrl({ zoom: 15 })}>Google Maps</a>
-      {" | "}
-      <a href={gps.geoHackUrl({ title: "no title" })}>GeoHack</a>
-    </p>
-  );
-};
+import React, { useEffect } from "react";
 
 const resolutionName = (videoTrack: { Width: number; Height: number }) => {
   if (videoTrack.Width == 1920 && videoTrack.Height == 1080) return "HD";
   if (videoTrack.Width == 3840 && videoTrack.Height == 2160) return "4K";
   return;
 };
-
-// const WidthAndHeight = ({ w, h }: { w?: number; h?: number }) => {
-//   if (!w || !h) return;
-
-//   return (
-//     <>
-//       {w}x{h}
-//       {w == 1920 && h == 1080 && (
-//         <span
-//           style={{
-//             background: "darkgreen",
-//             color: "white",
-//             padding: "0.35em 0.3em 0.2em",
-//             borderRadius: "0.2em",
-//             marginInline: "0.5em",
-//             fontFamily: "sans-serif",
-//             fontSize: "80%",
-//           }}
-//         >
-//           HD
-//         </span>
-//       )}
-//       {w == 3840 && h == 2160 && (
-//         <span
-//           style={{
-//             background: "darkpurple",
-//             color: "white",
-//             padding: "0.35em 0.3em 0.2em",
-//             borderRadius: "0.2em",
-//             marginInline: "0.5em",
-//             fontFamily: "sans-serif",
-//             fontSize: "80%",
-//           }}
-//         >
-//           4K
-//         </span>
-//       )}
-//     </>
-//   );
-// };
 
 // Quicktime "mebx": https://developer.apple.com/documentation/quicktime-file-format/timed_metadata_sample_descriptions
 
@@ -143,9 +88,6 @@ const SummariseMediaInfo = ({
     return () => void head.removeChild(style);
   }, []);
 
-  const [expandFull, setExpandFull] = useState(false);
-  const checkboxId = useId();
-
   const tracks = mediaInfo.mediainfoData.media?.track ?? [];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const generalTrack = tracks.find((t) => t["@type"] === "General") as any;
@@ -208,22 +150,6 @@ const SummariseMediaInfo = ({
         <div className="mig-a-br k2">Bitrate</div>
         <div className="mig-a-br v">{audioTrack?.BitRate_String ?? "-"}</div>
       </div>
-
-      {generalTrack.Recorded_Location && (
-        <RecordedLocation location={generalTrack.Recorded_Location} />
-      )}
-
-      <p>
-        <input
-          id={checkboxId}
-          type="checkbox"
-          checked={expandFull}
-          onChange={(e) => setExpandFull(e.currentTarget.checked)}
-        />{" "}
-        <label htmlFor={checkboxId}>Show full mediainfo</label>
-      </p>
-
-      {expandFull && <pre>{JSON.stringify(mediaInfo, null, 2)}</pre>}
     </>
   );
 };

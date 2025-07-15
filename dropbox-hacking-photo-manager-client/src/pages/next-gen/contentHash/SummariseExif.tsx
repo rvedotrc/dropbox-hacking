@@ -1,15 +1,10 @@
 import type { ExifFromHash } from "@blaahaj/dropbox-hacking-exif-db";
 import logRender from "@lib/logRender";
-import { GPSLatLong } from "dropbox-hacking-photo-manager-shared";
-import React, { useId, useState } from "react";
+import React from "react";
 
 const SummariseExif = ({ exif }: { exif: ExifFromHash }) => {
-  const [expandFull, setExpandFull] = useState(false);
-  const checkboxId = useId();
-
   const imageSize = exif.exifData.imageSize;
   const tags = exif.exifData.tags;
-  const gps = tags ? GPSLatLong.fromExifTags(tags) : null;
 
   // The most present (and not blank) tags as of 2025-06-27 are:
   // Make (97.1%)
@@ -60,26 +55,6 @@ const SummariseExif = ({ exif }: { exif: ExifFromHash }) => {
         <li>Orientation: {tags?.Orientation ?? "-"}</li>
         <li>ISO: {tags?.ISO ?? "-"}</li>
       </ul>
-
-      {gps && (
-        <p>
-          <a href={gps.googleMapsUrl({ zoom: 15 })}>Google Maps</a>
-          {" | "}
-          <a href={gps.geoHackUrl({ title: "no title" })}>GeoHack</a>
-        </p>
-      )}
-
-      <p>
-        <input
-          id={checkboxId}
-          type="checkbox"
-          checked={expandFull}
-          onChange={(e) => setExpandFull(e.currentTarget.checked)}
-        />{" "}
-        <label htmlFor={checkboxId}>Show full EXIF data</label>
-      </p>
-
-      {expandFull && <pre>{JSON.stringify(exif, null, 2)}</pre>}
     </>
   );
 };

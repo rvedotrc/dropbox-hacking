@@ -1,3 +1,8 @@
+import type { ExifFromHash } from "@blaahaj/dropbox-hacking-exif-db";
+import type {
+  MediainfoFromHash,
+  Track,
+} from "@blaahaj/dropbox-hacking-mediainfo-db";
 import { geoHackUrl } from "@blaahaj/geometry/geoHack";
 import type {
   GPSLatLongWithDirection,
@@ -8,6 +13,11 @@ import { ExifTags } from "ts-exif-parser";
 export { GPSLatNLongE } from "@blaahaj/geometry/latlong";
 
 export class GPSLatLong {
+  public static fromExif(exif: ExifFromHash): GPSLatLong | null {
+    const tags = exif.exifData.tags;
+    return tags ? GPSLatLong.fromExifTags(tags) : null;
+  }
+
   public static fromExifTags(tags: ExifTags): GPSLatLong | null {
     const lat = tags.GPSLatitude;
     const long = tags.GPSLongitude;
@@ -19,6 +29,15 @@ export class GPSLatLong {
     if (longRef !== "E" && longRef !== "W") return null;
 
     return new GPSLatLong({ lat, long, latRef, longRef });
+  }
+
+  public static fromMediaInfo(mediaInfo: MediainfoFromHash): GPSLatLong | null {
+    const tracks = mediaInfo.mediainfoData.media?.track;
+    const generalTrack = tracks?.find((t) => t["@type"] === "General");
+    const recordedLocation = (
+      generalTrack as Track & { Recorded_Location?: string }
+    ).Recorded_Location;
+    return GPSLatLong.fromMediaInfoRecordedAt(recordedLocation);
   }
 
   public static fromMediaInfoRecordedAt(
