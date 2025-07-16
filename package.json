@@ -4,12 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "postinstall": "./in-each-module install",
     "build": "node buildAll.mjs",
     "build:watch": "./in-each-module build:watch",
     "clean": "rm -rf */dist node_modules dropbox-hacking-*/node_modules",
     "fix": "./in-each-module fix",
     "format": "./in-each-module format",
-    "install-all": "pnpm install && ./in-each-module install",
     "test": "./in-each-module test",
     "test:lint": "./in-each-module test:lint",
     "test:prettier": "./in-each-module test:prettier",
