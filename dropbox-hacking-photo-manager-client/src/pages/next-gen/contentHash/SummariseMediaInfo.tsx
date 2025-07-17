@@ -1,6 +1,7 @@
 import type { MediainfoFromHash } from "@blaahaj/dropbox-hacking-mediainfo-db";
+import { useStyleSheet } from "@hooks/useStyleSheet";
 import logRender from "@lib/logRender";
-import React, { useEffect } from "react";
+import React from "react";
 
 const resolutionName = (videoTrack: { Width: number; Height: number }) => {
   if (videoTrack.Width == 1920 && videoTrack.Height == 1080) return "HD";
@@ -15,7 +16,8 @@ const SummariseMediaInfo = ({
 }: {
   mediaInfo: MediainfoFromHash;
 }) => {
-  const css = `
+  useStyleSheet({
+    cssText: `
 
 .mediaInfoGrid {
     display: grid;
@@ -74,19 +76,8 @@ const SummariseMediaInfo = ({
     font-size: 80%;
     font-weight: bold;
 }
-    `;
-
-  useEffect(() => {
-    const head = document.getElementsByTagName("head")[0];
-    if (!head) return;
-
-    const style = document.createElement("style");
-    style.appendChild(document.createTextNode(css));
-    style.setAttribute("type", "text/css");
-    head.appendChild(style);
-
-    return () => void head.removeChild(style);
-  }, []);
+    `,
+  });
 
   const tracks = mediaInfo.mediainfoData.media?.track ?? [];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
