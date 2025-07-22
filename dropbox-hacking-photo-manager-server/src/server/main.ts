@@ -7,7 +7,6 @@ import contextBuilder from "./contextBuilder.js";
 import getPages from "./getPages.js";
 import getRoot from "./getRoot.js";
 import image from "./image/index.js";
-import legacyRedirects from "./legacyRedirects.js";
 
 const appWithoutWs = express();
 const appWithWs = expressWs(appWithoutWs).app;
@@ -83,7 +82,6 @@ appWithWs.use(express.json());
 
 getRoot(appWithWs, context);
 getPages(appWithWs, context);
-legacyRedirects(appWithWs, context);
 
 api(appWithWs, context);
 image(appWithWs, context);
