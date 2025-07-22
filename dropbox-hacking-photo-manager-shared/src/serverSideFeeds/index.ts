@@ -19,7 +19,7 @@ export * from "./fsck.js";
 export * from "./listOfDays.js";
 export * from "./tags.js";
 export * from "./thumbnail.js";
-// RVE-add-feed
+export * from "./video.js";
 
 import * as exifDb from "@blaahaj/dropbox-hacking-exif-db";
 import * as mediaInfoDb from "@blaahaj/dropbox-hacking-mediainfo-db";

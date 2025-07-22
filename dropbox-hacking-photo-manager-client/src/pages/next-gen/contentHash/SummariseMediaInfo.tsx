@@ -1,11 +1,19 @@
-import type { MediainfoFromHash } from "@blaahaj/dropbox-hacking-mediainfo-db";
+import {
+  isAudioTrack,
+  isGeneralTrack,
+  isVideoTrack,
+  type MediainfoFromHash,
+  type VideoTrack,
+} from "@blaahaj/dropbox-hacking-mediainfo-db/types";
 import { useStyleSheet } from "@hooks/useStyleSheet";
 import logRender from "@lib/logRender";
 import React from "react";
 
-const resolutionName = (videoTrack: { Width: number; Height: number }) => {
-  if (videoTrack.Width == 1920 && videoTrack.Height == 1080) return "HD";
-  if (videoTrack.Width == 3840 && videoTrack.Height == 2160) return "4K";
+const resolutionName = (videoTrack: VideoTrack) => {
+  if (Number(videoTrack.Width) === 1920 && Number(videoTrack.Height) === 1080)
+    return "HD";
+  if (Number(videoTrack.Width) === 3840 && Number(videoTrack.Height) === 2160)
+    return "4K";
   return;
 };
 
@@ -80,30 +88,27 @@ const SummariseMediaInfo = ({
   });
 
   const tracks = mediaInfo.mediainfoData.media?.track ?? [];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const generalTrack = tracks.find((t) => t["@type"] === "General") as any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const videoTrack = tracks.find((t) => t["@type"] === "Video") as any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const audioTrack = tracks.find((t) => t["@type"] === "Audio") as any;
+  const generalTrack = tracks.find(isGeneralTrack);
+  const videoTrack = tracks.find(isVideoTrack);
+  const audioTrack = tracks.find(isAudioTrack);
 
   return (
     <>
       <div className="mediaInfoGrid">
         <div className="mig-c k1">General</div>
         <div className="mig-c-f k2">Format</div>
-        <div className="mig-c-f v">{generalTrack?.Format_String ?? "-"}</div>
+        <div className="mig-c-f v">{generalTrack?.Format ?? "-"}</div>
         <div className="mig-c-d k2">Duration</div>
-        <div className="mig-c-d v">{generalTrack?.Duration_String ?? "-"}</div>
+        <div className="mig-c-d v">{generalTrack?.Duration ?? "-"}</div>
         <div className="mig-c-s k2">File size</div>
-        <div className="mig-c-s v">{generalTrack?.FileSize_String4 ?? "-"}</div>
+        <div className="mig-c-s v">{generalTrack?.FileSize ?? "-"}</div>
 
         <div className="mig-v k1">Video</div>
         <div className="mig-v-f k2">Format</div>
-        <div className="mig-v-f v">{videoTrack?.Format_String ?? "-"}</div>
+        <div className="mig-v-f v">{videoTrack?.Format ?? "-"}</div>
         <div className="mig-v-res k2">Resolution</div>
         <div className="mig-v-res v">
-          {videoTrack.Width && videoTrack.Height ? (
+          {videoTrack?.Width && videoTrack?.Height ? (
             <>
               {videoTrack.Width}
               {" x "}
@@ -131,15 +136,13 @@ const SummariseMediaInfo = ({
 
         <div className="mig-a k1">Audio</div>
         <div className="mig-a-f k2">Format</div>
-        <div className="mig-a-f v">{audioTrack?.Format_String ?? "-"}</div>
+        <div className="mig-a-f v">{audioTrack?.Format ?? "-"}</div>
         <div className="mig-a-sr k2">Sampling rate</div>
-        <div className="mig-a-sr v">
-          {audioTrack?.SamplingRate_String ?? "-"}
-        </div>
+        <div className="mig-a-sr v">{audioTrack?.SamplingRate ?? "-"}</div>
         <div className="mig-a-ch k2">Channels</div>
         <div className="mig-a-ch v">{audioTrack?.Channels ?? "-"}</div>
         <div className="mig-a-br k2">Bitrate</div>
-        <div className="mig-a-br v">{audioTrack?.BitRate_String ?? "-"}</div>
+        <div className="mig-a-br v">{audioTrack?.BitRate ?? "-"}</div>
       </div>
     </>
   );

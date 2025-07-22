@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@blaahaj/dropbox-hacking-exif-db": "^1.0.0",
-    "@blaahaj/dropbox-hacking-mediainfo-db": "^1.2.0",
+    "@blaahaj/dropbox-hacking-mediainfo-db": "^1.3.0",
     "@blaahaj/geometry": "^1.0.0",
     "@blaahaj/json": "^1.0.1",
     "ts-exif-parser": "^0.2.2"
