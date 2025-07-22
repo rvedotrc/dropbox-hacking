@@ -14,9 +14,14 @@ export default (app: Application, context: Context): void => {
         day_metadata: { date: req.params.date, description },
       };
 
-      void context.dayDb.setDay(r.day_metadata).then(() => {
-        res.json(r);
-      });
+      void context.dayDb
+        .setDay(r.day_metadata)
+        .then(() => res.json(r))
+        .catch((error) => {
+          console.error(`Error in ${req.method} ${req.path}:`, error);
+          res.sendStatus(500);
+        })
+        .finally(() => res.end());
     } else {
       res.status(400);
       res.json({ error: "No description" });
