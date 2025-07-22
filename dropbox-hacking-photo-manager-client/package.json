@@ -61,7 +61,7 @@
     "build:watch": "rebuild -r . --exclude public/dist -- sh -c 'if ! pnpm test:prettier ; then pnpm format ; else pnpm run test:lint && pnpm run compile ; fi'",
     "compile": "webpack --mode development",
     "fix": "eslint --fix",
-    "format": "prettier --write .",
+    "format": "prettier --write --list-different .",
     "rebuild": "rebuild package.json package-lock.json tsconfig.json .babelrc webpack.config.js src .git/refs -- npm run-script build",
     "test": "concurrently --group pnpm:test:*",
     "test:prettier": "prettier --check .",

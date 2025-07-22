@@ -8,7 +8,7 @@
     "build": "tsc",
     "build:watch": "tsc --watch",
     "fix": "eslint --fix",
-    "format": "prettier --write .",
+    "format": "prettier --write --list-different .",
     "test:prettier": "prettier --check .",
     "test:lint": "eslint",
     "test:unit": "c8 node --enable-source-maps --experimental-test-coverage --test './dist/spec/**/*.js'"
