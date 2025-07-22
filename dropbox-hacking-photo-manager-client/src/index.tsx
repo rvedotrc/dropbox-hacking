@@ -9,7 +9,9 @@ import NGDayFiles from "@pages/next-gen/day/files";
 import ExifExplorer from "@pages/next-gen/exifExplorer";
 import Fsck from "@pages/next-gen/fsck";
 import NGDaysNoSamples from "@pages/next-gen/list-of-days/without-samples";
+import MediaInfoExplorer from "@pages/next-gen/mediaInfoExplorer";
 import Tags from "@pages/next-gen/tags";
+import Video from "@pages/next-gen/video";
 import {
   type IOHandler,
   RouteState,
@@ -27,10 +29,14 @@ const toRender = ({ routeState }: { routeState: RouteState }) => {
     return <BasicCounts {...routeState} />;
   if (routeState.route === "route/next-gen/fsck")
     return <Fsck {...routeState} />;
+  if (routeState.route === "route/next-gen/video")
+    return <Video {...routeState} />;
   if (routeState.route === "route/next-gen/tags")
     return <Tags {...routeState} />;
   if (routeState.route === "route/next-gen/exif-explorer")
     return <ExifExplorer {...routeState} />;
+  if (routeState.route === "route/next-gen/mediainfo-explorer")
+    return <MediaInfoExplorer {...routeState} />;
   if (routeState.route === "route/next-gen/list-of-days/without-samples")
     return <NGDaysNoSamples {...routeState} />;
   if (routeState.route === "route/next-gen/day/files")

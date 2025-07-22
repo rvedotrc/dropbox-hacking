@@ -1,10 +1,10 @@
-import type { RxFeedResponse } from "dropbox-hacking-photo-manager-shared";
+import type { ObservableUpdate } from "dropbox-hacking-photo-manager-shared";
 import { generateId, IOHandler } from "dropbox-hacking-photo-manager-shared";
 import { Observable } from "rxjs";
 
 export const serveRxFeed = <T>(
   observable: Observable<T>,
-  io: IOHandler<never, RxFeedResponse<T>>,
+  io: IOHandler<never, ObservableUpdate<T>>,
 ): void => {
   const id = generateId();
   console.debug(`serveRxFeed(${io.inspect()}) -> ${id}`);

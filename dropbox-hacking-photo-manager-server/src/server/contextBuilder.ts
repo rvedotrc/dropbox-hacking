@@ -2,6 +2,11 @@ import { getDropboxClient } from "@blaahaj/dropbox-hacking-util";
 import { Dropbox } from "dropbox";
 import type { FullDatabaseFeeds } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 
+import { fsCachingThumbnailFetcher } from "./api/websocket/fsCachingThumbnailFetcher.js";
+import {
+  batchingThumbnailFetcher,
+  nullThumbnailFetcher,
+} from "./api/websocket/thumbnailFetcher.js";
 import { Context } from "./context.js";
 import DayDb from "./dayDb.js";
 import { buildForDayDbMap } from "./rx/dayDb.js";
@@ -57,7 +62,7 @@ export default (args: {
     photosRxMap.close();
   };
 
-  return {
+  const context = {
     port: args.port,
     baseUrlWithoutSlash: args.baseUrlWithoutSlash,
     get dropboxClient(): Promise<Dropbox> {
@@ -70,7 +75,16 @@ export default (args: {
     dayDb,
 
     fullDatabaseFeeds,
+    thumbnailFetcher: nullThumbnailFetcher(),
 
     close,
+  };
+
+  return {
+    ...context,
+    thumbnailFetcher: fsCachingThumbnailFetcher(
+      context,
+      batchingThumbnailFetcher(context),
+    ),
   };
 };

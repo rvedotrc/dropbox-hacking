@@ -25,7 +25,14 @@ export type RouteState =
       route: "route/next-gen/fsck";
     }
   | {
+      route: "route/next-gen/video";
+    }
+  | {
       route: "route/next-gen/exif-explorer";
+    }
+  | {
+      route: "route/next-gen/mediainfo-explorer";
+      streamKind: string | null;
     }
   | {
       route: "route/next-gen/list-of-days/without-samples";
@@ -54,10 +61,14 @@ export const urlForState = (state: RouteState): string => {
       return `/next-gen/basic-counts`;
     case "route/next-gen/fsck":
       return `/next-gen/fsck`;
+    case "route/next-gen/video":
+      return `/next-gen/video`;
     case "route/next-gen/tags":
       return `/next-gen/tags${state.tag === null ? "" : `/${state.tag}`}`;
     case "route/next-gen/exif-explorer":
       return `/next-gen/exif-explorer`;
+    case "route/next-gen/mediainfo-explorer":
+      return `/next-gen/mediainfo-explorer/${state.streamKind}`;
     case "route/next-gen/content-hash":
       return `/next-gen/content-hash/${state.contentHash}`;
     case "route/next-gen/day/files":

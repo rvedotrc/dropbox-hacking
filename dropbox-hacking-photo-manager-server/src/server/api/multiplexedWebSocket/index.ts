@@ -9,10 +9,10 @@ import {
 } from "dropbox-hacking-photo-manager-shared";
 import {
   buildFeedMap,
+  type FeedMap,
   type FullDatabaseFeeds,
   type RequestTypeFor,
   type ResponseTypeFor,
-  type RxFeedRequest,
 } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import type { Application } from "express-ws";
 import type { Subscription } from "rxjs";
@@ -59,7 +59,7 @@ export default (app: Application, context: Context): void => {
 
       const socketIO = fromExpressWebSocket(ws, socketId);
       const usingJSON = transportAsJson<
-        IDHolder & WrappedPayload<RxFeedRequest>,
+        IDHolder & WrappedPayload<RequestTypeFor<keyof FeedMap>>,
         IDHolder & WrappedPayload<JSONValue>
       >(socketIO);
 
@@ -67,7 +67,7 @@ export default (app: Application, context: Context): void => {
         usingJSON,
         // FIXME: JSONValue type safety
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (accept: IOHandler<RxFeedRequest, any>) => {
+        (accept: IOHandler<RequestTypeFor<keyof FeedMap>, any>) => {
           let subscription: Subscription | undefined;
 
           const receiverId = generateId();

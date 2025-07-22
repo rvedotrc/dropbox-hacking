@@ -8,9 +8,11 @@ const navigation = (): React.ReactElement | null => (
     >
       List of days
     </SamePageLink>
-
     {" | "}
-
+    <SamePageLink routeState={{ route: "route/next-gen/video" }}>
+      Video
+    </SamePageLink>
+    {" | "}
     <SamePageLink routeState={{ route: "route/next-gen/basic-counts" }}>
       Basic counts
     </SamePageLink>
@@ -25,6 +27,15 @@ const navigation = (): React.ReactElement | null => (
     {" | "}
     <SamePageLink routeState={{ route: "route/next-gen/exif-explorer" }}>
       EXIF explorer
+    </SamePageLink>
+    {" | "}
+    <SamePageLink
+      routeState={{
+        route: "route/next-gen/mediainfo-explorer",
+        streamKind: null,
+      }}
+    >
+      MediaInfo explorer
     </SamePageLink>
 
     {" /// "}

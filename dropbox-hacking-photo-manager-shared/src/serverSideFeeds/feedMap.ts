@@ -9,8 +9,9 @@ import { provideExifExplorer } from "./exifExplorer.js";
 import { provideFileId } from "./fileId.js";
 import { provideFileRev } from "./fileRev.js";
 import { provideFsck } from "./fsck.js";
-import { type FullDatabaseFeeds } from "./index.js";
+import { type FullDatabaseFeeds, provideVideo } from "./index.js";
 import { provideListOfDaysWithoutSamples } from "./listOfDays.js";
+import { provideMediaInfoExplorer } from "./mediaInfoExplorer.js";
 import { provideTags } from "./tags.js";
 import { provideThumbnail, type ThumbnailRequest } from "./thumbnail.js";
 
@@ -75,8 +76,14 @@ export const buildFeedMap = (
     f10,
     createSpec("rx.ng.thumbnail2", provideThumbnail(thumbnailHandler)),
   );
+  const f12 = addFeed(f11, createSpec("rx.ng.video", provideVideo));
+  const f13 = addFeed(
+    f12,
+    createSpec("rx.ng.mediainfo-explorer", provideMediaInfoExplorer),
+  );
+  // RVE-add-feed
 
-  return f11;
+  return f13;
 };
 
 export type FeedMap = ReturnType<typeof buildFeedMap>;

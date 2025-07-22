@@ -43,16 +43,16 @@ const EditablePhotoEntry = ({
 
   return (
     <div>
-      <p>
+      <div>
         Description:{" "}
         <EditableTextField
           key={photoDbEntry.description ?? ""}
           value={photoDbEntry.description ?? ""}
           onSave={onSaveDescription}
         />
-      </p>
+      </div>
 
-      <p>
+      <div>
         Tags:{" "}
         <EditableTextField
           key={photoDbEntry.tags?.join(" ") ?? ""}
@@ -66,7 +66,7 @@ const EditablePhotoEntry = ({
             )
           }
         />
-      </p>
+      </div>
     </div>
   );
 };

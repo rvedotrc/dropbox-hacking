@@ -12,8 +12,8 @@ importers:
         specifier: ^1.0.0
         version: 1.0.0(@types/node-fetch@2.6.12)
       '@blaahaj/dropbox-hacking-mediainfo-db':
-        specifier: ^1.2.0
-        version: 1.2.0(@types/node-fetch@2.6.12)
+        specifier: ^1.3.0
+        version: 1.3.0(@types/node-fetch@2.6.12)
       '@blaahaj/geometry':
         specifier: ^1.0.0
         version: 1.0.0
@@ -76,14 +76,14 @@ packages:
   '@blaahaj/dropbox-hacking-lister@1.0.0':
     resolution: {integrity: sha512-0Q0UE0Je7I9SbdHVCpGSZQcoIrlaO/Go1/+BMpDFLPf5RvZCYA4a3ItroDj8tx5szaG+pYoPLBBiOOK9N4rr4A==}
 
-  '@blaahaj/dropbox-hacking-mediainfo-db@1.2.0':
-    resolution: {integrity: sha512-q+qejpqYBjLFcUwaJ+M942ac6PPzPSl5mRZqa4TFwz4t8czBSU2hSNjSSamDDoM/u+zZ5uXJxSNPIEmKvPKSRw==}
+  '@blaahaj/dropbox-hacking-mediainfo-db@1.3.0':
+    resolution: {integrity: sha512-ua5BBIX3FYTmGUxAM+mSlVJ5u/0h5WCyz3rGxG/+ylR+HQradt1H/KMSk8FsTUDAGjBQnBFdmdWXfJLGIyH/hA==}
 
   '@blaahaj/dropbox-hacking-util@1.0.1':
     resolution: {integrity: sha512-kwPcC1dj8bEfScrrjCVKo1av5ZyfyrzgtzZJQNeMcXisbqVeQ0ik0fxSuwt9PI4JdLlxxq+8X1LXtfkyaNsxzg==}
 
-  '@blaahaj/dropbox-hacking-util@1.1.0':
-    resolution: {integrity: sha512-ZE4MZZStsa7TPed48MZk+ilHpWWn25xZ4vaswTTMW/HXupPKahSi2qlvOmLLZGM1ffOpdN+abzpQDM/f6pt0dA==}
+  '@blaahaj/dropbox-hacking-util@1.2.0':
+    resolution: {integrity: sha512-Pmo8/OQkPg1UhVA4m7w/yhZFUSPQGYWjyvt1pRdI+v9AW4smlUsaUeYCVezQ9AAN412jckE9Uv6swktyPKwKXg==}
 
   '@blaahaj/geometry@1.0.0':
     resolution: {integrity: sha512-5bPCKbWYOY9eovcABZgKeMpd2xsGnYySASLJr8k8obqU1wu4WYKHceeI20ulVi1Bw0nfv21KoYJzB2I6wwrCng==}
@@ -1103,7 +1103,7 @@ snapshots:
 
   '@blaahaj/dropbox-hacking-downloader@1.0.1(@types/node-fetch@2.6.12)':
     dependencies:
-      '@blaahaj/dropbox-hacking-util': 1.1.0(@types/node-fetch@2.6.12)
+      '@blaahaj/dropbox-hacking-util': 1.2.0(@types/node-fetch@2.6.12)
       dropbox: 10.34.0(@types/node-fetch@2.6.12)
     transitivePeerDependencies:
       - '@types/node-fetch'
@@ -1122,18 +1122,18 @@ snapshots:
 
   '@blaahaj/dropbox-hacking-lister@1.0.0(@types/node-fetch@2.6.12)':
     dependencies:
-      '@blaahaj/dropbox-hacking-util': 1.1.0(@types/node-fetch@2.6.12)
+      '@blaahaj/dropbox-hacking-util': 1.2.0(@types/node-fetch@2.6.12)
       dropbox: 10.34.0(@types/node-fetch@2.6.12)
     transitivePeerDependencies:
       - '@types/node-fetch'
       - encoding
       - supports-color
 
-  '@blaahaj/dropbox-hacking-mediainfo-db@1.2.0(@types/node-fetch@2.6.12)':
+  '@blaahaj/dropbox-hacking-mediainfo-db@1.3.0(@types/node-fetch@2.6.12)':
     dependencies:
       '@blaahaj/dropbox-hacking-downloader': 1.0.1(@types/node-fetch@2.6.12)
       '@blaahaj/dropbox-hacking-lister': 1.0.0(@types/node-fetch@2.6.12)
-      '@blaahaj/dropbox-hacking-util': 1.1.0(@types/node-fetch@2.6.12)
+      '@blaahaj/dropbox-hacking-util': 1.2.0(@types/node-fetch@2.6.12)
       dropbox: 10.34.0(@types/node-fetch@2.6.12)
     transitivePeerDependencies:
       - '@types/node-fetch'
@@ -1149,7 +1149,7 @@ snapshots:
       - encoding
       - supports-color
 
-  '@blaahaj/dropbox-hacking-util@1.1.0(@types/node-fetch@2.6.12)':
+  '@blaahaj/dropbox-hacking-util@1.2.0(@types/node-fetch@2.6.12)':
     dependencies:
       dropbox: 10.34.0(@types/node-fetch@2.6.12)
       express: 4.21.2

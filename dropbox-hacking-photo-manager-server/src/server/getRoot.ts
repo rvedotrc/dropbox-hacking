@@ -8,5 +8,6 @@ export default (app: Application, context: Context): void => {
       302,
       `${context.baseUrlWithoutSlash}/next-gen/list-of-days/without-samples`,
     );
+    res.end();
   });
 };
