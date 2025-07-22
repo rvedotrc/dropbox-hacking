@@ -1,4 +1,3 @@
-import logRender from "@lib/logRender";
 import React, { type CSSProperties } from "react";
 
 const Tags = ({ tags, style }: { tags: string[]; style?: CSSProperties }) => {
@@ -13,4 +12,4 @@ const Tags = ({ tags, style }: { tags: string[]; style?: CSSProperties }) => {
   );
 };
 
-export default logRender(Tags);
+export default Tags;
