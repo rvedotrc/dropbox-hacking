@@ -19,7 +19,6 @@ export type RouteState =
     }
   | {
       route: "route/next-gen/tags";
-      tag: string | null;
     }
   | {
       route: "route/next-gen/fsck";
@@ -72,7 +71,7 @@ export const urlForState = (state: RouteState): string => {
     case "route/next-gen/video":
       return `/next-gen/video`;
     case "route/next-gen/tags":
-      return `/next-gen/tags${state.tag === null ? "" : `/${state.tag}`}`;
+      return `/next-gen/tags`;
     case "route/next-gen/exif-explorer":
       return `/next-gen/exif-explorer`;
     case "route/next-gen/mediainfo-explorer":

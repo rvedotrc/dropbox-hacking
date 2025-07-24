@@ -53,14 +53,7 @@ export default (app: Application, _context: Context): void => {
 
   app.get("/next-gen/tags", (_req, res) => {
     res.contentType("text/html");
-    res.send(pageAsString({ route: "route/next-gen/tags", tag: null }));
-  });
-
-  app.get("/next-gen/tags/:tag", (req, res) => {
-    res.contentType("text/html");
-    res.send(
-      pageAsString({ route: "route/next-gen/tags", tag: req.params.tag }),
-    );
+    res.send(pageAsString({ route: "route/next-gen/tags" }));
   });
 
   app.get("/next-gen/exif-explorer", (_req, res) => {
