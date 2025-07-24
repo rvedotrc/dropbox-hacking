@@ -42,7 +42,11 @@ export const PrevNextFileNav = ({
             },
           }}
         >
-          &larr; {previousFile.namedFile.name}
+          &larr;{" "}
+          {previousFile.namedFile.name.replaceAll(
+            previousFile.namedFile.content_hash,
+            "#",
+          )}
         </SamePageLink>
       )}
       {" ~ "}
@@ -66,7 +70,11 @@ export const PrevNextFileNav = ({
             },
           }}
         >
-          {nextFile.namedFile.name} &rarr;
+          {nextFile.namedFile.name.replaceAll(
+            nextFile.namedFile.content_hash,
+            "#",
+          )}{" "}
+          &rarr;
         </SamePageLink>
       )}
     </div>
