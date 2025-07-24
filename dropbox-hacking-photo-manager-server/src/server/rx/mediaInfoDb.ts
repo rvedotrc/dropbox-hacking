@@ -10,7 +10,19 @@ import { jsonFileObservableViaLoader } from "./util.js";
 export const buildForMediaInfoDbMap = (dbDir: string) => {
   const observable = jsonFileObservableViaLoader(
     dbDir,
-    () => new MediainfoDB(dbDir).readAll(),
+    () =>
+      new MediainfoDB(dbDir)
+        .readAll()
+        .then(
+          (all) =>
+            new Map(
+              all
+                .entries()
+                .filter(
+                  ([_, v]) => (v.mediainfoData.media?.track.length ?? 0) > 1,
+                ),
+            ),
+        ),
     100,
   );
 

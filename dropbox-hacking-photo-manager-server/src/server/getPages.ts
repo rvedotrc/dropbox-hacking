@@ -46,6 +46,11 @@ export default (app: Application, _context: Context): void => {
     res.send(pageAsString({ route: "route/next-gen/video" }));
   });
 
+  app.get("/next-gen/search", (_req, res) => {
+    res.contentType("text/html");
+    res.send(pageAsString({ route: "route/next-gen/search" }));
+  });
+
   app.get("/next-gen/tags", (_req, res) => {
     res.contentType("text/html");
     res.send(pageAsString({ route: "route/next-gen/tags", tag: null }));

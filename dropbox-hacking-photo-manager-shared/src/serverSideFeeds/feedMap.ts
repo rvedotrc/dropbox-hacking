@@ -11,6 +11,7 @@ import { provideFsck } from "./fsck.js";
 import { type FullDatabaseFeeds } from "./index.js";
 import { provideListOfDaysWithoutSamples } from "./listOfDays.js";
 import { provideMediaInfoExplorer } from "./mediaInfoExplorer.js";
+import { provideSearch } from "./search.js";
 import { provideTags } from "./tags.js";
 import {
   provideThumbnail,
@@ -85,9 +86,10 @@ export const buildFeedMap = (
     f12,
     createSpec("rx.ng.mediainfo-explorer", provideMediaInfoExplorer),
   );
+  const f14 = addFeed(f13, createSpec("rx.ng.search", provideSearch));
   // RVE-add-feed
 
-  return f13;
+  return f14;
 };
 
 export type FeedMap = ReturnType<typeof buildFeedMap>;

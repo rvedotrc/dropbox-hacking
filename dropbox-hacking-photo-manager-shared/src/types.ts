@@ -42,6 +42,10 @@ export type RouteState =
       date: string;
     }
   | {
+      route: "route/next-gen/search";
+      filterText?: string;
+    }
+  | {
       route: "route/next-gen/content-hash";
       contentHash: string;
       context?: {
@@ -51,7 +55,9 @@ export type RouteState =
     };
 // RVE-add-route
 
-export const ensureNever = (_: never) => undefined;
+export const ensureNever = (_: never) => {
+  throw new Error("ensureNever failed");
+};
 
 export const urlForState = (state: RouteState): string => {
   switch (state.route) {
@@ -61,6 +67,8 @@ export const urlForState = (state: RouteState): string => {
       return `/next-gen/basic-counts`;
     case "route/next-gen/fsck":
       return `/next-gen/fsck`;
+    case "route/next-gen/search":
+      return `/next-gen/search`;
     case "route/next-gen/video":
       return `/next-gen/video`;
     case "route/next-gen/tags":

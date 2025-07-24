@@ -21,6 +21,10 @@ const navigation = (): React.ReactElement | null => (
       tags
     </SamePageLink>
     {" | "}
+    <SamePageLink routeState={{ route: "route/next-gen/search" }}>
+      Search
+    </SamePageLink>
+    {" | "}
     <SamePageLink routeState={{ route: "route/next-gen/fsck" }}>
       fsck
     </SamePageLink>
