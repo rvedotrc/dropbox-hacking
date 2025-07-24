@@ -43,13 +43,17 @@ const NGSearch = ({
       <p>The query is in Reverse Polish.</p>
 
       <ul>
-        <li>tag=swan</li>
         <li>image / video / audio</li>
+        <li>gps</li>
+
+        <li>tag=swan</li>
+        <li>text~meet</li>
+        <li>path~originals</li>
+
         <li>tags&gt;0 / tags&lt;2</li>
         <li>date&gt;2015 / date&lt;2019</li>
         <li>duration&gt;300 / duration&lt;10</li>
-        <li>gps / !gps</li>
-        <li>path~originals</li>
+
         <li>&, |, !</li>
       </ul>
 
@@ -62,8 +66,19 @@ const NGSearch = ({
 
       {filter ? (
         <p>{JSON.stringify(filter, null, 2)}</p>
+      ) : filterSource === "" ? (
+        false
       ) : (
-        <p>Not valid filter</p>
+        <p
+          style={{
+            background: "red",
+            color: "white",
+            padding: "0.3em",
+            width: "auto",
+          }}
+        >
+          Not a valid filter
+        </p>
       )}
 
       {latestValue ? (
