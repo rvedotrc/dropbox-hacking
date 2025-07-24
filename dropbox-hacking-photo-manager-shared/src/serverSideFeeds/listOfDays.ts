@@ -74,6 +74,16 @@ export const provideListOfDaysWithoutSamples = (
         const hasExif = exifs.has(file.content_hash);
         const hasMediaInfo = mediaInfos.has(file.content_hash);
 
+        const photoDbEntry = photosByContentHash.get(file.content_hash);
+
+        if (
+          !hasExif &&
+          !hasMediaInfo &&
+          !photoDbEntry &&
+          file.path_lower.endsWith(".cr3")
+        )
+          continue;
+
         let e = out.get(date);
         if (e) {
           if (isImage) {
@@ -101,7 +111,6 @@ export const provideListOfDaysWithoutSamples = (
           out.set(date, e);
         }
 
-        const photoDbEntry = photosByContentHash.get(file.content_hash);
         if (photoDbEntry) {
           for (const tag of photoDbEntry.tags ?? []) {
             e.photoTags[tag] = (e.photoTags[tag] ?? 0) + 1;
@@ -109,9 +118,12 @@ export const provideListOfDaysWithoutSamples = (
         }
       }
 
-      const r = [...out.values()].toSorted((a, b) =>
-        a.date.localeCompare(b.date),
-      );
+      const r = [...out.values()]
+        .filter(
+          (item) =>
+            item.counts.imagesWithExif + item.counts.videosWithMediaInfo > 0,
+        )
+        .toSorted((a, b) => a.date.localeCompare(b.date));
 
       return r;
     }),

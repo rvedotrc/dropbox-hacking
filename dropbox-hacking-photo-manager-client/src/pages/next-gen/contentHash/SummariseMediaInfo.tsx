@@ -9,6 +9,8 @@ import { useStyleSheet } from "@hooks/useStyleSheet";
 import logRender from "@lib/logRender";
 import React from "react";
 
+import SummaryTable from "./SummaryTable";
+
 const resolutionName = (videoTrack: VideoTrack) => {
   if (Number(videoTrack.Width) === 1920 && Number(videoTrack.Height) === 1080)
     return "HD";
@@ -93,58 +95,63 @@ const SummariseMediaInfo = ({
   const audioTrack = tracks.find(isAudioTrack);
 
   return (
-    <>
-      <div className="mediaInfoGrid">
-        <div className="mig-c k1">General</div>
-        <div className="mig-c-f k2">Format</div>
-        <div className="mig-c-f v">{generalTrack?.Format ?? "-"}</div>
-        <div className="mig-c-d k2">Duration</div>
-        <div className="mig-c-d v">{generalTrack?.Duration ?? "-"}</div>
-        <div className="mig-c-s k2">File size</div>
-        <div className="mig-c-s v">{generalTrack?.FileSize ?? "-"}</div>
-
-        <div className="mig-v k1">Video</div>
-        <div className="mig-v-f k2">Format</div>
-        <div className="mig-v-f v">{videoTrack?.Format ?? "-"}</div>
-        <div className="mig-v-res k2">Resolution</div>
-        <div className="mig-v-res v">
-          {videoTrack?.Width && videoTrack?.Height ? (
-            <>
-              {videoTrack.Width}
-              {" x "}
-              {videoTrack.Height}
-              {resolutionName(videoTrack) && (
-                <span className="resolutionName">
-                  {resolutionName(videoTrack)}
-                </span>
-              )}
-            </>
-          ) : (
-            "-"
-          )}
-        </div>
-        <div className="mig-v-ar k2">Aspect ratio</div>
-        <div className="mig-v-ar v">
-          {videoTrack?.DisplayAspectRatio_String ?? "-"}
-        </div>
-        <div className="mig-v-fps k2">fps</div>
-        <div className="mig-v-fps v">
-          {videoTrack?.FrameRate
-            ? Math.round(Number(videoTrack.FrameRate))
-            : "-"}
-        </div>
-
-        <div className="mig-a k1">Audio</div>
-        <div className="mig-a-f k2">Format</div>
-        <div className="mig-a-f v">{audioTrack?.Format ?? "-"}</div>
-        <div className="mig-a-sr k2">Sampling rate</div>
-        <div className="mig-a-sr v">{audioTrack?.SamplingRate ?? "-"}</div>
-        <div className="mig-a-ch k2">Channels</div>
-        <div className="mig-a-ch v">{audioTrack?.Channels ?? "-"}</div>
-        <div className="mig-a-br k2">Bitrate</div>
-        <div className="mig-a-br v">{audioTrack?.BitRate ?? "-"}</div>
-      </div>
-    </>
+    <SummaryTable
+      table={{
+        sections: [
+          {
+            name: "General",
+            rows: [
+              { key: "Format", value: generalTrack?.Format ?? "-" },
+              { key: "Duration", value: generalTrack?.Duration ?? "-" },
+              { key: "File size", value: generalTrack?.FileSize ?? "-" },
+            ],
+          },
+          {
+            name: "Video",
+            rows: [
+              { key: "Format", value: videoTrack?.Format ?? "-" },
+              {
+                key: "Resolution",
+                value:
+                  videoTrack?.Width && videoTrack?.Height ? (
+                    <>
+                      {videoTrack.Width}
+                      {" x "}
+                      {videoTrack.Height}
+                      {resolutionName(videoTrack) && (
+                        <span className="resolutionName">
+                          {resolutionName(videoTrack)}
+                        </span>
+                      )}
+                    </>
+                  ) : (
+                    "-"
+                  ),
+              },
+              {
+                key: "Aspect ratio",
+                value: videoTrack?.DisplayAspectRatio_String ?? "-",
+              },
+              {
+                key: "fps",
+                value: videoTrack?.FrameRate
+                  ? Math.round(Number(videoTrack.FrameRate))
+                  : "-",
+              },
+            ],
+          },
+          {
+            name: "Audio",
+            rows: [
+              { key: "Format", value: audioTrack?.Format ?? "-" },
+              { key: "Sampling rate", value: audioTrack?.SamplingRate ?? "-" },
+              { key: "Channels", value: audioTrack?.Channels ?? "-" },
+              { key: "Bitrate", value: audioTrack?.BitRate ?? "-" },
+            ],
+          },
+        ],
+      }}
+    />
   );
 };
 
