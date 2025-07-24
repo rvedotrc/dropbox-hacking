@@ -241,6 +241,12 @@ ol.files > li .icons > * {
   border-color: red;
 }
 
+.tag.tag-dox {
+  background: orange;
+  border-color: orange;
+  color: black;
+}
+
 .multiTagEditor {
   position: sticky;
   top: 0;

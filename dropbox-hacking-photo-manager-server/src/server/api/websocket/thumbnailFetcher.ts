@@ -10,24 +10,6 @@ export type ThumbnailFetcher = (args: {
 export const nullThumbnailFetcher = (): ThumbnailFetcher => () =>
   Promise.resolve(null);
 
-export const singleThumbnailFetcher =
-  (context: Context): ThumbnailFetcher =>
-  (args) =>
-    context.dropboxClient.then((dbx) =>
-      dbx
-        .filesGetThumbnailBatch({
-          entries: [{ path: `rev:${args.rev}`, size: { ".tag": args.size } }],
-        })
-        .then((r) =>
-          r.status === 200 &&
-          r.result.entries.length === 1 &&
-          r.result.entries[0][".tag"] === "success" &&
-          r.result.entries[0].metadata.rev === args.rev
-            ? { base64JPEG: r.result.entries[0].thumbnail }
-            : null,
-        ),
-    );
-
 export const batchingThumbnailFetcher = (
   context: Context,
   maxWait = 250,

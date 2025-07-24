@@ -10,6 +10,7 @@ import ExifExplorer from "@pages/next-gen/exifExplorer";
 import Fsck from "@pages/next-gen/fsck";
 import NGDaysNoSamples from "@pages/next-gen/list-of-days/without-samples";
 import MediaInfoExplorer from "@pages/next-gen/mediaInfoExplorer";
+import NGSearch from "@pages/next-gen/search";
 import Tags from "@pages/next-gen/tags";
 import Video from "@pages/next-gen/video";
 import {
@@ -43,6 +44,8 @@ const toRender = ({ routeState }: { routeState: RouteState }) => {
     return <NGDayFiles {...routeState} />;
   if (routeState.route === "route/next-gen/content-hash")
     return <NGContentHash {...routeState} />;
+  if (routeState.route === "route/next-gen/search")
+    return <NGSearch {...routeState} />;
   // RVE-add-route
 
   ensureNever<typeof routeState>();

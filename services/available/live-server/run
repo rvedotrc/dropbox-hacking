@@ -8,6 +8,8 @@ export PATH="$HOME/bin:$PATH"
 
 cd "$( git rev-parse --show-toplevel )"
 
+ping -c 1 -n -i 2 -t 300 8.8.4.4
+
 mkdir -p var/live/day-db
 exec ./with-live \
     env \

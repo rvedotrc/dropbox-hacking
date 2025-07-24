@@ -19,7 +19,6 @@ export type RouteState =
     }
   | {
       route: "route/next-gen/tags";
-      tag: string | null;
     }
   | {
       route: "route/next-gen/fsck";
@@ -42,6 +41,10 @@ export type RouteState =
       date: string;
     }
   | {
+      route: "route/next-gen/search";
+      filterText?: string;
+    }
+  | {
       route: "route/next-gen/content-hash";
       contentHash: string;
       context?: {
@@ -51,7 +54,9 @@ export type RouteState =
     };
 // RVE-add-route
 
-export const ensureNever = (_: never) => undefined;
+export const ensureNever = (_: never) => {
+  throw new Error("ensureNever failed");
+};
 
 export const urlForState = (state: RouteState): string => {
   switch (state.route) {
@@ -61,10 +66,12 @@ export const urlForState = (state: RouteState): string => {
       return `/next-gen/basic-counts`;
     case "route/next-gen/fsck":
       return `/next-gen/fsck`;
+    case "route/next-gen/search":
+      return `/next-gen/search`;
     case "route/next-gen/video":
       return `/next-gen/video`;
     case "route/next-gen/tags":
-      return `/next-gen/tags${state.tag === null ? "" : `/${state.tag}`}`;
+      return `/next-gen/tags`;
     case "route/next-gen/exif-explorer":
       return `/next-gen/exif-explorer`;
     case "route/next-gen/mediainfo-explorer":
@@ -81,31 +88,11 @@ export const urlForState = (state: RouteState): string => {
   ensureNever(state);
 };
 
-export type CountsByDateEntry = {
-  date: string;
-  count: number;
-  countWithGps: number;
-  samplePhotos: Photo[];
-};
-export type CountsByDate = CountsByDateEntry[];
-export type CountsByDateResponse = { counts_by_date: CountsByDate };
-
 export type Photo = {
   namedFile: NamedFile;
   exif: ExifFromHash;
 };
-export type PhotoResponse = { photo: Photo };
-export type PhotosResponse = { photos: Photo[] };
-
-export type ThumbnailsByRevEntry = { rev: string; thumbnail: string };
-export type ThumbnailsByRevResponse = {
-  thumbnails_by_rev: ThumbnailsByRevEntry[];
-};
 
 export type DayMetadataResponse = {
   day_metadata: DayMetadata;
-};
-
-export type DaysMetadataResponse = {
-  days_metadata: DayMetadata[];
 };

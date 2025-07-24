@@ -1,13 +1,16 @@
 import type { files } from "dropbox/types/dropbox_types.js";
 import { Observable } from "rxjs";
 
-import type { ThumbnailResponse } from "../ws.js";
 import { type FullDatabaseFeeds } from "./index.js";
 
 export type ThumbnailRequest = {
   readonly type: "rx.ng.thumbnail2";
   readonly rev: string;
   readonly size: files.ThumbnailSize[".tag"];
+};
+
+export type ThumbnailResponse = {
+  thumbnail: string | null;
 };
 
 export const provideThumbnail =

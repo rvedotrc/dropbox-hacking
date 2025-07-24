@@ -1,5 +1,7 @@
-import type { ThumbnailResponse } from "dropbox-hacking-photo-manager-shared";
-import type { ThumbnailRequest } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
+import type {
+  ThumbnailRequest,
+  ThumbnailResponse,
+} from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 
 import type { Context } from "../../context.js";
 

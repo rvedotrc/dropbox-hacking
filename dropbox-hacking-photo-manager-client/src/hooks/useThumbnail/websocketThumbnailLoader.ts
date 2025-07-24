@@ -2,9 +2,11 @@ import { getRxFeed } from "@lib/rxFeed/getRxFeed";
 import type {
   IOHandler,
   ObservableUpdate,
-  ThumbnailResponse,
 } from "dropbox-hacking-photo-manager-shared";
-import type { ThumbnailRequest } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
+import type {
+  ThumbnailRequest,
+  ThumbnailResponse,
+} from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 
 import type { ThumbnailLoader } from "./types";
 

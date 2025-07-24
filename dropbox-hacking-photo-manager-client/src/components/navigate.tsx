@@ -13,16 +13,20 @@ const navigation = (): React.ReactElement | null => (
       Video
     </SamePageLink>
     {" | "}
+    <SamePageLink routeState={{ route: "route/next-gen/tags" }}>
+      Tags
+    </SamePageLink>
+    {" | "}
+    <SamePageLink routeState={{ route: "route/next-gen/search" }}>
+      Search
+    </SamePageLink>
+    {" /// "}
     <SamePageLink routeState={{ route: "route/next-gen/basic-counts" }}>
       Basic counts
     </SamePageLink>
     {" | "}
-    <SamePageLink routeState={{ route: "route/next-gen/tags", tag: null }}>
-      tags
-    </SamePageLink>
-    {" | "}
     <SamePageLink routeState={{ route: "route/next-gen/fsck" }}>
-      fsck
+      Check
     </SamePageLink>
     {" | "}
     <SamePageLink routeState={{ route: "route/next-gen/exif-explorer" }}>

@@ -10,7 +10,21 @@ import { jsonFileObservableViaLoader } from "./util.js";
 export const buildForExifDbMap = (dbDir: string) => {
   const observable = jsonFileObservableViaLoader(
     dbDir,
-    () => new ExifDB(dbDir).readAll(),
+    () =>
+      new ExifDB(dbDir)
+        .readAll()
+        .then(
+          (all) =>
+            new Map(
+              all
+                .entries()
+                .filter(
+                  ([_, v]) =>
+                    v.exifData.tags !== undefined &&
+                    Object.keys(v.exifData.tags).length > 0,
+                ),
+            ),
+        ),
     100,
   );
 

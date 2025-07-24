@@ -5,6 +5,7 @@ import {
   type ObservedValueOf,
 } from "rxjs";
 
+import { GPSLatLong } from "../gpsLatLong.js";
 import type { DayMetadata } from "../types.js";
 import {
   type FullDatabaseFeeds,
@@ -23,6 +24,8 @@ export type DaySummaryWithoutSamples = {
   counts: {
     imagesWithExif: number;
     videosWithMediaInfo: number;
+    imagesWithGPS: number;
+    videosWithGPS: number;
   };
   photoTags: Record<string, number>;
 };
@@ -48,6 +51,8 @@ export const provideListOfDaysWithoutSamples = (
           counts: {
             imagesWithExif: 0,
             videosWithMediaInfo: 0,
+            imagesWithGPS: 0,
+            videosWithGPS: 0,
           },
           photoTags: {} as Record<string, number>,
         });
@@ -58,6 +63,13 @@ export const provideListOfDaysWithoutSamples = (
         const isVideo = videoFilenamePattern.test(file.path_lower);
         if (!isImage && !isVideo) continue;
 
+        const exif = exifs.get(file.content_hash);
+        const exifGPS = exif ? GPSLatLong.fromExif(exif) : null;
+        const mediaInfo = mediaInfos.get(file.content_hash);
+        const mediaInfoGPS = mediaInfo
+          ? GPSLatLong.fromMediaInfo(mediaInfo)
+          : null;
+
         const date = file.client_modified.substring(0, 10);
         const hasExif = exifs.has(file.content_hash);
         const hasMediaInfo = mediaInfos.has(file.content_hash);
@@ -66,10 +78,12 @@ export const provideListOfDaysWithoutSamples = (
         if (e) {
           if (isImage) {
             if (hasExif) ++e.counts.imagesWithExif;
+            if (exifGPS) ++e.counts.imagesWithGPS;
           }
 
           if (isVideo) {
             if (hasMediaInfo) ++e.counts.videosWithMediaInfo;
+            if (mediaInfoGPS) ++e.counts.videosWithGPS;
           }
         } else {
           e = {
@@ -78,6 +92,8 @@ export const provideListOfDaysWithoutSamples = (
             counts: {
               imagesWithExif: isImage && hasExif ? 1 : 0,
               videosWithMediaInfo: isVideo && hasMediaInfo ? 1 : 0,
+              imagesWithGPS: exifGPS ? 1 : 0,
+              videosWithGPS: mediaInfoGPS ? 1 : 0,
             },
             photoTags: {},
           };
