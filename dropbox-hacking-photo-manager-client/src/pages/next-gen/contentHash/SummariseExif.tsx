@@ -1,6 +1,9 @@
 import type { ExifFromHash } from "@blaahaj/dropbox-hacking-exif-db";
+import { useStyleSheet } from "@hooks/useStyleSheet";
 import logRender from "@lib/logRender";
-import React from "react";
+import React, { useMemo } from "react";
+
+import SummaryTable from "./SummaryTable";
 
 const SummariseExif = ({ exif }: { exif: ExifFromHash }) => {
   const imageSize = exif.exifData.imageSize;
@@ -36,25 +39,94 @@ const SummariseExif = ({ exif }: { exif: ExifFromHash }) => {
   // ShutterSpeedValue
   // and that takes us down to 80%.
 
+  const photographicParametersId = useMemo(
+    () => "X_" + crypto.randomUUID().replaceAll(/-/g, "_"),
+    [],
+  );
+
+  useStyleSheet({
+    cssText: `
+      #${photographicParametersId} {
+        display: flex;
+        flex-direction: row;
+        padding-inline-start: 0;
+      }
+
+      #${photographicParametersId} > li {
+        list-style: none;
+        margin-right: 1em;
+      }
+    `,
+  });
+
+  const t = tags?.ExposureTime;
+
   return (
     <>
-      <p>
-        Image size:{" "}
-        {imageSize ? `${imageSize.width} x ${imageSize.height}` : "unknown"}
-      </p>
-
-      <p>Selected tags:</p>
-
-      <ul>
-        <li>Make: {tags?.Make ?? "-"}</li>
-        <li>Model: {tags?.Model ?? "-"}</li>
-        <li>ExposureTime: {tags?.ExposureTime ?? "-"}</li>
-        <li>FocalLength: {tags?.FocalLength ?? "-"}</li>
-        <li>FNumber: {tags?.FNumber ?? "-"}</li>
-        <li>DateTimeOriginal: {tags?.DateTimeOriginal ?? "-"}</li>
-        <li>Orientation: {tags?.Orientation ?? "-"}</li>
-        <li>ISO: {tags?.ISO ?? "-"}</li>
-      </ul>
+      <SummaryTable
+        table={{
+          sections: [
+            {
+              name: "General",
+              rows: [
+                {
+                  key: "Size",
+                  value: imageSize
+                    ? `${imageSize.width} x ${imageSize.height}`
+                    : "?",
+                },
+                {
+                  key: "Aspect ratio",
+                  value: imageSize
+                    ? (imageSize.width / imageSize.height).toFixed(2)
+                    : "?",
+                },
+                {
+                  key: "Taken",
+                  value: tags?.DateTimeOriginal
+                    ? new Date(tags.DateTimeOriginal * 1000).toISOString()
+                    : "-",
+                },
+              ],
+            },
+            {
+              name: "Photographic",
+              rows: [
+                {
+                  key: "Exposure",
+                  value: t ? (
+                    <>
+                      {t.toFixed(4)}s (1/{(1 / t).toFixed(4)}s
+                    </>
+                  ) : (
+                    "-"
+                  ),
+                },
+                {
+                  key: "Aperture",
+                  value: tags?.FNumber ? `ƒ${tags.FNumber}` : "-",
+                },
+                {
+                  key: "Focal length",
+                  value: tags?.FocalLength ? `${tags?.FocalLength}m` : "-",
+                },
+                {
+                  key: "Film speed",
+                  value: tags?.ISO ? `ISO${tags.ISO}` : "-",
+                },
+              ],
+            },
+            {
+              name: "Device",
+              rows: [
+                { key: "Make", value: tags?.Make ?? "-" },
+                { key: "Model", value: tags?.Model ?? "-" },
+                { key: "Orientation", value: tags?.Orientation ?? "-" },
+              ],
+            },
+          ],
+        }}
+      />
     </>
   );
 };
