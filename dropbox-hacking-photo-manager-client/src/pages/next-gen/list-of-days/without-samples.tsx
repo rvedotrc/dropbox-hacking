@@ -29,6 +29,7 @@ const NGDaysNoSamples = () => {
               <th>Date</th>
               <th>Images (with exif)</th>
               <th>Videos (with mediainfo)</th>
+              <th>GPS</th>
               <th>Description</th>
               <th>Tags</th>
             </tr>
@@ -48,6 +49,13 @@ const NGDaysNoSamples = () => {
                 </td>
                 <td>{row.counts.imagesWithExif}</td>
                 <td>{row.counts.videosWithMediaInfo}</td>
+                <td
+                  style={{
+                    backgroundColor: `rgb(${255.0 * (1 - (row.counts.imagesWithGPS + row.counts.videosWithGPS) / (row.counts.imagesWithExif + row.counts.videosWithMediaInfo))}, 0, 0)`,
+                  }}
+                >
+                  {row.counts.imagesWithGPS} / {row.counts.videosWithGPS}
+                </td>
                 <td>{row.dayMetadata?.description ?? ""}</td>
                 <td>
                   <TagsWithCounts tags={row.photoTags} />
