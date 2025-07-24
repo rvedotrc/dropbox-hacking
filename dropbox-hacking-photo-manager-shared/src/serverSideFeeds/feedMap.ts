@@ -1,6 +1,5 @@
 import type { Observable, ObservedValueOf } from "rxjs";
 
-import type { ThumbnailResponse } from "../index.js";
 import { provideBasicCounts } from "./basicCounts.js";
 import { provideClosestTo } from "./closestTo.js";
 import { provideContentHash } from "./contentHash.js";
@@ -9,11 +8,16 @@ import { provideExifExplorer } from "./exifExplorer.js";
 import { provideFileId } from "./fileId.js";
 import { provideFileRev } from "./fileRev.js";
 import { provideFsck } from "./fsck.js";
-import { type FullDatabaseFeeds, provideVideo } from "./index.js";
+import { type FullDatabaseFeeds } from "./index.js";
 import { provideListOfDaysWithoutSamples } from "./listOfDays.js";
 import { provideMediaInfoExplorer } from "./mediaInfoExplorer.js";
 import { provideTags } from "./tags.js";
-import { provideThumbnail, type ThumbnailRequest } from "./thumbnail.js";
+import {
+  provideThumbnail,
+  type ThumbnailRequest,
+  type ThumbnailResponse,
+} from "./thumbnail.js";
+import { provideVideo } from "./video.js";
 
 type Provider<REQ, RES> = (
   feeds: FullDatabaseFeeds,

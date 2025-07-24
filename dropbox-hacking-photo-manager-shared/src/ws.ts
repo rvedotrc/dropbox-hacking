@@ -2,10 +2,6 @@ import type { files } from "dropbox";
 
 import type { Photo } from "./types.js";
 
-export type ThumbnailResponse = {
-  thumbnail: string | null;
-};
-
 export type ClosestToResponse = {
   items: {
     distanceInMeters: number;
