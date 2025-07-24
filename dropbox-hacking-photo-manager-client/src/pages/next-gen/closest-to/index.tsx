@@ -3,6 +3,8 @@ import { useLatestValueFromServerFeed } from "@hooks/useLatestValueFromServerFee
 import type { GPSLatNLongE } from "dropbox-hacking-photo-manager-shared";
 import React from "react";
 
+import MaybeVisibleThumbnail from "../day/MaybeVisibleThumbnail";
+
 // import SamplePhoto from "../../legacy/days/samplePhoto";
 
 export default ({
@@ -45,7 +47,10 @@ export default ({
                       contentHash: item.photo.namedFile.content_hash,
                     }}
                   >
-                    {"<SamplePhoto photo={item.photo} visible={true} />"}
+                    <MaybeVisibleThumbnail
+                      namedFile={item.photo.namedFile}
+                      visible={true}
+                    />
                   </SamePageLink>
                 </td>
               </tr>
@@ -53,9 +58,6 @@ export default ({
           })}
         </tbody>
       </table>
-
-      <hr />
-      <pre>{JSON.stringify(data, null, 2)}</pre>
     </div>
   ) : (
     "loading..."
