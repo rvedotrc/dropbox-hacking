@@ -93,6 +93,7 @@ export default (app: Application, context: Context): void => {
                   sender.close();
                 },
                 error: (error) => {
+                  console.error(error);
                   sender.send({ tag: "error", error });
                   sender.close();
                 },

@@ -22,6 +22,7 @@ export const serveRxFeed = <T>(
       sender.close();
     },
     error: (error) => {
+      console.error(error);
       sender.send({ tag: "error", error });
       sender.close();
     },
