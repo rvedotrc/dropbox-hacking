@@ -4,10 +4,9 @@ import SamePageLink from "@components/samePageLink";
 import { useIdentity } from "@hooks/useIdentity";
 import { useLatestValueFromServerFeed } from "@hooks/useLatestValueFromServerFeed";
 import logRender from "@lib/logRender";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 
-import FilesTable from "./filesTable";
-import MultiTagEditor from "./MultiTagEditor";
+import { ListOfFiles } from "./listOfFiles";
 
 const NGDayFiles = ({ date }: { date: string }) => {
   console.log("NGDayFiles", useIdentity());
@@ -56,10 +55,6 @@ const NGDayFiles = ({ date }: { date: string }) => {
     document.title = `DPMNG - ${date}`;
   });
 
-  const [selectedContentHashes, setSelectedContentHashes] = useState<
-    ReadonlySet<string>
-  >(() => new Set());
-
   return (
     <>
       <Navigate />
@@ -102,24 +97,7 @@ const NGDayFiles = ({ date }: { date: string }) => {
             />
           </p>
 
-          <p>{latestValue.files.length} files</p>
-
-          {selectedContentHashes.size > 0 && (
-            <MultiTagEditor
-              key={[...selectedContentHashes].toSorted().join(" ")}
-              contentHashes={selectedContentHashes}
-              files={latestValue.files.filter((f) =>
-                selectedContentHashes.has(f.namedFile.content_hash),
-              )}
-            />
-          )}
-
-          <FilesTable
-            files={latestValue.files}
-            selectedContentHashes={selectedContentHashes}
-            onSelectedContentHashes={(t) => setSelectedContentHashes(t)}
-            date={date}
-          />
+          <ListOfFiles files={latestValue.files} date={date} />
         </>
       ) : (
         "loading..."
