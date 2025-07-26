@@ -58,6 +58,7 @@
   "name": "dropbox-hacking-photo-manager-client",
   "scripts": {
     "version": "node --version ; npm --version",
+    "reset": "rm -rf public/dist node_modules",
     "build": "pnpm format && pnpm run test:lint && pnpm run compile",
     "build:watch": "rebuild -r . --exclude public/dist -- sh -c 'if ! pnpm test:prettier ; then pnpm format ; else pnpm run test:lint && pnpm run compile ; fi'",
     "compile": "webpack --mode development",
