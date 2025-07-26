@@ -6,6 +6,7 @@ import React from "react";
 import EditablePhotoEntry from "./EditablePhotoEntry";
 import ImagePreview from "./imagePreview";
 import ShowData from "./ShowData";
+import { ShowMap } from "./ShowMap";
 import SummariseExif from "./SummariseExif";
 import SummariseMediaInfo from "./SummariseMediaInfo";
 import SummariseNamedFiles from "./SummariseNamedFiles";
@@ -63,11 +64,16 @@ export const ShowContentHashResult = ({
             <SummariseMediaInfo mediaInfo={latestValue.mediainfo} />
           )}
           {gps ? (
-            <p className="gps">
-              <a href={gps.googleMapsUrl({ zoom: 15 })}>Google Maps</a>
-              {" | "}
-              <a href={gps.geoHackUrl({ title: "no title" })}>GeoHack</a>
-            </p>
+            <>
+              <div style={{ marginBlock: "1em" }}>
+                <ShowMap pos={gps} />
+              </div>
+              <p className="gps">
+                <a href={gps.googleMapsUrl({ zoom: 15 })}>Google Maps</a>
+                {" | "}
+                <a href={gps.geoHackUrl({ title: "no title" })}>GeoHack</a>
+              </p>
+            </>
           ) : (
             <p className="no-gps">[no GPS information]</p>
           )}
