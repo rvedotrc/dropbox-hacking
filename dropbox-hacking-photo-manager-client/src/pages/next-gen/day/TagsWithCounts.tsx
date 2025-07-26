@@ -21,4 +21,4 @@ const TagsWithCounts = ({
   );
 };
 
-export default logRender(TagsWithCounts);
+export default logRender(TagsWithCounts, false);

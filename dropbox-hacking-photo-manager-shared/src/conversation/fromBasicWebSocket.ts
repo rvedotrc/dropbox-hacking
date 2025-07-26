@@ -1,5 +1,5 @@
 import { generateId } from "./id.js";
-import { spyOnConnector } from "./spy.js";
+// import { spyOnConnector } from "./spy.js";
 import type { IOHandler } from "./types.js";
 
 export interface BasicWebSocket<S, I, O> {
@@ -56,5 +56,6 @@ export const fromBasicWebSocket = <S, I, O>(
     inspect: () => id,
   };
 
-  return spyOnConnector(connector);
+  return connector;
+  // return spyOnConnector(connector);
 };

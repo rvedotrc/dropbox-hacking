@@ -31,7 +31,7 @@ const MaybeVisibleThumbnail = ({
   const isThumbnailable = dropboxThumbnailableExtensions.includes(ext);
   const thumbnail = useThumbnail(namedFile.rev)(isThumbnailable && visible);
 
-  console.log([namedFile.name, ext, isThumbnailable, visible, !!thumbnail]);
+  // console.log([namedFile.name, ext, isThumbnailable, visible, !!thumbnail]);
 
   return (
     <>
@@ -53,4 +53,4 @@ const MaybeVisibleThumbnail = ({
   );
 };
 
-export default logRender(MaybeVisibleThumbnail);
+export default logRender(MaybeVisibleThumbnail, false);

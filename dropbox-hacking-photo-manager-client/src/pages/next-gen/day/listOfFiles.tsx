@@ -1,3 +1,4 @@
+import logRender from "@lib/logRender";
 import { GPSLatLong } from "dropbox-hacking-photo-manager-shared";
 import type { DayFilesResult } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import React, { useMemo, useState } from "react";
@@ -6,7 +7,7 @@ import FilesTable from "./filesTable";
 import MultiTagEditor from "./MultiTagEditor";
 import ShowMap from "./ShowMap";
 
-export const ListOfFiles = ({
+const ListOfFiles = ({
   files,
   date,
 }: {
@@ -77,3 +78,5 @@ export const ListOfFiles = ({
     </>
   );
 };
+
+export default logRender(ListOfFiles);

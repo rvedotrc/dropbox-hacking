@@ -13,11 +13,18 @@ const doLog = true;
 
 const nameSequence = makeSequence();
 
-const logRender = <P extends PropsWithChildren<object>>(f: F<P>): F<P> => {
+const logRender = <P extends PropsWithChildren<object>>(
+  f: F<P>,
+  enable?: boolean,
+): F<P> => {
+  if (!(enable ?? true)) return f;
+
   const functionName = f.displayName || f.name || `anonymous${nameSequence()}`;
   const renderSequence = makeSequence();
 
   const r: F<P> = (props: P) => {
+    // console.log("logRender-stack", (new Error().stack) ?? "NONE");
+
     if (doLog) {
       const seenMap = Object.entries(props as object)
         .toSorted((a, b) => a[0].localeCompare(b[0]))
