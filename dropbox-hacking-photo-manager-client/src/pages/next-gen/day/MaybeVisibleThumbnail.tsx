@@ -1,24 +1,8 @@
 import useThumbnail from "@hooks/useThumbnail";
 import logRender from "@lib/logRender";
 import type { NamedFile } from "dropbox-hacking-photo-manager-shared";
+import { isPreviewable } from "dropbox-hacking-photo-manager-shared/fileTypes";
 import React from "react";
-
-const dropboxThumbnailableExtensions: readonly string[] = [
-  "jpg",
-  "jpeg,",
-  "png",
-  "tiff",
-  "tif",
-  "gif",
-  "webp",
-  "ppm",
-  "bmp",
-
-  // And observationally also:
-  "cr3",
-  "mov",
-  "mp4",
-];
 
 const MaybeVisibleThumbnail = ({
   namedFile,
@@ -27,8 +11,7 @@ const MaybeVisibleThumbnail = ({
   namedFile: NamedFile;
   visible: boolean;
 }) => {
-  const ext = namedFile.path_lower.split(".").pop() as string;
-  const isThumbnailable = dropboxThumbnailableExtensions.includes(ext);
+  const isThumbnailable = isPreviewable(namedFile.path_lower);
   const thumbnail = useThumbnail(namedFile.rev)(isThumbnailable && visible);
 
   // console.log([namedFile.name, ext, isThumbnailable, visible, !!thumbnail]);
