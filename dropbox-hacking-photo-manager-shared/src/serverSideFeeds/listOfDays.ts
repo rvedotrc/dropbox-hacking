@@ -5,28 +5,33 @@ import {
   type ObservedValueOf,
 } from "rxjs";
 
+import {
+  isExifableFilename,
+  isMediainfoableFilename,
+  isPreviewable,
+} from "../fileTypes.js";
 import { GPSLatLong } from "../gpsLatLong.js";
 import type { DayMetadata } from "../types.js";
-import {
-  type FullDatabaseFeeds,
-  imageFilenamePattern,
-  videoFilenamePattern,
-} from "./index.js";
+import { type FullDatabaseFeeds } from "./index.js";
 
 export type ListOfDaysRequest = {
   readonly type: "rx.ng.list-of-days";
   readonly withSamples: false;
 };
 
+const template = {
+  exifableCount: 0,
+  hasExifCount: 0,
+  mediaInfoableCount: 0,
+  hasMediaInfoCount: 0,
+  previewableCount: 0,
+  hasGPSCount: 0,
+};
+
 export type DaySummaryWithoutSamples = {
   date: string;
   dayMetadata: DayMetadata | null;
-  counts: {
-    imagesWithExif: number;
-    videosWithMediaInfo: number;
-    imagesWithGPS: number;
-    videosWithGPS: number;
-  };
+  counts: typeof template;
   photoTags: Record<string, number>;
 };
 
@@ -44,86 +49,68 @@ export const provideListOfDaysWithoutSamples = (
     map(([exifs, mediaInfos, allFiles, days, photosByContentHash]) => {
       const out = new Map<string, DaySummaryWithoutSamples>();
 
-      for (const [date, dayMetadata] of days.entries()) {
-        out.set(date, {
+      const getOrCreate = (date: string) => {
+        let item = out.get(date);
+        if (item) return item;
+
+        item = {
           date,
-          dayMetadata,
-          counts: {
-            imagesWithExif: 0,
-            videosWithMediaInfo: 0,
-            imagesWithGPS: 0,
-            videosWithGPS: 0,
-          },
+          dayMetadata: null,
+          counts: { ...template },
           photoTags: {} as Record<string, number>,
-        });
-      }
+        };
+        out.set(date, item);
+        return item;
+      };
 
       for (const file of allFiles.values()) {
-        const isImage = imageFilenamePattern.test(file.path_lower);
-        const isVideo = videoFilenamePattern.test(file.path_lower);
-        if (!isImage && !isVideo) continue;
+        if (!isPreviewable(file.path_lower)) continue;
 
-        const exif = exifs.get(file.content_hash);
-        const exifGPS = exif ? GPSLatLong.fromExif(exif) : null;
-        const mediaInfo = mediaInfos.get(file.content_hash);
-        const mediaInfoGPS = mediaInfo
-          ? GPSLatLong.fromMediaInfo(mediaInfo)
-          : null;
+        const exifData = exifs.get(file.content_hash);
+        const mediaInfoData = mediaInfos.get(file.content_hash);
+        const photo = photosByContentHash.get(file.content_hash);
 
         const date = file.client_modified.substring(0, 10);
-        const hasExif = exifs.has(file.content_hash);
-        const hasMediaInfo = mediaInfos.has(file.content_hash);
+        const item = getOrCreate(date);
 
-        const photoDbEntry = photosByContentHash.get(file.content_hash);
+        ++item.counts.previewableCount;
+        let gps: GPSLatLong | null = null;
 
-        if (
-          !hasExif &&
-          !hasMediaInfo &&
-          !photoDbEntry &&
-          file.path_lower.endsWith(".cr3")
-        )
-          continue;
+        if (isExifableFilename(file.name)) {
+          ++item.counts.exifableCount;
 
-        let e = out.get(date);
-        if (e) {
-          if (isImage) {
-            if (hasExif) ++e.counts.imagesWithExif;
-            if (exifGPS) ++e.counts.imagesWithGPS;
+          if (exifData) {
+            ++item.counts.hasExifCount;
+            gps ??= GPSLatLong.fromExif(exifData);
           }
-
-          if (isVideo) {
-            if (hasMediaInfo) ++e.counts.videosWithMediaInfo;
-            if (mediaInfoGPS) ++e.counts.videosWithGPS;
-          }
-        } else {
-          e = {
-            date,
-            dayMetadata: null,
-            counts: {
-              imagesWithExif: isImage && hasExif ? 1 : 0,
-              videosWithMediaInfo: isVideo && hasMediaInfo ? 1 : 0,
-              imagesWithGPS: exifGPS ? 1 : 0,
-              videosWithGPS: mediaInfoGPS ? 1 : 0,
-            },
-            photoTags: {},
-          };
-
-          out.set(date, e);
         }
 
-        if (photoDbEntry) {
-          for (const tag of photoDbEntry.tags ?? []) {
-            e.photoTags[tag] = (e.photoTags[tag] ?? 0) + 1;
+        if (isMediainfoableFilename(file.name)) {
+          ++item.counts.mediaInfoableCount;
+
+          if (mediaInfoData) {
+            ++item.counts.hasMediaInfoCount;
+            gps ??= GPSLatLong.fromMediaInfo(mediaInfoData);
           }
+        }
+
+        if (gps) ++item.counts.hasGPSCount;
+
+        for (const tag of photo?.tags ?? []) {
+          item.photoTags[tag] = (item.photoTags[tag] ?? 0) + 1;
         }
       }
 
-      const r = [...out.values()]
-        .filter(
-          (item) =>
-            item.counts.imagesWithExif + item.counts.videosWithMediaInfo > 0,
-        )
-        .toSorted((a, b) => a.date.localeCompare(b.date));
+      for (const [date, v] of days) {
+        const entry = out.get(date);
+        if (!entry) continue;
+
+        entry.dayMetadata = v;
+      }
+
+      const r = [...out.values()].toSorted((a, b) =>
+        a.date.localeCompare(b.date),
+      );
 
       return r;
     }),
