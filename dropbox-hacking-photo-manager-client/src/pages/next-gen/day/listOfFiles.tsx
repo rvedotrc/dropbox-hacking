@@ -1,11 +1,12 @@
+import GeoMap from "@components/map/GeoMap";
 import logRender from "@lib/logRender";
 import { GPSLatLong } from "dropbox-hacking-photo-manager-shared";
 import type { DayFilesResult } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
-import React, { useMemo, useState } from "react";
+import * as L from "leaflet";
+import React, { useDeferredValue, useMemo, useState } from "react";
 
 import FilesTable from "./filesTable";
 import MultiTagEditor from "./MultiTagEditor";
-import ShowMap from "./ShowMap";
 
 const ListOfFiles = ({
   files,
@@ -17,6 +18,12 @@ const ListOfFiles = ({
   const [selectedContentHashes, setSelectedContentHashes] = useState<
     ReadonlySet<string>
   >(() => new Set());
+
+  const prev = useDeferredValue(selectedContentHashes);
+
+  console.log(
+    `GeoMap curr=${selectedContentHashes.size} prev=${prev.size} is=${Object.is(selectedContentHashes, prev)}`,
+  );
 
   const withGPS = useMemo(
     () =>
@@ -34,19 +41,28 @@ const ListOfFiles = ({
 
   const forMap = useMemo(
     () =>
-      withGPS
-        .filter(
-          (
-            t,
-          ): t is typeof t & {
-            readonly gps: NonNullable<(typeof t)["gps"]>;
-          } => t.gps !== null,
-        )
-        .map((f) => ({
-          position: f.gps,
-          contentHash: f.namedFile.content_hash,
-        })),
-    [withGPS],
+      new Map(
+        withGPS
+          .filter(
+            (
+              t,
+            ): t is typeof t & {
+              readonly gps: NonNullable<(typeof t)["gps"]>;
+            } => t.gps !== null,
+          )
+          .map((f) => [
+            f.namedFile.content_hash,
+            {
+              position: new L.LatLng(
+                f.gps.asSigned().lat,
+                f.gps.asSigned().long,
+              ),
+
+              highlighted: selectedContentHashes.has(f.namedFile.content_hash),
+            },
+          ]),
+      ),
+    [withGPS, selectedContentHashes],
   );
 
   return (
@@ -70,10 +86,10 @@ const ListOfFiles = ({
         date={date}
       />
 
-      <ShowMap positions={forMap} />
+      <GeoMap positions={forMap} />
 
       <p>
-        With GPS: {forMap.length} // Without GPS: {files.length - forMap.length}
+        With GPS: {forMap.size} // Without GPS: {files.length - forMap.size}
       </p>
     </>
   );

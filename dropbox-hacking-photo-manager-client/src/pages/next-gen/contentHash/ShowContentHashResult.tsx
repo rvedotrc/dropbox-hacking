@@ -1,12 +1,13 @@
 import type { MediainfoFromHash } from "@blaahaj/dropbox-hacking-mediainfo-db";
+import GeoMap from "@components/map/GeoMap";
 import { GPSLatLong } from "dropbox-hacking-photo-manager-shared";
 import type { ContentHashResult } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
+import * as L from "leaflet";
 import React from "react";
 
 import EditablePhotoEntry from "./EditablePhotoEntry";
 import ImagePreview from "./imagePreview";
 import ShowData from "./ShowData";
-import { ShowMap } from "./ShowMap";
 import SummariseExif from "./SummariseExif";
 import SummariseMediaInfo from "./SummariseMediaInfo";
 import SummariseNamedFiles from "./SummariseNamedFiles";
@@ -67,7 +68,22 @@ export const ShowContentHashResult = ({
           {gps ? (
             <>
               <div style={{ marginBlock: "1em" }}>
-                <ShowMap pos={gps} />
+                <GeoMap
+                  positions={
+                    new Map([
+                      [
+                        contentHash,
+                        {
+                          position: new L.LatLng(
+                            gps.asSigned().lat,
+                            gps.asSigned().long,
+                          ),
+                          highlighted: false,
+                        },
+                      ],
+                    ])
+                  }
+                />
               </div>
               <p className="gps">
                 <a href={gps.googleMapsUrl({ zoom: 15 })}>Google Maps</a>
