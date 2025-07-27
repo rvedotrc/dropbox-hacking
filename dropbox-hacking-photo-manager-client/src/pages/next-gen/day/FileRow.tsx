@@ -1,4 +1,3 @@
-import SamePageLink from "@components/samePageLink";
 import logRender from "@lib/logRender";
 import { GPSLatLong } from "dropbox-hacking-photo-manager-shared";
 import type { DayFilesResult } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
@@ -104,7 +103,10 @@ const FileRow = ({
           .replaceAll(file.namedFile.content_hash, "#")}
       </div>
       <div className="thumbnail">
-        <SamePageLink
+        <MaybeVisibleThumbnail
+          namedFile={file.namedFile}
+          visible={visible}
+          photo={file.photoDbEntry ?? {}}
           routeState={useMemo(
             () => ({
               route: "route/next-gen/content-hash",
@@ -116,9 +118,7 @@ const FileRow = ({
             }),
             [file.namedFile.content_hash, file.namedFile.rev, date],
           )}
-        >
-          <MaybeVisibleThumbnail namedFile={file.namedFile} visible={visible} />
-        </SamePageLink>
+        />
       </div>
       <div className="description">{file.photoDbEntry?.description ?? ""}</div>
       <div className="tags">

@@ -13,6 +13,7 @@ export type ClosestToResponse = {
 export type PhotoDbEntry = {
   description?: string;
   tags?: string[];
+  rotate?: number;
 };
 
 export type NamedFile = Readonly<files.FileMetadata> & {

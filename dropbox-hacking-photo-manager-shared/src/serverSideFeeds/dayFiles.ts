@@ -2,6 +2,7 @@ import type { ExifFromHash } from "@blaahaj/dropbox-hacking-exif-db";
 import type { MediainfoFromHash } from "@blaahaj/dropbox-hacking-mediainfo-db";
 import { combineLatest, map, type Observable } from "rxjs";
 
+import { isPreviewable } from "../fileTypes.js";
 import type { DayMetadata } from "../types.js";
 import type { NamedFile, PhotoDbEntry } from "../ws.js";
 import { type FullDatabaseFeeds } from "./index.js";
@@ -48,6 +49,7 @@ export const provideDayFiles = (
       r.files = allFiles
         .values()
         .filter((f) => f.client_modified.startsWith(req.date))
+        .filter((f) => isPreviewable(f.path_lower))
         .map((namedFile) => ({
           namedFile,
           exif: exifs.get(namedFile.content_hash),
@@ -57,13 +59,13 @@ export const provideDayFiles = (
             mediaInfo: medaInfos.get(namedFile.content_hash),
           },
         }))
-        .filter(
-          (item) =>
-            item.exif ||
-            item.photoDbEntry ||
-            item.content.mediaInfo ||
-            item.namedFile.path_lower.match(/\.cr3$/),
-        )
+        // .filter(
+        //   (item) =>
+        //     item.exif ||
+        //     item.photoDbEntry ||
+        //     item.content.mediaInfo ||
+        //     item.namedFile.path_lower.match(/\.cr3$/),
+        // )
         .toArray()
         .toSorted((a, b) =>
           a.namedFile.client_modified.localeCompare(

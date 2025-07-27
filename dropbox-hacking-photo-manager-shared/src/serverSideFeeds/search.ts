@@ -184,7 +184,17 @@ export const provideSearch = (
           results.push(c);
         }
 
-        return { files: results.map((r) => r.asResult()), truncated };
+        return {
+          files: results
+            .map((r) => r.asResult())
+            .sort(
+              (a, b) =>
+                a.namedFile.client_modified.localeCompare(
+                  b.namedFile.client_modified,
+                ) || a.namedFile.rev.localeCompare(b.namedFile.rev),
+            ),
+          truncated,
+        };
       },
     ),
   );

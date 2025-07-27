@@ -6,7 +6,7 @@ import { useLatestValueFromServerFeed } from "@hooks/useLatestValueFromServerFee
 import logRender from "@lib/logRender";
 import React, { useEffect, useMemo } from "react";
 
-import { ListOfFiles } from "./listOfFiles";
+import ListOfFiles from "./listOfFiles";
 
 const NGDayFiles = ({ date }: { date: string }) => {
   console.log("NGDayFiles", useIdentity());

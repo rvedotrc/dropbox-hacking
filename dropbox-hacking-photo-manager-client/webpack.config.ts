@@ -14,6 +14,7 @@ const config: webpack.Configuration = {
   externals: {
     react: "React",
     "react-dom": "ReactDOM",
+    leaflet: "L",
   },
   mode: "production",
   module: {

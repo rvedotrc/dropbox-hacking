@@ -5,9 +5,11 @@ import {
   type Track,
 } from "@blaahaj/dropbox-hacking-mediainfo-db/types";
 import { geoHackUrl } from "@blaahaj/geometry/geoHack";
-import type {
-  GPSLatLongWithDirection,
-  GPSLatNLongE,
+import {
+  EARTH_RADIUS_METRES,
+  type GPSLatLongWithDirection,
+  type GPSLatNLongE,
+  greatCircleDistance,
 } from "@blaahaj/geometry/latlong";
 import { ExifTags } from "ts-exif-parser";
 
@@ -62,6 +64,15 @@ export class GPSLatLong {
     });
   }
 
+  public static fromGPSLatNLongE(other: GPSLatNLongE): GPSLatLong {
+    return new GPSLatLong({
+      lat: other.lat,
+      latRef: "N",
+      long: other.long,
+      longRef: "E",
+    });
+  }
+
   constructor(private readonly pos: GPSLatLongWithDirection) {}
 
   public asUnsigned(): GPSLatLongWithDirection {
@@ -86,5 +97,9 @@ export class GPSLatLong {
       pageName: args.title,
       encodeURIComponent,
     });
+  }
+
+  public distanceFrom(other: GPSLatLong): number {
+    return greatCircleDistance(this.pos, other.pos, EARTH_RADIUS_METRES);
   }
 }

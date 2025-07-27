@@ -1,7 +1,8 @@
 import { watch } from "fs";
 import { readFile } from "fs/promises";
 import { dirname } from "path";
-import { debounceTime, Observable, tap } from "rxjs";
+import { debounceTime, distinctUntilChanged, Observable, tap } from "rxjs";
+import { isDeepStrictEqual } from "util";
 
 export const addSequence = <T>(): ((value: T) => {
   value: T;
@@ -47,7 +48,8 @@ export const jsonFileObservableViaLoader = <T>(
 
           return () => x.unsubscribe();
         }),
-    );
+    )
+    .pipe(distinctUntilChanged<T>(isDeepStrictEqual));
 
 export const jsonFileObservable = <T>(path: string, dTime: number) =>
   jsonFileObservableViaLoader(

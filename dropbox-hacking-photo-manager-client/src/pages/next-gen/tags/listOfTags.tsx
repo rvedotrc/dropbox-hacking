@@ -35,6 +35,12 @@ const ListOfTags = () => {
         color: white;
         line-height: 2.5em;
         text-wrap: nowrap;
+        text-decoration: none;
+      }
+
+      #${listId} li a:hover, #${listId} li a:active, #${listId} li a:focus {
+        background: white;
+        color: black;
       }
     `,
   });

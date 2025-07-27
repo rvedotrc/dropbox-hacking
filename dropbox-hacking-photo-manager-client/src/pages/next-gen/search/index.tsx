@@ -9,7 +9,7 @@ import React, {
   useState,
 } from "react";
 
-import { ListOfFiles } from "../day/listOfFiles";
+import ListOfFiles from "../day/listOfFiles";
 
 const NGSearch = ({
   filterText: initialFilterText,

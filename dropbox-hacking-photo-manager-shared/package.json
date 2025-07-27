@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "reset": "rm -rf dist node_modules",
     "test": "concurrently --group pnpm:test:*",
     "build": "tsc",
     "build:watch": "tsc --watch",
@@ -33,6 +34,7 @@
   },
   "exports": {
     ".": "./dist/src/index.js",
+    "./fileTypes": "./dist/src/fileTypes.js",
     "./serverSideFeeds": "./dist/src/serverSideFeeds/index.js"
   },
   "dependencies": {

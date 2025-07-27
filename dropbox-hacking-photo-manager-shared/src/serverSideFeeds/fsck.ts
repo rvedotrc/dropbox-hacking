@@ -1,83 +1,11 @@
-import { extname } from "node:path";
-
 import { combineLatest, map, type ObservedValueOf } from "rxjs";
 
+import { isExifableFilename, isMediainfoableFilename } from "../fileTypes.js";
 import {
   type FullDatabaseFeeds,
   imageFilenamePattern,
   videoFilenamePattern,
 } from "./index.js";
-
-// https://en.wikipedia.org/wiki/Exif
-const exifableFileExtensions = [
-  "jpg",
-  "jpeg",
-  "tif",
-  "tiff",
-  "wav",
-  "png",
-  "webp",
-];
-
-const isExifableFilename = (name: string) =>
-  exifableFileExtensions.includes(
-    extname(name).toLocaleLowerCase().substring(1),
-  );
-
-// https://mediaarea.net/en/MediaInfo/Support/Formats
-const mediainfoFileExtensions = [
-  "ac3",
-  "aifc",
-  "aiff",
-  "ape",
-  "asf",
-  "au",
-  "avi",
-  "avr",
-  "dat",
-  "dts",
-  "flac",
-  "iff",
-  "ifo",
-  "irca",
-  "m1v",
-  "m2v",
-  "mac",
-  "mat",
-  "mka",
-  "mks",
-  "mkv",
-  "mov",
-  "mp2",
-  "mp3",
-  "mp4",
-  "mpeg",
-  "mpg",
-  "mpgv",
-  "mpv",
-  "ogg",
-  "ogm",
-  "paf",
-  "pvf",
-  "qt",
-  "ra",
-  "rm",
-  "rmvb",
-  "sd2",
-  "sds",
-  "vob",
-  "w64",
-  "wav",
-  "wma",
-  "wmv",
-  "xi",
-  "aac",
-];
-
-const isMediainfoableFilename = (name: string) =>
-  mediainfoFileExtensions.includes(
-    extname(name).toLocaleLowerCase().substring(1),
-  );
 
 const areUnique = (things: Iterable<string>): boolean => {
   const seen = {} as Record<string, true>;

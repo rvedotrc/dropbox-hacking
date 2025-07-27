@@ -6,6 +6,19 @@ import React, { useEffect } from "react";
 
 import TagsWithCounts from "../day/TagsWithCounts";
 
+const XOutOfY = ({ x, y }: { x: number; y: number }) =>
+  y === 0 ? (
+    <td />
+  ) : (
+    <td
+      style={{
+        backgroundColor: `rgb(${255.0 * (1 - x / y)}, 0, 0)`,
+      }}
+    >
+      {x} / {y}
+    </td>
+  );
+
 const NGDaysNoSamples = () => {
   const latestValue = useLatestValueFromServerFeed({
     type: "rx.ng.list-of-days",
@@ -27,8 +40,8 @@ const NGDaysNoSamples = () => {
           <thead>
             <tr>
               <th>Date</th>
-              <th>Images (with exif)</th>
-              <th>Videos (with mediainfo)</th>
+              <th>EXIF</th>
+              <th>MediaInfo</th>
               <th>GPS</th>
               <th>Description</th>
               <th>Tags</th>
@@ -47,15 +60,18 @@ const NGDaysNoSamples = () => {
                     {row.date}
                   </SamePageLink>
                 </td>
-                <td>{row.counts.imagesWithExif}</td>
-                <td>{row.counts.videosWithMediaInfo}</td>
-                <td
-                  style={{
-                    backgroundColor: `rgb(${255.0 * (1 - (row.counts.imagesWithGPS + row.counts.videosWithGPS) / (row.counts.imagesWithExif + row.counts.videosWithMediaInfo))}, 0, 0)`,
-                  }}
-                >
-                  {row.counts.imagesWithGPS} / {row.counts.videosWithGPS}
-                </td>
+                <XOutOfY
+                  x={row.counts.hasExifCount}
+                  y={row.counts.exifableCount}
+                />
+                <XOutOfY
+                  x={row.counts.hasMediaInfoCount}
+                  y={row.counts.mediaInfoableCount}
+                />
+                <XOutOfY
+                  x={row.counts.hasGPSCount}
+                  y={row.counts.previewableCount}
+                />
                 <td>{row.dayMetadata?.description ?? ""}</td>
                 <td>
                   <TagsWithCounts tags={row.photoTags} />

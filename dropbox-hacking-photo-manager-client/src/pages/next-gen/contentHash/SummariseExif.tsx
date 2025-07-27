@@ -1,6 +1,7 @@
 import type { ExifFromHash } from "@blaahaj/dropbox-hacking-exif-db";
 import { useStyleSheet } from "@hooks/useStyleSheet";
 import logRender from "@lib/logRender";
+import { analyseAspectRatio } from "dropbox-hacking-photo-manager-shared";
 import React, { useMemo } from "react";
 
 import SummaryTable from "./SummaryTable";
@@ -78,7 +79,8 @@ const SummariseExif = ({ exif }: { exif: ExifFromHash }) => {
                 {
                   key: "Aspect ratio",
                   value: imageSize
-                    ? (imageSize.width / imageSize.height).toFixed(2)
+                    ? (analyseAspectRatio(imageSize.width, imageSize.height) ??
+                      "?")
                     : "?",
                 },
                 {
@@ -96,7 +98,7 @@ const SummariseExif = ({ exif }: { exif: ExifFromHash }) => {
                   key: "Exposure",
                   value: t ? (
                     <>
-                      {t.toFixed(4)}s (1/{(1 / t).toFixed(4)}s
+                      {t.toFixed(4)}s (1/{(1 / t).toFixed(4)}s)
                     </>
                   ) : (
                     "-"

@@ -40,9 +40,9 @@ export const multiplexer = <I, O>(
               }
 
               receiversById.set(mxControlMessage.id, incomingReceiver);
-              console.debug(
-                `mx accept(${listenerId}) -> R=${incomingReceiver.inspect()} S=${id} (count=${receiversById.size})`,
-              );
+              // console.debug(
+              //   `mx accept(${listenerId}) -> R=${incomingReceiver.inspect()} S=${id} (count=${receiversById.size})`,
+              // );
 
               const incomingSender: Sender<O> = {
                 send: (message) =>
@@ -58,9 +58,9 @@ export const multiplexer = <I, O>(
                     id,
                   });
                   incomingReceiver.close();
-                  console.debug(
-                    `${multiplexerId} ${id} closed (count=${receiversById.size})`,
-                  );
+                  // console.debug(
+                  //   `${multiplexerId} ${id} closed (count=${receiversById.size})`,
+                  // );
                 },
                 inspect: () => id,
               };
@@ -70,7 +70,7 @@ export const multiplexer = <I, O>(
             inspect: () => listenerId,
           };
 
-          console.debug(`mx listener ${id} -> ${listenerId}`);
+          // console.debug(`mx listener ${id} -> ${listenerId}`);
           listenerCallback(listener);
         }
       } else if (tag === "message") {
@@ -87,9 +87,9 @@ export const multiplexer = <I, O>(
         if (receiver) {
           receiversById.delete(id);
           receiver.close();
-          console.debug(
-            `${multiplexerId} ${id} closed (count=${receiversById.size})`,
-          );
+          // console.debug(
+          //   `${multiplexerId} ${id} closed (count=${receiversById.size})`,
+          // );
         } else {
           console.error("close of non-open conversation", id);
         }
@@ -121,9 +121,9 @@ export const multiplexer = <I, O>(
       receiversById.set(id, outgoingReceiver);
       baseSender.send({ id, tag: "open" });
 
-      console.debug(
-        `connect(${id}) -> R=${outgoingReceiver.inspect()} S=${id} (count=${receiversById.size})`,
-      );
+      // console.debug(
+      //   `connect(${id}) -> R=${outgoingReceiver.inspect()} S=${id} (count=${receiversById.size})`,
+      // );
 
       return {
         send: (message) => baseSender.send({ id, tag: "message", message }),

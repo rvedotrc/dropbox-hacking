@@ -7,7 +7,7 @@
     "postinstall": "./in-each-module install",
     "build": "node buildAll.mjs",
     "build:watch": "./in-each-module build:watch",
-    "clean": "rm -rf */dist node_modules dropbox-hacking-*/node_modules",
+    "reset": "./in-each-module reset && rm -rf */dist node_modules",
     "fix": "./in-each-module fix",
     "format": "./in-each-module format",
     "test": "./in-each-module test",
