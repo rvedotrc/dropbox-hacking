@@ -41,17 +41,15 @@ export default ({
                   </SamePageLink>
                 </td>
                 <td>
-                  <SamePageLink
+                  <MaybeVisibleThumbnail
+                    namedFile={item.photo.namedFile}
+                    photo={item.photoDbEntry ?? {}}
+                    visible={true}
                     routeState={{
                       route: "route/next-gen/content-hash",
                       contentHash: item.photo.namedFile.content_hash,
                     }}
-                  >
-                    <MaybeVisibleThumbnail
-                      namedFile={item.photo.namedFile}
-                      visible={true}
-                    />
-                  </SamePageLink>
+                  />
                 </td>
               </tr>
             );

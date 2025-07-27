@@ -55,6 +55,7 @@ export const ShowContentHashResult = ({
       <div style={{ display: "flex", flexDirection: "row" }}>
         <ImagePreview
           namedFile={latestValue.namedFiles[0]}
+          photo={latestValue.photoDbEntry}
           fullWidthAndHeight={widthAndHeight}
         />
 

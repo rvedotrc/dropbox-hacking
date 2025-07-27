@@ -39,8 +39,12 @@ export const provideClosestTo = (
   feeds: FullDatabaseFeeds,
   req: ClosestToRequest,
 ) =>
-  combineLatest([feeds.exifsByContentHash, feeds.allFilesByRev]).pipe(
-    map(([exif, ls]) => {
+  combineLatest([
+    feeds.exifsByContentHash,
+    feeds.allFilesByRev,
+    feeds.photosByContentHash,
+  ]).pipe(
+    map(([exif, ls, photos]) => {
       const withGPS = [...exif.entries()]
         .map(([hash, data]) => ({
           hash,
@@ -48,6 +52,7 @@ export const provideClosestTo = (
           gps: data.exifData.tags
             ? GPSLatLong.fromExifTags(data.exifData.tags)
             : null,
+          photoDbEntry: photos.get(hash),
         }))
         .filter(hasGPS);
 
@@ -75,6 +80,7 @@ export const provideClosestTo = (
               namedFile,
               exif: exifItem.data,
             },
+            photoDbEntry: exifItem.photoDbEntry,
             exif,
           })),
       );
