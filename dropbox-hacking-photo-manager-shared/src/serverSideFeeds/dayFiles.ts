@@ -1,11 +1,7 @@
-import type { ExifFromHash } from "@blaahaj/dropbox-hacking-exif-db";
-import type { MediainfoFromHash } from "@blaahaj/dropbox-hacking-mediainfo-db";
 import { combineLatest, map, type Observable } from "rxjs";
 
-import { isPreviewable } from "../fileTypes.js";
 import type { DayMetadata } from "../types.js";
-import type { NamedFile, PhotoDbEntry } from "../ws.js";
-import { type FullDatabaseFeeds } from "./index.js";
+import { type ContentHashCollection, type FullDatabaseFeeds } from "./index.js";
 
 export type DayFilesRequest = {
   readonly type: "rx.ng.day.files";
@@ -13,14 +9,9 @@ export type DayFilesRequest = {
 };
 
 export type DayFilesResult = {
-  date: string;
-  dayMetadata?: DayMetadata;
-  files: {
-    namedFile: NamedFile;
-    exif: ExifFromHash | undefined;
-    mediaInfo: MediainfoFromHash | undefined;
-    photoDbEntry: PhotoDbEntry | undefined;
-  }[];
+  readonly date: string;
+  readonly dayMetadata?: DayMetadata;
+  readonly files: readonly ContentHashCollection[];
 };
 
 export const provideDayFiles = (
@@ -28,45 +19,23 @@ export const provideDayFiles = (
   req: DayFilesRequest,
 ): Observable<DayFilesResult> =>
   combineLatest([
-    feeds.allFilesByRev,
-    feeds.daysByDate,
-    feeds.photosByContentHash,
-    feeds.exifsByContentHash,
-    feeds.mediaInfoByContentHash,
+    feeds.byContentHash.pipe(
+      map((m) =>
+        m
+          .values()
+          .filter((item) => item.date === req.date)
+          .toArray(),
+      ),
+    ),
+    feeds.daysByDate.pipe(map((m) => m.get(req.date))),
   ]).pipe(
-    map(([allFiles, days, photos, exifs, medaInfos]) => {
-      const dayMetadata = days.get(req.date);
-
-      const r: DayFilesResult = {
-        date: req.date,
-        dayMetadata,
-        files: [],
-      };
-
-      r.files = allFiles
-        .values()
-        .filter((f) => f.client_modified.startsWith(req.date))
-        .filter((f) => isPreviewable(f.path_lower))
-        .map((namedFile) => ({
-          namedFile,
-          exif: exifs.get(namedFile.content_hash),
-          mediaInfo: medaInfos.get(namedFile.content_hash),
-          photoDbEntry: photos.get(namedFile.content_hash),
-        }))
-        // .filter(
-        //   (item) =>
-        //     item.exif ||
-        //     item.photoDbEntry ||
-        //     item.content.mediaInfo ||
-        //     item.namedFile.path_lower.match(/\.cr3$/),
-        // )
-        .toArray()
-        .toSorted((a, b) =>
-          a.namedFile.client_modified.localeCompare(
-            b.namedFile.client_modified,
-          ),
-        );
-
-      return r;
-    }),
+    map(([items, day]) => ({
+      date: req.date,
+      dayMetadata: day,
+      files: items.toSorted(
+        (a, b) =>
+          a.timestamp.localeCompare(b.timestamp) ||
+          a.contentHash.localeCompare(b.contentHash),
+      ),
+    })),
   );

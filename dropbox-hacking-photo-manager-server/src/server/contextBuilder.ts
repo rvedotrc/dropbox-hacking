@@ -1,3 +1,4 @@
+import { isGeneralTrack } from "@blaahaj/dropbox-hacking-mediainfo-db";
 import { getDropboxClient } from "@blaahaj/dropbox-hacking-util";
 import { Dropbox } from "dropbox";
 import {
@@ -111,11 +112,20 @@ export default (args: {
                 photo: photos.get(k) ?? null,
               };
 
+              const d =
+                out.mediaInfo?.mediainfoData.media?.track.find(
+                  isGeneralTrack,
+                )?.Duration;
+
               return [
                 k,
                 {
+                  contentHash: k,
                   ...out,
-                  gps: selectGPS(out.photo, out.exif, out.mediaInfo),
+                  gps:
+                    selectGPS(out.photo, out.exif, out.mediaInfo)?.asSigned() ??
+                    null,
+                  duration: typeof d === "string" ? Number(d) : null,
                   timestamp: out.namedFiles[0].client_modified,
                   date: out.namedFiles[0].client_modified.substring(0, 10),
                 },

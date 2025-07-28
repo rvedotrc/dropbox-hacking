@@ -5,7 +5,7 @@ import React from "react";
 export const PrevNextFileNav = ({
   context,
 }: {
-  context: { date: string; rev: string };
+  context: { date: string; contentHash: string };
 }) => {
   const dayFiles = useLatestValueFromServerFeed({
     type: "rx.ng.day.files",
@@ -13,7 +13,7 @@ export const PrevNextFileNav = ({
   });
 
   const indexOfThisFile = dayFiles?.files.findIndex(
-    (f) => f.namedFile.rev === context.rev,
+    (f) => f.contentHash === context.contentHash,
   );
 
   const previousFile =
@@ -35,16 +35,16 @@ export const PrevNextFileNav = ({
         <SamePageLink
           routeState={{
             route: "route/next-gen/content-hash",
-            contentHash: previousFile.namedFile.content_hash,
+            contentHash: previousFile.contentHash,
             context: {
               date: context.date,
-              rev: previousFile.namedFile.rev,
+              contentHash: previousFile.contentHash,
             },
           }}
         >
           &larr;{" "}
-          {previousFile.namedFile.name.replaceAll(
-            previousFile.namedFile.content_hash,
+          {previousFile.namedFiles[0].name.replaceAll(
+            previousFile.contentHash,
             "#",
           )}
         </SamePageLink>
@@ -63,17 +63,14 @@ export const PrevNextFileNav = ({
         <SamePageLink
           routeState={{
             route: "route/next-gen/content-hash",
-            contentHash: nextFile.namedFile.content_hash,
+            contentHash: nextFile.contentHash,
             context: {
               date: context.date,
-              rev: nextFile.namedFile.rev,
+              contentHash: nextFile.contentHash,
             },
           }}
         >
-          {nextFile.namedFile.name.replaceAll(
-            nextFile.namedFile.content_hash,
-            "#",
-          )}{" "}
+          {nextFile.namedFiles[0].name.replaceAll(nextFile.contentHash, "#")}{" "}
           &rarr;
         </SamePageLink>
       )}

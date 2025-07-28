@@ -1,5 +1,6 @@
 import type { MediainfoFromHash } from "@blaahaj/dropbox-hacking-mediainfo-db";
 import GeoMap from "@components/map/GeoMap";
+import { GPSLatLong } from "dropbox-hacking-photo-manager-shared";
 import type { ContentHashCollection } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import * as L from "leaflet";
 import React from "react";
@@ -68,8 +69,8 @@ export const ShowContentHashResult = ({
                         contentHash,
                         {
                           position: new L.LatLng(
-                            latestValue.gps.asLatLng().lat,
-                            latestValue.gps.asLatLng().lng,
+                            latestValue.gps.lat,
+                            latestValue.gps.long,
                           ),
                           highlighted: false,
                         },
@@ -79,11 +80,19 @@ export const ShowContentHashResult = ({
                 />
               </div>
               <p className="gps">
-                <a href={latestValue.gps.googleMapsUrl({ zoom: 15 })}>
+                <a
+                  href={GPSLatLong.fromGPSLatNLongE(
+                    latestValue.gps,
+                  ).googleMapsUrl({ zoom: 15 })}
+                >
                   Google Maps
                 </a>
                 {" | "}
-                <a href={latestValue.gps.geoHackUrl({ title: "no title" })}>
+                <a
+                  href={GPSLatLong.fromGPSLatNLongE(latestValue.gps).geoHackUrl(
+                    { title: "no title" },
+                  )}
+                >
                   GeoHack
                 </a>
               </p>

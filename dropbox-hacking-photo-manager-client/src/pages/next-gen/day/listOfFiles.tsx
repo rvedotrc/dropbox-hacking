@@ -1,7 +1,6 @@
 import GeoMap from "@components/map/GeoMap";
 import logRender from "@lib/logRender";
-import { selectGPS } from "dropbox-hacking-photo-manager-shared";
-import type { DayFilesResult } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
+import type { ContentHashCollection } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import * as L from "leaflet";
 import React, { useDeferredValue, useMemo, useState } from "react";
 
@@ -12,7 +11,7 @@ const ListOfFiles = ({
   files,
   date,
 }: {
-  files: DayFilesResult["files"];
+  files: readonly ContentHashCollection[];
   date: string;
 }) => {
   const [selectedContentHashes, setSelectedContentHashes] = useState<
@@ -25,39 +24,27 @@ const ListOfFiles = ({
     `GeoMap curr=${selectedContentHashes.size} prev=${prev.size} is=${Object.is(selectedContentHashes, prev)}`,
   );
 
-  const withGPS = useMemo(
-    () =>
-      files.map((f) => ({
-        ...f,
-        gps: selectGPS(f.photoDbEntry, f.exif, f.mediaInfo),
-      })),
-    [files],
-  );
-
   const forMap = useMemo(
     () =>
       new Map(
-        withGPS
-          .filter(
-            (
-              t,
-            ): t is typeof t & {
-              readonly gps: NonNullable<(typeof t)["gps"]>;
-            } => t.gps !== null,
-          )
-          .map((f) => [
-            f.namedFile.content_hash,
-            {
-              position: new L.LatLng(
-                f.gps.asSigned().lat,
-                f.gps.asSigned().long,
-              ),
+        files.flatMap((t) =>
+          t.gps
+            ? [
+                [
+                  t.namedFiles[0].content_hash,
+                  {
+                    position: new L.LatLng(t.gps.lat, t.gps.long),
 
-              highlighted: selectedContentHashes.has(f.namedFile.content_hash),
-            },
-          ]),
+                    highlighted: selectedContentHashes.has(
+                      t.namedFiles[0].content_hash,
+                    ),
+                  },
+                ],
+              ]
+            : [],
+        ),
       ),
-    [withGPS, selectedContentHashes],
+    [files, selectedContentHashes],
   );
 
   return (
@@ -68,9 +55,7 @@ const ListOfFiles = ({
         <MultiTagEditor
           key={[...selectedContentHashes].toSorted().join(" ")}
           contentHashes={selectedContentHashes}
-          files={files.filter((f) =>
-            selectedContentHashes.has(f.namedFile.content_hash),
-          )}
+          files={files.filter((f) => selectedContentHashes.has(f.contentHash))}
         />
       )}
 

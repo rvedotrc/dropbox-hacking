@@ -23,7 +23,7 @@ const FileRow = ({
 }) => {
   const [visible, setVisible] = useState(false);
 
-  const gps = selectGPS(file.photoDbEntry, file.exif, file.mediaInfo);
+  const gps = selectGPS(file.photo, file.exif, file.mediaInfo);
 
   const generalTrack = file.mediaInfo?.mediainfoData.media?.track.find(
     (track) => track["@type"] === "General",
@@ -43,21 +43,21 @@ const FileRow = ({
     ? "/camera-icon.dark.svg"
     : /iPhone 4S|Pixel|Pixel 2|iPhone 12 mini/.test(model)
       ? "/mobile-phone.svg"
-      : file.namedFile.name.toLocaleLowerCase().startsWith("dji")
+      : file.namedFiles[0].name.toLocaleLowerCase().startsWith("dji")
         ? "/drone.svg"
         : null;
 
   useEffect(() => {
     const sub = observableVisibleItems.subscribe((s) =>
-      setVisible(s.has(file.namedFile.rev)),
+      setVisible(s.has(file.contentHash)),
     );
     return () => sub.unsubscribe();
   }, [observableVisibleItems, file]);
 
   return (
     <li
-      key={file.namedFile.id}
-      data-rev={file.namedFile.rev}
+      key={file.contentHash}
+      data-rev={file.contentHash}
       className={`${selected ? "selected" : ""} ${focused ? "focused" : ""}`}
     >
       <input
@@ -83,9 +83,7 @@ const FileRow = ({
         {file.exif && <span>exif</span>}
         {file.mediaInfo && <span>mediainfo</span>}
       </div>
-      <time className="mtime">
-        {file.namedFile.client_modified.replace("T", " ")}
-      </time>
+      <time className="mtime">{file.timestamp.replace("T", " ")}</time>
       <div className={"makeAndModel"}>
         {make || "[none]"}{" "}
         {(model.startsWith(make)
@@ -93,31 +91,31 @@ const FileRow = ({
           : model) || "[none]"}
       </div>
       <div className="basename">
-        {file.namedFile.name
+        {file.namedFiles[0].name
           .toLocaleLowerCase()
-          .replaceAll(file.namedFile.content_hash, "#")}
+          .replaceAll(file.contentHash, "#")}
       </div>
       <div className="thumbnail">
         <MaybeVisibleThumbnail
-          namedFile={file.namedFile}
+          namedFile={file.namedFiles[0]}
           visible={visible}
-          photo={file.photoDbEntry ?? {}}
+          photo={file.photo ?? {}}
           routeState={useMemo(
             () => ({
               route: "route/next-gen/content-hash",
-              contentHash: file.namedFile.content_hash,
+              contentHash: file.contentHash,
               context: {
                 date,
-                rev: file.namedFile.rev,
+                contentHash: file.contentHash,
               },
             }),
-            [file.namedFile.content_hash, file.namedFile.rev, date],
+            [file.contentHash, date],
           )}
         />
       </div>
-      <div className="description">{file.photoDbEntry?.description ?? ""}</div>
+      <div className="description">{file.photo?.description ?? ""}</div>
       <div className="tags">
-        {(file.photoDbEntry?.tags ?? []).map((tag, index) => (
+        {(file.photo?.tags ?? []).map((tag, index) => (
           <span key={index} className={`tag tag-${tag}`}>
             {tag}
           </span>

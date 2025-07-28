@@ -49,7 +49,7 @@ export type RouteState =
       contentHash: string;
       context?: {
         date: string;
-        rev: string;
+        contentHash: string;
       };
     };
 // RVE-add-route
