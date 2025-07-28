@@ -73,6 +73,15 @@ export class GPSLatLong {
     });
   }
 
+  public static fromTuple(tuple: [number, number]): GPSLatLong {
+    return new GPSLatLong({
+      lat: tuple[0],
+      latRef: "N",
+      long: tuple[1],
+      longRef: "E",
+    });
+  }
+
   constructor(private readonly pos: GPSLatLongWithDirection) {}
 
   public asUnsigned(): GPSLatLongWithDirection {
@@ -84,6 +93,16 @@ export class GPSLatLong {
       lat: this.pos.latRef === "N" ? this.pos.lat : -this.pos.lat,
       long: this.pos.longRef === "E" ? this.pos.long : -this.pos.long,
     };
+  }
+
+  public asLatLng(): { lat: number; lng: number } {
+    const signed = this.asSigned();
+    return { lat: signed.lat, lng: signed.long };
+  }
+
+  public asTuple(): [number, number] {
+    const signed = this.asSigned();
+    return [signed.lat, signed.long];
   }
 
   public googleMapsUrl(_args: { zoom: number }): string {

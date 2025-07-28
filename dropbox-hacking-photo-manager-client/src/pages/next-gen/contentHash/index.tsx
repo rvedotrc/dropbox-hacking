@@ -11,7 +11,7 @@ const NGContentHash = ({
   context,
 }: {
   contentHash: string;
-  context?: { date: string; rev: string };
+  context?: { date: string; contentHash: string };
 }) => {
   const latestValue = useLatestValueFromServerFeed({
     type: "rx.ng.content_hash",
@@ -27,7 +27,7 @@ const NGContentHash = ({
       <Navigate />
       {context && (
         <PrevNextFileNav
-          key={`${context.date} ${context.rev}`}
+          key={`${context.date} ${context.contentHash}`}
           context={context}
         />
       )}

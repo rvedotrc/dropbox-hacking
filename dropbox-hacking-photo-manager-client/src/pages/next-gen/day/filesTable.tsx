@@ -1,6 +1,6 @@
 import useVisibilityTracking from "@hooks/useVisibilityTracking";
 import logRender from "@lib/logRender";
-import type { DayFilesResult } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
+import type { ContentHashCollection } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import React, { useMemo, useRef, useState } from "react";
 
 import FileRow from "./FileRow";
@@ -11,7 +11,7 @@ const FilesTable = ({
   onSelectedContentHashes,
   date,
 }: {
-  files: DayFilesResult["files"];
+  files: readonly ContentHashCollection[];
   selectedContentHashes: ReadonlySet<string>;
   onSelectedContentHashes: (selectedContentHashes: ReadonlySet<string>) => void;
   date: string;
@@ -26,21 +26,21 @@ const FilesTable = ({
   console.log([...selectedContentHashes].toSorted().join(" "));
 
   const countSelected = files.filter((f) =>
-    selectedContentHashes.has(f.namedFile.content_hash),
+    selectedContentHashes.has(f.namedFiles[0].content_hash),
   ).length;
   const countAll = files.length;
 
   const setAll = (which: "all" | "none", checked: boolean) => {
     if ((which === "all") === checked) {
       onSelectedContentHashes(
-        new Set(files.map((f) => f.namedFile.content_hash)),
+        new Set(files.map((f) => f.namedFiles[0].content_hash)),
       );
     } else {
       onSelectedContentHashes(new Set());
     }
   };
 
-  const [focusedRev, setFocusedRev] = useState<string>();
+  const [focusedHash, setFocusedHash] = useState<string>();
 
   return (
     <>
@@ -71,48 +71,45 @@ const FilesTable = ({
 
           if (e.key === "j") {
             const idx = files.findIndex(
-              (item) => item.namedFile.rev === focusedRev,
+              (item) => item.contentHash === focusedHash,
             );
             const newIndex = (idx + 1) % files.length;
-            setFocusedRev(files[newIndex].namedFile.rev);
+            setFocusedHash(files[newIndex].contentHash);
           }
 
           if (e.key === "k") {
             const idx = files.findIndex(
-              (item) => item.namedFile.rev === focusedRev,
+              (item) => item.contentHash === focusedHash,
             );
             const newIndex = idx <= 0 ? files.length - 1 : idx - 1;
-            setFocusedRev(files[newIndex].namedFile.rev);
+            setFocusedHash(files[newIndex].contentHash);
           }
 
           if (e.key === "y" || e.key === "n") {
             const want = e.key === "y";
 
             const idx = files.findIndex(
-              (item) => item.namedFile.rev === focusedRev,
+              (item) => item.contentHash === focusedHash,
             );
-            const focusedFile: (typeof files)[number] | undefined = files[idx];
+            const focusedFile: ContentHashCollection | undefined = files[idx];
 
             if (
               focusedFile &&
-              selectedContentHashes.has(focusedFile.namedFile.content_hash) !==
-                want
+              selectedContentHashes.has(focusedFile.contentHash) !== want
             ) {
               const copy = new Set(selectedContentHashes);
-              if (want) copy.add(focusedFile.namedFile.content_hash);
-              else copy.delete(focusedFile.namedFile.content_hash);
+              if (want) copy.add(focusedFile.contentHash);
+              else copy.delete(focusedFile.contentHash);
               onSelectedContentHashes(copy);
             }
 
             const newIndex = (idx + 1) % files.length;
-            setFocusedRev(files[newIndex].namedFile.rev);
+            setFocusedHash(files[newIndex].contentHash);
           }
 
           if (e.key === "q") onSelectedContentHashes(new Set());
           if (e.key === "a")
-            onSelectedContentHashes(
-              new Set(files.map((f) => f.namedFile.content_hash)),
-            );
+            onSelectedContentHashes(new Set(files.map((f) => f.contentHash)));
 
           console.log({ key: e });
         }}
@@ -120,18 +117,18 @@ const FilesTable = ({
         {observableVisibleItems &&
           files.map((f) => (
             <FileRow
-              key={f.namedFile.id}
+              key={f.contentHash}
               file={f}
-              focused={f.namedFile.rev === focusedRev}
+              focused={f.contentHash === focusedHash}
               observableVisibleItems={observableVisibleItems}
-              selected={selectedContentHashes.has(f.namedFile.content_hash)}
+              selected={selectedContentHashes.has(f.contentHash)}
               onSelected={(selected) => {
                 const t = new Set(selectedContentHashes);
-                if (selected) t.add(f.namedFile.content_hash);
-                else t.delete(f.namedFile.content_hash);
+                if (selected) t.add(f.contentHash);
+                else t.delete(f.contentHash);
 
                 onSelectedContentHashes(t);
-                setFocusedRev(f.namedFile.rev);
+                setFocusedHash(f.contentHash);
               }}
               date={date}
             />

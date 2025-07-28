@@ -1,6 +1,16 @@
+import { isGeneralTrack } from "@blaahaj/dropbox-hacking-mediainfo-db";
 import { getDropboxClient } from "@blaahaj/dropbox-hacking-util";
 import { Dropbox } from "dropbox";
+import {
+  type NamedFile,
+  selectGPS,
+} from "dropbox-hacking-photo-manager-shared";
+import { isPreviewable } from "dropbox-hacking-photo-manager-shared/fileTypes";
 import type { FullDatabaseFeeds } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
+import type { Observable } from "rxjs";
+import { combineLatest } from "rxjs/internal/observable/combineLatest";
+import { ReplaySubject } from "rxjs/internal/ReplaySubject";
+import { map } from "rxjs/operators";
 
 import { fsCachingThumbnailFetcher } from "./api/websocket/fsCachingThumbnailFetcher.js";
 import {
@@ -42,12 +52,97 @@ export default (args: {
   const allFilesRxMap = buildForLsCacheMapAllFiles(lsCacheDir);
   const photosRxMap = buildForPhotoDbMap(photoDbDir);
 
+  const wrapAsReplay = <T>(obs: Observable<T>) => {
+    const replay = new ReplaySubject<T>(1);
+    const subscription = obs.subscribe(replay);
+    return {
+      observable: () => replay.asObservable(),
+      close: () => subscription.unsubscribe(),
+    };
+  };
+
+  const interestingFilesByRev = wrapAsReplay(
+    allFilesRxMap
+      .observable()
+      .pipe(
+        map(
+          (t) =>
+            new Map(
+              t.entries().filter(([_, v]) => isPreviewable(v.path_lower)),
+            ) as ReadonlyMap<string, NamedFile>,
+        ),
+      ),
+  );
+
+  const interestingFilesByContentHash = wrapAsReplay(
+    interestingFilesByRev.observable().pipe(
+      map((t) => {
+        const out = new Map<string, NamedFile[]>();
+
+        for (const namedFile of t.values()) {
+          const list = out.get(namedFile.content_hash);
+          if (list) list.push(namedFile);
+          else out.set(namedFile.content_hash, [namedFile]);
+        }
+
+        for (const list of out.values()) {
+          list.sort((a, b) => a.path_lower.localeCompare(b.path_lower));
+        }
+
+        return out as ReadonlyMap<string, readonly NamedFile[]>;
+      }),
+    ),
+  );
+
+  const byContentHash = wrapAsReplay(
+    combineLatest([
+      interestingFilesByContentHash.observable(),
+      exifRxMap.observable(),
+      mediaInfoRxMap.observable(),
+      photosRxMap.observable(),
+    ]).pipe(
+      map(
+        ([files, exifs, medaInfos, photos]) =>
+          new Map(
+            files.entries().map(([k, v]) => {
+              const out = {
+                namedFiles: v,
+                exif: exifs.get(k) ?? null,
+                mediaInfo: medaInfos.get(k) ?? null,
+                photo: photos.get(k) ?? null,
+              };
+
+              const d =
+                out.mediaInfo?.mediainfoData.media?.track.find(
+                  isGeneralTrack,
+                )?.Duration;
+
+              return [
+                k,
+                {
+                  contentHash: k,
+                  ...out,
+                  gps:
+                    selectGPS(out.photo, out.exif, out.mediaInfo)?.asSigned() ??
+                    null,
+                  duration: typeof d === "string" ? Number(d) : null,
+                  timestamp: out.namedFiles[0].client_modified,
+                  date: out.namedFiles[0].client_modified.substring(0, 10),
+                },
+              ] as const;
+            }),
+          ),
+      ),
+    ),
+  );
+
   const fullDatabaseFeeds: FullDatabaseFeeds = {
     exifsByContentHash: exifRxMap.observable(),
     mediaInfoByContentHash: mediaInfoRxMap.observable(),
     daysByDate: daysRxMap.observable(),
     allFilesByRev: allFilesRxMap.observable(),
     photosByContentHash: photosRxMap.observable(),
+    byContentHash: byContentHash.observable(),
   };
 
   const photoRx = buildForPhotoDb(photoDbDir);
@@ -60,6 +155,9 @@ export default (args: {
     daysRxMap.close();
     allFilesRxMap.close();
     photosRxMap.close();
+    interestingFilesByRev.close();
+    interestingFilesByContentHash.close();
+    byContentHash.close();
   };
 
   const context = {

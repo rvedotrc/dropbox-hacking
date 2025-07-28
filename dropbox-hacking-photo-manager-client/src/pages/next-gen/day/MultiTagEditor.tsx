@@ -13,7 +13,7 @@ const MultiTagEditor = ({
     const countsByTag = new Map<string, number>();
 
     for (const file of files) {
-      for (const tag of file.photoDbEntry?.tags ?? []) {
+      for (const tag of file.photo?.tags ?? []) {
         countsByTag.set(tag, (countsByTag.get(tag) ?? 0) + 1);
       }
     }

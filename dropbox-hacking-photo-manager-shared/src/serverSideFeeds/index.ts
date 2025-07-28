@@ -27,6 +27,18 @@ import * as mediaInfoDb from "@blaahaj/dropbox-hacking-mediainfo-db";
 export const imageFilenamePattern = /\.(jpg|jpeg|png)$/;
 export const videoFilenamePattern = /\.(mp4|mov)$/;
 
+export type ContentHashCollection = {
+  readonly contentHash: string;
+  readonly namedFiles: readonly NamedFile[];
+  readonly exif: exifDb.ExifFromHash | null;
+  readonly mediaInfo: mediaInfoDb.MediainfoFromHash | null;
+  readonly photo: PhotoDbEntry | null;
+  readonly gps: { lat: number; long: number } | null;
+  readonly duration: number | null;
+  readonly timestamp: string;
+  readonly date: string;
+};
+
 export interface FullDatabaseFeeds {
   exifsByContentHash: Observable<Map<exifDb.ContentHash, exifDb.ExifFromHash>>;
   mediaInfoByContentHash: Observable<
@@ -35,4 +47,5 @@ export interface FullDatabaseFeeds {
   daysByDate: Observable<Map<string, DayMetadata>>;
   allFilesByRev: Observable<Map<string, NamedFile>>;
   photosByContentHash: Observable<Map<string, PhotoDbEntry>>;
+  byContentHash: Observable<ReadonlyMap<string, ContentHashCollection>>;
 }

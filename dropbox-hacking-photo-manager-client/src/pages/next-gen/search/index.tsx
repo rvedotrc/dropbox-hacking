@@ -85,7 +85,7 @@ const NGSearch = ({
         <>
           {latestValue.truncated && <p>Results are truncated</p>}
 
-          <ListOfFiles files={latestValue.files} date={"2000-01-01"} />
+          <ListOfFiles files={latestValue.matches} date={"2000-01-01"} />
         </>
       ) : (
         "loading..."
