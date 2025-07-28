@@ -18,11 +18,8 @@ export type DayFilesResult = {
   files: {
     namedFile: NamedFile;
     exif: ExifFromHash | undefined;
-    photoDbEntry?: PhotoDbEntry;
-    content: {
-      exif?: ExifFromHash;
-      mediaInfo?: MediainfoFromHash;
-    };
+    mediaInfo: MediainfoFromHash | undefined;
+    photoDbEntry: PhotoDbEntry | undefined;
   }[];
 };
 
@@ -53,11 +50,8 @@ export const provideDayFiles = (
         .map((namedFile) => ({
           namedFile,
           exif: exifs.get(namedFile.content_hash),
+          mediaInfo: medaInfos.get(namedFile.content_hash),
           photoDbEntry: photos.get(namedFile.content_hash),
-          content: {
-            exif: exifs.get(namedFile.content_hash),
-            mediaInfo: medaInfos.get(namedFile.content_hash),
-          },
         }))
         // .filter(
         //   (item) =>

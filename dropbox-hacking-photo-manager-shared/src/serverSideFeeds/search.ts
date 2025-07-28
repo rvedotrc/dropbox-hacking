@@ -100,11 +100,8 @@ class CandidateImpl implements Candidate {
     return {
       namedFile: this.namedFile,
       exif: this.exif ?? undefined,
+      mediaInfo: this.mediaInfo ?? undefined,
       photoDbEntry: this.photoDbEntry ?? undefined,
-      content: {
-        exif: this.exif ?? undefined,
-        mediaInfo: this.mediaInfo ?? undefined,
-      },
       // dayMetadata: this.dayMetadata ?? {
       //   date: this.namedFile.client_modified.substring(0, 10),
       //   description: "",

@@ -29,7 +29,7 @@ const ListOfFiles = ({
     () =>
       files.map((f) => ({
         ...f,
-        gps: selectGPS(f.photoDbEntry, f.exif, f.content.mediaInfo),
+        gps: selectGPS(f.photoDbEntry, f.exif, f.mediaInfo),
       })),
     [files],
   );

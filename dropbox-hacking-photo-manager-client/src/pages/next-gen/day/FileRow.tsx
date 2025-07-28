@@ -23,18 +23,18 @@ const FileRow = ({
 }) => {
   const [visible, setVisible] = useState(false);
 
-  const gps = selectGPS(file.photoDbEntry, file.exif, file.content.mediaInfo);
+  const gps = selectGPS(file.photoDbEntry, file.exif, file.mediaInfo);
 
-  const generalTrack = file.content.mediaInfo?.mediainfoData.media?.track.find(
+  const generalTrack = file.mediaInfo?.mediainfoData.media?.track.find(
     (track) => track["@type"] === "General",
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ) as any;
   const make =
-    file.content.exif?.exifData.tags?.Make ??
+    file.exif?.exifData.tags?.Make ??
     generalTrack?.Encoded_Hardware_CompanyName ??
     "";
   const model =
-    file.content.exif?.exifData.tags?.Model ??
+    file.exif?.exifData.tags?.Model ??
     generalTrack?.Encoded_Hardware_Name ??
     "";
   const deviceIcon = /EX-Z3|FinePix HS10 HS11|Canon PowerShot SX70 HS/.test(
@@ -80,8 +80,8 @@ const FileRow = ({
           <img src={deviceIcon} style={{ width: "2em", height: "2em" }} />
         )}
 
-        {file.content.exif && <span>exif</span>}
-        {file.content.mediaInfo && <span>mediainfo</span>}
+        {file.exif && <span>exif</span>}
+        {file.mediaInfo && <span>mediainfo</span>}
       </div>
       <time className="mtime">
         {file.namedFile.client_modified.replace("T", " ")}
