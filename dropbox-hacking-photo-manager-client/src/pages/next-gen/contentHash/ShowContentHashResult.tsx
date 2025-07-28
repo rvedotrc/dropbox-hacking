@@ -1,7 +1,6 @@
 import type { MediainfoFromHash } from "@blaahaj/dropbox-hacking-mediainfo-db";
 import GeoMap from "@components/map/GeoMap";
-import { selectGPS } from "dropbox-hacking-photo-manager-shared";
-import type { ContentHashResult } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
+import type { ContentHashCollection } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import * as L from "leaflet";
 import React from "react";
 
@@ -37,35 +36,29 @@ export const ShowContentHashResult = ({
   latestValue,
 }: {
   contentHash: string;
-  latestValue: ContentHashResult;
+  latestValue: ContentHashCollection;
 }) => {
   const widthAndHeight = latestValue.exif
     ? latestValue.exif.exifData.imageSize
-    : latestValue.mediainfo
-      ? imageSizeFromMediaInfo(latestValue.mediainfo)
+    : latestValue.mediaInfo
+      ? imageSizeFromMediaInfo(latestValue.mediaInfo)
       : undefined;
-
-  const gps = selectGPS(
-    latestValue.photoDbEntry,
-    latestValue.exif,
-    latestValue.mediainfo,
-  );
 
   return (
     <>
       <div style={{ display: "flex", flexDirection: "row" }}>
         <ImagePreview
           namedFile={latestValue.namedFiles[0]}
-          photo={latestValue.photoDbEntry}
+          photo={latestValue.photo ?? {}}
           fullWidthAndHeight={widthAndHeight}
         />
 
         <div style={{ display: "flex", flexDirection: "column" }}>
           {latestValue.exif && <SummariseExif exif={latestValue.exif} />}
-          {latestValue.mediainfo && (
-            <SummariseMediaInfo mediaInfo={latestValue.mediainfo} />
+          {latestValue.mediaInfo && (
+            <SummariseMediaInfo mediaInfo={latestValue.mediaInfo} />
           )}
-          {gps ? (
+          {latestValue.gps ? (
             <>
               <div style={{ marginBlock: "1em" }}>
                 <GeoMap
@@ -75,8 +68,8 @@ export const ShowContentHashResult = ({
                         contentHash,
                         {
                           position: new L.LatLng(
-                            gps.asSigned().lat,
-                            gps.asSigned().long,
+                            latestValue.gps.asLatLng().lat,
+                            latestValue.gps.asLatLng().lng,
                           ),
                           highlighted: false,
                         },
@@ -86,9 +79,13 @@ export const ShowContentHashResult = ({
                 />
               </div>
               <p className="gps">
-                <a href={gps.googleMapsUrl({ zoom: 15 })}>Google Maps</a>
+                <a href={latestValue.gps.googleMapsUrl({ zoom: 15 })}>
+                  Google Maps
+                </a>
                 {" | "}
-                <a href={gps.geoHackUrl({ title: "no title" })}>GeoHack</a>
+                <a href={latestValue.gps.geoHackUrl({ title: "no title" })}>
+                  GeoHack
+                </a>
               </p>
             </>
           ) : (
@@ -100,7 +97,7 @@ export const ShowContentHashResult = ({
       <div style={{ marginBlock: "1em" }}>
         <EditablePhotoEntry
           contentHash={contentHash}
-          photoDbEntry={latestValue.photoDbEntry}
+          photoDbEntry={latestValue.photo ?? {}}
         />
       </div>
 
