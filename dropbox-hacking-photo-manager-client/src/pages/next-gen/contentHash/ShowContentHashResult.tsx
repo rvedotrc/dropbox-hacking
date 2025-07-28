@@ -1,6 +1,6 @@
 import type { MediainfoFromHash } from "@blaahaj/dropbox-hacking-mediainfo-db";
 import GeoMap from "@components/map/GeoMap";
-import { GPSLatLong } from "dropbox-hacking-photo-manager-shared";
+import { selectGPS } from "dropbox-hacking-photo-manager-shared";
 import type { ContentHashResult } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import * as L from "leaflet";
 import React from "react";
@@ -45,11 +45,11 @@ export const ShowContentHashResult = ({
       ? imageSizeFromMediaInfo(latestValue.mediainfo)
       : undefined;
 
-  const gps =
-    (latestValue.exif ? GPSLatLong.fromExif(latestValue.exif) : null) ??
-    (latestValue.mediainfo
-      ? GPSLatLong.fromMediaInfo(latestValue.mediainfo)
-      : null);
+  const gps = selectGPS(
+    latestValue.photoDbEntry,
+    latestValue.exif,
+    latestValue.mediainfo,
+  );
 
   return (
     <>

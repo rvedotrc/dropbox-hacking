@@ -1,5 +1,5 @@
 import logRender from "@lib/logRender";
-import { GPSLatLong } from "dropbox-hacking-photo-manager-shared";
+import { selectGPS } from "dropbox-hacking-photo-manager-shared";
 import type { DayFilesResult } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import React, { useEffect, useMemo, useState } from "react";
 import { Observable } from "rxjs";
@@ -23,17 +23,12 @@ const FileRow = ({
 }) => {
   const [visible, setVisible] = useState(false);
 
-  const tags = file.content.exif?.exifData.tags;
+  const gps = selectGPS(file.photoDbEntry, file.exif, file.content.mediaInfo);
+
   const generalTrack = file.content.mediaInfo?.mediainfoData.media?.track.find(
     (track) => track["@type"] === "General",
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ) as any;
-  const gps = tags
-    ? GPSLatLong.fromExifTags(tags)
-    : generalTrack?.Recorded_Location
-      ? GPSLatLong.fromMediaInfoRecordedAt(generalTrack.Recorded_Location)
-      : null;
-
   const make =
     file.content.exif?.exifData.tags?.Make ??
     generalTrack?.Encoded_Hardware_CompanyName ??

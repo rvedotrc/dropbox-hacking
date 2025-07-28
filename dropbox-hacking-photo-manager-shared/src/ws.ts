@@ -10,11 +10,12 @@ export type ClosestToResponse = {
   truncated: boolean;
 };
 
-export type PhotoDbEntry = {
-  description?: string;
-  tags?: string[];
-  rotate?: number;
-};
+export type PhotoDbEntry = Partial<{
+  description: string;
+  tags: string[];
+  rotate: number;
+  gps: [number, number];
+}>;
 
 export type NamedFile = Readonly<files.FileMetadata> & {
   readonly path_lower: string;

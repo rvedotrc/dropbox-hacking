@@ -10,7 +10,7 @@ import {
   isMediainfoableFilename,
   isPreviewable,
 } from "../fileTypes.js";
-import { GPSLatLong } from "../gpsLatLong.js";
+import { selectGPS } from "../selectGPS.js";
 import type { DayMetadata } from "../types.js";
 import { type FullDatabaseFeeds } from "./index.js";
 
@@ -74,14 +74,12 @@ export const provideListOfDaysWithoutSamples = (
         const item = getOrCreate(date);
 
         ++item.counts.previewableCount;
-        let gps: GPSLatLong | null = null;
 
         if (isExifableFilename(file.name)) {
           ++item.counts.exifableCount;
 
           if (exifData) {
             ++item.counts.hasExifCount;
-            gps ??= GPSLatLong.fromExif(exifData);
           }
         }
 
@@ -90,11 +88,11 @@ export const provideListOfDaysWithoutSamples = (
 
           if (mediaInfoData) {
             ++item.counts.hasMediaInfoCount;
-            gps ??= GPSLatLong.fromMediaInfo(mediaInfoData);
           }
         }
 
-        if (gps) ++item.counts.hasGPSCount;
+        if (selectGPS(photo, exifData, mediaInfoData))
+          ++item.counts.hasGPSCount;
 
         for (const tag of photo?.tags ?? []) {
           item.photoTags[tag] = (item.photoTags[tag] ?? 0) + 1;

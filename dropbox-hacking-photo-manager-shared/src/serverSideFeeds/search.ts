@@ -10,7 +10,7 @@ import {
 import { combineLatest, map, type Observable } from "rxjs";
 
 import type { FilterNode } from "../filter.js";
-import { GPSLatLong } from "../gpsLatLong.js";
+import { selectGPS } from "../selectGPS.js";
 import { type DayMetadata, ensureNever } from "../types.js";
 import type { NamedFile, PhotoDbEntry } from "../ws.js";
 import { type DayFilesResult, type FullDatabaseFeeds } from "./index.js";
@@ -79,11 +79,7 @@ class CandidateImpl implements Candidate {
   }
 
   public get hasGPS() {
-    return this.exif
-      ? !!GPSLatLong.fromExif(this.exif)
-      : this.mediaInfo
-        ? !!GPSLatLong.fromMediaInfo(this.mediaInfo)
-        : false;
+    return !!selectGPS(this.photoDbEntry, this.exif, this.mediaInfo);
   }
 
   public get duration() {

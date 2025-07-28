@@ -1,6 +1,6 @@
 import GeoMap from "@components/map/GeoMap";
 import logRender from "@lib/logRender";
-import { GPSLatLong } from "dropbox-hacking-photo-manager-shared";
+import { selectGPS } from "dropbox-hacking-photo-manager-shared";
 import type { DayFilesResult } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import * as L from "leaflet";
 import React, { useDeferredValue, useMemo, useState } from "react";
@@ -29,12 +29,7 @@ const ListOfFiles = ({
     () =>
       files.map((f) => ({
         ...f,
-        gps:
-          (f.exif ? GPSLatLong.fromExif(f.exif) : null) ??
-          (f.content.mediaInfo
-            ? GPSLatLong.fromMediaInfo(f.content.mediaInfo)
-            : null) ??
-          null,
+        gps: selectGPS(f.photoDbEntry, f.exif, f.content.mediaInfo),
       })),
     [files],
   );
