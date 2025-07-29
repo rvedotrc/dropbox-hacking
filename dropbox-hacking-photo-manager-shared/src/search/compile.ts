@@ -3,9 +3,9 @@ import {
   isVideoTrack,
 } from "@blaahaj/dropbox-hacking-mediainfo-db";
 
-import type { FilterNode } from "../filter.js";
+import { ensureNever } from "../ensureNever.js";
 import type { ContentHashCollection } from "../serverSideFeeds/index.js";
-import { ensureNever } from "../types.js";
+import type { FilterNode } from "./filterNode.js";
 
 type Predicate<T> = (candidate: T) => boolean;
 

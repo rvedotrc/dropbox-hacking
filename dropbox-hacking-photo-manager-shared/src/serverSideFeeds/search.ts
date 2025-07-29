@@ -1,7 +1,7 @@
 import { combineLatest, map, type Observable } from "rxjs";
 
-import type { FilterNode } from "../filter.js";
 import { compile } from "../search/compile.js";
+import type { FilterNode } from "../search/filterNode.js";
 import type { DayMetadata } from "../types.js";
 import { type ContentHashCollection, type FullDatabaseFeeds } from "./index.js";
 
