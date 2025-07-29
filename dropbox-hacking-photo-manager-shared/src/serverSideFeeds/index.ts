@@ -22,7 +22,7 @@ export * from "./thumbnail.js";
 export * from "./video.js";
 
 import * as exifDb from "@blaahaj/dropbox-hacking-exif-db";
-import * as mediaInfoDb from "@blaahaj/dropbox-hacking-mediainfo-db";
+import * as mediaInfoDb from "@blaahaj/dropbox-hacking-mediainfo-db/types";
 
 export const imageFilenamePattern = /\.(jpg|jpeg|png)$/;
 export const videoFilenamePattern = /\.(mp4|mov)$/;

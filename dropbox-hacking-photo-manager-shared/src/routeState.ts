@@ -1,3 +1,4 @@
+import { ensureNever } from "./ensureNever.js";
 import type { GPSLatNLongE } from "./gpsLatLong.js";
 
 export type RouteState =
@@ -44,10 +45,6 @@ export type RouteState =
         contentHash: string;
       };
     };
-
-export const ensureNever = (_: never) => {
-  throw new Error("ensureNever failed");
-};
 
 export const urlForState = (state: RouteState): string => {
   switch (state.route) {

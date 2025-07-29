@@ -1,7 +1,7 @@
 import {
   isAudioTrack,
   isVideoTrack,
-} from "@blaahaj/dropbox-hacking-mediainfo-db";
+} from "@blaahaj/dropbox-hacking-mediainfo-db/types";
 
 import { ensureNever } from "../ensureNever.js";
 import type { ContentHashCollection } from "../serverSideFeeds/index.js";
@@ -64,7 +64,12 @@ export const compile = (
   if (filter.type === "tag")
     return (c) => !!c.photo?.tags?.includes(filter.tag);
 
-  if (filter.type === "text") return () => false; // FIXME: c.hasText(filter.text);
+  if (filter.type === "tag-loose")
+    return (c) => !!c.photo?.tags?.some((t) => t.includes(filter.q));
+
+  // FIXME: also search day-description
+  if (filter.type === "text")
+    return (c) => !!c.photo?.description?.includes(filter.text);
 
   if (filter.type === "timestamp") {
     const { operand, timestamp } = filter;
@@ -80,6 +85,13 @@ export const compile = (
         namedFile.path_lower.includes(filter.path),
       );
   }
+
+  if (filter.type === "file-id")
+    return (c) => c.namedFiles.some((namedFile) => namedFile.id === filter.id);
+
+  if (filter.type === "file-rev")
+    return (c) =>
+      c.namedFiles.some((namedFile) => namedFile.rev === filter.rev);
 
   ensureNever(filter);
   throw new Error();

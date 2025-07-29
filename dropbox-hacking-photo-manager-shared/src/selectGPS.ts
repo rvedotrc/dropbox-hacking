@@ -1,5 +1,5 @@
 import type { ExifFromHash } from "@blaahaj/dropbox-hacking-exif-db";
-import type { MediainfoFromHash } from "@blaahaj/dropbox-hacking-mediainfo-db";
+import type { MediainfoFromHash } from "@blaahaj/dropbox-hacking-mediainfo-db/types";
 
 import { GPSLatLong } from "./gpsLatLong.js";
 import type { PhotoDbEntry } from "./ws.js";

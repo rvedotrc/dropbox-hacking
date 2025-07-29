@@ -1,7 +1,7 @@
 import Navigate from "@components/navigate";
 import { useLatestValueFromServerFeed } from "@hooks/useLatestValueFromServerFeed";
 import logRender from "@lib/logRender";
-import { parseFilterString } from "dropbox-hacking-photo-manager-shared";
+import { parseFilterString } from "dropbox-hacking-photo-manager-shared/search";
 import React, {
   type ChangeEventHandler,
   useEffect,
@@ -47,6 +47,8 @@ const NGSearch = ({
         <li>gps</li>
 
         <li>tag=swan</li>
+        <li>id=id:...</li>
+        <li>rev=...</li>
         <li>text~meet</li>
         <li>path~originals</li>
 

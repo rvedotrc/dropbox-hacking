@@ -54,6 +54,21 @@ export const parseFilterString = (query: string): FilterNode | null => {
       continue;
     }
 
+    if (part.startsWith("tag~")) {
+      stack.push({ type: "tag-loose", q: part.substring(4) });
+      continue;
+    }
+
+    if (part.startsWith("id=")) {
+      stack.push({ type: "file-id", id: part.substring(3) });
+      continue;
+    }
+
+    if (part.startsWith("rev=")) {
+      stack.push({ type: "file-rev", rev: part.substring(4) });
+      continue;
+    }
+
     if ((match = part.match(/^tags([<>])(\d+)$/))) {
       stack.push({
         type: "tag_count",
