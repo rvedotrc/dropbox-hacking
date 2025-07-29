@@ -1,6 +1,7 @@
 import EditableTextField from "@components/editableTextField";
 import Navigate from "@components/navigate";
 import SamePageLink from "@components/samePageLink";
+import ShowData from "@components/ShowData";
 import { useIdentity } from "@hooks/useIdentity";
 import { useLatestValueFromServerFeed } from "@hooks/useLatestValueFromServerFeed";
 import logRender from "@lib/logRender";
@@ -98,6 +99,8 @@ const NGDayFiles = ({ date }: { date: string }) => {
           </p>
 
           <ListOfFiles files={latestValue.files} date={date} />
+
+          <ShowData data={latestValue} />
         </>
       ) : (
         "loading..."
