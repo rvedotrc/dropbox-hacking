@@ -111,6 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (container) {
       window.history.replaceState(routeState, "unused");
       createRoot(container).render(
+        // FIXME: Disabled: incompatible with GeoMap pin tracking
         // <React.StrictMode>
         <WrappedRoot initialRouteState={routeState} />,
         // </React.StrictMode>,
