@@ -59,7 +59,7 @@ export const compile = (
     throw new Error();
   }
 
-  if (filter.type === "has_gps") return (c) => !!c.gps;
+  if (filter.type === "has_gps") return (c) => !!c.gps.effective;
 
   if (filter.type === "tag")
     return (c) => !!c.photo?.tags?.includes(filter.tag);

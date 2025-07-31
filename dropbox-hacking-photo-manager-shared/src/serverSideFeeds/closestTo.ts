@@ -44,13 +44,15 @@ export const provideClosestTo = (
     feeds.allFilesByRev,
     feeds.photosByContentHash,
   ]).pipe(
+    // FIXME rewrite using the combined feed
     map(([exif, ls, photos]) => {
       const withGPS = [...exif.entries()]
         .map(([hash, data]) => ({
           hash,
           data,
-          gps: data.exifData.tags
-            ? GPSLatLong.fromExifTags(data.exifData.tags)
+          gps:
+            data.exifData.tags ?
+              GPSLatLong.fromExifTags(data.exifData.tags)
             : null,
           photoDbEntry: photos.get(hash),
         }))

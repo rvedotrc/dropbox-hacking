@@ -82,11 +82,6 @@ const GeoMap = ({ positions }: { positions: Positions }) => {
     mapRef.current?.setView(center, initialZoom);
   }, [center.lat, center.lng, initialZoom]);
 
-  // console.log({ GeoMap: { positions, initialZoom, c2, halfDiagonal } });
-
-  // const [currentZoom, setCurrentZoom] = useState(initialZoom);
-
-  // const previousPositions = useDeferredValue(positions);
   const iconA = useMemo(() => new L.Icon.Default({ className: "iconA" }), []);
   const iconB = useMemo(() => new L.Icon.Default({ className: "iconB" }), []);
   const markersRef = useRef(new Map<string, P & { marker: L.Marker }>());
@@ -135,9 +130,6 @@ const GeoMap = ({ positions }: { positions: Positions }) => {
   return (
     <div>
       <div ref={eleRef} style={{ width: "600px", height: "600px" }} />
-      {/* <p>
-        {halfDiagonal} / {initialZoom} / curr={currentZoom}
-      </p> */}
     </div>
   );
 };
