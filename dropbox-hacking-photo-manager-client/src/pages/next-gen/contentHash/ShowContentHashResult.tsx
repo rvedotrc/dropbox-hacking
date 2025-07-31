@@ -1,4 +1,3 @@
-import type { MediainfoFromHash } from "@blaahaj/dropbox-hacking-mediainfo-db";
 import GeoMap from "@components/map/GeoMap";
 import ShowData from "@components/ShowData";
 import { GPSLatLong } from "dropbox-hacking-photo-manager-shared";
@@ -12,26 +11,6 @@ import SummariseExif from "./SummariseExif";
 import SummariseMediaInfo from "./SummariseMediaInfo";
 import SummariseNamedFiles from "./SummariseNamedFiles";
 
-const imageSizeFromMediaInfo = (
-  mediaInfo: MediainfoFromHash,
-): { width: number; height: number } | undefined => {
-  const videoTrack = mediaInfo.mediainfoData.media?.track.find(
-    (t) => t["@type"] === "Video",
-  );
-  if (!videoTrack) return;
-
-  const t = videoTrack as typeof videoTrack & {
-    Width?: string;
-    Height?: string;
-  };
-  if (!t.Width || !t.Height) return;
-
-  return {
-    width: Number(t.Width),
-    height: Number(t.Height),
-  };
-};
-
 export const ShowContentHashResult = ({
   contentHash,
   latestValue,
@@ -39,19 +18,14 @@ export const ShowContentHashResult = ({
   contentHash: string;
   latestValue: ContentHashCollection;
 }) => {
-  const widthAndHeight = latestValue.exif
-    ? latestValue.exif.exifData.imageSize
-    : latestValue.mediaInfo
-      ? imageSizeFromMediaInfo(latestValue.mediaInfo)
-      : undefined;
-
   return (
     <>
+      <ShowData data={latestValue} />
+
       <div style={{ display: "flex", flexDirection: "row" }}>
         <ImagePreview
           namedFile={latestValue.namedFiles[0]}
           photo={latestValue.photo ?? {}}
-          fullWidthAndHeight={widthAndHeight}
         />
 
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -59,6 +33,16 @@ export const ShowContentHashResult = ({
           {latestValue.mediaInfo && (
             <SummariseMediaInfo mediaInfo={latestValue.mediaInfo} />
           )}
+
+          <div style={{ marginBlock: "1em" }}>
+            <EditablePhotoEntry
+              contentHash={contentHash}
+              photoDbEntry={latestValue.photo ?? {}}
+            />
+          </div>
+
+          <p>Rotation: {latestValue.photo?.rotate ?? 0}°</p>
+
           {latestValue.gps ? (
             <>
               <div style={{ marginBlock: "1em" }}>
@@ -100,19 +84,10 @@ export const ShowContentHashResult = ({
           ) : (
             <p className="no-gps">[no GPS information]</p>
           )}
+
+          <SummariseNamedFiles namedFiles={latestValue.namedFiles} />
         </div>
       </div>
-
-      <div style={{ marginBlock: "1em" }}>
-        <EditablePhotoEntry
-          contentHash={contentHash}
-          photoDbEntry={latestValue.photo ?? {}}
-        />
-      </div>
-
-      <SummariseNamedFiles namedFiles={latestValue.namedFiles} />
-
-      <ShowData data={latestValue} />
     </>
   );
 };

@@ -32,8 +32,6 @@ const NGContentHash = ({
         />
       )}
 
-      <h1>Content hash {contentHash.substring(0, 10)}</h1>
-
       {latestValue ? (
         <>
           <ShowContentHashResult
