@@ -49,6 +49,7 @@ const NGSearch = ({
         <li>tag=swan</li>
         <li>id=id:...</li>
         <li>rev=...</li>
+        <li>tag~person:</li>
         <li>text~meet</li>
         <li>path~originals</li>
 
