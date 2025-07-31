@@ -1,5 +1,4 @@
 import logRender from "@lib/logRender";
-import { selectGPS } from "dropbox-hacking-photo-manager-shared";
 import type { DayFilesResult } from "dropbox-hacking-photo-manager-shared/serverSideFeeds";
 import React, { useEffect, useMemo, useState } from "react";
 import { Observable } from "rxjs";
@@ -23,7 +22,7 @@ const FileRow = ({
 }) => {
   const [visible, setVisible] = useState(false);
 
-  const gps = selectGPS(file.photo, file.exif, file.mediaInfo);
+  const gps = file.gps;
 
   const generalTrack = file.mediaInfo?.mediainfoData.media?.track.find(
     (track) => track["@type"] === "General",
@@ -69,7 +68,7 @@ const FileRow = ({
         )}
       />
       <div className="icons">
-        {gps && (
+        {gps.effective && (
           <img
             src="/gps-pin.dark.svg"
             style={{ width: "1em", height: "2em" }}

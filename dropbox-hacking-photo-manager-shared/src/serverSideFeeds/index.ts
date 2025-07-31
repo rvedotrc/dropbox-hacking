@@ -1,5 +1,6 @@
 import type {
   DayMetadata,
+  GPSInformation,
   NamedFile,
   PhotoDbEntry,
 } from "dropbox-hacking-photo-manager-shared";
@@ -33,7 +34,7 @@ export type ContentHashCollection = {
   readonly exif: exifDb.ExifFromHash | null;
   readonly mediaInfo: mediaInfoDb.MediainfoFromHash | null;
   readonly photo: PhotoDbEntry | null;
-  readonly gps: { lat: number; long: number } | null;
+  readonly gps: GPSInformation;
   readonly duration: number | null;
   readonly timestamp: string;
   readonly date: string;

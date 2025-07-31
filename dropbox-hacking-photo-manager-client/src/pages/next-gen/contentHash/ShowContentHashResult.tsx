@@ -43,7 +43,7 @@ export const ShowContentHashResult = ({
 
           <p>Rotation: {latestValue.photo?.rotate ?? 0}°</p>
 
-          {latestValue.gps ? (
+          {latestValue.gps.effective ? (
             <>
               <div style={{ marginBlock: "1em" }}>
                 <GeoMap
@@ -53,8 +53,8 @@ export const ShowContentHashResult = ({
                         contentHash,
                         {
                           position: new L.LatLng(
-                            latestValue.gps.lat,
-                            latestValue.gps.long,
+                            latestValue.gps.effective.lat,
+                            latestValue.gps.effective.long,
                           ),
                           highlighted: false,
                         },
@@ -66,16 +66,16 @@ export const ShowContentHashResult = ({
               <p className="gps">
                 <a
                   href={GPSLatLong.fromGPSLatNLongE(
-                    latestValue.gps,
+                    latestValue.gps.effective,
                   ).googleMapsUrl({ zoom: 15 })}
                 >
                   Google Maps
                 </a>
                 {" | "}
                 <a
-                  href={GPSLatLong.fromGPSLatNLongE(latestValue.gps).geoHackUrl(
-                    { title: "no title" },
-                  )}
+                  href={GPSLatLong.fromGPSLatNLongE(
+                    latestValue.gps.effective,
+                  ).geoHackUrl({ title: "no title" })}
                 >
                   GeoHack
                 </a>

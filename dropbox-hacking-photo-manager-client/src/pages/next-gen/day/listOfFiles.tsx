@@ -28,12 +28,15 @@ const ListOfFiles = ({
     () =>
       new Map(
         files.flatMap((t) =>
-          t.gps
+          t.gps.effective
             ? [
                 [
                   t.namedFiles[0].content_hash,
                   {
-                    position: new L.LatLng(t.gps.lat, t.gps.long),
+                    position: new L.LatLng(
+                      t.gps.effective.lat,
+                      t.gps.effective.long,
+                    ),
 
                     highlighted: selectedContentHashes.has(
                       t.namedFiles[0].content_hash,
