@@ -39,8 +39,19 @@ const findInitialZoom = (halfDiagonal: number) => {
   return initialZoom;
 };
 
-const GeoMap = ({ positions }: { positions: Positions }) => {
+const GeoMap = ({
+  positions,
+  listeners,
+}: {
+  positions: Positions;
+  listeners?: Partial<{
+    onClickMarker: (e: L.LeafletMouseEvent, key: string) => void;
+  }>;
+}) => {
   if (positions.size === 0) return;
+
+  const listenersRef = useRef(listeners);
+  listenersRef.current = listeners;
 
   useStyleSheet({
     cssText: `
@@ -108,6 +119,10 @@ const GeoMap = ({ positions }: { positions: Positions }) => {
           icon: newDetails.highlighted ? iconB : iconA,
         });
         marker.addTo(theMap);
+
+        marker.addEventListener("click", (e) =>
+          listenersRef.current?.onClickMarker?.(e, id),
+        );
 
         markers.set(id, {
           ...newDetails,

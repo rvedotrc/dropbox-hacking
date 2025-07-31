@@ -50,6 +50,21 @@ const ListOfFiles = ({
     [files, selectedContentHashes],
   );
 
+  const mapListeners = useMemo<Parameters<typeof GeoMap>[0]["listeners"]>(
+    () => ({
+      onClickMarker: (e, key) => {
+        setSelectedContentHashes((before) => {
+          console.log("on click marker", key, e);
+          const copy = new Set(before);
+          if (copy.has(key)) copy.delete(key);
+          else copy.add(key);
+          return copy;
+        });
+      },
+    }),
+    [],
+  );
+
   return (
     <>
       <p>{files.length} files</p>
@@ -69,7 +84,7 @@ const ListOfFiles = ({
         date={date}
       />
 
-      <GeoMap positions={forMap} />
+      <GeoMap positions={forMap} listeners={mapListeners} />
 
       <p>
         With GPS: {forMap.size} // Without GPS: {files.length - forMap.size}
