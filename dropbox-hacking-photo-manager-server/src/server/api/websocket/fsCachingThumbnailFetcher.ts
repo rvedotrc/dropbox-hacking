@@ -47,7 +47,7 @@ const backgroundSave = async (base64JPEG: string, filename: string) => {
 export const fsCachingThumbnailFetcher =
   (_context: Context, _backend: ThumbnailFetcher): ThumbnailFetcher =>
   async (args) => {
-    const filename = await pathFor(args.rev, args.size, "jpeg", "strict");
+    const filename = await pathFor(args.rev, args.size, args.format, args.mode);
 
     try {
       const base64JPEG = await readFile(filename, { encoding: "utf-8" });

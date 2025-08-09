@@ -24,6 +24,8 @@ export const websocketThumbnailLoader = (
           type: "rx.ng.thumbnail2",
           rev,
           size: "w128h128",
+          mode: "strict",
+          format: "jpeg",
         },
         mx,
       ).subscribe({

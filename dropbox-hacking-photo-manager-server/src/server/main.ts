@@ -8,6 +8,16 @@ import getPages from "./getPages.js";
 import getRoot from "./getRoot.js";
 import image from "./image/index.js";
 
+// To trace where log messages are coming from
+// const realLog = console.log;
+// const fakeLog: typeof realLog = (...args) => {
+//   const e = new Error();
+//   const where = e.stack?.split("\n")[2];
+//   if (where) realLog(`from %s`, where);
+//   realLog(...args);
+// };
+// console.log = fakeLog;
+
 const appWithoutWs = express();
 const appWithWs = expressWs(appWithoutWs).app;
 

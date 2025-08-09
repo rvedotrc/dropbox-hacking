@@ -1,7 +1,7 @@
 import { combineLatest, map, type Observable } from "rxjs";
 
-import type { FilterNode } from "../filter.js";
 import { compile } from "../search/compile.js";
+import type { FilterNode } from "../search/filterNode.js";
 import type { DayMetadata } from "../types.js";
 import { type ContentHashCollection, type FullDatabaseFeeds } from "./index.js";
 
@@ -12,6 +12,7 @@ export type SearchRequest = {
 
 export type SearchResult = {
   readonly truncated: boolean;
+  readonly totalCount: number;
   readonly matches: readonly (ContentHashCollection & {
     readonly day: DayMetadata | undefined;
   })[];
@@ -47,6 +48,7 @@ export const provideSearch = (
 
         return {
           truncated: matches.length > 1000,
+          totalCount: matches.length,
           matches:
             matches.length > 1000
               ? matches.slice(matches.length - 1000)

@@ -122,9 +122,7 @@ export default (args: {
                 {
                   contentHash: k,
                   ...out,
-                  gps:
-                    selectGPS(out.photo, out.exif, out.mediaInfo)?.asSigned() ??
-                    null,
+                  gps: selectGPS(out.photo, out.exif, out.mediaInfo),
                   duration: typeof d === "string" ? Number(d) : null,
                   timestamp: out.namedFiles[0].client_modified,
                   date: out.namedFiles[0].client_modified.substring(0, 10),

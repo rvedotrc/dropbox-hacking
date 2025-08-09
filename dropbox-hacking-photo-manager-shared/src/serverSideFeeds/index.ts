@@ -1,5 +1,6 @@
 import type {
   DayMetadata,
+  GPSInformation,
   NamedFile,
   PhotoDbEntry,
 } from "dropbox-hacking-photo-manager-shared";
@@ -22,7 +23,7 @@ export * from "./thumbnail.js";
 export * from "./video.js";
 
 import * as exifDb from "@blaahaj/dropbox-hacking-exif-db";
-import * as mediaInfoDb from "@blaahaj/dropbox-hacking-mediainfo-db";
+import * as mediaInfoDb from "@blaahaj/dropbox-hacking-mediainfo-db/types";
 
 export const imageFilenamePattern = /\.(jpg|jpeg|png)$/;
 export const videoFilenamePattern = /\.(mp4|mov)$/;
@@ -33,7 +34,7 @@ export type ContentHashCollection = {
   readonly exif: exifDb.ExifFromHash | null;
   readonly mediaInfo: mediaInfoDb.MediainfoFromHash | null;
   readonly photo: PhotoDbEntry | null;
-  readonly gps: { lat: number; long: number } | null;
+  readonly gps: GPSInformation;
   readonly duration: number | null;
   readonly timestamp: string;
   readonly date: string;

@@ -1,5 +1,6 @@
 import Navigate from "@components/navigate";
 import SamePageLink from "@components/samePageLink";
+import ShowData from "@components/ShowData";
 import { useLatestValueFromServerFeed } from "@hooks/useLatestValueFromServerFeed";
 import logRender from "@lib/logRender";
 import React, { useEffect } from "react";
@@ -83,6 +84,8 @@ const NGDaysNoSamples = () => {
       ) : (
         "loading ..."
       )}
+
+      <ShowData data={latestValue} />
     </>
   );
 };

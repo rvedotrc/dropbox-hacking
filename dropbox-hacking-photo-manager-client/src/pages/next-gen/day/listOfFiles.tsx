@@ -28,12 +28,15 @@ const ListOfFiles = ({
     () =>
       new Map(
         files.flatMap((t) =>
-          t.gps
+          t.gps.effective
             ? [
                 [
                   t.namedFiles[0].content_hash,
                   {
-                    position: new L.LatLng(t.gps.lat, t.gps.long),
+                    position: new L.LatLng(
+                      t.gps.effective.lat,
+                      t.gps.effective.long,
+                    ),
 
                     highlighted: selectedContentHashes.has(
                       t.namedFiles[0].content_hash,
@@ -45,6 +48,21 @@ const ListOfFiles = ({
         ),
       ),
     [files, selectedContentHashes],
+  );
+
+  const mapListeners = useMemo<Parameters<typeof GeoMap>[0]["listeners"]>(
+    () => ({
+      onClickMarker: (e, key) => {
+        setSelectedContentHashes((before) => {
+          console.log("on click marker", key, e);
+          const copy = new Set(before);
+          if (copy.has(key)) copy.delete(key);
+          else copy.add(key);
+          return copy;
+        });
+      },
+    }),
+    [],
   );
 
   return (
@@ -66,7 +84,7 @@ const ListOfFiles = ({
         date={date}
       />
 
-      <GeoMap positions={forMap} />
+      <GeoMap positions={forMap} listeners={mapListeners} />
 
       <p>
         With GPS: {forMap.size} // Without GPS: {files.length - forMap.size}

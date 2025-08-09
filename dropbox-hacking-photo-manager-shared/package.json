@@ -35,6 +35,7 @@
   "exports": {
     ".": "./dist/src/index.js",
     "./fileTypes": "./dist/src/fileTypes.js",
+    "./search": "./dist/src/search/index.js",
     "./serverSideFeeds": "./dist/src/serverSideFeeds/index.js"
   },
   "dependencies": {

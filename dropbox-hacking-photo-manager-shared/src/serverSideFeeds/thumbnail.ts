@@ -7,6 +7,8 @@ export type ThumbnailRequest = {
   readonly type: "rx.ng.thumbnail2";
   readonly rev: string;
   readonly size: files.ThumbnailSize[".tag"];
+  readonly mode: files.ThumbnailMode[".tag"];
+  readonly format: files.ThumbnailFormat[".tag"];
 };
 
 export type ThumbnailResponse = {

@@ -30,67 +30,43 @@ type SPEC<NAME extends string, REQ extends { readonly type: NAME }, RES> = {
   readonly provider: Provider<REQ, RES>;
 };
 
-const createSpec = <
-  NAME extends string,
-  REQ extends { readonly type: NAME },
-  RES,
->(
-  name: NAME,
-  provider: Provider<REQ, RES>,
-): SPEC<NAME, REQ, RES> => ({
-  name,
-  provider,
-});
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+class Builder<FEEDMAP extends { [K in string]: any }> {
+  public static init() {
+    return new Builder({});
+  }
 
-const addFeed = <
-  NAME extends string,
-  REQ extends { readonly type: NAME },
-  RES,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  BASE extends { [K in string]: any },
->(
-  base: BASE,
-  spec: NAME extends keyof BASE ? never : SPEC<NAME, REQ, RES>,
-) =>
-  ({
-    ...base,
-    [spec.name]: spec,
-  }) as BASE & Record<NAME, typeof spec>;
+  constructor(public readonly feedMap: FEEDMAP) {}
+
+  public addFeed<NAME extends string, REQ extends { readonly type: NAME }, RES>(
+    name: NAME,
+    provider: Provider<REQ, RES>,
+  ) {
+    return new Builder({
+      ...this.feedMap,
+      [name]: { name, provider },
+    } as FEEDMAP & Record<NAME, SPEC<NAME, REQ, RES>>);
+  }
+}
 
 export const buildFeedMap = (
   thumbnailHandler: (req: ThumbnailRequest) => Promise<ThumbnailResponse>,
-) => {
-  const f0: Record<never, never> = {};
-  const f1 = addFeed(f0, createSpec("rx.ng.basic-counts", provideBasicCounts));
-  const f2 = addFeed(f1, createSpec("rx.ng.closest-to", provideClosestTo));
-  const f3 = addFeed(f2, createSpec("rx.ng.content_hash", provideContentHash));
-  const f4 = addFeed(f3, createSpec("rx.ng.day.files", provideDayFiles));
-  const f5 = addFeed(
-    f4,
-    createSpec("rx.ng.exif-explorer", provideExifExplorer),
-  );
-  const f6 = addFeed(f5, createSpec("rx.ng.file.id", provideFileId));
-  const f7 = addFeed(f6, createSpec("rx.ng.file.rev", provideFileRev));
-  const f8 = addFeed(f7, createSpec("rx.ng.fsck", provideFsck));
-  const f9 = addFeed(
-    f8,
-    createSpec("rx.ng.list-of-days", provideListOfDaysWithoutSamples),
-  );
-  const f10 = addFeed(f9, createSpec("rx.ng.tags", provideTags));
-  const f11 = addFeed(
-    f10,
-    createSpec("rx.ng.thumbnail2", provideThumbnail(thumbnailHandler)),
-  );
-  const f12 = addFeed(f11, createSpec("rx.ng.video", provideVideo));
-  const f13 = addFeed(
-    f12,
-    createSpec("rx.ng.mediainfo-explorer", provideMediaInfoExplorer),
-  );
-  const f14 = addFeed(f13, createSpec("rx.ng.search", provideSearch));
-  // RVE-add-feed
-
-  return f14;
-};
+) =>
+  Builder.init()
+    .addFeed("rx.ng.basic-counts", provideBasicCounts)
+    .addFeed("rx.ng.closest-to", provideClosestTo)
+    .addFeed("rx.ng.content_hash", provideContentHash)
+    .addFeed("rx.ng.day.files", provideDayFiles)
+    .addFeed("rx.ng.exif-explorer", provideExifExplorer)
+    .addFeed("rx.ng.file.id", provideFileId)
+    .addFeed("rx.ng.file.rev", provideFileRev)
+    .addFeed("rx.ng.fsck", provideFsck)
+    .addFeed("rx.ng.list-of-days", provideListOfDaysWithoutSamples)
+    .addFeed("rx.ng.tags", provideTags)
+    .addFeed("rx.ng.thumbnail2", provideThumbnail(thumbnailHandler))
+    .addFeed("rx.ng.video", provideVideo)
+    .addFeed("rx.ng.mediainfo-explorer", provideMediaInfoExplorer)
+    .addFeed("rx.ng.search", provideSearch).feedMap;
 
 export type FeedMap = ReturnType<typeof buildFeedMap>;
 

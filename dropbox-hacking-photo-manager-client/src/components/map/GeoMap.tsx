@@ -39,8 +39,19 @@ const findInitialZoom = (halfDiagonal: number) => {
   return initialZoom;
 };
 
-const GeoMap = ({ positions }: { positions: Positions }) => {
+const GeoMap = ({
+  positions,
+  listeners,
+}: {
+  positions: Positions;
+  listeners?: Partial<{
+    onClickMarker: (e: L.LeafletMouseEvent, key: string) => void;
+  }>;
+}) => {
   if (positions.size === 0) return;
+
+  const listenersRef = useRef(listeners);
+  listenersRef.current = listeners;
 
   useStyleSheet({
     cssText: `
@@ -82,11 +93,6 @@ const GeoMap = ({ positions }: { positions: Positions }) => {
     mapRef.current?.setView(center, initialZoom);
   }, [center.lat, center.lng, initialZoom]);
 
-  // console.log({ GeoMap: { positions, initialZoom, c2, halfDiagonal } });
-
-  // const [currentZoom, setCurrentZoom] = useState(initialZoom);
-
-  // const previousPositions = useDeferredValue(positions);
   const iconA = useMemo(() => new L.Icon.Default({ className: "iconA" }), []);
   const iconB = useMemo(() => new L.Icon.Default({ className: "iconB" }), []);
   const markersRef = useRef(new Map<string, P & { marker: L.Marker }>());
@@ -114,6 +120,10 @@ const GeoMap = ({ positions }: { positions: Positions }) => {
         });
         marker.addTo(theMap);
 
+        marker.addEventListener("click", (e) =>
+          listenersRef.current?.onClickMarker?.(e, id),
+        );
+
         markers.set(id, {
           ...newDetails,
           marker,
@@ -135,9 +145,6 @@ const GeoMap = ({ positions }: { positions: Positions }) => {
   return (
     <div>
       <div ref={eleRef} style={{ width: "600px", height: "600px" }} />
-      {/* <p>
-        {halfDiagonal} / {initialZoom} / curr={currentZoom}
-      </p> */}
     </div>
   );
 };

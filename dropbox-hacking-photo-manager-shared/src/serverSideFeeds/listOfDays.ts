@@ -5,12 +5,7 @@ import {
   type ObservedValueOf,
 } from "rxjs";
 
-import {
-  isExifableFilename,
-  isMediainfoableFilename,
-  isPreviewable,
-} from "../fileTypes.js";
-import { selectGPS } from "../selectGPS.js";
+import { isExifableFilename, isMediainfoableFilename } from "../fileTypes.js";
 import type { DayMetadata } from "../types.js";
 import { type FullDatabaseFeeds } from "./index.js";
 
@@ -39,14 +34,8 @@ export const provideListOfDaysWithoutSamples = (
   feeds: FullDatabaseFeeds,
   _req: ListOfDaysRequest,
 ): Observable<DaySummaryWithoutSamples[]> =>
-  combineLatest([
-    feeds.exifsByContentHash,
-    feeds.mediaInfoByContentHash,
-    feeds.allFilesByRev,
-    feeds.daysByDate,
-    feeds.photosByContentHash,
-  ]).pipe(
-    map(([exifs, mediaInfos, allFiles, days, photosByContentHash]) => {
+  combineLatest([feeds.byContentHash, feeds.daysByDate]).pipe(
+    map(([contentMap, days]) => {
       const out = new Map<string, DaySummaryWithoutSamples>();
 
       const getOrCreate = (date: string) => {
@@ -63,38 +52,30 @@ export const provideListOfDaysWithoutSamples = (
         return item;
       };
 
-      for (const file of allFiles.values()) {
-        if (!isPreviewable(file.path_lower)) continue;
-
-        const exifData = exifs.get(file.content_hash);
-        const mediaInfoData = mediaInfos.get(file.content_hash);
-        const photo = photosByContentHash.get(file.content_hash);
-
-        const date = file.client_modified.substring(0, 10);
-        const item = getOrCreate(date);
+      for (const file of contentMap.values()) {
+        const item = getOrCreate(file.date);
 
         ++item.counts.previewableCount;
 
-        if (isExifableFilename(file.name)) {
+        if (isExifableFilename(file.namedFiles[0].name)) {
           ++item.counts.exifableCount;
 
-          if (exifData) {
+          if (file.exif) {
             ++item.counts.hasExifCount;
           }
         }
 
-        if (isMediainfoableFilename(file.name)) {
+        if (isMediainfoableFilename(file.namedFiles[0].name)) {
           ++item.counts.mediaInfoableCount;
 
-          if (mediaInfoData) {
+          if (file.mediaInfo) {
             ++item.counts.hasMediaInfoCount;
           }
         }
 
-        if (selectGPS(photo, exifData, mediaInfoData))
-          ++item.counts.hasGPSCount;
+        if (file.gps) ++item.counts.hasGPSCount;
 
-        for (const tag of photo?.tags ?? []) {
+        for (const tag of file.photo?.tags ?? []) {
           item.photoTags[tag] = (item.photoTags[tag] ?? 0) + 1;
         }
       }

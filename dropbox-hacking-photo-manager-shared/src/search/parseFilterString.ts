@@ -1,75 +1,4 @@
-export type FilterNode = Leaf | Bool;
-
-export type Leaf =
-  | Leaf_Tag
-  | Leaf_TagCount
-  | Leaf_Timestamp
-  | Leaf_Text
-  | Leaf_MediaType
-  | Leaf_Duration
-  | Leaf_HasGPS
-  | Leaf_Path;
-
-type Leaf_Tag = {
-  readonly type: "tag";
-  readonly tag: string;
-};
-
-type Leaf_TagCount = {
-  readonly type: "tag_count";
-  readonly tagCount: number;
-  readonly operand: ">" | "<";
-};
-
-type Leaf_Timestamp = {
-  readonly type: "timestamp";
-  readonly timestamp: string;
-  readonly operand: ">" | "<";
-};
-
-type Leaf_Text = {
-  readonly type: "text";
-  readonly text: string;
-};
-
-type Leaf_MediaType = {
-  readonly type: "media_type";
-  readonly mediaType: "image" | "video" | "audio";
-};
-
-type Leaf_Duration = {
-  readonly type: "duration";
-  readonly durationSeconds: number;
-  readonly operand: ">" | "<";
-};
-
-type Leaf_HasGPS = {
-  readonly type: "has_gps";
-};
-
-type Leaf_Path = {
-  readonly type: "path";
-  readonly path: string;
-};
-
-export type Bool = Boolean_And | Boolean_Or | Boolean_Not;
-
-type Boolean_And = {
-  readonly type: "and";
-  readonly left: FilterNode;
-  readonly right: FilterNode;
-};
-
-type Boolean_Or = {
-  readonly type: "or";
-  readonly left: FilterNode;
-  readonly right: FilterNode;
-};
-
-type Boolean_Not = {
-  readonly type: "not";
-  readonly left: FilterNode;
-};
+import type { FilterNode } from "./filterNode.js";
 
 export const parseFilterString = (query: string): FilterNode | null => {
   const parts = query.trim().split(" ");
@@ -122,6 +51,21 @@ export const parseFilterString = (query: string): FilterNode | null => {
 
     if (part.startsWith("tag=")) {
       stack.push({ type: "tag", tag: part.substring(4) });
+      continue;
+    }
+
+    if (part.startsWith("tag~")) {
+      stack.push({ type: "tag-loose", q: part.substring(4) });
+      continue;
+    }
+
+    if (part.startsWith("id=")) {
+      stack.push({ type: "file-id", id: part.substring(3) });
+      continue;
+    }
+
+    if (part.startsWith("rev=")) {
+      stack.push({ type: "file-rev", rev: part.substring(4) });
       continue;
     }
 

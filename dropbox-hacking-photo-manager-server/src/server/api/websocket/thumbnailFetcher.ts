@@ -5,6 +5,8 @@ import type { Context } from "../../context.js";
 export type ThumbnailFetcher = (args: {
   rev: string;
   size: files.ThumbnailSize[".tag"];
+  mode: files.ThumbnailMode[".tag"];
+  format: files.ThumbnailFormat[".tag"];
 }) => Promise<{ base64JPEG: string } | null>;
 
 export const nullThumbnailFetcher = (): ThumbnailFetcher => () =>
@@ -62,7 +64,12 @@ export const batchingThumbnailFetcher = (
     new Promise<Awaited<ReturnType<ThumbnailFetcher>>>((resolve, reject) => {
       if (waiting.length === 0) timer = setTimeout(flush, maxWait);
       waiting.push({
-        req: { path: `rev:${req.rev}`, size: { ".tag": req.size } },
+        req: {
+          path: `rev:${req.rev}`,
+          size: { ".tag": req.size },
+          mode: { ".tag": req.mode },
+          format: { ".tag": req.format },
+        },
         resolve,
         reject,
       });

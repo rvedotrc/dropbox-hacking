@@ -3,7 +3,7 @@ import {
   isGeneralTrack,
   isVideoTrack,
   type MediainfoFromHash,
-} from "@blaahaj/dropbox-hacking-mediainfo-db";
+} from "@blaahaj/dropbox-hacking-mediainfo-db/types";
 import { combineLatest, map, type ObservedValueOf } from "rxjs";
 
 import type { DayMetadata } from "../types.js";
