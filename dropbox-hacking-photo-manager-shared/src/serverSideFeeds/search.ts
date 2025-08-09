@@ -12,6 +12,7 @@ export type SearchRequest = {
 
 export type SearchResult = {
   readonly truncated: boolean;
+  readonly totalCount: number;
   readonly matches: readonly (ContentHashCollection & {
     readonly day: DayMetadata | undefined;
   })[];
@@ -47,6 +48,7 @@ export const provideSearch = (
 
         return {
           truncated: matches.length > 1000,
+          totalCount: matches.length,
           matches:
             matches.length > 1000
               ? matches.slice(matches.length - 1000)
